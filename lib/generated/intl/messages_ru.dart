@@ -181,6 +181,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "githubRepo":
             MessageLookupByLibrary.simpleMessage("GitHub репозиторий"),
         "green": MessageLookupByLibrary.simpleMessage("Зеленый"),
+        "grid_view":
+            MessageLookupByLibrary.simpleMessage("Представление сетки"),
         "image": MessageLookupByLibrary.simpleMessage("Изображение"),
         "image_picker_error": m5,
         "import_cancelled":
@@ -198,6 +200,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "last_updated": MessageLookupByLibrary.simpleMessage("Обновлено"),
         "light": MessageLookupByLibrary.simpleMessage("Светлая"),
         "lightBlue": MessageLookupByLibrary.simpleMessage("Голубой"),
+        "list_view":
+            MessageLookupByLibrary.simpleMessage("Представление списка"),
         "main_image":
             MessageLookupByLibrary.simpleMessage("Основное изображение"),
         "male": MessageLookupByLibrary.simpleMessage("Мужской"),

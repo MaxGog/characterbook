@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:characterbook/ui/widgets/character_grid_tile.dart';
+import 'package:characterbook/ui/widgets/character_list_card.dart';
+import 'package:characterbook/ui/widgets/tag_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -22,15 +25,23 @@ class CharacterListPage extends StatefulWidget {
 
 class _CharacterListPageState extends State<CharacterListPage> {
   final TextEditingController _searchController = TextEditingController();
+  final FilePickerService _filePickerService = FilePickerService();
+  
   List<Character> _filteredCharacters = [];
   bool _isSearching = false;
   bool _isImporting = false;
+  bool _isGridView = false;
   String? _selectedTag;
   String? _errorMessage;
   Character? _selectedCharacter;
-  final FilePickerService _filePickerService = FilePickerService();
 
-  List<String> _generateTags(List<Character> characters) {
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<String> _generateTags(BuildContext context, List<Character> characters) {
     final s = S.of(context);
     return [
       s.male, s.female, s.another,
@@ -41,64 +52,57 @@ class _CharacterListPageState extends State<CharacterListPage> {
   }
 
   void _filterCharacters(String query, List<Character> allCharacters) {
+    final s = S.of(context);
+    
     setState(() {
-      final s = S.of(context);
-
-      List<Character> filtered = allCharacters.where((character) {
+      _filteredCharacters = allCharacters.where((character) {
         final matchesSearch = query.isEmpty ||
             character.name.toLowerCase().contains(query.toLowerCase()) ||
             character.age.toString().contains(query);
 
         bool matchesTag = true;
         if (_selectedTag != null) {
-          if (_selectedTag == s.male) {
-            matchesTag = character.gender == 'male';
-          } else if (_selectedTag == s.female) {
-            matchesTag = character.gender == 'female';
-          } else if (_selectedTag == s.another) {
-            matchesTag = character.gender == 'another';
-          } else if (_selectedTag == s.short_name) {
-            matchesTag = character.name.length <= 4;
-          } else if (_selectedTag == s.children) {
-            matchesTag = character.age < 18;
-          } else if (_selectedTag == s.young) {
-            matchesTag = character.age < 30;
-          } else if (_selectedTag == s.adults) {
-            matchesTag = character.age < 50;
-          } else if (_selectedTag == s.elderly) {
-            matchesTag = character.age >= 50;
-          }
+          matchesTag = switch (_selectedTag) {
+            _ when _selectedTag == s.male => character.gender == 'male',
+            _ when _selectedTag == s.female => character.gender == 'female',
+            _ when _selectedTag == s.another => character.gender == 'another',
+            _ when _selectedTag == s.short_name => character.name.length <= 4,
+            _ when _selectedTag == s.children => character.age < 18,
+            _ when _selectedTag == s.young => character.age < 30,
+            _ when _selectedTag == s.adults => character.age < 50,
+            _ when _selectedTag == s.elderly => character.age >= 50,
+            _ => true,
+          };
         }
 
         return matchesSearch && matchesTag;
       }).toList();
 
       if (_selectedTag == s.a_to_z) {
-        filtered.sort((a, b) => a.name.compareTo(b.name));
+        _filteredCharacters.sort((a, b) => a.name.compareTo(b.name));
       } else if (_selectedTag == s.z_to_a) {
-        filtered.sort((a, b) => b.name.compareTo(a.name));
+        _filteredCharacters.sort((a, b) => b.name.compareTo(a.name));
       } else if (_selectedTag == s.age_asc) {
-        filtered.sort((a, b) => a.age.compareTo(b.age));
+        _filteredCharacters.sort((a, b) => a.age.compareTo(b.age));
       } else if (_selectedTag == s.age_desc) {
-        filtered.sort((a, b) => b.age.compareTo(a.age));
+        _filteredCharacters.sort((a, b) => b.age.compareTo(a.age));
       }
 
-      _filteredCharacters = filtered;
-
-      if (_selectedCharacter != null && !filtered.contains(_selectedCharacter)) {
+      if (_selectedCharacter != null && 
+          !_filteredCharacters.contains(_selectedCharacter)) {
         _selectedCharacter = null;
       }
     });
   }
 
-  String _getLocalizedGender(String genderKey) {
+  String _getLocalizedGender(BuildContext context, String genderKey) {
     final s = S.of(context);
-    switch (genderKey) {
-      case 'male': return s.male;
-      case 'female': return s.female;
-      case 'another': return s.another;
-      default: return genderKey;
-    }
+    return switch (genderKey) {
+      'male' => s.male,
+      'female' => s.female,
+      'another' => s.another,
+      _ => genderKey,
+    };
   }
 
   Future<void> _importCharacter() async {
@@ -114,15 +118,17 @@ class _CharacterListPageState extends State<CharacterListPage> {
       final box = Hive.box<Character>('characters');
       await box.add(character);
 
-      _showSnackBar(S.of(context).character_imported(character.name));
+      if (mounted) {
+        _showSnackBar(S.of(context).character_imported(character.name));
+      }
     } catch (e) {
-      setState(() {
-        _errorMessage = e.toString();
-      });
+      if (mounted) {
+        setState(() => _errorMessage = e.toString());
+      }
     } finally {
-      setState(() {
-        _isImporting = false;
-      });
+      if (mounted) {
+        setState(() => _isImporting = false);
+      }
     }
   }
 
@@ -136,18 +142,6 @@ class _CharacterListPageState extends State<CharacterListPage> {
     );
   }
 
-  void _showCharacterContextMenu(Character character, BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => ContextMenu.character(
-        character: character,
-        onEdit: () => _editCharacter(character),
-        onDelete: () => _deleteCharacter(character),
-      ),
-    );
-  }
-
   Future<void> _editCharacter(Character character) async {
     final result = await Navigator.push<bool>(
       context,
@@ -155,8 +149,11 @@ class _CharacterListPageState extends State<CharacterListPage> {
         builder: (context) => CharacterEditPage(character: character),
       ),
     );
+    
     if (result == true && mounted) {
-      _filterCharacters(_searchController.text, Hive.box<Character>('characters').values.toList().cast<Character>());
+      final characters = Hive.box<Character>('characters')
+        .values.toList().cast<Character>();
+      _filterCharacters(_searchController.text, characters);
     }
   }
 
@@ -166,9 +163,7 @@ class _CharacterListPageState extends State<CharacterListPage> {
     final box = Hive.box<Character>('characters');
     final characters = box.values.toList().cast<Character>();
 
-    if (oldIndex < newIndex) {
-      newIndex -= 1;
-    }
+    if (oldIndex < newIndex) newIndex -= 1;
 
     final character = characters.removeAt(oldIndex);
     characters.insert(newIndex, character);
@@ -177,9 +172,7 @@ class _CharacterListPageState extends State<CharacterListPage> {
     await box.addAll(characters);
 
     if (mounted) {
-      setState(() {
-        _filterCharacters(_searchController.text, characters);
-      });
+      _filterCharacters(_searchController.text, characters);
     }
   }
 
@@ -201,6 +194,218 @@ class _CharacterListPageState extends State<CharacterListPage> {
     }
   }
 
+  Future<void> _deleteCharacter(Character character) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(S.of(context).character_delete_title),
+        content: Text(S.of(context).character_delete_confirm),
+        actions: [
+          TextButton(
+            child: Text(S.of(context).cancel),
+            onPressed: () => Navigator.of(context).pop(false),
+          ),
+          TextButton(
+            child: Text(S.of(context).delete),
+            onPressed: () => Navigator.of(context).pop(true),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await Hive.box<Character>('characters').delete(character.key);
+      if (mounted) _showSnackBar(S.of(context).character_deleted);
+    }
+  }
+
+  void _showCharacterContextMenu(Character character, BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ContextMenu.character(
+        character: character,
+        onEdit: () => _editCharacter(character),
+        onDelete: () => _deleteCharacter(character),
+      ),
+    );
+  }
+
+  Widget _buildCharacterCard(Character character, ThemeData theme) {
+    final isSelected = _selectedCharacter?.key == character.key;
+
+    return CharacterListCard(
+      character: character,
+      isSelected: isSelected,
+      onTap: () => _handleCharacterTap(character),
+      onLongPress: () => _showCharacterContextMenu(character, context),
+      onMenuPressed: () => _showCharacterContextMenu(character, context),
+    );
+  }
+
+  Widget _buildCharacterTile(Character character, ThemeData theme) {
+    return CharacterGridTile(
+      character: character,
+      onTap: () => _handleCharacterTap(character),
+      onLongPress: () => _showCharacterContextMenu(character, context),
+    );
+  }
+
+  void _handleCharacterTap(Character character) {
+    if (MediaQuery.of(context).size.width > 1000) {
+      setState(() => _selectedCharacter = character);
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CharacterDetailPage(character: character),
+        ),
+      );
+    }
+  }
+
+  Widget _buildTagFilter(List<String> tags, ThemeData theme, List<Character> allCharacters) {
+    return TagFilter(
+      tags: tags,
+      selectedTag: _selectedTag,
+      onTagSelected: (tag) {
+        setState(() => _selectedTag = tag);
+        _filterCharacters(_searchController.text, allCharacters);
+      },
+      allCharacters: allCharacters,
+    );
+  }
+
+  Widget _buildEmptyState(ThemeData theme) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.person_search,
+            size: 48,
+            color: theme.colorScheme.onSurface,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            _isSearching && _searchController.text.isNotEmpty
+                ? S.of(context).nothing_found
+                : S.of(context).no_characters,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+          if (!_isSearching)
+            TextButton(
+              onPressed: _importCharacter,
+              child: Text(S.of(context).import_character),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCharactersList(List<Character> characters, ThemeData theme) {
+    if (characters.isEmpty) return _buildEmptyState(theme);
+
+    return ReorderableListView.builder(
+      key: const ValueKey('characters_reorderable_list'),
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: characters.length,
+      itemBuilder: (context, index) {
+        final character = characters[index];
+        return KeyedSubtree(
+          key: ValueKey('character_item_${character.key}'),
+          child: _buildCharacterCard(character, theme),
+        );
+      },
+      onReorder: (oldIndex, newIndex) {
+        if (oldIndex < newIndex) newIndex -= 1;
+        final character = characters.removeAt(oldIndex);
+        characters.insert(newIndex, character);
+        _reorderCharacters(oldIndex, newIndex);
+      },
+      buildDefaultDragHandles: false,
+      proxyDecorator: (child, _, animation) => Material(
+        elevation: 6,
+        color: Colors.transparent,
+        child: child,
+      ),
+    );
+  }
+
+  Widget _buildCharactersGrid(List<Character> characters, ThemeData theme) {
+    if (characters.isEmpty) return _buildEmptyState(theme);
+
+    return GridView.builder(
+      padding: const EdgeInsets.all(8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.8,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+      ),
+      itemCount: characters.length,
+      itemBuilder: (context, index) => _buildCharacterTile(characters[index], theme),
+    );
+  }
+
+  Widget _buildWideLayout(List<Character> characters, List<String> tags, ThemeData theme, List<Character> allCharacters) {
+    return Row(
+      children: [
+        Container(
+          width: 400,
+          decoration: BoxDecoration(
+            border: Border(right: BorderSide(color: theme.dividerColor))),
+          child: Column(
+            children: [
+              if (tags.isNotEmpty) _buildTagFilter(tags, theme, allCharacters),
+              Expanded(
+                child: _isGridView 
+                    ? _buildCharactersGrid(characters, theme) 
+                    : _buildCharactersList(characters, theme),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: _selectedCharacter != null
+              ? CharacterDetailPage(character: _selectedCharacter!)
+              : Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.person_outline,
+                        size: 48,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        S.of(context).select_character,
+                        style: theme.textTheme.bodyLarge,
+                      ),
+                    ],
+                  ),
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMobileLayout(List<Character> characters, List<String> tags, ThemeData theme, List<Character> allCharacters) {
+    return Column(
+      children: [
+        if (tags.isNotEmpty) _buildTagFilter(tags, theme, allCharacters),
+        Expanded(
+          child: _isGridView 
+              ? _buildCharactersGrid(characters, theme) 
+              : _buildCharactersList(characters, theme)
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -208,23 +413,33 @@ class _CharacterListPageState extends State<CharacterListPage> {
 
     return Scaffold(
       appBar: CustomAppBar(
-          title: S.of(context).my_characters,
-          isSearching: _isSearching,
-          searchController: _searchController,
-          searchHint: S.of(context).search_characters,
-          onSearchToggle: () => setState(() {
-            _isSearching = !_isSearching;
-            if (!_isSearching) {
-              _searchController.clear();
-              _selectedTag = null;
-              _filteredCharacters = [];
-            }
-          }),
-          onSearchChanged: (query) {
-            final allCharacters = Hive.box<Character>('characters').values.toList().cast<Character>();
-            _filterCharacters(query, allCharacters);
-          },
-          onTemplatesPressed: _createFromTemplate
+        title: S.of(context).my_characters,
+        isSearching: _isSearching,
+        searchController: _searchController,
+        searchHint: S.of(context).search_characters,
+        onSearchToggle: () => setState(() {
+          _isSearching = !_isSearching;
+          if (!_isSearching) {
+            _searchController.clear();
+            _selectedTag = null;
+            _filteredCharacters = [];
+          }
+        }),
+        onSearchChanged: (query) {
+          final allCharacters = Hive.box<Character>('characters')
+            .values.toList().cast<Character>();
+          _filterCharacters(query, allCharacters);
+        },
+        onTemplatesPressed: _createFromTemplate,
+        additionalActions: [
+          IconButton(
+            icon: Icon(_isGridView ? Icons.list : Icons.grid_view),
+            onPressed: () => setState(() => _isGridView = !_isGridView),
+            tooltip: _isGridView 
+                ? S.of(context).list_view 
+                : S.of(context).grid_view,
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -246,7 +461,8 @@ class _CharacterListPageState extends State<CharacterListPage> {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.close, color: theme.colorScheme.onErrorContainer),
+                    icon: Icon(Icons.close, 
+                      color: theme.colorScheme.onErrorContainer),
                     onPressed: () => setState(() => _errorMessage = null),
                   ),
                 ],
@@ -257,7 +473,7 @@ class _CharacterListPageState extends State<CharacterListPage> {
               valueListenable: Hive.box<Character>('characters').listenable(),
               builder: (context, box, _) {
                 final allCharacters = box.values.toList().cast<Character>();
-                final tags = _generateTags(allCharacters);
+                final tags = _generateTags(context, allCharacters);
                 final characters = _isSearching || _selectedTag != null
                     ? _filteredCharacters
                     : allCharacters;
@@ -279,242 +495,5 @@ class _CharacterListPageState extends State<CharacterListPage> {
         onTemplate: _createFromTemplate,
       ),
     );
-  }
-
-  Widget _buildWideLayout(List<Character> characters, List<String> tags, ThemeData theme, List<Character> allCharacters) {
-    return Row(
-      children: [
-        Container(
-          width: 400,
-          decoration: BoxDecoration(
-              border: Border(right: BorderSide(color: theme.dividerColor))),
-          child: Column(
-            children: [
-              if (tags.isNotEmpty) _buildTagFilter(tags, theme, allCharacters),
-              Expanded(child: _buildCharactersList(characters, theme)),
-            ],
-          ),
-        ),
-        Expanded(
-          child: _selectedCharacter != null
-              ? CharacterDetailPage(character: _selectedCharacter!)
-              : Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.person_outline,
-                  size: 48,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  S.of(context).select_character,
-                  style: theme.textTheme.bodyLarge,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMobileLayout(List<Character> characters, List<String> tags, ThemeData theme, List<Character> allCharacters) {
-    return Column(
-      children: [
-        if (tags.isNotEmpty) _buildTagFilter(tags, theme, allCharacters),
-        Expanded(child: _buildCharactersList(characters, theme)),
-      ],
-    );
-  }
-
-  Widget _buildCharacterCard(Character character, ThemeData theme) {
-    final isSelected = _selectedCharacter?.key == character.key;
-
-    return Card(
-      key: ValueKey(character.key),
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-      elevation: 0,
-      color: isSelected
-          ? theme.colorScheme.secondaryContainer
-          : theme.colorScheme.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: isSelected
-              ? theme.colorScheme.secondary
-              : theme.colorScheme.outlineVariant,
-          width: isSelected ? 2 : 1,
-        ),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: () {
-          if (MediaQuery.of(context).size.width > 1000) {
-            setState(() => _selectedCharacter = character);
-          } else {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CharacterDetailPage(character: character),
-              ),
-            );
-          }
-        },
-        onLongPress: () => _showCharacterContextMenu(character, context),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              character.imageBytes != null
-                  ? CircleAvatar(
-                backgroundImage: MemoryImage(character.imageBytes!),
-                radius: 28,
-              )
-                  : CircleAvatar(
-                radius: 28,
-                backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                child: Icon(
-                  Icons.person,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(character.name, style: theme.textTheme.bodyLarge),
-                    Text(
-                      '${character.age} ${S.of(context).years}, ${_getLocalizedGender(character.gender)}',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              IconButton(
-                icon: Icon(Icons.more_vert, color: theme.colorScheme.onSurfaceVariant),
-                onPressed: () => _showCharacterContextMenu(character, context),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTagFilter(List<String> tags, ThemeData theme, List<Character> allCharacters) {
-    return Container(
-      height: 56,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: tags.length,
-        itemBuilder: (context, index) {
-          final tag = tags[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: FilterChip(
-              label: Text(tag),
-              selected: _selectedTag == tag,
-              onSelected: (selected) => setState(() {
-                _selectedTag = selected ? tag : null;
-                _filterCharacters(_searchController.text, allCharacters);
-              }),
-              shape: StadiumBorder(side: BorderSide(color: theme.colorScheme.outline)),
-              showCheckmark: false,
-              selectedColor: theme.colorScheme.secondaryContainer,
-              labelStyle: theme.textTheme.labelLarge?.copyWith(
-                color: _selectedTag == tag
-                    ? theme.colorScheme.onSecondaryContainer
-                    : theme.colorScheme.onSurface,
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildCharactersList(List<Character> characters, ThemeData theme) {
-    if (characters.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.person_search,
-              size: 48,
-              color: theme.colorScheme.onSurface,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              _isSearching && _searchController.text.isNotEmpty
-                  ? S.of(context).nothing_found
-                  : S.of(context).no_characters,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface,
-              ),
-            ),
-            if (!_isSearching)
-              TextButton(
-                onPressed: _importCharacter,
-                child: Text(S.of(context).import_character),
-              ),
-          ],
-        ),
-      );
-    }
-
-    return ReorderableListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      itemCount: characters.length,
-      itemBuilder: (context, index) => _buildCharacterCard(characters[index], theme),
-      onReorder: (oldIndex, newIndex) async {
-        await _reorderCharacters(oldIndex, newIndex);
-      },
-      buildDefaultDragHandles: false,
-      proxyDecorator: (child, index, animation) {
-        return Material(
-          elevation: 6,
-          color: Colors.transparent,
-          child: child,
-        );
-      },
-    );
-  }
-
-  Future<void> _deleteCharacter(Character character) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(S.of(context).character_delete_title),
-        content: Text(S.of(context).character_delete_confirm),
-        actions: [
-          TextButton(
-            child: Text(
-              S.of(context).cancel,
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-            ),
-            onPressed: () => Navigator.of(context).pop(false),
-          ),
-          TextButton(
-            child: Text(
-              S.of(context).delete,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-            onPressed: () => Navigator.of(context).pop(true),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed ?? false) {
-      await Hive.box<Character>('characters').delete(character.key);
-      if (mounted) _showSnackBar(S.of(context).character_deleted);
-    }
   }
 }

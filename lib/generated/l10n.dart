@@ -931,6 +931,16 @@ class S {
     );
   }
 
+  /// `Представление сетки`
+  String get grid_view {
+    return Intl.message(
+      'Представление сетки',
+      name: 'grid_view',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Изображение`
   String get image {
     return Intl.message(
@@ -1046,6 +1056,16 @@ class S {
     return Intl.message(
       'Голубой',
       name: 'lightBlue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Представление списка`
+  String get list_view {
+    return Intl.message(
+      'Представление списка',
+      name: 'list_view',
       desc: '',
       args: [],
     );

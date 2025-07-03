@@ -126,6 +126,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Create from Template"),
         "create_template_tooltip":
             MessageLookupByLibrary.simpleMessage("Create Template"),
+        "creatingBackup":
+            MessageLookupByLibrary.simpleMessage("Create a backup copy"),
         "custom_fields": MessageLookupByLibrary.simpleMessage("Custom Fields"),
         "dark": MessageLookupByLibrary.simpleMessage("Dark"),
         "delete": MessageLookupByLibrary.simpleMessage("Delete"),
@@ -161,6 +163,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "gender": MessageLookupByLibrary.simpleMessage("Gender"),
         "githubRepo": MessageLookupByLibrary.simpleMessage("GitHub Repository"),
         "green": MessageLookupByLibrary.simpleMessage("Green"),
+        "grid_view": MessageLookupByLibrary.simpleMessage("Grid view"),
         "image": MessageLookupByLibrary.simpleMessage("Image"),
         "image_picker_error": m5,
         "import_cancelled":
@@ -178,6 +181,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "last_updated": MessageLookupByLibrary.simpleMessage("Last Updated"),
         "light": MessageLookupByLibrary.simpleMessage("Light"),
         "lightBlue": MessageLookupByLibrary.simpleMessage("Light Blue"),
+        "list_view":
+            MessageLookupByLibrary.simpleMessage("Представление списка"),
         "main_image": MessageLookupByLibrary.simpleMessage("Main Image"),
         "male": MessageLookupByLibrary.simpleMessage("Male"),
         "markdown_bold": MessageLookupByLibrary.simpleMessage("Bold"),
@@ -224,6 +229,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "personality": MessageLookupByLibrary.simpleMessage("Personality"),
         "pink": MessageLookupByLibrary.simpleMessage("Pink"),
         "posts": MessageLookupByLibrary.simpleMessage("Posts"),
+        "processing": MessageLookupByLibrary.simpleMessage("Loading..."),
         "purple": MessageLookupByLibrary.simpleMessage("Purple"),
         "race": MessageLookupByLibrary.simpleMessage("Race"),
         "race_copied":
@@ -249,6 +255,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "required_field_error":
             MessageLookupByLibrary.simpleMessage("Required field"),
         "restoreData": MessageLookupByLibrary.simpleMessage("Restore Data"),
+        "restoringBackup":
+            MessageLookupByLibrary.simpleMessage("Restore from backup"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),
         "save_error": MessageLookupByLibrary.simpleMessage("Save Error"),
         "save_race": MessageLookupByLibrary.simpleMessage("Save Race"),
