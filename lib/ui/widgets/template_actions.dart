@@ -8,8 +8,6 @@ import 'package:universal_html/html.dart' as html;
 
 import '../../../generated/l10n.dart';
 import '../../models/template_model.dart';
-import '../../services/file_picker_service.dart';
-import '../../services/template_service.dart';
 
 class TemplateActions {
   static Future<void> exportTemplate(
