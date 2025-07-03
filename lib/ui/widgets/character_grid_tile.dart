@@ -34,10 +34,15 @@ class CharacterGridTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         onTap: onTap,
         onLongPress: onLongPress,
-        child: Padding(
+        child: Container(
           padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: theme.colorScheme.surface,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CharacterAvatar(character: character, size: 40),
               const SizedBox(height: 12),
