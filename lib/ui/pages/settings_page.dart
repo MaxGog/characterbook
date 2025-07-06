@@ -1,3 +1,4 @@
+import 'package:characterbook/ui/widgets/backup_buttons_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -165,74 +166,7 @@ class SettingsPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            StatefulBuilder(
-              builder: (context, setState) {
-                bool isProcessing = false;
-                String? processingText;
-
-                return Column(
-                  children: [
-                    FilledButton.tonalIcon(
-                      icon: const Icon(Icons.cloud_upload),
-                      label: Text(s.createBackup),
-                      onPressed: isProcessing
-                          ? null
-                          : () async {
-                              setState(() {
-                                isProcessing = true;
-                                processingText = s.creatingBackup;
-                              });
-                              await _handleBackupAction(
-                                context,
-                                cloudBackupService.exportAllToCloud,
-                              );
-                              setState(() {
-                                isProcessing = false;
-                                processingText = null;
-                              });
-                            },
-                    ),
-                    const SizedBox(height: 8),
-                    FilledButton.tonalIcon(
-                      icon: const Icon(Icons.cloud_download),
-                      label: Text(s.restoreData),
-                      onPressed: isProcessing
-                          ? null
-                          : () async {
-                              setState(() {
-                                isProcessing = true;
-                                processingText = s.restoringBackup;
-                              });
-                              await _handleBackupAction(
-                                context,
-                                cloudBackupService.importAllFromCloud,
-                              );
-                              setState(() {
-                                isProcessing = false;
-                                processingText = null;
-                              });
-                            },
-                    ),
-                    if (isProcessing) ...[
-                      const SizedBox(height: 16),
-                      Column(
-                        children: [
-                          LinearProgressIndicator(
-                            color: colorScheme.primary,
-                            backgroundColor: colorScheme.primaryContainer,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            processingText ?? s.processing,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ],
-                );
-              },
-            ),
+            BackupButtons(cloudBackupService: cloudBackupService),
           ],
         ),
       ),
