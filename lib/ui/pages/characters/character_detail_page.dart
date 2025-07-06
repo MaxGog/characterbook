@@ -25,10 +25,12 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
   };
 
   List<Note> _relatedNotes = [];
+  late final CharacterService _exportService;
 
   @override
   void initState() {
     super.initState();
+    _exportService = CharacterService.forExport(widget.character);
     _loadRelatedNotes();
   }
 
@@ -37,25 +39,42 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
 
     try {
       final notesBox = await Hive.openBox<Note>('notes');
-      _relatedNotes = notesBox.values
+      final notes = notesBox.values
           .where((note) => note.characterIds.contains(widget.character.key.toString()))
-          .toList()
-        ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+          .toList();
+      
+      notes.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+      
+      if (mounted) {
+        setState(() => _relatedNotes = notes);
+      }
     } catch (e) {
       debugPrint('${S.of(context).error_loading_notes}: $e');
-    } finally {
-      if (mounted) {
-        setState(() {});
-      }
     }
   }
 
-  void _confirmDelete() async {
-    final shouldDelete = await showDialog<bool>(
+  Future<void> _handleDelete() async {
+    final confirmed = await _showConfirmationDialog(
+      title: S.of(context).character_delete_title,
+      message: S.of(context).character_delete_confirm,
+      confirmText: S.of(context).delete,
+      isDestructive: true,
+    );
+
+    if (confirmed == true) await _deleteCharacter();
+  }
+
+  Future<bool?> _showConfirmationDialog({
+    required String title,
+    required String message,
+    required String confirmText,
+    bool isDestructive = false,
+  }) {
+    return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(S.of(context).character_delete_title),
-        content: Text(S.of(context).character_delete_confirm),
+        title: Text(title),
+        content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -63,43 +82,35 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text(S.of(context).delete, style: TextStyle(color: Colors.red)),
+            child: Text(
+              confirmText,
+              style: TextStyle(color: isDestructive ? Colors.red : null),
+            ),
           ),
         ],
       ),
     );
-
-    if (shouldDelete == true) {
-      _deleteCharacter();
-    }
   }
 
-  void _deleteCharacter() async {
+  Future<void> _deleteCharacter() async {
     try {
       if (widget.character.key != null) {
         final box = Hive.box<Character>('characters');
         await box.delete(widget.character.key);
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(S.of(context).character_deleted)),
-          );
+          _showSnackBar(S.of(context).character_deleted, isError: false);
           Navigator.pop(context);
         }
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${S.of(context).delete_error}: ${e.toString()}')),
-        );
-      }
+      _showSnackBar('${S.of(context).delete_error}: ${e.toString()}');
     }
   }
 
   Future<void> _exportToPdf() async {
     try {
-      final exportService = CharacterService.forExport(widget.character);
-      await exportService.exportToPdf();
+      await _exportService.exportToPdf();
       _showSnackBar(S.of(context).pdf_export_success, isError: false);
     } catch (e) {
       _showSnackBar('${S.of(context).export_error}: ${e.toString()}');
@@ -108,8 +119,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
 
   Future<void> _exportToJson() async {
     try {
-      final exportService = CharacterService.forExport(widget.character);
-      await exportService.exportToJson();
+      await _exportService.exportToJson();
       _showSnackBar(S.of(context).file_ready, isError: false);
     } catch (e) {
       _showSnackBar('${S.of(context).export_error}: ${e.toString()}');
@@ -145,7 +155,9 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
       SnackBar(
         content: Text(message),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        backgroundColor: isError 
+          ? Theme.of(context).colorScheme.errorContainer 
+          : null,
       ),
     );
   }
@@ -161,12 +173,10 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
           AppBar(
             backgroundColor: Colors.black,
             title: Text(title),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.close, color: Colors.white),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
+            leading: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
+            ),
           ),
           InteractiveViewer(
             panEnabled: true,
@@ -192,11 +202,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
               color: theme.colorScheme.onSurface,
             ),
             const SizedBox(width: 8),
-            Icon(
-              icon,
-              color: theme.colorScheme.primary,
-              size: 24,
-            ),
+            Icon(icon, color: theme.colorScheme.primary, size: 24),
             const SizedBox(width: 12),
             Text(
               title,
@@ -222,9 +228,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
       ),
       child: SelectableText(
         content.isNotEmpty ? content : S.of(context).no_information,
-        style: theme.textTheme.bodyLarge?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
+        style: theme.textTheme.bodyLarge,
       ),
     );
   }
@@ -232,9 +236,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
   Widget _buildNoteCard(Note note) {
     final theme = Theme.of(context);
     return Card(
-      elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 4),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -247,24 +249,21 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                   child: Text(
                     note.title,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
-                    ),
+                      fontWeight: FontWeight.bold),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Text(
                   '${note.updatedAt.day}.${note.updatedAt.month}.${note.updatedAt.year}',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface,
-                  ),
+                  style: theme.textTheme.bodySmall,
                 ),
               ],
             ),
             const SizedBox(height: 8),
             Text(
-              note.content.length > 100 ? '${note.content.substring(0, 100)}...' : note.content,
-              style: theme.textTheme.bodyMedium,
+              note.content.length > 100 
+                ? '${note.content.substring(0, 100)}...' 
+                : note.content,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
@@ -282,33 +281,23 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
   }
 
   Widget _buildInfoRow(String label, String value, IconData icon) {
-    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 40,
-            child: Icon(
-              icon,
-              color: theme.colorScheme.primary,
-              size: 20,
-            ),
-          ),
+          Icon(icon, color: Theme.of(context).colorScheme.primary, size: 20),
           const SizedBox(width: 8),
           SizedBox(
             width: 80,
             child: Text(
               label,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onSurface,
-              ),
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(width: 8),
-          Expanded(child: SelectableText(value, style: theme.textTheme.bodyLarge)),
+          Expanded(child: SelectableText(value)),
         ],
       ),
     );
@@ -318,31 +307,34 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
     final theme = Theme.of(context);
     return widget.character.imageBytes != null
         ? InkWell(
-      onTap: () => _showFullImage(widget.character.imageBytes!, S.of(context).character_avatar),
-      child: CircleAvatar(
-        radius: 80,
-        backgroundImage: MemoryImage(widget.character.imageBytes!),
-      ),
-    )
+            onTap: () => _showFullImage(
+              widget.character.imageBytes!, 
+              S.of(context).character_avatar),
+            child: CircleAvatar(
+              radius: 80,
+              backgroundImage: MemoryImage(widget.character.imageBytes!),
+            ),
+          )
         : CircleAvatar(
-      radius: 80,
-      backgroundColor: theme.colorScheme.surfaceContainerHighest,
-      child: Icon(
-        Icons.person,
-        size: 60,
-        color: theme.colorScheme.onSurfaceVariant,
-      ),
-    );
+            radius: 80,
+            backgroundColor: theme.colorScheme.surfaceContainerHighest,
+            child: Icon(
+              Icons.person,
+              size: 60,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          );
   }
 
   Widget _buildReferenceImage() {
     final theme = Theme.of(context);
     return InkWell(
       onTap: widget.character.referenceImageBytes != null
-          ? () => _showFullImage(widget.character.referenceImageBytes!, S.of(context).character_reference)
+          ? () => _showFullImage(
+              widget.character.referenceImageBytes!, 
+              S.of(context).character_reference)
           : null,
-      borderRadius: BorderRadius.circular(12),
-      child: Ink(
+      child: Container(
         width: 120,
         height: 120,
         decoration: BoxDecoration(
@@ -350,9 +342,9 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
           borderRadius: BorderRadius.circular(12),
           image: widget.character.referenceImageBytes != null
               ? DecorationImage(
-            image: MemoryImage(widget.character.referenceImageBytes!),
-            fit: BoxFit.cover,
-          )
+                  image: MemoryImage(widget.character.referenceImageBytes!),
+                  fit: BoxFit.cover,
+                )
               : null,
         ),
         child: widget.character.referenceImageBytes == null
@@ -389,32 +381,18 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
   }
 
   Widget _buildCustomFields() {
-    final theme = Theme.of(context);
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: widget.character.customFields.map((field) => Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                field.key,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
+              Text(field.key, style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
-              SelectableText(
-                field.value,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
+              SelectableText(field.value),
             ],
           ),
         ),
@@ -422,21 +400,31 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
     );
   }
 
+  Widget _buildSection(String title, String key, String content, IconData icon) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle(title, key, icon),
+        if (_expandedSections[key]!) ...[
+          _buildSelectableContent(content),
+          const SizedBox(height: 16),
+        ],
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.character.name,
-          style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-        ),
+        title: Text(widget.character.name, style: textTheme.headlineSmall?.copyWith(
+          fontWeight: FontWeight.bold)),
         actions: [
           PopupMenuButton<String>(
-            icon: Icon(Icons.share, color: colorScheme.onSurface),
+            icon: Icon(Icons.share),
             onSelected: (value) => switch (value) {
               'file' => _exportToJson(),
               'pdf' => _exportToPdf(),
@@ -449,23 +437,23 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
             ],
           ),
           IconButton(
-              icon: Icon(Icons.copy, color: colorScheme.onSurface),
-              onPressed: _copyToClipboard,
-              tooltip: S.of(context).copy_character
+            icon: Icon(Icons.copy),
+            onPressed: _copyToClipboard,
+            tooltip: S.of(context).copy_character,
           ),
           IconButton(
-              icon: Icon(Icons.edit, color: colorScheme.onSurface),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CharacterEditPage(character: widget.character),
-                ),
+            icon: Icon(Icons.edit),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CharacterEditPage(character: widget.character),
               ),
-              tooltip: S.of(context).edit_character
+            ),
+            tooltip: S.of(context).edit_character,
           ),
           IconButton(
             icon: const Icon(Icons.delete),
-            onPressed: _confirmDelete,
+            onPressed: _handleDelete,
             tooltip: S.of(context).delete_character,
           ),
         ],
@@ -479,9 +467,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
               alignment: Alignment.centerRight,
               child: Text(
                 '${S.of(context).last_updated}: ${widget.character.lastEdited}',
-                style: textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurface,
-                ),
+                style: textTheme.bodySmall,
               ),
             ),
             const SizedBox(height: 16),
@@ -542,19 +528,6 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildSection(String title, String key, String content, IconData icon) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle(title, key, icon),
-        if (_expandedSections[key]!) ...[
-          _buildSelectableContent(content),
-          const SizedBox(height: 16),
-        ],
-      ],
     );
   }
 }
