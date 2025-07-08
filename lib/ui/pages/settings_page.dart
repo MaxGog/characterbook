@@ -220,7 +220,7 @@ class SettingsPage extends StatelessWidget {
               trailing: FutureBuilder<String>(
                 builder: (context, snapshot) {
                   return Text(
-                    snapshot.data ?? '1.6.3',
+                    snapshot.data ?? '1.6.4',
                     style: Theme.of(context).textTheme.bodyLarge,
                   );
                 }, future: null,
