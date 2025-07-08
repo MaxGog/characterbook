@@ -197,5 +197,19 @@
   "z_to_a": "Z-A",
   "creatingBackup": "Create a backup copy",
   "restoringBackup": "Restore from backup",
-  "processing": "Loading..."
+  "processing": "Loading...",
+
+  "backup_options": "Backup Options",
+  "restore_options": "Restore Options",
+  "backup_to_cloud": "Backup to Cloud",
+  "backup_to_file": "Backup to File",
+  "restore_from_cloud": "Restore from Cloud",
+  "restore_from_file": "Restore from File",
+  "local_backup_success": "Backup file created successfully",
+  "local_backup_error": "Backup failed",
+  "local_restore_success": "Restored {charactersCount} characters, {notesCount} notes, {racesCount} races, {templatesCount} templates",
+  "local_restore_error": "Restore failed",
+  "share_backup_file": "Here's my CharacterBook backup file",
+
+  "empty_file_error": "The selected file is empty"
 }

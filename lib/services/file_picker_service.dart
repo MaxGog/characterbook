@@ -10,6 +10,10 @@ import '../models/template_model.dart';
 
 class FilePickerService {
 
+  Future<File?> pickJsonFile() async {
+    return await _pickFileNative(fileExtension: '.json');
+  }
+
   Future<File?> _pickFileNative({String? fileExtension}) async {
     if (kIsWeb) return null;
 

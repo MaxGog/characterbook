@@ -22,7 +22,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(name) => "Персонаж создан из шаблона \"${name}\"";
 
-  static String m12(name) => "Персонаж \"${name}\" успешно экспортирован";
+  static String m13(name) => "Персонаж \"${name}\" успешно экспортирован";
 
   static String m1(name) => "Персонаж \"${name}\" успешно импортирован";
 
@@ -37,15 +37,18 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m6(error) => "Ошибка импорта: ${error}";
 
-  static String m7(name) => "Раса \"${name}\" успешно импортирована";
+  static String m7(charactersCount, notesCount, racesCount, templatesCount) =>
+      "Восстановлено ${charactersCount} персонажей, ${notesCount} заметок, ${racesCount} рас, ${templatesCount} шаблонов";
 
-  static String m8(name) => "Файл расы ${name}";
+  static String m8(name) => "Раса \"${name}\" успешно импортирована";
 
-  static String m9(name) => "Шаблон \"${name}\" успешно экспортирован";
+  static String m9(name) => "Файл расы ${name}";
 
-  static String m10(name) => "Шаблон \"${name}\" успешно импортирован";
+  static String m10(name) => "Шаблон \"${name}\" успешно экспортирован";
 
-  static String m11(name) => "Шаблон \"${name}\" уже существует. Заменить его?";
+  static String m11(name) => "Шаблон \"${name}\" успешно импортирован";
+
+  static String m12(name) => "Шаблон \"${name}\" уже существует. Заменить его?";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -76,6 +79,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "back": MessageLookupByLibrary.simpleMessage("Назад"),
         "backstory": MessageLookupByLibrary.simpleMessage("Предыстория"),
         "backup": MessageLookupByLibrary.simpleMessage("Резервное копирование"),
+        "backup_options": MessageLookupByLibrary.simpleMessage(
+            "Варианты резервного копирования"),
+        "backup_to_cloud":
+            MessageLookupByLibrary.simpleMessage("Сохранить в облако"),
+        "backup_to_file":
+            MessageLookupByLibrary.simpleMessage("Сохранить в файл"),
         "basic_info":
             MessageLookupByLibrary.simpleMessage("Основная информация"),
         "biography": MessageLookupByLibrary.simpleMessage("Биография"),
@@ -92,7 +101,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Удалить персонажа?"),
         "character_deleted":
             MessageLookupByLibrary.simpleMessage("Персонаж удален"),
-        "character_exported": m12,
+        "character_exported": m13,
         "character_gallery":
             MessageLookupByLibrary.simpleMessage("Галерея персонажа"),
         "character_imported": m1,
@@ -161,6 +170,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "edit_race": MessageLookupByLibrary.simpleMessage("Редактировать расу"),
         "edit_template": MessageLookupByLibrary.simpleMessage("Редактирование"),
         "elderly": MessageLookupByLibrary.simpleMessage("Пожилые"),
+        "empty_file_error":
+            MessageLookupByLibrary.simpleMessage("Выбранный файл пуст"),
         "empty_list": MessageLookupByLibrary.simpleMessage("Здесь пусто!"),
         "enter_age": MessageLookupByLibrary.simpleMessage("Введите возраст"),
         "enter_race_name":
@@ -205,6 +216,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "lightBlue": MessageLookupByLibrary.simpleMessage("Голубой"),
         "list_view":
             MessageLookupByLibrary.simpleMessage("Представление списка"),
+        "local_backup_error": MessageLookupByLibrary.simpleMessage(
+            "Ошибка создания резервной копии"),
+        "local_backup_success": MessageLookupByLibrary.simpleMessage(
+            "Резервная копия успешно создана"),
+        "local_restore_error":
+            MessageLookupByLibrary.simpleMessage("Ошибка восстановления"),
+        "local_restore_success": m7,
         "main_image":
             MessageLookupByLibrary.simpleMessage("Основное изображение"),
         "male": MessageLookupByLibrary.simpleMessage("Мужской"),
@@ -269,11 +287,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "race_delete_title":
             MessageLookupByLibrary.simpleMessage("Удаление расы"),
         "race_deleted": MessageLookupByLibrary.simpleMessage("Раса удалена"),
-        "race_imported": m7,
+        "race_imported": m8,
         "race_management":
             MessageLookupByLibrary.simpleMessage("Управление расами"),
         "race_name": MessageLookupByLibrary.simpleMessage("Название расы"),
-        "race_share_text": m8,
+        "race_share_text": m9,
         "races": MessageLookupByLibrary.simpleMessage("Расы"),
         "red": MessageLookupByLibrary.simpleMessage("Красный"),
         "reference_image": MessageLookupByLibrary.simpleMessage("Референс"),
@@ -284,6 +302,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Обязательное поле"),
         "restoreData":
             MessageLookupByLibrary.simpleMessage("Восстановить данные"),
+        "restore_from_cloud":
+            MessageLookupByLibrary.simpleMessage("Восстановить из облака"),
+        "restore_from_file":
+            MessageLookupByLibrary.simpleMessage("Восстановить из файла"),
+        "restore_options":
+            MessageLookupByLibrary.simpleMessage("Варианты восстановления"),
         "restoringBackup": MessageLookupByLibrary.simpleMessage(
             "Восстановить из резервной копии"),
         "save": MessageLookupByLibrary.simpleMessage("Сохранить"),
@@ -311,6 +335,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "select_template_file":
             MessageLookupByLibrary.simpleMessage("Выберите файл шаблона"),
         "settings": MessageLookupByLibrary.simpleMessage("Настройки"),
+        "share_backup_file": MessageLookupByLibrary.simpleMessage(
+            "Вот моя резервная копия CharacterBook"),
         "share_character": MessageLookupByLibrary.simpleMessage("Поделиться"),
         "short_name": MessageLookupByLibrary.simpleMessage("Короткое имя"),
         "standard_fields":
@@ -326,11 +352,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Шаблон удален"),
         "template_exists":
             MessageLookupByLibrary.simpleMessage("Шаблон уже существует"),
-        "template_exported": m9,
-        "template_imported": m10,
+        "template_exported": m10,
+        "template_imported": m11,
         "template_name_label":
             MessageLookupByLibrary.simpleMessage("Название шаблона"),
-        "template_replace_confirm": m11,
+        "template_replace_confirm": m12,
         "templates": MessageLookupByLibrary.simpleMessage("Шаблоны"),
         "templates_not_found":
             MessageLookupByLibrary.simpleMessage("Шаблоны не найдены"),

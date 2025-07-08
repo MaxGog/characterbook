@@ -1,117 +1,149 @@
-import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/services/google_drive_service.dart';
 import 'package:flutter/material.dart';
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/services/cloud_backup_service.dart';
+import 'package:characterbook/services/local_backup_service.dart';
 
-class BackupButtons extends StatefulWidget {
+class BackupButtons extends StatelessWidget {
   final CloudBackupService cloudBackupService;
+  final LocalBackupService localBackupService = LocalBackupService();
 
-  const BackupButtons({super.key, required this.cloudBackupService});
-
-  @override
-  _BackupButtonsState createState() => _BackupButtonsState();
-}
-
-class _BackupButtonsState extends State<BackupButtons> {
-  bool isProcessing = false;
-  String? processingText;
+  BackupButtons({super.key, required this.cloudBackupService});
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Column(
+    Theme.of(context);
+    
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
       children: [
-        FilledButton.tonalIcon(
-          icon: const Icon(Icons.cloud_upload),
-          label: Text(s.createBackup),
-          onPressed: isProcessing
-              ? null
-              : () async {
-                  setState(() {
-                    isProcessing = true;
-                    processingText = s.creatingBackup;
-                  });
-                  await _handleBackupAction(
-                    context,
-                    widget.cloudBackupService.exportAllToCloud,
-                  );
-                  setState(() {
-                    isProcessing = false;
-                    processingText = null;
-                  });
-                },
-        ),
-        const SizedBox(height: 8),
-        FilledButton.tonalIcon(
-          icon: const Icon(Icons.cloud_download),
-          label: Text(s.restoreData),
-          onPressed: isProcessing
-              ? null
-              : () async {
-                  setState(() {
-                    isProcessing = true;
-                    processingText = s.restoringBackup;
-                  });
-                  await _handleBackupAction(
-                    context,
-                    widget.cloudBackupService.importAllFromCloud,
-                  );
-                  setState(() {
-                    isProcessing = false;
-                    processingText = null;
-                  });
-                },
-        ),
-        if (isProcessing) ...[
-          const SizedBox(height: 16),
-          Column(
-            children: [
-              LinearProgressIndicator(
-                color: colorScheme.primary,
-                backgroundColor: colorScheme.primaryContainer,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                processingText ?? s.processing,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
+        FilledButton.tonal(
+          onPressed: () => _showBackupDialog(context),
+          style: FilledButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
           ),
-        ],
+          child: Text(s.backup),
+        ),
+        FilledButton.tonal(
+          onPressed: () => _showRestoreDialog(context),
+          style: FilledButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+          child: Text(s.restoreData),
+        ),
       ],
     );
   }
 
-  Future<void> _handleBackupAction(
-    BuildContext context,
-    Future Function(BuildContext) action,
-  ) async {
-    try {
-      await action(context);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(S.of(context).operationCompleted),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+  void _showBackupDialog(BuildContext context) {
+    final s = S.of(context);
+    Theme.of(context);
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(s.backup_options),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildListTile(
+              context,
+              icon: Icons.cloud_upload,
+              title: s.backup_to_cloud,
+              onTap: () {
+                Navigator.pop(context);
+                cloudBackupService.exportAllToCloud(context);
+              },
             ),
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${S.of(context).error}: ${e.toString()}'),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+            const Divider(height: 1),
+            _buildListTile(
+              context,
+              icon: Icons.file_upload,
+              title: s.backup_to_file,
+              onTap: () {
+                Navigator.pop(context);
+                localBackupService.exportAllToFile(context);
+              },
             ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
           ),
-        );
-      }
-    }
+        ],
+      ),
+    );
+  }
+
+  void _showRestoreDialog(BuildContext context) {
+    final s = S.of(context);
+    Theme.of(context);
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(s.restore_options),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildListTile(
+              context,
+              icon: Icons.cloud_download,
+              title: s.restore_from_cloud,
+              onTap: () {
+                Navigator.pop(context);
+                cloudBackupService.importAllFromCloud(context);
+              },
+            ),
+            const Divider(height: 1),
+            _buildListTile(
+              context,
+              icon: Icons.file_download,
+              title: s.restore_from_file,
+              onTap: () {
+                Navigator.pop(context);
+                localBackupService.importFromFile(context);
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListTile(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    final theme = Theme.of(context);
+    
+    return Material(
+      color: Colors.transparent,
+      child: ListTile(
+        leading: Icon(icon, color: theme.colorScheme.primary),
+        title: Text(title),
+        minLeadingWidth: 24,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        onTap: onTap,
+      ),
+    );
   }
 }

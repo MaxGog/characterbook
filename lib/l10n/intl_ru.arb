@@ -203,5 +203,20 @@
   "backstory": "Предыстория",
   "creatingBackup": "Создать резервную копию",
   "restoringBackup": "Восстановить из резервной копии",
-  "processing": "Загрузка..."
+  "processing": "Загрузка...",
+
+  "backup_options": "Варианты резервного копирования",
+  "restore_options": "Варианты восстановления",
+  "backup_to_cloud": "Сохранить в облако",
+  "backup_to_file": "Сохранить в файл",
+  "restore_from_cloud": "Восстановить из облака",
+  "restore_from_file": "Восстановить из файла",
+  "local_backup_success": "Резервная копия успешно создана",
+  "local_backup_error": "Ошибка создания резервной копии",
+  "local_restore_success": "Восстановлено {charactersCount} персонажей, {notesCount} заметок, {racesCount} рас, {templatesCount} шаблонов",
+  "local_restore_error": "Ошибка восстановления",
+  "share_backup_file": "Вот моя резервная копия CharacterBook",
+
+  "empty_file_error": "Выбранный файл пуст"
+
 }

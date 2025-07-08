@@ -2090,6 +2090,127 @@ class S {
       args: [],
     );
   }
+
+  /// `Варианты резервного копирования`
+  String get backup_options {
+    return Intl.message(
+      'Варианты резервного копирования',
+      name: 'backup_options',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Варианты восстановления`
+  String get restore_options {
+    return Intl.message(
+      'Варианты восстановления',
+      name: 'restore_options',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Сохранить в облако`
+  String get backup_to_cloud {
+    return Intl.message(
+      'Сохранить в облако',
+      name: 'backup_to_cloud',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Сохранить в файл`
+  String get backup_to_file {
+    return Intl.message(
+      'Сохранить в файл',
+      name: 'backup_to_file',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Восстановить из облака`
+  String get restore_from_cloud {
+    return Intl.message(
+      'Восстановить из облака',
+      name: 'restore_from_cloud',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Восстановить из файла`
+  String get restore_from_file {
+    return Intl.message(
+      'Восстановить из файла',
+      name: 'restore_from_file',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Резервная копия успешно создана`
+  String get local_backup_success {
+    return Intl.message(
+      'Резервная копия успешно создана',
+      name: 'local_backup_success',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ошибка создания резервной копии`
+  String get local_backup_error {
+    return Intl.message(
+      'Ошибка создания резервной копии',
+      name: 'local_backup_error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Восстановлено {charactersCount} персонажей, {notesCount} заметок, {racesCount} рас, {templatesCount} шаблонов`
+  String local_restore_success(Object charactersCount, Object notesCount,
+      Object racesCount, Object templatesCount) {
+    return Intl.message(
+      'Восстановлено $charactersCount персонажей, $notesCount заметок, $racesCount рас, $templatesCount шаблонов',
+      name: 'local_restore_success',
+      desc: '',
+      args: [charactersCount, notesCount, racesCount, templatesCount],
+    );
+  }
+
+  /// `Ошибка восстановления`
+  String get local_restore_error {
+    return Intl.message(
+      'Ошибка восстановления',
+      name: 'local_restore_error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Вот моя резервная копия CharacterBook`
+  String get share_backup_file {
+    return Intl.message(
+      'Вот моя резервная копия CharacterBook',
+      name: 'share_backup_file',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Выбранный файл пуст`
+  String get empty_file_error {
+    return Intl.message(
+      'Выбранный файл пуст',
+      name: 'empty_file_error',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

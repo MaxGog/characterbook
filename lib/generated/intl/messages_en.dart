@@ -35,15 +35,18 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m6(error) => "Import error: ${error}";
 
-  static String m7(name) => "Race \"${name}\" imported successfully";
+  static String m7(charactersCount, notesCount, racesCount, templatesCount) =>
+      "Restored ${charactersCount} characters, ${notesCount} notes, ${racesCount} races, ${templatesCount} templates";
 
-  static String m8(name) => "Race file ${name}";
+  static String m8(name) => "Race \"${name}\" imported successfully";
 
-  static String m9(name) => "Template \"${name}\" exported successfully";
+  static String m9(name) => "Race file ${name}";
 
-  static String m10(name) => "Template \"${name}\" imported successfully";
+  static String m10(name) => "Template \"${name}\" exported successfully";
 
-  static String m11(name) => "Template \"${name}\" already exists. Replace it?";
+  static String m11(name) => "Template \"${name}\" imported successfully";
+
+  static String m12(name) => "Template \"${name}\" already exists. Replace it?";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -72,6 +75,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "back": MessageLookupByLibrary.simpleMessage("Back"),
         "backstory": MessageLookupByLibrary.simpleMessage("Backstory"),
         "backup": MessageLookupByLibrary.simpleMessage("Backup"),
+        "backup_options":
+            MessageLookupByLibrary.simpleMessage("Backup Options"),
+        "backup_to_cloud":
+            MessageLookupByLibrary.simpleMessage("Backup to Cloud"),
+        "backup_to_file":
+            MessageLookupByLibrary.simpleMessage("Backup to File"),
         "basic_info": MessageLookupByLibrary.simpleMessage("Basic Info"),
         "biology": MessageLookupByLibrary.simpleMessage("Biology"),
         "blue": MessageLookupByLibrary.simpleMessage("Blue"),
@@ -144,6 +153,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "edit_race": MessageLookupByLibrary.simpleMessage("Edit Race"),
         "edit_template": MessageLookupByLibrary.simpleMessage("Edit"),
         "elderly": MessageLookupByLibrary.simpleMessage("Elderly"),
+        "empty_file_error":
+            MessageLookupByLibrary.simpleMessage("The selected file is empty"),
         "empty_list": MessageLookupByLibrary.simpleMessage("It\'s empty here!"),
         "enter_age": MessageLookupByLibrary.simpleMessage("Enter age"),
         "enter_race_name":
@@ -186,6 +197,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "lightBlue": MessageLookupByLibrary.simpleMessage("Light Blue"),
         "list_view":
             MessageLookupByLibrary.simpleMessage("Представление списка"),
+        "local_backup_error":
+            MessageLookupByLibrary.simpleMessage("Backup failed"),
+        "local_backup_success": MessageLookupByLibrary.simpleMessage(
+            "Backup file created successfully"),
+        "local_restore_error":
+            MessageLookupByLibrary.simpleMessage("Restore failed"),
+        "local_restore_success": m7,
         "main_image": MessageLookupByLibrary.simpleMessage("Main Image"),
         "male": MessageLookupByLibrary.simpleMessage("Male"),
         "markdown_bold": MessageLookupByLibrary.simpleMessage("Bold"),
@@ -246,11 +264,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "race_delete_title":
             MessageLookupByLibrary.simpleMessage("Delete Race"),
         "race_deleted": MessageLookupByLibrary.simpleMessage("Race deleted"),
-        "race_imported": m7,
+        "race_imported": m8,
         "race_management":
             MessageLookupByLibrary.simpleMessage("Race Management"),
         "race_name": MessageLookupByLibrary.simpleMessage("Race Name"),
-        "race_share_text": m8,
+        "race_share_text": m9,
         "races": MessageLookupByLibrary.simpleMessage("Races"),
         "reference_image": MessageLookupByLibrary.simpleMessage("Reference"),
         "related_notes": MessageLookupByLibrary.simpleMessage("Related Posts"),
@@ -258,6 +276,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "required_field_error":
             MessageLookupByLibrary.simpleMessage("Required field"),
         "restoreData": MessageLookupByLibrary.simpleMessage("Restore Data"),
+        "restore_from_cloud":
+            MessageLookupByLibrary.simpleMessage("Restore from Cloud"),
+        "restore_from_file":
+            MessageLookupByLibrary.simpleMessage("Restore from File"),
+        "restore_options":
+            MessageLookupByLibrary.simpleMessage("Restore Options"),
         "restoringBackup":
             MessageLookupByLibrary.simpleMessage("Restore from backup"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),
@@ -284,6 +308,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "select_template_file":
             MessageLookupByLibrary.simpleMessage("Select Template File"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+        "share_backup_file": MessageLookupByLibrary.simpleMessage(
+            "Here\'s my CharacterBook backup file"),
         "share_character":
             MessageLookupByLibrary.simpleMessage("Share Character"),
         "short_name": MessageLookupByLibrary.simpleMessage("Short Name"),
@@ -300,11 +326,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Template deleted"),
         "template_exists":
             MessageLookupByLibrary.simpleMessage("Template already exists"),
-        "template_exported": m9,
-        "template_imported": m10,
+        "template_exported": m10,
+        "template_imported": m11,
         "template_name_label":
             MessageLookupByLibrary.simpleMessage("Template Name"),
-        "template_replace_confirm": m11,
+        "template_replace_confirm": m12,
         "templates": MessageLookupByLibrary.simpleMessage("Templates"),
         "templates_not_found":
             MessageLookupByLibrary.simpleMessage("No templates found"),

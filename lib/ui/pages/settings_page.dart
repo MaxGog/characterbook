@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../providers/locale_provider.dart';
 import '../../providers/theme_provider.dart';
-import '../../services/google_drive_service.dart';
+import '../../services/cloud_backup_service.dart';
 import '../../generated/l10n.dart';
 
 class SettingsPage extends StatelessWidget {
