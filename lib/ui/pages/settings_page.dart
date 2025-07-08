@@ -166,7 +166,9 @@ class SettingsPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            BackupButtons(cloudBackupService: cloudBackupService),
+            Center(
+              child: BackupButtons(cloudBackupService: cloudBackupService),
+            ),
           ],
         ),
       ),
