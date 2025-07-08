@@ -199,11 +199,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Представление сетки"),
         "image": MessageLookupByLibrary.simpleMessage("Изображение"),
         "image_picker_error": m5,
+        "import": MessageLookupByLibrary.simpleMessage("Импорт"),
         "import_cancelled":
             MessageLookupByLibrary.simpleMessage("Импорт отменен"),
         "import_character":
             MessageLookupByLibrary.simpleMessage("Импортировать персонажа"),
         "import_error": m6,
+        "import_race": MessageLookupByLibrary.simpleMessage("Импорт расы"),
         "import_template":
             MessageLookupByLibrary.simpleMessage("Импортировать шаблон"),
         "import_template_tooltip":

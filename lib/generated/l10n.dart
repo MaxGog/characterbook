@@ -2211,6 +2211,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Импорт`
+  String get import {
+    return Intl.message(
+      'Импорт',
+      name: 'import',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Импорт расы`
+  String get import_race {
+    return Intl.message(
+      'Импорт расы',
+      name: 'import_race',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

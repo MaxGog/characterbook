@@ -180,11 +180,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "grid_view": MessageLookupByLibrary.simpleMessage("Grid view"),
         "image": MessageLookupByLibrary.simpleMessage("Image"),
         "image_picker_error": m5,
+        "import": MessageLookupByLibrary.simpleMessage("Import"),
         "import_cancelled":
             MessageLookupByLibrary.simpleMessage("Import cancelled"),
         "import_character":
             MessageLookupByLibrary.simpleMessage("Import Character"),
         "import_error": m6,
+        "import_race": MessageLookupByLibrary.simpleMessage("Import race"),
         "import_template":
             MessageLookupByLibrary.simpleMessage("Import Template"),
         "import_template_tooltip":

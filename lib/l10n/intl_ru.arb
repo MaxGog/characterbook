@@ -217,6 +217,8 @@
   "local_restore_error": "Ошибка восстановления",
   "share_backup_file": "Вот моя резервная копия CharacterBook",
 
-  "empty_file_error": "Выбранный файл пуст"
+  "empty_file_error": "Выбранный файл пуст",
+  "import": "Импорт",
+  "import_race": "Импорт расы"
 
 }

@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:isolate';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
@@ -15,6 +18,17 @@ class CloudBackupService {
   static const List<String> _scopes = [drive.DriveApi.driveFileScope];
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: _scopes);
   drive.DriveApi? _driveApi;
+  bool isProcessing = false;
+
+  void _startProcessing() => isProcessing = true;
+  void _endProcessing() => isProcessing = false;
+
+  Future<void> _ensureBoxesAreOpen() async {
+    if (!Hive.isBoxOpen('characters')) await Hive.openBox<Character>('characters');
+    if (!Hive.isBoxOpen('notes')) await Hive.openBox<Note>('notes');
+    if (!Hive.isBoxOpen('races')) await Hive.openBox<Race>('races');
+    if (!Hive.isBoxOpen('templates')) await Hive.openBox<QuestionnaireTemplate>('templates');
+  }
 
   void _showSnackBar(BuildContext context, String message, {bool isError = false}) {
     if (context.mounted) {
@@ -24,222 +38,73 @@ class CloudBackupService {
     }
   }
 
-  Future<void> _exportDataToCloud<T>(
-    BuildContext context,
-    String boxName,
-    String successMessage,
-    String errorMessage,
-    String fileNamePrefix,
-  ) async {
-    try {
-      final box = Hive.box<T>(boxName);
-      final items = box.values.toList();
-      final jsonStr = jsonEncode(items.map((item) => (item as dynamic).toJson()).toList());
-
-      await _exportToGoogleDrive(context, jsonStr, fileNamePrefix);
-
-      _showSnackBar(context, successMessage);
-    } catch (e) {
-      _showSnackBar(context, '$errorMessage: $e', isError: true);
-    }
-  }
-
-  Future<void> _importDataFromCloud<T>(
-    BuildContext context,
-    String boxName,
-    String successMessage,
-    String errorMessage,
-    String fileNamePrefix,
-    T Function(Map<String, dynamic>) fromJson,
-  ) async {
-    try {
-      final jsonStr = await _importFromGoogleDrive(context, fileNamePrefix);
-      final box = Hive.box<T>(boxName);
-      await box.clear();
-
-      final List<dynamic> jsonList = jsonDecode(jsonStr);
-      for (final json in jsonList) {
-        await box.add(fromJson(json));
-      }
-
-      _showSnackBar(context, successMessage.replaceFirst('{}', jsonList.length.toString()));
-    } catch (e) {
-      _showSnackBar(context, '$errorMessage: $e', isError: true);
-    }
-  }
-
   Future<void> exportAllToCloud(BuildContext context) async {
     try {
+      _startProcessing();
+      
+      await _ensureBoxesAreOpen();
       final backupData = {
-        'characters': Hive.box<Character>('characters').values.toList(),
-        'notes': Hive.box<Note>('notes').values.toList(),
-        'races': Hive.box<Race>('races').values.toList(),
-        'templates': Hive.box<QuestionnaireTemplate>('templates').values.toList(),
+        'characters': Hive.box<Character>('characters').values.map((e) => e.toJson()).toList(),
+        'notes': Hive.box<Note>('notes').values.map((e) => e.toJson()).toList(),
+        'races': Hive.box<Race>('races').values.map((e) => e.toJson()).toList(),
+        'templates': Hive.box<QuestionnaireTemplate>('templates').values.map((e) => e.toJson()).toList(),
       };
-      final backupJson = jsonEncode(backupData);
+
+      final backupJson = await compute(_jsonEncodeInIsolate, backupData);
 
       await _exportToGoogleDrive(context, backupJson, 'characterbook_backup');
-
       _showSnackBar(context, S.of(context).cloud_backup_full_success);
     } catch (e) {
-      _showSnackBar(context, '${S.of(context).cloud_backup_error}: $e', isError: true);
+      if (context.mounted) {
+        _showSnackBar(context, '${S.of(context).cloud_backup_error}: $e', isError: true);
+      }
+    } finally {
+      _endProcessing();
     }
   }
 
-  Future<void> exportCharactersToCloud(BuildContext context) async {
-    await _exportDataToCloud<Character>(
-      context,
-      'characters',
-      S.of(context).cloud_backup_characters_success,
-      S.of(context).cloud_backup_characters_error,
-      'characters_backup',
-    );
+  static String _jsonEncodeInIsolate(Map<String, dynamic> data) {
+    return jsonEncode(data);
   }
 
-  Future<void> exportNotesToCloud(BuildContext context) async {
-    await _exportDataToCloud<Note>(
-      context,
-      'notes',
-      S.of(context).operationCompleted,
-      S.of(context).error,
-      'notes_backup',
-    );
-  }
-
-  Future<void> exportRacesToCloud(BuildContext context) async {
-    await _exportDataToCloud<Race>(
-      context,
-      'races',
-      S.of(context).operationCompleted,
-      S.of(context).error,
-      'races_backup',
-    );
-  }
-
-  Future<void> exportTemplatesToCloud(BuildContext context) async {
-    await _exportDataToCloud<QuestionnaireTemplate>(
-      context,
-      'templates',
-      S.of(context).operationCompleted,
-      S.of(context).error,
-      'templates_backup',
-    );
-  }
-
-  Future<void> importAllFromCloud(BuildContext context) async {
+  Future<void> _exportToGoogleDrive(BuildContext context, String jsonStr, String prefix) async {
     try {
-      final jsonStr = await _importFromGoogleDrive(context, 'characterbook_backup');
-      final data = jsonDecode(jsonStr) as Map<String, dynamic>;
-
-      await _clearAndImportBox<Race>('races', data['races'] ?? [], Race.fromJson);
-      await _clearAndImportBox<QuestionnaireTemplate>('templates', data['templates'] ?? [], QuestionnaireTemplate.fromJson);
-      await _clearAndImportBox<Character>('characters', data['characters'] ?? [], Character.fromJson);
-      await _clearAndImportBox<Note>('notes', data['notes'] ?? [], Note.fromJson);
-
-      final counts = {
-        'characters': (data['characters'] as List?)?.length ?? 0,
-        'notes': (data['notes'] as List?)?.length ?? 0,
-        'races': (data['races'] as List?)?.length ?? 0,
-        'templates': (data['templates'] as List?)?.length ?? 0,
-      };
-
-      _showSnackBar(
-        context,
-        S.of(context).cloud_restore_success(
-          counts['characters'].toString(),
-          counts['notes'].toString(),
-          counts['races'].toString(),
-          counts['templates'].toString(),
-        ),
-      );
-    } catch (e) {
-      _showSnackBar(context, '${S.of(context).cloud_restore_error}: $e', isError: true);
-    }
-  }
-
-  Future<void> _clearAndImportBox<T>(
-    String boxName,
-    List<dynamic> items,
-    T Function(Map<String, dynamic>) fromJson,
-  ) async {
-    final box = Hive.box<T>(boxName);
-    await box.clear();
-    for (final json in items) {
-      await box.add(fromJson(json));
-    }
-  }
-
-  Future<void> importCharactersFromCloud(BuildContext context) async {
-    await _importDataFromCloud<Character>(
-      context,
-      'characters',
-      S.of(context).character_imported('{}'),
-      S.of(context).cloud_restore_error,
-      'characters_backup',
-      Character.fromJson,
-    );
-  }
-
-  Future<void> importNotesFromCloud(BuildContext context) async {
-    await _importDataFromCloud<Note>(
-      context,
-      'notes',
-      S.of(context).operationCompleted,
-      S.of(context).error,
-      'notes_backup',
-      Note.fromJson,
-    );
-  }
-
-  Future<void> importRacesFromCloud(BuildContext context) async {
-    await _importDataFromCloud<Race>(
-      context,
-      'races',
-      S.of(context).race_imported('{}'),
-      S.of(context).error,
-      'races_backup',
-      Race.fromJson,
-    );
-  }
-
-  Future<void> importTemplatesFromCloud(BuildContext context) async {
-    await _importDataFromCloud<QuestionnaireTemplate>(
-      context,
-      'templates',
-      S.of(context).template_imported('{}'),
-      S.of(context).error,
-      'templates_backup',
-      QuestionnaireTemplate.fromJson,
-    );
-  }
-
-  Future<void> _exportToGoogleDrive(
-    BuildContext context,
-    String jsonStr,
-    String prefix,
-  ) async {
-    try {
-      final account = await _googleSignIn.signIn();
-      if (account == null) throw Exception(S.of(context).auth_cancelled);
+      final account = _googleSignIn.currentUser ?? await _googleSignIn.signIn();
+      if (account == null) {
+        debugPrint('Аутентификация отменена пользователем');
+        if (context.mounted) {
+          _showSnackBar(context, 'Вы не вошли в Google аккаунт', isError: true);
+        }
+        return;
+      }
 
       final client = await _googleSignIn.authenticatedClient();
-      if (client == null) throw Exception(S.of(context).auth_client_error);
+      if (client == null) {
+        if (context.mounted) {
+          _showSnackBar(context, 'Ошибка доступа к Google Drive', isError: true);
+        }
+        return;
+      }
 
-      _driveApi ??= drive.DriveApi(client);
+      if (jsonStr.isEmpty) {
+        if (context.mounted) {
+          _showSnackBar(context, 'Нет данных для сохранения', isError: true);
+        }
+        return;
+      }
 
-      final fileMetadata = drive.File()
-        ..name = '${prefix}_${DateTime.now().toIso8601String()}.json'
-        ..mimeType = 'application/json';
+      final driveApi = drive.DriveApi(client);
+      final fileName = '${prefix}_${DateTime.now().toIso8601String()}.json';
 
-      final bytes = Uint8List.fromList(utf8.encode(jsonStr));
-      final media = drive.Media(Stream.value(bytes), bytes.length);
-
-      await _driveApi!.files.create(
-        fileMetadata,
-        uploadMedia: media,
+      await driveApi.files.create(
+        drive.File()..name = fileName,
+        uploadMedia: drive.Media(Stream.value(utf8.encode(jsonStr)), utf8.encode(jsonStr).length),
       );
+      if (context.mounted) {
+        _showSnackBar(context, 'Резервная копия создана в Google Drive');
+      }
     } catch (e) {
-      throw Exception('${S.of(context).cloud_export_error}: $e');
+      _showSnackBar(context, 'Ошибка: ${e.toString()}', isError: true);
     }
   }
 
@@ -279,6 +144,63 @@ class CloudBackupService {
     }
   }
 
+  Future<void> importAllFromCloud(BuildContext context) async {
+  try {
+    _startProcessing();
+    await _ensureBoxesAreOpen();
+    
+    final jsonStr = await _importFromGoogleDrive(context, 'characterbook_backup');
+    
+    final data = await compute(_jsonDecodeInIsolate, jsonStr);
+    
+    await _clearAndImportBox<Race>('races', data['races'] ?? [], Race.fromJson);
+    await _clearAndImportBox<QuestionnaireTemplate>('templates', data['templates'] ?? [], QuestionnaireTemplate.fromJson);
+    await _clearAndImportBox<Character>('characters', data['characters'] ?? [], Character.fromJson);
+    await _clearAndImportBox<Note>('notes', data['notes'] ?? [], Note.fromJson);
+
+    if (context.mounted) {
+      final counts = {
+        'characters': (data['characters'] as List?)?.length ?? 0,
+        'notes': (data['notes'] as List?)?.length ?? 0,
+        'races': (data['races'] as List?)?.length ?? 0,
+        'templates': (data['templates'] as List?)?.length ?? 0,
+      };
+
+      _showSnackBar(
+        context,
+        S.of(context).cloud_restore_success(
+          counts['characters'].toString(),
+          counts['notes'].toString(),
+          counts['races'].toString(),
+          counts['templates'].toString(),
+        ),
+      );
+    }
+  } catch (e) {
+    if (context.mounted) {
+      _showSnackBar(context, '${S.of(context).cloud_restore_error}: $e', isError: true);
+    }
+  } finally {
+    _endProcessing();
+  }
+}
+
+static Map<String, dynamic> _jsonDecodeInIsolate(String jsonStr) {
+  return jsonDecode(jsonStr) as Map<String, dynamic>;
+}
+
+  Future<void> _clearAndImportBox<T>(
+    String boxName,
+    List<dynamic> items,
+    T Function(Map<String, dynamic>) fromJson,
+  ) async {
+    final box = Hive.box<T>(boxName);
+    await box.clear();
+    for (final json in items) {
+      await box.add(fromJson(json));
+    }
+  }
+
   Future<Uint8List> _readStream(Stream<List<int>> stream) async {
     final bytesBuilder = BytesBuilder();
     await for (final chunk in stream) {
@@ -286,4 +208,16 @@ class CloudBackupService {
     }
     return bytesBuilder.toBytes();
   }
+}
+
+class _IsolateMessage<T> {
+  final FutureOr<void> Function() computation;
+  final SendPort sendPort;
+  final SendPort errorPort;
+
+  _IsolateMessage({
+    required this.computation,
+    required this.sendPort,
+    required this.errorPort,
+  });
 }

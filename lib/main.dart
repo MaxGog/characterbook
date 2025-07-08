@@ -1,14 +1,11 @@
+import 'package:characterbook/services/hive_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
-import 'adapters/custom_field_adapter.dart';
 import 'generated/l10n.dart';
 import 'models/character_model.dart';
-import 'models/note_model.dart';
-import 'models/race_model.dart';
-import 'models/template_model.dart';
 import 'providers/locale_provider.dart';
 import 'providers/theme_provider.dart';
 import 'services/file_handler.dart';
@@ -16,22 +13,7 @@ import 'services/file_handler_wrapper.dart';
 import 'ui/pages/home_page.dart';
 
 Future<void> _initializeHive() async {
-  await Hive.initFlutter();
-  
-
-  Hive
-    ..registerAdapter(CharacterAdapter())
-    ..registerAdapter(CustomFieldAdapter())
-    ..registerAdapter(NoteAdapter())
-    ..registerAdapter(RaceAdapter())
-    ..registerAdapter(QuestionnaireTemplateAdapter());
-
-  await Future.wait([
-    Hive.openBox<Character>('characters'),
-    Hive.openBox<Note>('notes'),
-    Hive.openBox<Race>('races'),
-    Hive.openBox<QuestionnaireTemplate>('templates'),
-  ]);
+  await HiveService.initHive();
 }
 
 void main() async {

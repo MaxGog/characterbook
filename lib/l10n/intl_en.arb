@@ -211,5 +211,7 @@
   "local_restore_error": "Restore failed",
   "share_backup_file": "Here's my CharacterBook backup file",
 
-  "empty_file_error": "The selected file is empty"
+  "empty_file_error": "The selected file is empty",
+  "import": "Import",
+  "import_race": "Import race"
 }
