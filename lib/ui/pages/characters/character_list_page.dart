@@ -1,16 +1,16 @@
 import 'dart:async';
-import 'package:characterbook/ui/widgets/character_grid_tile.dart';
-import 'package:characterbook/ui/widgets/character_list_card.dart';
-import 'package:characterbook/ui/widgets/tag_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../../generated/l10n.dart';
 import '../../../models/character_model.dart';
 import '../../../models/template_model.dart';
 import '../../../services/file_picker_service.dart';
+import '../../widgets/character_grid_tile.dart';
+import '../../widgets/character_list_card.dart';
 import '../../widgets/context_menu.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_floating_buttons.dart';
+import '../../widgets/tag_filter.dart';
 import '../templates/templates_page.dart';
 import 'character_detail_page.dart';
 import 'character_management_page.dart';
@@ -32,17 +32,12 @@ class _CharacterListPageState extends State<CharacterListPage> {
   bool _isGridView = false;
   String? _selectedTag;
   String? _errorMessage;
-  Character? _selectedCharacter;
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
-
-  static const _genderMale = 'male';
-  static const _genderFemale = 'female';
-  static const _genderAnother = 'another';
 
   List<String> _generateTags(List<Character> characters) {
     final s = S.of(context);
@@ -67,9 +62,9 @@ class _CharacterListPageState extends State<CharacterListPage> {
         if (_selectedTag == null) return matchesSearch;
 
         return matchesSearch && switch (_selectedTag) {
-          _ when _selectedTag == s.male => character.gender == _genderMale,
-          _ when _selectedTag == s.female => character.gender == _genderFemale,
-          _ when _selectedTag == s.another => character.gender == _genderAnother,
+          _ when _selectedTag == s.male => character.gender == 'male',
+          _ when _selectedTag == s.female => character.gender == 'female',
+          _ when _selectedTag == s.another => character.gender == 'another',
           _ when _selectedTag == s.short_name => character.name.length <= 4,
           _ when _selectedTag == s.children => character.age < 18,
           _ when _selectedTag == s.young => character.age < 30,
@@ -87,11 +82,6 @@ class _CharacterListPageState extends State<CharacterListPage> {
         _filteredCharacters.sort((a, b) => a.age.compareTo(b.age));
       } else if (_selectedTag == s.age_desc) {
         _filteredCharacters.sort((a, b) => b.age.compareTo(a.age));
-      }
-
-      if (_selectedCharacter != null && 
-          !_filteredCharacters.contains(_selectedCharacter)) {
-        _selectedCharacter = null;
       }
     });
   }
@@ -153,16 +143,23 @@ class _CharacterListPageState extends State<CharacterListPage> {
     final box = Hive.box<Character>('characters');
     final characters = box.values.toList().cast<Character>();
 
-    if (oldIndex < newIndex) newIndex -= 1;
+    if (oldIndex < 0 || oldIndex >= characters.length || 
+        newIndex < 0 || newIndex >= characters.length) {
+      debugPrint('⚠️ Некорректные индексы: old=$oldIndex, new=$newIndex');
+      return;
+    }
 
-    final character = characters.removeAt(oldIndex);
-    characters.insert(newIndex, character);
+    final updatedList = List<Character>.from(characters);
+    final item = updatedList.removeAt(oldIndex);
+    updatedList.insert(newIndex, item);
 
     await box.clear();
-    await box.addAll(characters);
+    await box.addAll(updatedList);
 
     if (mounted) {
-      _filterCharacters(_searchController.text, characters);
+      setState(() {
+        _filterCharacters(_searchController.text, updatedList);
+      });
     }
   }
 
@@ -221,51 +218,71 @@ class _CharacterListPageState extends State<CharacterListPage> {
     );
   }
 
-  Widget _buildCharacterCard(Character character, ThemeData theme) {
-    return CharacterListCard(
-      character: character,
-      isSelected: _selectedCharacter?.key == character.key,
-      onTap: () => _handleCharacterTap(character),
-      onLongPress: () => _showCharacterContextMenu(character),
-      onMenuPressed: () => _showCharacterContextMenu(character),
+  Widget _buildCharacterCard(Character character, int index) {
+    final itemKey = ValueKey('char_${character.key}_${character.hashCode}');
+
+    return ReorderableDragStartListener(
+      key: itemKey,
+      index: index,
+      child: CharacterListCard(
+        key: itemKey,
+        character: character,
+        isSelected: false,
+        onTap: () => _navigateToDetail(character),
+        onLongPress: () => _showCharacterContextMenu(character),
+        onMenuPressed: () => _showCharacterContextMenu(character),
+        enableDrag: true,
+      ),
     );
   }
+
+  Widget _buildCharactersList(List<Character> characters) {
+    if (characters.isEmpty) return _buildEmptyState();
+
+    assert(() {
+      final keys = characters.map((c) => 'char_${c.key}_${c.hashCode}').toList();
+      if (keys.length != keys.toSet().length) {
+        debugPrint('⚠️ Найдены дубликаты ключей!');
+        debugPrint('Дубликаты: ${keys.where((e) => keys.indexOf(e) != keys.lastIndexOf(e))}');
+      }
+      return true;
+    }());
+
+  return ReorderableListView.builder(
+    key: const ValueKey('characters_reorderable_list'),
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    itemCount: characters.length,
+    itemBuilder: (context, index) => _buildCharacterCard(characters[index], index),
+    onReorder: (oldIndex, newIndex) {
+      if (oldIndex < newIndex) newIndex -= 1;
+      _reorderCharacters(oldIndex, newIndex);
+    },
+    buildDefaultDragHandles: false,
+  );
+}
 
   Widget _buildCharacterTile(Character character) {
     return CharacterGridTile(
+      key: ValueKey(character.key ?? character.hashCode),
       character: character,
-      onTap: () => _handleCharacterTap(character),
+      onTap: () => _navigateToDetail(character),
       onLongPress: () => _showCharacterContextMenu(character),
     );
   }
 
-  void _handleCharacterTap(Character character) {
-    if (MediaQuery.of(context).size.width > 1000) {
-      setState(() => _selectedCharacter = character);
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CharacterDetailPage(character: character),
-        ),
-      );
-    }
-  }
-
-  Widget _buildTagFilter(List<String> tags, ThemeData theme, List<Character> allCharacters) {
-    return TagFilter(
-      tags: tags,
-      selectedTag: _selectedTag,
-      onTagSelected: (tag) {
-        setState(() => _selectedTag = tag);
-        _filterCharacters(_searchController.text, allCharacters);
-      },
-      allCharacters: allCharacters,
+  void _navigateToDetail(Character character) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CharacterDetailPage(character: character),
+      ),
     );
   }
 
-  Widget _buildEmptyState(ThemeData theme) {
+  Widget _buildEmptyState() {
+    final theme = Theme.of(context);
     final s = S.of(context);
+    
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -294,32 +311,8 @@ class _CharacterListPageState extends State<CharacterListPage> {
     );
   }
 
-  Widget _buildCharactersList(List<Character> characters, ThemeData theme) {
-    if (characters.isEmpty) return _buildEmptyState(theme);
-
-    return ReorderableListView.builder(
-      key: const ValueKey('characters_reorderable_list'),
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      itemCount: characters.length,
-      itemBuilder: (context, index) => KeyedSubtree(
-        key: ValueKey('character_item_${characters[index].key}'),
-        child: _buildCharacterCard(characters[index], theme),
-      ),
-      onReorder: (oldIndex, newIndex) {
-        if (oldIndex < newIndex) newIndex -= 1;
-        _reorderCharacters(oldIndex, newIndex);
-      },
-      buildDefaultDragHandles: false,
-      proxyDecorator: (child, _, animation) => Material(
-        elevation: 6,
-        color: Colors.transparent,
-        child: child,
-      ),
-    );
-  }
-
-  Widget _buildCharactersGrid(List<Character> characters, ThemeData theme) {
-    if (characters.isEmpty) return _buildEmptyState(theme);
+  Widget _buildCharactersGrid(List<Character> characters) {
+    if (characters.isEmpty) return _buildEmptyState();
 
     return GridView.builder(
       padding: const EdgeInsets.all(8),
@@ -334,67 +327,8 @@ class _CharacterListPageState extends State<CharacterListPage> {
     );
   }
 
-  Widget _buildWideLayout(List<Character> characters, List<String> tags, ThemeData theme, List<Character> allCharacters) {
-    return Row(
-      children: [
-        Container(
-          width: 400,
-          decoration: BoxDecoration(
-            border: Border(right: BorderSide(color: theme.dividerColor))),
-          child: Column(
-            children: [
-              if (tags.isNotEmpty) _buildTagFilter(tags, theme, allCharacters),
-              Expanded(
-                child: _isGridView 
-                    ? _buildCharactersGrid(characters, theme) 
-                    : _buildCharactersList(characters, theme),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: _selectedCharacter != null
-              ? CharacterDetailPage(character: _selectedCharacter!)
-              : Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.person_outline,
-                        size: 48,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        S.of(context).select_character,
-                        style: theme.textTheme.bodyLarge,
-                      ),
-                    ],
-                  ),
-                ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMobileLayout(List<Character> characters, List<String> tags, ThemeData theme, List<Character> allCharacters) {
-    return Column(
-      children: [
-        if (tags.isNotEmpty) _buildTagFilter(tags, theme, allCharacters),
-        Expanded(
-          child: _isGridView 
-              ? _buildCharactersGrid(characters, theme) 
-              : _buildCharactersList(characters, theme)
-        )
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isWideScreen = MediaQuery.of(context).size.width > 1000;
-
     return Scaffold(
       appBar: CustomAppBar(
         title: S.of(context).my_characters,
@@ -430,22 +364,22 @@ class _CharacterListPageState extends State<CharacterListPage> {
           if (_errorMessage != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: theme.colorScheme.errorContainer,
+              color: Theme.of(context).colorScheme.errorContainer,
               child: Row(
                 children: [
-                  Icon(Icons.error, color: theme.colorScheme.error),
+                  Icon(Icons.error, color: Theme.of(context).colorScheme.error),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       _errorMessage!,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onErrorContainer,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onErrorContainer,
                       ),
                     ),
                   ),
                   IconButton(
                     icon: Icon(Icons.close, 
-                      color: theme.colorScheme.onErrorContainer),
+                      color: Theme.of(context).colorScheme.onErrorContainer),
                     onPressed: () => setState(() => _errorMessage = null),
                   ),
                 ],
@@ -461,9 +395,25 @@ class _CharacterListPageState extends State<CharacterListPage> {
                     ? _filteredCharacters
                     : allCharacters;
 
-                return isWideScreen
-                    ? _buildWideLayout(characters, tags, theme, allCharacters)
-                    : _buildMobileLayout(characters, tags, theme, allCharacters);
+                return Column(
+                  children: [
+                    if (tags.isNotEmpty) 
+                      TagFilter(
+                        tags: tags,
+                        selectedTag: _selectedTag,
+                        onTagSelected: (tag) {
+                          setState(() => _selectedTag = tag);
+                          _filterCharacters(_searchController.text, allCharacters);
+                        },
+                        allCharacters: allCharacters,
+                      ),
+                    Expanded(
+                      child: _isGridView 
+                          ? _buildCharactersGrid(characters) 
+                          : _buildCharactersList(characters),
+                    ),
+                  ],
+                );
               },
             ),
           ),

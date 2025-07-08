@@ -9,15 +9,17 @@ class CharacterListCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onLongPress;
   final VoidCallback onMenuPressed;
+  final bool enableDrag;
 
   const CharacterListCard({
-    super.key,
+    Key? key,
     required this.character,
     required this.isSelected,
     required this.onTap,
     required this.onLongPress,
     required this.onMenuPressed,
-  });
+    this.enableDrag = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,7 @@ class CharacterListCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: onTap,
-        onLongPress: onLongPress,
+        onLongPress: enableDrag ? null : onLongPress,
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
