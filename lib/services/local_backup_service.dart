@@ -39,9 +39,6 @@ class LocalBackupService {
         final bytes = utf8.encode(backupJson);
         final blob = html.Blob([bytes]);
         final url = html.Url.createObjectUrlFromBlob(blob);
-        final anchor = html.AnchorElement(href: url)
-          ..setAttribute('download', 'characterbook_backup_${DateTime.now().toIso8601String()}.json')
-          ..click();
         html.Url.revokeObjectUrl(url);
       } else {
         final directory = await getTemporaryDirectory();
