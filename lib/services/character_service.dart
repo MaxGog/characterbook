@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/ui/widgets/loading_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
@@ -35,9 +37,9 @@ class CharacterService {
     await box.delete(key);
   }
 
-  Future<void> exportToPdf() async {
+  Future<void> exportToPdf(context) async {
     if (character == null) throw Exception("Character is not set for export");
-
+    showLoadingDialog(context: context, message: S.of(context).creating_pdf);
     try {
       final font = await _loadFont(_regularFontPath);
       final boldFont = await _loadFont(_boldFontPath);
@@ -46,6 +48,8 @@ class CharacterService {
       final pdf = pw.Document();
       _addMainPage(pdf, theme);
       _addOptionalSections(pdf, theme);
+
+      hideLoadingDialog(context);
 
       final bytes = await pdf.save();
       await _sharePdf(bytes);
@@ -181,7 +185,7 @@ class CharacterService {
           ),
           pw.SizedBox(height: 20),
           ...character!.additionalImages.map((imageBytes) => 
-            pw.Column(children: [_buildImage(imageBytes!), pw.SizedBox(height: 20)])
+            pw.Column(children: [_buildImage(imageBytes), pw.SizedBox(height: 20)])
           ),
         ],
       ),
@@ -229,12 +233,15 @@ class CharacterService {
     );
   }
 
-  Future<void> exportToJson() async {
+  Future<void> exportToJson(context) async {
     if (character == null) throw Exception("Character is not set for export");
-
+    showLoadingDialog(context: context, message: S.of(context).creating_file);
     try {
       final jsonStr = jsonEncode(character!.toJson());
       final fileName = '${character!.name}_${DateTime.now().millisecondsSinceEpoch}.character';
+
+      hideLoadingDialog(context);
+
       await _shareFile(
         Uint8List.fromList(jsonStr.codeUnits),
         fileName,

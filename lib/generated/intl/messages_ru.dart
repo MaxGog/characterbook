@@ -141,6 +141,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Создать шаблон"),
         "creatingBackup":
             MessageLookupByLibrary.simpleMessage("Создать резервную копию"),
+        "creating_file":
+            MessageLookupByLibrary.simpleMessage("Создание файла..."),
+        "creating_pdf": MessageLookupByLibrary.simpleMessage("Создание PDF..."),
         "custom_fields":
             MessageLookupByLibrary.simpleMessage("Пользовательские поля"),
         "dark": MessageLookupByLibrary.simpleMessage("Тёмная"),

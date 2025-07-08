@@ -128,6 +128,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Create Template"),
         "creatingBackup":
             MessageLookupByLibrary.simpleMessage("Create a backup copy"),
+        "creating_file":
+            MessageLookupByLibrary.simpleMessage("Creating file..."),
+        "creating_pdf": MessageLookupByLibrary.simpleMessage("Creating PDF..."),
         "custom_fields": MessageLookupByLibrary.simpleMessage("Custom Fields"),
         "dark": MessageLookupByLibrary.simpleMessage("Dark"),
         "delete": MessageLookupByLibrary.simpleMessage("Delete"),

@@ -133,7 +133,7 @@ class ContextMenu extends StatelessWidget {
 
     try {
       final exportService = CharacterService.forExport(item as Character);
-      await exportService.exportToPdf();
+      await exportService.exportToPdf(context);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

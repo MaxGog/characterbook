@@ -51,6 +51,8 @@
   "copy_error": "Copy Error",
   "copied_to_clipboard": "Copied to clipboard",
   "create": "Create",
+  "creating_pdf": "Creating PDF...",
+  "creating_file": "Creating file...",
   "createBackup": "Create Backup",
   "create_character": "Create Character",
   "create_from_template_tooltip": "Create from Template",

@@ -124,7 +124,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
 
   Future<void> _exportToPdf() async {
     try {
-      await _exportService.exportToPdf();
+      await _exportService.exportToPdf(context);
       _showSnackBar(S.of(context).pdf_export_success, isError: false);
     } catch (e) {
       _showSnackBar('${S.of(context).export_error}: ${e.toString()}');
@@ -133,7 +133,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
 
   Future<void> _exportToJson() async {
     try {
-      await _exportService.exportToJson();
+      await _exportService.exportToJson(context);
       _showSnackBar(S.of(context).file_ready, isError: false);
     } catch (e) {
       _showSnackBar('${S.of(context).export_error}: ${e.toString()}');

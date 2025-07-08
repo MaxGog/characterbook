@@ -54,6 +54,8 @@
   "copied_to_clipboard": "Скопировано в буфер обмена",
   "create": "Создать",
   "createBackup": "Создать резервную копию",
+  "creating_pdf": "Создание PDF...",
+  "creating_file": "Создание файла...",
   "create_character": "Создать персонажа",
   "create_from_template_tooltip": "Создать из шаблона",
   "create_template_tooltip": "Создать шаблон",

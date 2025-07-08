@@ -591,6 +591,26 @@ class S {
     );
   }
 
+  /// `Создание PDF...`
+  String get creating_pdf {
+    return Intl.message(
+      'Создание PDF...',
+      name: 'creating_pdf',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Создание файла...`
+  String get creating_file {
+    return Intl.message(
+      'Создание файла...',
+      name: 'creating_file',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Создать персонажа`
   String get create_character {
     return Intl.message(
