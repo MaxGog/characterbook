@@ -27,11 +27,25 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
   List<Note> _relatedNotes = [];
   late final CharacterService _exportService;
 
+  static const _genderMale = 'male';
+  static const _genderFemale = 'female';
+  static const _genderAnother = 'another';
+
   @override
   void initState() {
     super.initState();
     _exportService = CharacterService.forExport(widget.character);
     _loadRelatedNotes();
+  }
+
+  String _getLocalizedGender(String gender) {
+    final s = S.of(context);
+    return switch (gender) {
+      _genderMale => s.male,
+      _genderFemale => s.female,
+      _genderAnother => s.another,
+      _ => gender,
+    };
   }
 
   Future<void> _loadRelatedNotes() async {
@@ -478,7 +492,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
               const SizedBox(height: 24),
               _buildInfoRow(S.of(context).name, widget.character.name, Icons.badge),
               _buildInfoRow(S.of(context).age, '${widget.character.age} ${S.of(context).years}', Icons.cake),
-              _buildInfoRow(S.of(context).gender, widget.character.gender, Icons.transgender),
+              _buildInfoRow(S.of(context).gender, _getLocalizedGender(widget.character.gender), Icons.transgender),
               if (widget.character.race != null)
                 _buildInfoRow(S.of(context).race, widget.character.race!.name, Icons.people),
               const SizedBox(height: 16),
