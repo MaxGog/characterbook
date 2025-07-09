@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:characterbook/ui/widgets/avatar_widget.dart';
+import 'package:characterbook/ui/widgets/build_section.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import '../../../generated/l10n.dart';
@@ -393,15 +394,12 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
   }
 
   Widget _buildSection(String title, String key, String content, IconData icon) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle(title, key, icon),
-        if (_expandedSections[key]!) ...[
-          _buildSelectableContent(content),
-          const SizedBox(height: 16),
-        ],
-      ],
+    return BuildSection(
+      title: title,
+      content: content,
+      icon: icon,
+      isExpanded: _expandedSections[key]!,
+      onToggleExpand: () => setState(() => _expandedSections[key] = !_expandedSections[key]!),
     );
   }
 
@@ -493,14 +491,11 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
               Center(child: _buildReferenceImage()),
               const SizedBox(height: 16),
             ],
-
-            _buildSection(S.of(context).appearance, 'appearance', widget.character.appearance, Icons.face_retouching_natural),
-            _buildSection(S.of(context).personality, 'personality', widget.character.personality, Icons.psychology),
-            _buildSection(S.of(context).biography, 'biography', widget.character.biography, Icons.history_edu),
-            if (widget.character.abilities.isNotEmpty)
-              _buildSection(S.of(context).abilities, 'abilities', widget.character.abilities, Icons.auto_awesome),
-            if (widget.character.other.isNotEmpty)
-              _buildSection(S.of(context).other, 'other', widget.character.other, Icons.more_horiz),
+            if (widget.character.appearance.isNotEmpty) _buildSection(S.of(context).appearance, 'appearance', widget.character.appearance, Icons.face_retouching_natural),
+            if (widget.character.personality.isNotEmpty) _buildSection(S.of(context).personality, 'personality', widget.character.personality, Icons.psychology),
+            if (widget.character.biography.isNotEmpty) _buildSection(S.of(context).biography, 'biography', widget.character.biography, Icons.history_edu),
+            if (widget.character.abilities.isNotEmpty) _buildSection(S.of(context).abilities, 'abilities', widget.character.abilities, Icons.auto_awesome),
+            if (widget.character.other.isNotEmpty) _buildSection(S.of(context).other, 'other', widget.character.other, Icons.more_horiz),
 
             if (widget.character.additionalImages.isNotEmpty) ...[
               _buildSectionTitle(S.of(context).character_gallery, 'additionalImages', Icons.photo_library),

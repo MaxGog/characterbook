@@ -297,6 +297,12 @@ class _RaceListPageState extends State<RaceListPage> {
                   onRaceTap: _editRace,
                   onRaceLongPress: _showRaceContextMenu,
                   onImportRace: _importRaceFromFile,
+                  onCreateRace: () async {
+                    await Navigator.push<bool>(
+                      context,
+                      MaterialPageRoute(builder: (context) => const RaceManagementPage()),
+                    );
+                  }
                 );
               },
             ),

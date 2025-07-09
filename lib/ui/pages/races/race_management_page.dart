@@ -135,7 +135,7 @@ class _RaceManagementPageState extends State<RaceManagementPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AvatarPicker(
+                AvatarPickerWidget(
                   imageBytes: _logoBytes,
                   onImageSelected: (bytes) {
                     setState(() {

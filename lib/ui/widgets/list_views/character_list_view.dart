@@ -1,6 +1,6 @@
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/ui/widgets/items/character_list_card.dart';
+import 'package:characterbook/ui/widgets/items/character_card.dart';
 import 'package:characterbook/ui/widgets/tag_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -20,6 +20,7 @@ class CharacterListView extends StatefulWidget {
   final Function(Character) onCharacterLongPress;
   final Function(String?) onTagSelected;
   final VoidCallback? onImportCharacter;
+  final VoidCallback? onCreateCharacter;
 
   const CharacterListView({
     super.key,
@@ -36,6 +37,7 @@ class CharacterListView extends StatefulWidget {
     required this.scrollController,
     required this.onScroll,
     this.onImportCharacter,
+    this.onCreateCharacter
   });
 
   @override
@@ -97,8 +99,8 @@ class _CharacterListViewState extends State<CharacterListView> {
               color: theme.colorScheme.onSurface,
             ),
           ),
-          if (widget.onImportCharacter != null) 
-            _buildImportButton(theme),
+          if (widget.onImportCharacter != null) _buildImportButton(theme),
+          if (widget.onCreateCharacter != null) _buildCreateButton(theme),
         ],
       ),
     );
@@ -115,6 +117,20 @@ class _CharacterListViewState extends State<CharacterListView> {
         ),
         child: Text(S.of(context).import_character),
       ),
+    );
+  }
+
+  Widget _buildCreateButton(ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.only(top:16),
+      child: ElevatedButton(
+        onPressed: widget.onCreateCharacter, 
+        style: ElevatedButton.styleFrom(
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.onPrimary,
+        ),
+        child: Text(S.of(context).create_character)
+      )
     );
   }
 
@@ -160,7 +176,7 @@ class _CharacterListViewState extends State<CharacterListView> {
         behavior: HitTestBehavior.opaque,
         onTap: () => widget.onCharacterTap(character),
         onLongPress: () => widget.onCharacterLongPress(character),
-        child: CharacterListCard(
+        child: CharacterCard(
           key: ValueKey(character.key),
           character: character,
           isSelected: false,
@@ -175,7 +191,7 @@ class _CharacterListViewState extends State<CharacterListView> {
 
   Widget _buildCharacterCardFeedback(Character character) {
     return Material(
-      child: CharacterListCard(
+      child: CharacterCard(
         character: character,
         isSelected: false,
         onTap: () {},
@@ -189,7 +205,7 @@ class _CharacterListViewState extends State<CharacterListView> {
   Widget _buildCharacterCardWhenDragging(Character character) {
     return Opacity(
       opacity: 0.5,
-      child: CharacterListCard(
+      child: CharacterCard(
         character: character,
         isSelected: false,
         onTap: () {},

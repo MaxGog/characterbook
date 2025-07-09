@@ -1,5 +1,5 @@
 import 'package:characterbook/ui/widgets/filter_chip_widget.dart';
-import 'package:characterbook/ui/widgets/items/note_item_widget.dart';
+import 'package:characterbook/ui/widgets/items/note_card.dart';
 import 'package:characterbook/ui/widgets/notes_empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -201,7 +201,7 @@ class _NotesListPageState extends State<NotesListPage> {
     return ReorderableListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: notes.length,
-      itemBuilder: (context, index) => NoteItemWidget(
+      itemBuilder: (context, index) => NoteCard(
         key: ValueKey(notes[index].key),
         note: notes[index],
         onTap: () => Navigator.push(

@@ -5,14 +5,14 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../generated/l10n.dart';
 
-class AvatarPicker extends StatelessWidget {
+class AvatarPickerWidget extends StatelessWidget {
   final Uint8List? imageBytes;
   final Function(Uint8List) onImageSelected;
   final double radius;
   final Color? backgroundColor;
   final IconData? placeholderIcon;
 
-  const AvatarPicker({
+  const AvatarPickerWidget({
     super.key,
     required this.imageBytes,
     required this.onImageSelected,

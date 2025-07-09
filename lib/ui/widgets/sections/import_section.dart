@@ -1,5 +1,5 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/ui/widgets/import_button.dart';
+import 'package:characterbook/ui/widgets/import_button_widget.dart';
 import 'package:characterbook/ui/widgets/sections/settings_section.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';

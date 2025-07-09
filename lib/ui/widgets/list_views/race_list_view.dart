@@ -16,6 +16,7 @@ class RaceListView extends StatelessWidget {
   final Function(Race) onRaceTap;
   final Function(Race) onRaceLongPress;
   final VoidCallback? onImportRace;
+  final VoidCallback? onCreateRace;
 
   const RaceListView({
     super.key,
@@ -30,6 +31,7 @@ class RaceListView extends StatelessWidget {
     required this.onRaceTap,
     required this.onRaceLongPress,
     this.onImportRace,
+    this.onCreateRace,
   });
 
   @override
@@ -70,6 +72,7 @@ class RaceListView extends StatelessWidget {
             ),
           ),
           if (onImportRace != null) _buildImportButton(context),
+          if (onCreateRace != null) _buildCreateButton(context),
         ],
       ),
     );
@@ -87,6 +90,22 @@ class RaceListView extends StatelessWidget {
           foregroundColor: theme.colorScheme.onPrimary,
         ),
         child: Text(S.of(context).import_race),
+      ),
+    );
+  }
+
+  Widget _buildCreateButton(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: ElevatedButton(
+        onPressed: onCreateRace,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.onPrimary,
+        ),
+        child: Text(S.of(context).create),
       ),
     );
   }

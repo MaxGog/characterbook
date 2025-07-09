@@ -241,7 +241,7 @@ class _CharacterEditPageState extends State<CharacterEditPage> {
                       backgroundColor: colorScheme.primaryContainer,
                     ),
                   ),
-                AvatarPicker(
+                AvatarPickerWidget(
                   imageBytes: _character.imageBytes,
                   onImageSelected: (bytes) {
                     setState(() {

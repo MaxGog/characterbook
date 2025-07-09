@@ -5,13 +5,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../../../models/character_model.dart';
 import '../../../../models/note_model.dart';
 
-class NoteItemWidget extends StatelessWidget {
+class NoteCard extends StatelessWidget {
   final Note note;
   final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
-  const NoteItemWidget({
+  const NoteCard({
     super.key,
     required this.note,
     required this.onTap,

@@ -28,7 +28,6 @@ class _CharacterListPageState extends State<CharacterListPage> {
   List<Character> _filteredCharacters = [];
   bool _isSearching = false;
   bool _isImporting = false;
-  bool _isGridView = false;
   String? _selectedTag;
   String? _errorMessage;
 
@@ -324,6 +323,10 @@ class _CharacterListPageState extends State<CharacterListPage> {
                 return CharacterListView(
                   allCharacters: allCharacters,
                   onImportCharacter: _importCharacter,
+                  onCreateCharacter: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CharacterEditPage()),
+                  ),
                   charactersToShow: charactersToShow,
                   tags: tags,
                   searchController: _searchController,
