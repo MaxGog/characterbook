@@ -151,20 +151,21 @@ class CloudBackupService {
   }
 
   Future<void> importAllFromCloud(BuildContext context) async {
-  try {
-    _startProcessing();
-    await _ensureBoxesAreOpen();
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     
-    final jsonStr = await _importFromGoogleDrive(context, 'characterbook_backup');
-    
-    final data = await compute(_jsonDecodeInIsolate, jsonStr);
-    
-    await _clearAndImportBox<Race>('races', data['races'] ?? [], Race.fromJson);
-    await _clearAndImportBox<QuestionnaireTemplate>('templates', data['templates'] ?? [], QuestionnaireTemplate.fromJson);
-    await _clearAndImportBox<Character>('characters', data['characters'] ?? [], Character.fromJson);
-    await _clearAndImportBox<Note>('notes', data['notes'] ?? [], Note.fromJson);
+    try {
+      _startProcessing();
+      await _ensureBoxesAreOpen();
+      
+      final jsonStr = await _importFromGoogleDrive(context, 'characterbook_backup');
+      
+      final data = await compute(_jsonDecodeInIsolate, jsonStr);
+      
+      await _clearAndImportBox<Race>('races', data['races'] ?? [], Race.fromJson);
+      await _clearAndImportBox<QuestionnaireTemplate>('templates', data['templates'] ?? [], QuestionnaireTemplate.fromJson);
+      await _clearAndImportBox<Character>('characters', data['characters'] ?? [], Character.fromJson);
+      await _clearAndImportBox<Note>('notes', data['notes'] ?? [], Note.fromJson);
 
-    if (context.mounted) {
       final counts = {
         'characters': (data['characters'] as List?)?.length ?? 0,
         'notes': (data['notes'] as List?)?.length ?? 0,
@@ -181,19 +182,20 @@ class CloudBackupService {
           counts['templates'].toString(),
         ),
       );
+    } catch (e) {
+      _showSnackBar(
+        context, 
+        '${S.of(context).cloud_restore_error}: $e'
+      );
+      debugPrint('Import error: $e');
+    } finally {
+      _endProcessing();
     }
-  } catch (e) {
-    if (context.mounted) {
-      _showSnackBar(context, '${S.of(context).cloud_restore_error}: $e', isError: true);
-    }
-  } finally {
-    _endProcessing();
   }
-}
 
-static Map<String, dynamic> _jsonDecodeInIsolate(String jsonStr) {
-  return jsonDecode(jsonStr) as Map<String, dynamic>;
-}
+  static Map<String, dynamic> _jsonDecodeInIsolate(String jsonStr) {
+    return jsonDecode(jsonStr) as Map<String, dynamic>;
+  }
 
   Future<void> _clearAndImportBox<T>(
     String boxName,

@@ -173,21 +173,18 @@ class LocalBackupService {
       await _clearAndImportBox<Character>('characters', data['characters'] ?? [], Character.fromJson);
       await _clearAndImportBox<Note>('notes', data['notes'] ?? [], Note.fromJson);
 
-      if (context.mounted) {
-        _showSnackBar(
-          context,
-          S.of(context).local_restore_success(
-            counts['characters'].toString(),
-            counts['notes'].toString(),
-            counts['races'].toString(),
-            counts['templates'].toString(),
-          ),
-        );
-      }
+    
+      _showSnackBar(
+        context,
+        S.of(context).local_restore_success(
+          counts['characters'].toString(),
+          counts['notes'].toString(),
+          counts['races'].toString(),
+          counts['templates'].toString(),
+        )
+      );
     } catch (e) {
-      if (context.mounted) {
-        _showSnackBar(context, '${S.of(context).local_restore_error}: $e', isError: true);
-      }
+      _showSnackBar(context, '${S.of(context).local_restore_error}: $e', isError: true);
     }
   }
 
