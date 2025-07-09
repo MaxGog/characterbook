@@ -296,6 +296,7 @@ class _RaceListPageState extends State<RaceListPage> {
                   onReorder: _reorderRaces,
                   onRaceTap: _editRace,
                   onRaceLongPress: _showRaceContextMenu,
+                  onImportRace: _importRaceFromFile,
                 );
               },
             ),

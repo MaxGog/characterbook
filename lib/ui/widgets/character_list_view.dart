@@ -1,3 +1,4 @@
+import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/models/character_model.dart';
 import 'package:characterbook/ui/widgets/items/character_list_card.dart';
 import 'package:characterbook/ui/widgets/tag_filter.dart';
@@ -19,6 +20,7 @@ class CharacterListView extends StatefulWidget {
   final Function(Character) onCharacterTap;
   final Function(Character) onCharacterLongPress;
   final Function(String?) onTagSelected;
+  final VoidCallback? onImportCharacter;
 
   const CharacterListView({
     super.key,
@@ -33,7 +35,8 @@ class CharacterListView extends StatefulWidget {
     required this.onCharacterLongPress,
     required this.onTagSelected,
     required this.scrollController,
-    required this.onScroll
+    required this.onScroll,
+    this.onImportCharacter,
   });
 
   @override
@@ -51,6 +54,8 @@ class _CharacterListViewState extends State<CharacterListView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Column(
       children: [
         if (widget.tags.isNotEmpty)
@@ -61,19 +66,37 @@ class _CharacterListViewState extends State<CharacterListView> {
             allCharacters: widget.allCharacters,
           ),
         Expanded(
-          child: _buildCharactersList(),
+          child: _buildCharactersList(theme),
         ),
       ],
     );
   }
 
-  Widget _buildCharactersList() {
+  Widget _buildCharactersList(ThemeData theme) {
     if (widget.charactersToShow.isEmpty) {
       return Center(
-        child: Text(
-          widget.isSearching && widget.searchController.text.isNotEmpty
-              ? 'Nothing found'
-              : 'No characters',
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.person_outline, size: 48, color: theme.colorScheme.onSurface),
+            const SizedBox(height: 16),
+            Text(
+              widget.isSearching && widget.searchController.text.isNotEmpty
+                  ? S.of(context).empty_list : S.of(context).empty_list,
+              style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurface),
+            ),
+            if (widget.onImportCharacter != null) ...[
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: widget.onImportCharacter,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                ),
+                child: Text(S.of(context).import_character),
+              ),
+            ],
+          ],
         ),
       );
     }
@@ -150,4 +173,3 @@ class _CharacterListViewState extends State<CharacterListView> {
     );
   }
 }
-

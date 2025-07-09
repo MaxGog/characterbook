@@ -274,7 +274,7 @@ class _CharacterListPageState extends State<CharacterListPage> {
           _filterCharacters(query, allCharacters.toList());
         },
         onTemplatesPressed: _createFromTemplate,
-        additionalActions: [
+        /*additionalActions: [
           IconButton(
             icon: Icon(_isGridView ? Icons.list : Icons.grid_view),
             onPressed: () => setState(() => _isGridView = !_isGridView),
@@ -282,7 +282,7 @@ class _CharacterListPageState extends State<CharacterListPage> {
                 ? S.of(context).list_view 
                 : S.of(context).grid_view,
           ),
-        ],
+        ],*/
       ),
       body: Column(
         children: [
@@ -323,6 +323,7 @@ class _CharacterListPageState extends State<CharacterListPage> {
 
                 return CharacterListView(
                   allCharacters: allCharacters,
+                  onImportCharacter: _importCharacter,
                   charactersToShow: charactersToShow,
                   tags: tags,
                   searchController: _searchController,

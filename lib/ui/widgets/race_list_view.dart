@@ -15,6 +15,7 @@ class RaceListView extends StatelessWidget {
   final Function(int, int) onReorder;
   final Function(Race) onRaceTap;
   final Function(Race) onRaceLongPress;
+  final VoidCallback? onImportRace;
 
   const RaceListView({
     super.key,
@@ -28,6 +29,7 @@ class RaceListView extends StatelessWidget {
     required this.onReorder,
     required this.onRaceTap,
     required this.onRaceLongPress,
+    this.onImportRace,
   });
 
   @override
@@ -43,10 +45,21 @@ class RaceListView extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               isSearching && searchController.text.isNotEmpty
-                  ? S.of(context).nothing_found
-                  : S.of(context).no_races_created,
+                  ? S.of(context).empty_list
+                  : S.of(context).empty_list,
               style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurface),
             ),
+            if (onImportRace != null) ...[
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: onImportRace,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                ),
+                child: Text(S.of(context).import_race),
+              ),
+            ],
           ],
         ),
       );
@@ -68,7 +81,7 @@ class RaceListView extends StatelessWidget {
                   label: Text(tag),
                   selected: selectedTag == tag,
                   onSelected: (selected) {
-                    // This would need to be handled by parent
+                    // TODO: Сделать теги для рас
                   },
                   shape: StadiumBorder(side: BorderSide(color: theme.colorScheme.outline)),
                   showCheckmark: false,
