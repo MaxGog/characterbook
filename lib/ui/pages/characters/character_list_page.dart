@@ -44,7 +44,6 @@ class _CharacterListPageState extends State<CharacterListPage> {
   @override
   void dispose() {
     _scrollController.removeListener(_handleScroll);
-    _scrollController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -353,18 +352,15 @@ class _CharacterListPageState extends State<CharacterListPage> {
           ),
         ],
       ),
-      floatingActionButton: AnimatedOpacity(
-        opacity: _isFabVisible ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 300),
-        child: CustomFloatingButtons(
+      floatingActionButton: _isFabVisible 
+      ? CustomFloatingButtons(
           onImport: _importCharacter,
           onAdd: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const CharacterEditPage()),
           ),
           onTemplate: _createFromTemplate,
-        ),
-      ),
+        ) : null,
     );
   }
 }

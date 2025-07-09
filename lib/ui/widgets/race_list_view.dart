@@ -11,12 +11,14 @@ class RaceListView extends StatelessWidget {
   final TextEditingController searchController;
   final bool isSearching;
   final String? selectedTag;
+  final ScrollController? scrollController;
   final Function(int, int) onReorder;
   final Function(Race) onRaceTap;
   final Function(Race) onRaceLongPress;
 
   const RaceListView({
     super.key,
+    this.scrollController,
     required this.allRaces,
     required this.racesToShow,
     required this.tags,
@@ -83,6 +85,7 @@ class RaceListView extends StatelessWidget {
           ),
         Expanded(
           child: ReorderableListView.builder(
+            scrollController: scrollController,
             padding: const EdgeInsets.symmetric(vertical: 8),
             itemCount: racesToShow.length,
             itemBuilder: (context, index) => RaceCard(

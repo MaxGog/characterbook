@@ -5,6 +5,7 @@ import 'package:characterbook/ui/widgets/custom_app_bar.dart';
 import 'package:characterbook/ui/widgets/custom_floating_buttons.dart';
 import 'package:characterbook/ui/widgets/race_list_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../generated/l10n.dart';
@@ -28,6 +29,8 @@ class _RaceListPageState extends State<RaceListPage> {
   String? _selectedTag;
   bool _isImporting = false;
   String? _errorMessage;
+  final ScrollController _scrollController = ScrollController();
+  bool _showFab = true;
 
   List<String> _generateTags(List<Race> races) {
     final tags = <String>{};
@@ -49,8 +52,22 @@ class _RaceListPageState extends State<RaceListPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      final direction = _scrollController.position.userScrollDirection;
+      if (direction == ScrollDirection.forward) {
+        if (!_showFab) setState(() => _showFab = true);
+      } else if (direction == ScrollDirection.reverse) {
+        if (_showFab) setState(() => _showFab = false);
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -269,6 +286,7 @@ class _RaceListPageState extends State<RaceListPage> {
                     : allRaces;
 
                 return RaceListView(
+                  scrollController: _scrollController,
                   allRaces: allRaces,
                   racesToShow: racesToShow,
                   tags: tags,
@@ -284,19 +302,20 @@ class _RaceListPageState extends State<RaceListPage> {
           ),
         ],
       ),
-      floatingActionButton: CustomFloatingButtons(
-        onImport: _importRaceFromFile,
-        onAdd: () async {
-          final result = await Navigator.push<bool>(
-            context,
-            MaterialPageRoute(builder: (context) => const RaceManagementPage()),
-          );
-          if (result == true && mounted) {
-            _filterRaces(_searchController.text,
-                Hive.box<Race>('races').values.toList());
-          }
-        },
-      ),
+      floatingActionButton: _showFab 
+        ? CustomFloatingButtons(
+            onImport: _importRaceFromFile,
+            onAdd: () async {
+              final result = await Navigator.push<bool>(
+                context,
+                MaterialPageRoute(builder: (context) => const RaceManagementPage()),
+              );
+              if (result == true && mounted) {
+                _filterRaces(_searchController.text,
+                    Hive.box<Race>('races').values.toList());
+              }
+            },
+          ) : null,
     );
   }
 }
