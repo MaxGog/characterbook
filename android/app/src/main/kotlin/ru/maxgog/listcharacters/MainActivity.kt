@@ -82,6 +82,8 @@ class MainActivity: FlutterActivity() {
                 data.toString().contains(".character") -> "character"
                 data.toString().contains(".race") -> "race"
                 data.toString().contains(".chax") -> "chax"
+                data.toString().contains(".json") -> "json"
+                data.toString().contains(".characterbook") -> "characterbook"
                 type == "application/json" -> "json"
                 else -> {
                     val path = data.path ?: ""
@@ -89,6 +91,8 @@ class MainActivity: FlutterActivity() {
                         path.contains(".character", ignoreCase = true) -> "character"
                         path.contains(".race", ignoreCase = true) -> "race"
                         path.contains(".chax", ignoreCase = true) -> "chax"
+                        path.contains(".json", ignoreCase = true) -> "json"
+                        path.contains(".characterbook", ignoreCase = true) -> "characterbook"
                         else -> "unknown"
                     }
                 }

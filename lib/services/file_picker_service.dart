@@ -9,10 +9,8 @@ import '../models/race_model.dart';
 import '../models/template_model.dart';
 
 class FilePickerService {
-
-  Future<File?> pickJsonFile() async {
-    return await _pickFileNative(fileExtension: '.json');
-  }
+  static const _channel = MethodChannel('file_picker');
+  static const _fileHandlerChannel = MethodChannel('file_handler');
 
   Future<File?> _pickFileNative({String? fileExtension}) async {
     if (kIsWeb) return null;
@@ -36,6 +34,36 @@ class FilePickerService {
       throw Exception(e);
     }
     return null;
+  }
+
+  Future<File?> pickRestoreFile() async {
+    try {
+      final filePath = await _channel.invokeMethod<String>('pickFile');
+      if (filePath == null || filePath.isEmpty) return null;
+      return File(filePath);
+    } catch (e) {
+      debugPrint('File picker error: $e');
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getRestoreFileData() async {
+    try {
+      if (Platform.isAndroid) {
+        final result = await _fileHandlerChannel.invokeMapMethod<String, dynamic>('getOpenedFile');
+        if (result != null && result['path'] != null) {
+          final file = File(result['path'] as String);
+          if (await file.exists()) {
+            final content = await file.readAsString();
+            return jsonDecode(content) as Map<String, dynamic>;
+          }
+        }
+      }
+      return null;
+    } catch (e) {
+      debugPrint('File handler error: $e');
+      return null;
+    }
   }
 
   Future<String?> _showDesktopFilePicker({String? fileExtension}) async {
