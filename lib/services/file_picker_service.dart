@@ -10,74 +10,58 @@ import '../models/template_model.dart';
 
 class FilePickerService {
   static const _channel = MethodChannel('file_picker');
-  static const _fileHandlerChannel = MethodChannel('file_handler');
 
-  Future<File?> _pickFileNative({String? fileExtension}) async {
-    if (kIsWeb) return null;
-
+  Future<Map<String, dynamic>?> pickRestoreFile() async {
     try {
-      if (Platform.isAndroid || Platform.isIOS) {
-        const channel = MethodChannel('file_picker');
-        final filePath = await channel.invokeMethod<String>('pickFile', {
-          'fileExtension': fileExtension,
-        });
-        if (filePath == null || filePath.isEmpty) return null;
-        return File(filePath);
-      } else if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-        final filePath = await _showDesktopFilePicker(fileExtension: fileExtension);
-        if (filePath == null) return null;
-        return File(filePath);
+      if (kIsWeb) {
+        final uploadInput = html.FileUploadInputElement();
+        uploadInput.accept = '.json,.characterbook';
+        uploadInput.click();
+
+        await uploadInput.onChange.first;
+        final files = uploadInput.files;
+        if (files == null || files.isEmpty) return null;
+
+        final file = files[0];
+        final reader = html.FileReader();
+        reader.readAsText(file);
+        await reader.onLoadEnd.first;
+        final jsonStr = reader.result as String;
+        
+        if (jsonStr.isEmpty) return null;
+        return jsonDecode(jsonStr) as Map<String, dynamic>;
+      } else {
+        final file = await _pickFileNative(fileExtension: '.json,.characterbook');
+        if (file == null) return null;
+        final jsonStr = await file.readAsString();
+        if (jsonStr.isEmpty) return null;
+
+        try {
+          final decoded = jsonDecode(jsonStr);
+          if (decoded is Map<String, dynamic>) {
+            return decoded;
+          }
+          return null;
+        } catch (e) {
+          debugPrint('JSON decode error: $e');
+          return null;
+        }
       }
-    } on PlatformException catch (e) {
-      throw Exception(e);
     } catch (e) {
-      throw Exception(e);
+      debugPrint('Restore file picker error: $e');
+      return null;
     }
-    return null;
   }
 
-  Future<File?> pickRestoreFile() async {
+  Future<File?> _pickFileNative({String? fileExtension}) async {
     try {
-      final filePath = await _channel.invokeMethod<String>('pickFile');
+      final filePath = await _channel.invokeMethod<String>('pickFile', {
+        'fileExtension': fileExtension,
+      });
       if (filePath == null || filePath.isEmpty) return null;
       return File(filePath);
     } catch (e) {
       debugPrint('File picker error: $e');
-      return null;
-    }
-  }
-
-  Future<Map<String, dynamic>?> getRestoreFileData() async {
-    try {
-      if (Platform.isAndroid) {
-        final result = await _fileHandlerChannel.invokeMapMethod<String, dynamic>('getOpenedFile');
-        if (result != null && result['path'] != null) {
-          final file = File(result['path'] as String);
-          if (await file.exists()) {
-            final content = await file.readAsString();
-            return jsonDecode(content) as Map<String, dynamic>;
-          }
-        }
-      }
-      return null;
-    } catch (e) {
-      debugPrint('File handler error: $e');
-      return null;
-    }
-  }
-
-  Future<String?> _showDesktopFilePicker({String? fileExtension}) async {
-    if (!Platform.isWindows && !Platform.isLinux && !Platform.isMacOS) {
-      return null;
-    }
-
-    final filePickerChannel = const MethodChannel('file_picker');
-    try {
-      return await filePickerChannel.invokeMethod<String>('pickFile', {
-        'dialogTitle': 'Select the file',
-        'fileExtension': fileExtension,
-      });
-    } on PlatformException {
       return null;
     }
   }

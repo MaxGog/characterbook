@@ -1,8 +1,5 @@
-import 'dart:async';
 import 'dart:convert';
-import 'dart:isolate';
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
@@ -20,21 +17,18 @@ class CloudBackupService {
   drive.DriveApi? _driveApi;
   bool isProcessing = false;
 
-  void _startProcessing() => isProcessing = true;
-  void _endProcessing() => isProcessing = false;
-
   Future<void> _ensureBoxesAreOpen() async {
-    if (!Hive.isBoxOpen('characters')) await Hive.openBox<Character>('characters');
-    if (!Hive.isBoxOpen('notes')) await Hive.openBox<Note>('notes');
-    if (!Hive.isBoxOpen('races')) await Hive.openBox<Race>('races');
-    if (!Hive.isBoxOpen('templates')) await Hive.openBox<QuestionnaireTemplate>('templates');
-  }
+    final boxes = {
+      'characters': Character,
+      'notes': Note,
+      'races': Race,
+      'templates': QuestionnaireTemplate,
+    };
 
-  void _showSnackBar(BuildContext context, String message, {bool isError = false}) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+    for (final entry in boxes.entries) {
+      if (!Hive.isBoxOpen(entry.key)) {
+        await Hive.openBox(entry.key);
+      }
     }
   }
 
@@ -43,9 +37,9 @@ class CloudBackupService {
     final s = S.of(context);
     
     try {
-      _startProcessing();
-      
+      isProcessing = true;
       await _ensureBoxesAreOpen();
+      
       final backupData = {
         'characters': Hive.box<Character>('characters').values.map((e) => e.toJson()).toList(),
         'notes': Hive.box<Note>('notes').values.map((e) => e.toJson()).toList(),
@@ -53,33 +47,29 @@ class CloudBackupService {
         'templates': Hive.box<QuestionnaireTemplate>('templates').values.map((e) => e.toJson()).toList(),
       };
 
-      final backupJson = await compute(_jsonEncodeInIsolate, backupData);
+      final backupJson = jsonEncode(backupData);
       await _exportToGoogleDrive(context, backupJson, 'characterbook_backup');
       
-      scaffoldMessenger.showSnackBar(
-        SnackBar(content: Text(s.cloud_backup_full_success)),
-      );
+      if (context.mounted) {
+        scaffoldMessenger.showSnackBar(SnackBar(content: Text(s.cloud_backup_full_success)));
+      }
     } catch (e) {
-      scaffoldMessenger.showSnackBar(
-        SnackBar(content: Text('${s.cloud_backup_error}: $e')),
-      );
-      debugPrint('Export error: $e');
+      if (context.mounted) {
+        scaffoldMessenger.showSnackBar(SnackBar(content: Text('${s.cloud_backup_error}: $e')));
+      }
     } finally {
-      _endProcessing();
+      isProcessing = false;
     }
-  }
-
-  static String _jsonEncodeInIsolate(Map<String, dynamic> data) {
-    return jsonEncode(data);
   }
 
   Future<void> _exportToGoogleDrive(BuildContext context, String jsonStr, String prefix) async {
     try {
       final account = _googleSignIn.currentUser ?? await _googleSignIn.signIn();
       if (account == null) {
-        debugPrint('Аутентификация отменена пользователем');
         if (context.mounted) {
-          _showSnackBar(context, 'Вы не вошли в Google аккаунт', isError: true);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(S.of(context).auth_cancelled)),
+          );
         }
         return;
       }
@@ -87,14 +77,9 @@ class CloudBackupService {
       final client = await _googleSignIn.authenticatedClient();
       if (client == null) {
         if (context.mounted) {
-          _showSnackBar(context, 'Ошибка доступа к Google Drive', isError: true);
-        }
-        return;
-      }
-
-      if (jsonStr.isEmpty) {
-        if (context.mounted) {
-          _showSnackBar(context, 'Нет данных для сохранения', isError: true);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(S.of(context).auth_client_error)),
+          );
         }
         return;
       }
@@ -106,65 +91,36 @@ class CloudBackupService {
         drive.File()..name = fileName,
         uploadMedia: drive.Media(Stream.value(utf8.encode(jsonStr)), utf8.encode(jsonStr).length),
       );
+
       if (context.mounted) {
-        _showSnackBar(context, 'Резервная копия создана в Google Drive');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(S.of(context).cloud_backup_characters_success)),
+        );
       }
     } catch (e) {
-      _showSnackBar(context, 'Ошибка: ${e.toString()}', isError: true);
-    }
-  }
-
-  Future<String> _importFromGoogleDrive(
-    BuildContext context,
-    String prefix,
-  ) async {
-    try {
-      final account = await _googleSignIn.signIn();
-      if (account == null) throw Exception(S.of(context).auth_cancelled);
-
-      final client = await _googleSignIn.authenticatedClient();
-      if (client == null) throw Exception(S.of(context).auth_client_error);
-
-      _driveApi ??= drive.DriveApi(client);
-
-      final files = await _driveApi!.files.list(
-        q: "name contains '$prefix' and mimeType='application/json'",
-        orderBy: 'createdTime desc',
-        pageSize: 1,
-      );
-
-      if (files.files == null || files.files!.isEmpty) {
-        throw Exception(S.of(context).cloud_backup_not_found);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${S.of(context).cloud_export_error}: $e')),
+        );
       }
-
-      final file = files.files!.first;
-      final response = await _driveApi!.files.get(
-        file.id!,
-        downloadOptions: drive.DownloadOptions.fullMedia,
-      ) as drive.Media;
-
-      final bytes = await _readStream(response.stream);
-      return utf8.decode(bytes);
-    } catch (e) {
-      throw Exception('${S.of(context).cloud_import_error}: $e');
     }
   }
 
   Future<void> importAllFromCloud(BuildContext context) async {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final s = S.of(context);
     
     try {
-      _startProcessing();
+      isProcessing = true;
       await _ensureBoxesAreOpen();
       
       final jsonStr = await _importFromGoogleDrive(context, 'characterbook_backup');
+      final data = jsonDecode(jsonStr) as Map<String, dynamic>;
       
-      final data = await compute(_jsonDecodeInIsolate, jsonStr);
-      
-      await _clearAndImportBox<Race>('races', data['races'] ?? [], Race.fromJson);
-      await _clearAndImportBox<QuestionnaireTemplate>('templates', data['templates'] ?? [], QuestionnaireTemplate.fromJson);
-      await _clearAndImportBox<Character>('characters', data['characters'] ?? [], Character.fromJson);
-      await _clearAndImportBox<Note>('notes', data['notes'] ?? [], Note.fromJson);
+      await _clearAndImportBox<Race>('races', data['races'] ?? []);
+      await _clearAndImportBox<QuestionnaireTemplate>('templates', data['templates'] ?? []);
+      await _clearAndImportBox<Character>('characters', data['characters'] ?? []);
+      await _clearAndImportBox<Note>('notes', data['notes'] ?? []);
 
       final counts = {
         'characters': (data['characters'] as List?)?.length ?? 0,
@@ -173,39 +129,67 @@ class CloudBackupService {
         'templates': (data['templates'] as List?)?.length ?? 0,
       };
 
-      _showSnackBar(
-        context,
-        S.of(context).cloud_restore_success(
-          counts['characters'].toString(),
-          counts['notes'].toString(),
-          counts['races'].toString(),
-          counts['templates'].toString(),
-        ),
-      );
+      if (context.mounted) {
+        scaffoldMessenger.showSnackBar(
+          SnackBar(
+            content: Text(s.cloud_restore_success(
+              counts['characters'].toString(),
+              counts['notes'].toString(),
+              counts['races'].toString(),
+              counts['templates'].toString(),
+            )),
+          ),
+        );
+      }
     } catch (e) {
-      _showSnackBar(
-        context, 
-        '${S.of(context).cloud_restore_error}: $e'
-      );
-      debugPrint('Import error: $e');
+      if (context.mounted) {
+        scaffoldMessenger.showSnackBar(
+          SnackBar(content: Text('${s.cloud_restore_error}: $e')),
+        );
+      }
     } finally {
-      _endProcessing();
+      isProcessing = false;
     }
   }
 
-  static Map<String, dynamic> _jsonDecodeInIsolate(String jsonStr) {
-    return jsonDecode(jsonStr) as Map<String, dynamic>;
+  Future<String> _importFromGoogleDrive(BuildContext context, String prefix) async {
+    final account = await _googleSignIn.signIn();
+    if (account == null) throw Exception(S.of(context).auth_cancelled);
+
+    final client = await _googleSignIn.authenticatedClient();
+    if (client == null) throw Exception(S.of(context).auth_client_error);
+
+    _driveApi ??= drive.DriveApi(client);
+
+    final files = await _driveApi!.files.list(
+      q: "name contains '$prefix' and mimeType='application/json'",
+      orderBy: 'createdTime desc',
+      pageSize: 1,
+    );
+
+    if (files.files == null || files.files!.isEmpty) {
+      throw Exception(S.of(context).cloud_backup_not_found);
+    }
+
+    final file = files.files!.first;
+    final response = await _driveApi!.files.get(
+      file.id!,
+      downloadOptions: drive.DownloadOptions.fullMedia,
+    ) as drive.Media;
+
+    final bytes = await _readStream(response.stream);
+    return utf8.decode(bytes);
   }
 
   Future<void> _clearAndImportBox<T>(
-    String boxName,
+    String boxName, 
     List<dynamic> items,
-    T Function(Map<String, dynamic>) fromJson,
   ) async {
     final box = Hive.box<T>(boxName);
     await box.clear();
-    for (final json in items) {
-      await box.add(fromJson(json));
+    
+    for (final json in items.cast<Map<String, dynamic>>()) {
+      await box.add(json as T);
     }
   }
 
@@ -216,16 +200,4 @@ class CloudBackupService {
     }
     return bytesBuilder.toBytes();
   }
-}
-
-class _IsolateMessage<T> {
-  final FutureOr<void> Function() computation;
-  final SendPort sendPort;
-  final SendPort errorPort;
-
-  _IsolateMessage({
-    required this.computation,
-    required this.sendPort,
-    required this.errorPort,
-  });
 }

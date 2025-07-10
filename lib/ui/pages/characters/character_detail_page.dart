@@ -233,22 +233,6 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
     );
   }
 
-  Widget _buildSelectableContent(String content) {
-    final theme = Theme.of(context);
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: SelectableText(
-        content.isNotEmpty ? content : S.of(context).no_information,
-        style: theme.textTheme.bodyLarge,
-      ),
-    );
-  }
-
   Widget _buildNoteCard(Note note) {
     final theme = Theme.of(context);
     return Card(

@@ -109,7 +109,7 @@ class BackupButtons extends StatelessWidget {
               title: s.restore_from_file,
               onTap: () {
                 Navigator.pop(context);
-                localBackupService.importFromFile(context);
+                localBackupService.restoreData();
               },
             ),
           ],

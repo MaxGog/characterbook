@@ -17,19 +17,6 @@ import 'file_picker_service.dart';
 class LocalBackupService {
   final FilePickerService filePickerService = FilePickerService();
 
-  void _showSnackBar(BuildContext? context, String message, {bool isError = false}) {
-    if (context != null && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: isError ? Colors.red : null,
-        ),
-      );
-    } else {
-      debugPrint('SnackBar not shown: $message');
-    }
-  }
-
   Future<void> _ensureBoxesAreOpen() async {
     if (!Hive.isBoxOpen('characters')) await Hive.openBox<Character>('characters');
     if (!Hive.isBoxOpen('notes')) await Hive.openBox<Note>('notes');
@@ -124,168 +111,81 @@ class LocalBackupService {
 
   String _safeJsonEncode(dynamic data) => jsonEncode(data);
 
-  Future<void> importFromFile(BuildContext context) async {
+  Future<void> restoreData() async {
     try {
-      final s = S.of(context);
-      final scaffoldMessenger = ScaffoldMessenger.of(context);
-
-      final intentData = await filePickerService.getRestoreFileData();
-      if (intentData != null) {
-        await _processRestoreData(context, intentData, s);
+      final jsonData = await filePickerService.pickRestoreFile();
+      if (jsonData == null || jsonData is! Map<String, dynamic>) {
+        debugPrint('Invalid backup file');
         return;
       }
 
-      final file = await filePickerService.pickRestoreFile();
-      if (file == null) return;
+      if (!_validateBackupStructure(jsonData)) {
+        debugPrint('Invalid backup structure');
+        return;
+      }
 
-      String jsonStr;
+      await _restoreBox<Character>('characters', jsonData['characters']);
+      await _restoreBox<Note>('notes', jsonData['notes']);
+      await _restoreBox<Race>('races', jsonData['races']);
+      await _restoreBox<QuestionnaireTemplate>(
+          'templates', jsonData['templates']);
+
+      debugPrint('Restore completed successfully');
+    } catch (e, stack) {
+      debugPrint('Restore failed: $e\n$stack');
+    }
+  }
+
+  bool _validateBackupStructure(Map<String, dynamic> data) {
+    return data.containsKey('characters') &&
+        data.containsKey('notes') &&
+        data.containsKey('races') &&
+        data.containsKey('templates');
+  }
+
+  Future<void> _restoreBox<T>(String boxName, List<dynamic>? items) async {
+    if (items == null || items.isEmpty) return;
+
+    debugPrint('Restoring $boxName (${items.length} items)');
+
+    final box = await Hive.openBox<T>(boxName);
+
+    await box.clear();
+
+    for (final json in items) {
       try {
-        jsonStr = await file.readAsString();
+        final item = _createModel<T>(json as Map<String, dynamic>);
+        if (item != null) {
+          await box.add(item);
+        }
       } catch (e) {
-        if (context.mounted) {
-          _showSnackBar(context, '${s.error}: ${e.toString()}', isError: true);
-        }
-        return;
+        debugPrint('Error creating $T from json: $e\nJson: $json');
       }
-
-      if (jsonStr.isEmpty) {
-        if (context.mounted) {
-          _showSnackBar(context, s.empty_file_error, isError: true);
-        }
-        return;
-      }
-
-      final parsedData = await compute(_parseAndValidateJson, jsonStr);
-      await _processRestoreData(context, parsedData, s);
-    } catch (e) {
-      debugPrint('Restore error: $e');
     }
+
+    debugPrint('Successfully restored ${box.length} items to $boxName');
   }
 
-  static Map<String, dynamic> _parseAndValidateJson(String jsonStr) {
+  T? _createModel<T>(Map<String, dynamic> json) {
     try {
-      final data = jsonDecode(jsonStr) as Map<String, dynamic>;
-      
-      if (!data.containsKey('characters') && 
-          !data.containsKey('notes') && 
-          !data.containsKey('races') && 
-          !data.containsKey('templates')) {
-        throw FormatException('Invalid backup file structure');
-      }
-      
-      return data;
-    } on FormatException catch (e) {
-      throw FormatException('Invalid JSON format: ${e.message}');
-    } catch (e) {
-      throw Exception('Failed to parse JSON: $e');
-    }
-  }
-
-  Future<void> _clearAndImportBox<T>(
-    String boxName,
-    List<dynamic> items,
-    T Function(dynamic) fromJson,
-  ) async {
-    try {
-      final box = Hive.box<T>(boxName);
-      await box.clear();
-      
-      for (final json in items) {
-        try {
-          final item = fromJson(json);
-          if (item != null) {
-            await box.add(item);
-          }
-        } catch (e) {
-          debugPrint('Failed to import item in $boxName: $e\nItem: $json');
-        }
+      switch (T) {
+        case Character:
+          return Character.fromJson(json) as T;
+        case Note:
+          return Note.fromJson(json) as T;
+        case Race:
+          return Race.fromJson(json) as T;
+        case QuestionnaireTemplate:
+          return QuestionnaireTemplate.fromJson(json) as T;
+        default:
+          return null;
       }
     } catch (e) {
-      debugPrint('Failed to import box $boxName: $e');
-      rethrow;
+      debugPrint('Error creating model: $e');
+      return null;
     }
   }
 
-  Future<void> _processRestoreData(
-    BuildContext context,
-    Map<String, dynamic> data,
-    S s,
-  ) async {
-    await _ensureBoxesAreOpen();
-    
-    final counts = {
-      'characters': (data['characters'] as List?)?.length ?? 0,
-      'notes': (data['notes'] as List?)?.length ?? 0,
-      'races': (data['races'] as List?)?.length ?? 0,
-      'templates': (data['templates'] as List?)?.length ?? 0,
-    };
 
-    if (!context.mounted) return;
-
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(s.restore_from_file),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(s.restore_from_file),
-            if (counts['characters']! > 0) Text('${s.characters}: ${counts['characters']}'),
-            if (counts['notes']! > 0) Text('${s.posts}: ${counts['notes']}'),
-            if (counts['races']! > 0) Text('${s.races}: ${counts['races']}'),
-            if (counts['templates']! > 0) Text('${s.templates}: ${counts['templates']}'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(s.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(s.ok),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed != true) return;
-
-    await _clearAndImportBox<Race>(
-      'races', 
-      data['races'] ?? [], 
-      (json) => Race.fromJson(json as Map<String, dynamic>)
-    );
-    
-    await _clearAndImportBox<QuestionnaireTemplate>(
-      'templates', 
-      data['templates'] ?? [], 
-      (json) => QuestionnaireTemplate.fromJson(json as Map<String, dynamic>)
-    );
-    
-    await _clearAndImportBox<Character>(
-      'characters', 
-      data['characters'] ?? [], 
-      (json) => Character.fromJson(json as Map<String, dynamic>)
-    );
-    
-    await _clearAndImportBox<Note>(
-      'notes', 
-      data['notes'] ?? [], 
-      (json) => Note.fromJson(json as Map<String, dynamic>)
-    );
-
-    if (context.mounted) {
-      _showSnackBar(
-        context,
-        s.local_restore_success(
-          counts['characters'].toString(),
-          counts['notes'].toString(),
-          counts['races'].toString(),
-          counts['templates'].toString(),
-        )
-      );
-    }
-  }
+  
 }
