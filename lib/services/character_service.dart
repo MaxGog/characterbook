@@ -40,6 +40,9 @@ class CharacterService {
   Future<void> exportToPdf(context) async {
     if (character == null) throw Exception("Character is not set for export");
     showLoadingDialog(context: context, message: S.of(context).creating_pdf);
+
+    await Future.delayed(const Duration(milliseconds: 50));
+
     try {
       final font = await _loadFont(_regularFontPath);
       final boldFont = await _loadFont(_boldFontPath);
@@ -236,6 +239,7 @@ class CharacterService {
   Future<void> exportToJson(context) async {
     if (character == null) throw Exception("Character is not set for export");
     showLoadingDialog(context: context, message: S.of(context).creating_file);
+    await Future.delayed(const Duration(milliseconds: 50));
     try {
       final jsonStr = jsonEncode(character!.toJson());
       final fileName = '${character!.name}_${DateTime.now().millisecondsSinceEpoch}.character';

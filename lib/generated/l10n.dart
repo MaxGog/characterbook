@@ -2221,11 +2221,31 @@ class S {
     );
   }
 
-  /// `Импорт расы`
+  /// `Импортирование расы`
   String get import_race {
     return Intl.message(
-      'Импорт расы',
+      'Импортирование расы',
       name: 'import_race',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Обрезка аватарки`
+  String get avatar_crop_title {
+    return Intl.message(
+      'Обрезка аватарки',
+      name: 'avatar_crop_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Сохранение обрезки`
+  String get avatar_crop_save {
+    return Intl.message(
+      'Сохранение обрезки',
+      name: 'avatar_crop_save',
       desc: '',
       args: [],
     );

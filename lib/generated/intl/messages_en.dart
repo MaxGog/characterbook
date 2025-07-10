@@ -69,6 +69,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Authorization cancelled"),
         "auth_client_error":
             MessageLookupByLibrary.simpleMessage("Failed to get API client"),
+        "avatar_crop_save": MessageLookupByLibrary.simpleMessage("Save crop"),
+        "avatar_crop_title":
+            MessageLookupByLibrary.simpleMessage("Crop avatar"),
         "back": MessageLookupByLibrary.simpleMessage("Back"),
         "backstory": MessageLookupByLibrary.simpleMessage("Backstory"),
         "backup": MessageLookupByLibrary.simpleMessage("Backup"),

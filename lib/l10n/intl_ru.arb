@@ -219,6 +219,9 @@
 
   "empty_file_error": "Выбранный файл пуст",
   "import": "Импорт",
-  "import_race": "Импорт расы"
+  "import_race": "Импортирование расы",
+
+  "avatar_crop_title": "Обрезка аватарки",
+  "avatar_crop_save": "Сохранение обрезки"
 
 }

@@ -213,5 +213,8 @@
 
   "empty_file_error": "The selected file is empty",
   "import": "Import",
-  "import_race": "Import race"
+  "import_race": "Import race",
+
+  "avatar_crop_title": "Crop avatar",
+  "avatar_crop_save": "Save crop"
 }

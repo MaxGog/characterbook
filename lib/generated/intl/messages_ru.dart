@@ -73,6 +73,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Авторизация отменена"),
         "auth_client_error": MessageLookupByLibrary.simpleMessage(
             "Не удалось получить клиент для API"),
+        "avatar_crop_save":
+            MessageLookupByLibrary.simpleMessage("Сохранение обрезки"),
+        "avatar_crop_title":
+            MessageLookupByLibrary.simpleMessage("Обрезка аватарки"),
         "back": MessageLookupByLibrary.simpleMessage("Назад"),
         "backstory": MessageLookupByLibrary.simpleMessage("Предыстория"),
         "backup": MessageLookupByLibrary.simpleMessage("Резервное копирование"),
@@ -202,7 +206,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "import_character":
             MessageLookupByLibrary.simpleMessage("Импортировать персонажа"),
         "import_error": m6,
-        "import_race": MessageLookupByLibrary.simpleMessage("Импорт расы"),
+        "import_race":
+            MessageLookupByLibrary.simpleMessage("Импортирование расы"),
         "import_template":
             MessageLookupByLibrary.simpleMessage("Импортировать шаблон"),
         "import_template_tooltip":
