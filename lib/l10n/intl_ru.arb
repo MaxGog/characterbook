@@ -222,6 +222,11 @@
   "import_race": "Импортирование расы",
 
   "avatar_crop_title": "Обрезка аватарки",
-  "avatar_crop_save": "Сохранение обрезки"
+  "avatar_crop_save": "Сохранение обрезки",
+
+  "licenses": "Лицензия",
+  "flutterLicense": "Flutter лицензия",
+  "characterbookLicense": "CharacterBook лицензия (GNU GPL v3.0)",
+  "usedLibraries": "Используемые библиотеки"
 
 }

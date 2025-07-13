@@ -216,5 +216,10 @@
   "import_race": "Import race",
 
   "avatar_crop_title": "Crop avatar",
-  "avatar_crop_save": "Save crop"
+  "avatar_crop_save": "Save crop",
+
+  "licenses": "Licenses",
+  "flutterLicense": "Flutter License",
+  "characterbookLicense": "CharacterBook License (GNU GPL v3.0)",
+  "usedLibraries": "Used Libraries"
 }

@@ -3,6 +3,7 @@ import 'package:characterbook/ui/widgets/sections/acknowledgements_section.dart'
 import 'package:characterbook/ui/widgets/sections/backup_section.dart';
 import 'package:characterbook/ui/widgets/sections/import_section.dart';
 import 'package:characterbook/ui/widgets/sections/language_section.dart';
+import 'package:characterbook/ui/widgets/sections/licenses_section.dart';
 import 'package:characterbook/ui/widgets/sections/theme_section.dart';
 import 'package:flutter/material.dart';
 import 'package:characterbook/generated/l10n.dart';
@@ -44,6 +45,8 @@ class _SettingsBody extends StatelessWidget {
         AboutSection(),
         SizedBox(height: 8),
         AcknowledgementsSection(),
+        SizedBox(height: 8),
+        LicensesSection(),
       ],
     );
   }

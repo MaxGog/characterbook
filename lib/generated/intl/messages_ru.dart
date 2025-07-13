@@ -111,6 +111,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "character_reference":
             MessageLookupByLibrary.simpleMessage("Референс персонажа"),
         "character_share_text": m2,
+        "characterbookLicense": MessageLookupByLibrary.simpleMessage(
+            "CharacterBook лицензия (GNU GPL v3.0)"),
         "characters": MessageLookupByLibrary.simpleMessage("Персонажи"),
         "children": MessageLookupByLibrary.simpleMessage("Дети"),
         "cloud_backup_characters_error": MessageLookupByLibrary.simpleMessage(
@@ -191,6 +193,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Ошибка выбора файла"),
         "file_ready":
             MessageLookupByLibrary.simpleMessage("Файл готов к отправке"),
+        "flutterLicense":
+            MessageLookupByLibrary.simpleMessage("Flutter лицензия"),
         "from_template": MessageLookupByLibrary.simpleMessage("Из шаблона"),
         "gender": MessageLookupByLibrary.simpleMessage("Гендер"),
         "githubRepo":
@@ -216,6 +220,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Введён неверный возраст"),
         "language": MessageLookupByLibrary.simpleMessage("Язык"),
         "last_updated": MessageLookupByLibrary.simpleMessage("Обновлено"),
+        "licenses": MessageLookupByLibrary.simpleMessage("Лицензия"),
         "light": MessageLookupByLibrary.simpleMessage("Светлая"),
         "lightBlue": MessageLookupByLibrary.simpleMessage("Голубой"),
         "list_view":
@@ -370,6 +375,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "У вас есть несохраненные изменения. Хотите сохранить перед выходом?"),
         "unsaved_changes_title":
             MessageLookupByLibrary.simpleMessage("Несохраненные изменения"),
+        "usedLibraries":
+            MessageLookupByLibrary.simpleMessage("Используемые библиотеки"),
         "version": MessageLookupByLibrary.simpleMessage("Версия"),
         "web_not_supported":
             MessageLookupByLibrary.simpleMessage("Недоступно для веба"),

@@ -2250,6 +2250,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Лицензия`
+  String get licenses {
+    return Intl.message(
+      'Лицензия',
+      name: 'licenses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Flutter лицензия`
+  String get flutterLicense {
+    return Intl.message(
+      'Flutter лицензия',
+      name: 'flutterLicense',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `CharacterBook лицензия (GNU GPL v3.0)`
+  String get characterbookLicense {
+    return Intl.message(
+      'CharacterBook лицензия (GNU GPL v3.0)',
+      name: 'characterbookLicense',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Используемые библиотеки`
+  String get usedLibraries {
+    return Intl.message(
+      'Используемые библиотеки',
+      name: 'usedLibraries',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
