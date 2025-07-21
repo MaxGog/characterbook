@@ -42,8 +42,6 @@ class _CharacterEditPageState extends State<CharacterEditPage> {
   late List<Uint8List> _additionalImages;
   bool _hasUnsavedChanges = false;
 
-  static const _logoSize = 120.0;
-
   late final FolderService _folderService;
   List<Folder> _characterFolders = [];
   Folder? _selectedFolder;

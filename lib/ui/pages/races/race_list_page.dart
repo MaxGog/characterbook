@@ -252,13 +252,13 @@ class _RaceListPageState extends State<RaceListPage> {
         onSearchChanged: (query) => _filterRaces(query, Hive.box<Race>('races').values.toList()),
         additionalActions: [
           IconButton(
-            icon: Icon(Icons.folder),
-            onPressed: () => setState(() => Navigator.push(
+            icon: Icon(Icons.folder_outlined),
+            onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => const FoldersScreen(folderType: FolderType.race),
               ),
-            )),
+            ),
             tooltip: S.of(context).folders,
           ),
         ],

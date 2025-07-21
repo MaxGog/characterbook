@@ -241,13 +241,13 @@ class _NotesListPageState extends State<NotesListPage> {
         },
         additionalActions: [
           IconButton(
-            icon: Icon(Icons.folder),
-            onPressed: () => setState(() => Navigator.push(
+            icon: Icon(Icons.folder_outlined),
+            onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => const FoldersScreen(folderType: FolderType.note),
               ),
-            )),
+            ),
             tooltip: S.of(context).folders,
           ),
         ],

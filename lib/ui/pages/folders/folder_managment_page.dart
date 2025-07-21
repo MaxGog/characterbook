@@ -1,3 +1,4 @@
+import 'package:characterbook/models/template_model.dart';
 import 'package:characterbook/ui/widgets/items/character_card.dart';
 import 'package:characterbook/ui/widgets/items/note_card.dart';
 import 'package:characterbook/ui/widgets/items/race_card.dart';
@@ -145,9 +146,27 @@ class _FolderEditScreenState extends State<FolderEditScreen> {
   }
 
   Widget _buildTemplateList() {
-    // Аналогично для шаблонов
-    return const Text('Шаблоны пока не поддерживаются');
+    final templateBox = Hive.box<QuestionnaireTemplate>('templates');
+    final templates = _selectedItems
+        .map((id) => templateBox.get(id))
+        .whereType<QuestionnaireTemplate>()
+        .toList();
+
+    if (templates.isEmpty) {
+      return const Text('Папка пуста');
+    }
+
+    return Column(
+      children: templates.map((template) => ListTile(
+        title: Text(template.name),
+        trailing: IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: () => _removeFromFolder(template.key as String),
+        ),
+      )).toList(),
+    );
   }
+
 
   Future<void> _addItemsToFolder() async {
     final result = await showModalBottomSheet<List<String>>(
@@ -229,18 +248,176 @@ class _FolderEditScreenState extends State<FolderEditScreen> {
   }
 
   Widget _buildAddRacesSheet() {
-    // Аналогично для рас
-    return const Placeholder();
+    final raceBox = Hive.box<Race>('races');
+    final allRaces = raceBox.values.toList();
+    final availableRaces = allRaces
+        .where((r) => !_selectedItems.contains(r.key as String))
+        .toList();
+
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.7,
+      maxChildSize: 0.9,
+      builder: (context, scrollController) => Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16))
+        ),
+        child: Column(
+          children: [
+            Text(
+              'Добавить расы',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: scrollController,
+                itemCount: availableRaces.length,
+                itemBuilder: (context, index) {
+                  final race = availableRaces[index];
+                  return CheckboxListTile(
+                    title: Text(race.name),
+                    value: _selectedItems.contains(race.key as String),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == true) {
+                          _selectedItems.add(race.key as String);
+                        } else {
+                          _selectedItems.remove(race.key as String);
+                        }
+                      });
+                    },
+                  );
+                },
+              ),
+            ),
+            SaveButton(
+              onPressed: () => Navigator.pop(context, _selectedItems),
+              text: 'Добавить выбранное',
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildAddNotesSheet() {
-    // Аналогично для заметок
-    return const Placeholder();
+    final noteBox = Hive.box<Note>('notes');
+    final allNotes = noteBox.values.toList();
+    final availableNotes = allNotes
+        .where((n) => !_selectedItems.contains(n.key as String))
+        .toList();
+
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.7,
+      maxChildSize: 0.9,
+      builder: (context, scrollController) => Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16))
+        ),
+        child: Column(
+          children: [
+            Text(
+              'Добавить заметки',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: scrollController,
+                itemCount: availableNotes.length,
+                itemBuilder: (context, index) {
+                  final note = availableNotes[index];
+                  return CheckboxListTile(
+                    title: Text(note.title),
+                    subtitle: Text(note.content.length > 50 
+                        ? '${note.content.substring(0, 50)}...' 
+                        : note.content),
+                    value: _selectedItems.contains(note.key as String),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == true) {
+                          _selectedItems.add(note.key as String);
+                        } else {
+                          _selectedItems.remove(note.key as String);
+                        }
+                      });
+                    },
+                  );
+                },
+              ),
+            ),
+            SaveButton(
+              onPressed: () => Navigator.pop(context, _selectedItems),
+              text: 'Добавить выбранное',
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
+
   Widget _buildAddTemplatesSheet() {
-    // Аналогично для шаблонов
-    return const Placeholder();
+    final templateBox = Hive.box<QuestionnaireTemplate>('templates');
+    final allTemplates = templateBox.values.toList();
+    final availableTemplates = allTemplates
+        .where((t) => !_selectedItems.contains(t.key as String))
+        .toList();
+
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.7,
+      maxChildSize: 0.9,
+      builder: (context, scrollController) => Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        child: Column(
+          children: [
+            Text(
+              'Добавить шаблоны',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: scrollController,
+                itemCount: availableTemplates.length,
+                itemBuilder: (context, index) {
+                  final template = availableTemplates[index];
+                  return CheckboxListTile(
+                    title: Text(template.name),
+                    subtitle: Text(
+                      '${template.standardFields.length} стандартных, '
+                      '${template.customFields.length} пользовательских полей',
+                    ),
+                    value: _selectedItems.contains(template.key as String),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == true) {
+                          _selectedItems.add(template.key as String);
+                        } else {
+                          _selectedItems.remove(template.key as String);
+                        }
+                      });
+                    },
+                  );
+                },
+              ),
+            ),
+            SaveButton(
+              onPressed: () => Navigator.pop(context, _selectedItems),
+              text: 'Добавить выбранное',
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _removeFromFolder(String id) {
