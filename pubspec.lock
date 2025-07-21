@@ -408,6 +408,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.28"
+  flutter_tags:
+    dependency: "direct main"
+    description:
+      name: flutter_tags
+      sha256: d87001c60f88be1abf63e86ebc7a388a5ca4563bf8e6a9315c7c2bc8489c8718
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0-nullsafety.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter

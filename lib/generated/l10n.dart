@@ -2340,6 +2340,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Теги`
+  String get tags {
+    return Intl.message(
+      'Теги',
+      name: 'tags',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Добавить тег`
+  String get add_tag {
+    return Intl.message(
+      'Добавить тег',
+      name: 'add_tag',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

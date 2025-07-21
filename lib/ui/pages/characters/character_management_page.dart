@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/services/folder_service.dart';
+import 'package:flutter_tags/flutter_tags.dart';
 
 import '../../../generated/l10n.dart';
 import '../../../models/character_model.dart';
@@ -47,6 +48,8 @@ class _CharacterEditPageState extends State<CharacterEditPage> {
   List<Folder> _characterFolders = [];
   Folder? _selectedFolder;
 
+  List<String> _tags = [];
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +59,7 @@ class _CharacterEditPageState extends State<CharacterEditPage> {
     _loadRaces();
     _loadFolders();
     _hasUnsavedChanges = widget.character == null;
+    _tags = List.from(widget.character?.tags ?? []);
   }
 
   Future<void> _loadFolders() async {
@@ -65,6 +69,13 @@ class _CharacterEditPageState extends State<CharacterEditPage> {
       _selectedFolder = widget.character?.folderId != null 
         ? _folderService.getFolderById(widget.character!.folderId!) 
         : null;
+    });
+  }
+
+  void _onTagsChanged(List<String> tags) {
+    setState(() {
+      _tags = tags;
+      _hasUnsavedChanges = true;
     });
   }
 
@@ -304,26 +315,45 @@ class _CharacterEditPageState extends State<CharacterEditPage> {
                 if (_characterFolders.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   InkWell(
+                    borderRadius: BorderRadius.circular(12),
                     onTap: () => _selectFolder(context),
                     child: InputDecorator(
                       decoration: InputDecoration(
                         labelText: S.of(context).folder,
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        filled: true,
+                        fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.folder, color: Theme.of(context).colorScheme.primary),
-                          const SizedBox(width: 12),
+                          Icon(
+                            Icons.folder_outlined,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 16),
                           Expanded(
                             child: Text(
                               _selectedFolder?.name ?? S.of(context).no_folder_selected,
-                              style: Theme.of(context).textTheme.bodyLarge,
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                color: _selectedFolder == null 
+                                  ? Theme.of(context).colorScheme.onSurface 
+                                  : Theme.of(context).colorScheme.onSurface,
+                              ),
                             ),
                           ),
                           if (_selectedFolder != null)
                             IconButton(
-                              icon: Icon(Icons.close),
+                              icon: Icon(
+                                Icons.close,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                              style: IconButton.styleFrom(
+                                visualDensity: VisualDensity.compact,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
                               onPressed: () {
                                 setState(() {
                                   _selectedFolder = null;
@@ -523,45 +553,152 @@ class _CharacterEditPageState extends State<CharacterEditPage> {
     );
   }
 
-  Future<void> _selectFolder(BuildContext context) async {
-    final selected = await showDialog<Folder>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(S.of(context).select_folder),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: _characterFolders.length,
-            itemBuilder: (context, index) {
-              final folder = _characterFolders[index];
-              return ListTile(
-                title: Text(folder.name),
-                leading: Icon(Icons.folder),
-                onTap: () => Navigator.pop(context, folder),
-              );
+  Widget _buildTagsInput(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          S.of(context).tags,
+          style: theme.textTheme.titleMedium,
+        ),
+        const SizedBox(height: 8),
+        Tags(
+          itemCount: _tags.length,
+          itemBuilder: (index) => ItemTags(
+            key: Key(index.toString()),
+            index: index,
+            title: _tags[index],
+            active: true,
+            //textStyle: theme.textTheme.bodyMedium,
+            combine: ItemTagsCombine.withTextBefore,
+            removeButton: ItemTagsRemoveButton(
+              onRemoved: () {
+                setState(() {
+                  _tags.removeAt(index);
+                  _hasUnsavedChanges = true;
+                });
+                return true;
+              },
+            ),
+          ),
+          textField: TagsTextField(
+            inputDecoration: InputDecoration(
+              hintText: S.of(context).add_tag,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            onSubmitted: (String tag) {
+              if (tag.trim().isNotEmpty && !_tags.contains(tag)) {
+                setState(() {
+                  _tags.add(tag);
+                  _hasUnsavedChanges = true;
+                });
+              }
             },
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, null),
-            child: Text(S.of(context).none),
-          ),
-        ],
+      ],
+    );
+  }
+
+  Future<void> _selectFolder(BuildContext context) async {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
+    final selected = await showModalBottomSheet<Folder>(
+      context: context,
+      backgroundColor: colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 40,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Text(
+                    S.of(context).select_folder,
+                    style: textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Positioned(
+                    right: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
+                      style: IconButton.styleFrom(
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Divider(),
+            const SizedBox(height: 8),
+
+            Expanded(
+              child: Material(
+                color: Colors.transparent,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _characterFolders.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return ListTile(
+                        leading: Icon(
+                          Icons.folder_off,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                        title: Text(
+                          S.of(context).none,
+                          style: textTheme.bodyLarge,
+                        ),
+                        onTap: () => Navigator.pop(context, null),
+                      );
+                    }
+
+                    final folder = _characterFolders[index - 1];
+                    return ListTile(
+                      leading: Icon(
+                        Icons.folder,
+                        color: colorScheme.primary,
+                      ),
+                      title: Text(
+                        folder.name,
+                        style: textTheme.bodyLarge,
+                      ),
+                      trailing: _selectedFolder?.id == folder.id
+                          ? Icon(
+                              Icons.check,
+                              color: colorScheme.primary,
+                            )
+                          : null,
+                      onTap: () => Navigator.pop(context, folder),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
 
-    if (selected != null) {
+    if (selected != null || _selectedFolder != null) {
       setState(() {
         _selectedFolder = selected;
-        _character.folderId = selected.id;
-        _hasUnsavedChanges = true;
-      });
-    } else if (_selectedFolder != null) {
-      setState(() {
-        _selectedFolder = null;
-        _character.folderId = null;
+        _character.folderId = selected?.id;
         _hasUnsavedChanges = true;
       });
     }

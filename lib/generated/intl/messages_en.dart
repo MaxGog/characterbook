@@ -53,6 +53,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "acknowledgements":
             MessageLookupByLibrary.simpleMessage("Acknowledgements"),
         "add_picture": MessageLookupByLibrary.simpleMessage("Add Image"),
+        "add_tag": MessageLookupByLibrary.simpleMessage("Add tag"),
         "additional_images":
             MessageLookupByLibrary.simpleMessage("Additional Images"),
         "adults": MessageLookupByLibrary.simpleMessage("Adults"),
@@ -330,6 +331,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "standard_fields":
             MessageLookupByLibrary.simpleMessage("Standard Fields"),
         "system": MessageLookupByLibrary.simpleMessage("System"),
+        "tags": MessageLookupByLibrary.simpleMessage("Tags"),
         "teal": MessageLookupByLibrary.simpleMessage("Teal"),
         "template": MessageLookupByLibrary.simpleMessage("Template"),
         "template_delete_confirm": MessageLookupByLibrary.simpleMessage(

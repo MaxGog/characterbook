@@ -465,34 +465,46 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
             const SizedBox(height: 16),
 
             if (_currentFolder != null) ...[
-                Center( 
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FoldersScreen(
-                            folderType: FolderType.character,
-                            //initialFolderId: _currentFolder!.id,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Chip(
-                      avatar: Icon(Icons.folder, color: Theme.of(context).colorScheme.onPrimary),
-                      label: Text(
-                        _currentFolder!.name,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimary,
+              Center( 
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FoldersScreen(
+                          folderType: FolderType.character,
+                          //initialFolderId: _currentFolder!.id,
                         ),
                       ),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    );
+                  },
+                  child: Chip(
+                    avatar: Icon(Icons.folder, color: Theme.of(context).colorScheme.onPrimary),
+                    label: Text(
+                      _currentFolder!.name,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
                     ),
-                  )
-                ),
-                const SizedBox(height: 16),
-              ],
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                )
+              ),
+              const SizedBox(height: 16),
+            ],
+            if (widget.character.tags.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: widget.character.tags.map((tag) => Chip(
+                  label: Text(tag),
+                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                )).toList(),
+              ),
+              const SizedBox(height: 16),
+            ],
 
             _buildSectionTitle(S.of(context).basic_info, 'basic', Icons.info),
             if (_expandedSections['basic']!) ...[

@@ -227,5 +227,8 @@
   "folder": "Folder",
   "select_folder": "Select folder",
   "no_folder_selected": "No folder selected",
-  "none": "None"
+  "none": "None",
+
+  "tags": "Tags",
+  "add_tag": "Add tag"
 }

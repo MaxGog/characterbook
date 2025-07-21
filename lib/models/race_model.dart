@@ -1,5 +1,4 @@
-import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 
 part 'race_model.g.dart';
@@ -21,11 +20,11 @@ class Race extends HiveObject {
   @HiveField(4)
   Uint8List? logo;
 
-  @HiveField(5)
+  @HiveField(5, defaultValue: null)
   String? folderId;
 
-  @HiveField(6)
-  final List<String> tags;
+  @HiveField(6, defaultValue: const [])
+  List<String> tags;
 
   Race({
     required this.name,
@@ -33,20 +32,33 @@ class Race extends HiveObject {
     this.biology = '',
     this.backstory = '',
     this.logo,
-    this.tags = const [],
-  });
+    this.folderId,
+    List<String> tags = const [],
+  }) : tags = List.from(tags);
 
-  static Race empty() => Race(name: '', description: '');
+  factory Race.empty() => Race(name: '');
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Race &&
-              runtimeType == other.runtimeType &&
-              name == other.name;
+      other is Race &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          description == other.description &&
+          biology == other.biology &&
+          backstory == other.backstory &&
+          folderId == other.folderId &&
+          listEquals(tags, other.tags);
 
   @override
-  int get hashCode => name.hashCode;
+  int get hashCode => Object.hash(
+        name,
+        description,
+        biology,
+        backstory,
+        folderId,
+        Object.hashAll(tags),
+      );
 
   Map<String, dynamic> toJson() {
     return {
@@ -55,6 +67,8 @@ class Race extends HiveObject {
       'biology': biology,
       'backstory': backstory,
       'logo': logo?.toList(),
+      'folderId': folderId,
+      'tags': tags,
     };
   }
 
@@ -67,6 +81,28 @@ class Race extends HiveObject {
       logo: json['logo'] != null
           ? Uint8List.fromList(List<int>.from(json['logo']))
           : null,
+      folderId: json['folderId'],
+      tags: (json['tags'] as List?)?.cast<String>() ?? [],
+    );
+  }
+
+  Race copyWith({
+    String? name,
+    String? description,
+    String? biology,
+    String? backstory,
+    Uint8List? logo,
+    String? folderId,
+    List<String>? tags,
+  }) {
+    return Race(
+      name: name ?? this.name,
+      description: description ?? this.description,
+      biology: biology ?? this.biology,
+      backstory: backstory ?? this.backstory,
+      logo: logo ?? this.logo,
+      folderId: folderId ?? this.folderId,
+      tags: tags ?? List.from(this.tags),
     );
   }
 }

@@ -57,6 +57,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Благодарности"),
         "add_picture":
             MessageLookupByLibrary.simpleMessage("Добавить изображение"),
+        "add_tag": MessageLookupByLibrary.simpleMessage("Добавить тег"),
         "additional_images":
             MessageLookupByLibrary.simpleMessage("Доп. изображения"),
         "adults": MessageLookupByLibrary.simpleMessage("Взрослые"),
@@ -358,6 +359,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "standard_fields":
             MessageLookupByLibrary.simpleMessage("Стандартные поля"),
         "system": MessageLookupByLibrary.simpleMessage("Системная"),
+        "tags": MessageLookupByLibrary.simpleMessage("Теги"),
         "teal": MessageLookupByLibrary.simpleMessage("Бирюзовый"),
         "template": MessageLookupByLibrary.simpleMessage("Шаблон"),
         "template_delete_confirm": MessageLookupByLibrary.simpleMessage(

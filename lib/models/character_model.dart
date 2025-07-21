@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:characterbook/models/race_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 
 import 'custom_field_model.dart';
@@ -43,7 +44,7 @@ class Character extends HiveObject {
   List<CustomField> customFields;
 
   @HiveField(11)
-  List<Uint8List> additionalImages = [];
+  List<Uint8List> additionalImages;
 
   @HiveField(12)
   DateTime lastEdited;
@@ -54,8 +55,8 @@ class Character extends HiveObject {
   @HiveField(14)
   String? folderId;
 
-  @HiveField(15)
-  final List<String> tags;
+  @HiveField(15, defaultValue: [])
+  List<String> tags;
 
   Character({
     this.name = '',
@@ -69,26 +70,47 @@ class Character extends HiveObject {
     this.imageBytes,
     this.referenceImageBytes,
     this.race,
-    this.tags = const [],
+    List<String> tags = const [],
     List<CustomField>? customFields,
     List<Uint8List>? additionalImages,
     DateTime? lastEdited,
-  }) :
-      customFields = customFields ?? [],
-      additionalImages = additionalImages ?? [],
-      lastEdited = lastEdited ?? DateTime.now();
+    this.folderId,
+  })  : customFields = customFields ?? [],
+        additionalImages = additionalImages ?? [],
+        lastEdited = lastEdited ?? DateTime.now(),
+        tags = List.from(tags);
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Character &&
-              runtimeType == other.runtimeType &&
-              name == other.name &&
-              age == other.age;
+      other is Character &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          age == other.age &&
+          gender == other.gender &&
+          biography == other.biography &&
+          personality == other.personality &&
+          appearance == other.appearance &&
+          abilities == other.abilities &&
+          this.other == other.other &&
+          race == other.race &&
+          folderId == other.folderId &&
+          listEquals(tags, other.tags);
 
   @override
-  int get hashCode => name.hashCode ^ age.hashCode;
-
+  int get hashCode => Object.hash(
+        name,
+        age,
+        gender,
+        biography,
+        personality,
+        appearance,
+        abilities,
+        other,
+        race,
+        folderId,
+        Object.hashAll(tags),
+      );
 
   Map<String, dynamic> toJson() {
     return {
@@ -106,6 +128,8 @@ class Character extends HiveObject {
       'additionalImages': additionalImages.map((img) => img.toList()).toList(),
       'lastEdited': lastEdited.toIso8601String(),
       'race': race?.name,
+      'folderId': folderId,
+      'tags': tags,
     };
   }
 
@@ -133,6 +157,8 @@ class Character extends HiveObject {
           ? DateTime.parse(json['lastEdited'])
           : DateTime.now(),
       race: json['race'] != null ? Race(name: json['race']) : null,
+      folderId: json['folderId'],
+      tags: (json['tags'] as List?)?.cast<String>() ?? [],
     );
   }
 
@@ -155,6 +181,7 @@ class Character extends HiveObject {
       customFields: [],
       additionalImages: [],
       race: null,
+      tags: [],
     );
   }
 
@@ -172,6 +199,8 @@ class Character extends HiveObject {
     List<CustomField>? customFields,
     List<Uint8List>? additionalImages,
     Race? race,
+    String? folderId,
+    List<String>? tags,
   }) {
     return Character(
       name: name ?? this.name,
@@ -184,9 +213,12 @@ class Character extends HiveObject {
       other: other ?? this.other,
       imageBytes: imageBytes ?? this.imageBytes,
       referenceImageBytes: referenceImageBytes ?? this.referenceImageBytes,
-      customFields: customFields ?? this.customFields,
-      additionalImages: additionalImages ?? this.additionalImages,
+      customFields: customFields ?? List.from(this.customFields),
+      additionalImages: additionalImages ?? List.from(this.additionalImages),
       race: race ?? this.race,
+      folderId: folderId ?? this.folderId,
+      tags: tags ?? List.from(this.tags),
+      lastEdited: DateTime.now(),
     );
   }
 }
