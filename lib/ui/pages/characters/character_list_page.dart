@@ -68,12 +68,18 @@ class _CharacterListPageState extends State<CharacterListPage> {
 
   List<String> _generateTags(List<Character> characters) {
     final s = S.of(context);
-    return [
+    final allTags = <String>{
       s.male, s.female, s.another,
       s.children, s.young, s.adults, s.elderly,
       s.short_name,
       s.a_to_z, s.z_to_a, s.age_asc, s.age_desc
-    ];
+    };
+
+    for (final character in characters) {
+      allTags.addAll(character.tags);
+    }
+
+    return allTags.toList();
   }
 
   void _filterCharacters(String query, List<Character> allCharacters) {
@@ -84,21 +90,33 @@ class _CharacterListPageState extends State<CharacterListPage> {
       _filteredCharacters = allCharacters.where((character) {
         final matchesSearch = query.isEmpty ||
             character.name.toLowerCase().contains(queryLower) ||
-            character.age.toString().contains(query);
+            character.age.toString().contains(query) ||
+            character.tags.any((tag) => tag.toLowerCase().contains(queryLower));
 
         if (_selectedTag == null) return matchesSearch;
 
-        return matchesSearch && switch (_selectedTag) {
-          _ when _selectedTag == s.male => character.gender == 'male',
-          _ when _selectedTag == s.female => character.gender == 'female',
-          _ when _selectedTag == s.another => character.gender == 'another',
-          _ when _selectedTag == s.short_name => character.name.length <= 4,
-          _ when _selectedTag == s.children => character.age < 18,
-          _ when _selectedTag == s.young => character.age < 30,
-          _ when _selectedTag == s.adults => character.age < 50,
-          _ when _selectedTag == s.elderly => character.age >= 50,
-          _ => true,
-        };
+        final isSpecialTag = [
+          s.male, s.female, s.another,
+          s.children, s.young, s.adults, s.elderly,
+          s.short_name,
+          s.a_to_z, s.z_to_a, s.age_asc, s.age_desc
+        ].contains(_selectedTag);
+
+        if (isSpecialTag) {
+          return matchesSearch && switch (_selectedTag) {
+            _ when _selectedTag == s.male => character.gender == 'male',
+            _ when _selectedTag == s.female => character.gender == 'female',
+            _ when _selectedTag == s.another => character.gender == 'another',
+            _ when _selectedTag == s.short_name => character.name.length <= 4,
+            _ when _selectedTag == s.children => character.age < 18,
+            _ when _selectedTag == s.young => character.age < 30,
+            _ when _selectedTag == s.adults => character.age < 50,
+            _ when _selectedTag == s.elderly => character.age >= 50,
+            _ => true,
+          };
+        } else {
+          return matchesSearch && character.tags.contains(_selectedTag);
+        }
       }).toList();
 
       if (_selectedTag == s.a_to_z) {

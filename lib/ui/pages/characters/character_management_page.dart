@@ -415,9 +415,10 @@ class _CharacterEditPageState extends State<CharacterEditPage> {
                     },
                   ),
                 if (_shouldShowField('race')) const SizedBox(height: 16),
+                _buildTagsInput(context),
                 if (_shouldShowField('referenceImage'))
                   _buildReferenceImageSection(context, colorScheme, textTheme),
-                if (_shouldShowField('referenceImage')) const SizedBox(height: 16),
+                  const SizedBox(height: 16),
                 if (_shouldShowField('appearance'))
                   CustomTextField(
                     label: S.of(context).appearance,
