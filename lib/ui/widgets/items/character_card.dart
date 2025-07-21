@@ -1,7 +1,10 @@
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/folder_model.dart';
+import 'package:characterbook/services/folder_service.dart';
 import 'package:characterbook/ui/widgets/avatar_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 class CharacterCard extends StatelessWidget {
   final Character character;
@@ -24,6 +27,9 @@ class CharacterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final folder = character.folderId != null 
+        ? FolderService(Hive.box<Folder>('folders')).getFolderById(character.folderId!)
+        : null;
 
     return Card(
       key: key,
@@ -47,29 +53,59 @@ class CharacterCard extends StatelessWidget {
         onLongPress: enableDrag ? null : onLongPress,
         child: Padding(
           padding: const EdgeInsets.all(12),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AvatarWidget.character(imageBytes: character.imageBytes, size: 28),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(character.name, style: theme.textTheme.bodyLarge),
-                    Text(
-                      '${character.age} ${S.of(context).years}, ${_getLocalizedGender(context, character.gender)}',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                      ),
+              Row(
+                children: [
+                  AvatarWidget.character(imageBytes: character.imageBytes, size: 28),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(character.name, style: theme.textTheme.bodyLarge),
+                        Text(
+                          '${character.age} ${S.of(context).years}, ${_getLocalizedGender(context, character.gender)}',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.more_vert, 
+                      color: theme.colorScheme.onSurfaceVariant),
+                    onPressed: onMenuPressed,
+                  ),
+                ],
+              ),
+              if (folder != null) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.folder, 
+                        size: 16, 
+                        color: theme.colorScheme.onPrimaryContainer),
+                      const SizedBox(width: 4),
+                      Text(
+                        folder.name,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              IconButton(
-                icon: Icon(Icons.more_vert, 
-                  color: theme.colorScheme.onSurfaceVariant),
-                onPressed: onMenuPressed,
-              ),
+              ],
             ],
           ),
         ),
@@ -87,4 +123,3 @@ class CharacterCard extends StatelessWidget {
     };
   }
 }
-
