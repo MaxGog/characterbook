@@ -413,7 +413,7 @@ class _CharacterEditPageState extends State<CharacterEditPage> {
                     },
                   ),
                 if (_shouldShowField('race')) const SizedBox(height: 16),
-                _buildTagsInput(context),
+                //_buildTagsInput(context),
                 if (_shouldShowField('referenceImage'))
                   _buildReferenceImageSection(context, colorScheme, textTheme),
                   const SizedBox(height: 16),
