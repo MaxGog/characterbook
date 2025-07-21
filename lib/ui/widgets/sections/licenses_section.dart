@@ -9,7 +9,6 @@ class LicensesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
 
     return SettingsSection(
       title: s.licenses,
