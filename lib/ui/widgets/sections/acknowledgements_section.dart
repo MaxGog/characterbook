@@ -16,7 +16,7 @@ class AcknowledgementsSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Text(
             'Данила Ганьков | Makoto🐼 | Максим Семенков | Артём Голубев | '
-                'Евгений Стратий | Никита Жевнерович | Участники EnA',
+                'Евгений Стратий | Никита Жевнерович | KellSmiley | Участники EnA',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
         ),

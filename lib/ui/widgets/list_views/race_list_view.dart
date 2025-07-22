@@ -40,14 +40,9 @@ class RaceListView extends StatelessWidget {
       return _buildEmptyState(context);
     }
 
-    return Column(
-      children: [
-        if (tags.isNotEmpty) _buildTagFilter(context),
-        Expanded(
-          child: _buildRaceList(),
-        ),
-      ],
-    );
+    return Expanded(
+        child: _buildRaceList(),
+      );
   }
 
   Widget _buildEmptyState(BuildContext context) {
@@ -106,41 +101,6 @@ class RaceListView extends StatelessWidget {
           foregroundColor: theme.colorScheme.onPrimary,
         ),
         child: Text(S.of(context).create),
-      ),
-    );
-  }
-
-  Widget _buildTagFilter(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    return SizedBox(
-      height: 56,
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        scrollDirection: Axis.horizontal,
-        itemCount: tags.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 4),
-        itemBuilder: (context, index) {
-          final tag = tags[index];
-          return FilterChip(
-            label: Text(tag),
-            selected: selectedTag == tag,
-            onSelected: (_) {
-              // TODO: Сделать теги для рас
-            },
-            shape: StadiumBorder(
-              side: BorderSide(color: theme.colorScheme.outline),
-            ),
-            showCheckmark: false,
-            side: BorderSide.none,
-            selectedColor: theme.colorScheme.secondaryContainer,
-            labelStyle: theme.textTheme.labelLarge?.copyWith(
-              color: selectedTag == tag
-                  ? theme.colorScheme.onSecondaryContainer
-                  : theme.colorScheme.onSurface,
-            ),
-          );
-        },
       ),
     );
   }

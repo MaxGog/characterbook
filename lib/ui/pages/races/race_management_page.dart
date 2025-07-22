@@ -1,4 +1,7 @@
 import 'dart:typed_data';
+import 'package:characterbook/ui/handlers/unsaved_changes_handler.dart';
+import 'package:characterbook/ui/widgets/folder_selector_widget.dart';
+import 'package:characterbook/ui/widgets/tags/tags_input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import '../../../generated/l10n.dart';
@@ -19,8 +22,8 @@ class RaceManagementPage extends StatefulWidget {
   State<RaceManagementPage> createState() => _RaceManagementPageState();
 }
 
-class _RaceManagementPageState extends State<RaceManagementPage> {
-  static const _logoSize = 120.0;
+class _RaceManagementPageState extends State<RaceManagementPage> with UnsavedChangesHandler {
+    static const _logoSize = 120.0;
   static const _borderRadius = 12.0;
 
   final _formKey = GlobalKey<FormState>();
@@ -30,12 +33,9 @@ class _RaceManagementPageState extends State<RaceManagementPage> {
   late final TextEditingController _backstoryController;
   Uint8List? _logoBytes;
 
-  bool _hasUnsavedChanges = false;
-
   late final FolderService _folderService;
   List<Folder> _raceFolders = [];
   Folder? _selectedFolder;
-
   List<String> _tags = [];
   final TextEditingController _tagController = TextEditingController();
 
@@ -49,21 +49,14 @@ class _RaceManagementPageState extends State<RaceManagementPage> {
     _biologyController = TextEditingController(text: race?.biology ?? '');
     _backstoryController = TextEditingController(text: race?.backstory ?? '');
     _logoBytes = race?.logo;
-    _hasUnsavedChanges = widget.race == null;
+    _tags = List.from(widget.race?.tags ?? []);
+    hasUnsavedChanges = widget.race == null;
     _setupControllers();
     _loadFolders();
-    _tags = List.from(widget.race?.tags ?? []);
   }
 
-  Future<void> _loadFolders() async {
-    final folders = _folderService.getFoldersByType(FolderType.race);
-    setState(() {
-      _raceFolders = folders;
-      _selectedFolder = widget.race?.folderId != null 
-        ? _folderService.getFolderById(widget.race!.folderId!) 
-        : null;
-    });
-  }
+  @override
+  Future<void> saveChanges() async => await _saveRace();
 
   @override
   void dispose() {
@@ -75,11 +68,22 @@ class _RaceManagementPageState extends State<RaceManagementPage> {
     super.dispose();
   }
 
+
+  Future<void> _loadFolders() async {
+    final folders = _folderService.getFoldersByType(FolderType.race);
+    setState(() {
+      _raceFolders = folders;
+      _selectedFolder = widget.race?.folderId != null 
+        ? _folderService.getFolderById(widget.race!.folderId!) 
+        : null;
+    });
+  }
+
   void _setupControllers() {
-    _nameController.addListener(() => setState(() => _hasUnsavedChanges = true));
-    _descriptionController.addListener(() => setState(() => _hasUnsavedChanges = true));
-    _biologyController.addListener(() => setState(() => _hasUnsavedChanges = true));
-    _backstoryController.addListener(() => setState(() => _hasUnsavedChanges = true));
+    _nameController.addListener(() => setState(() => hasUnsavedChanges = true));
+    _descriptionController.addListener(() => setState(() => hasUnsavedChanges = true));
+    _biologyController.addListener(() => setState(() => hasUnsavedChanges = true));
+    _backstoryController.addListener(() => setState(() => hasUnsavedChanges = true));
   }
 
   Future<void> _saveRace() async {
@@ -126,7 +130,7 @@ class _RaceManagementPageState extends State<RaceManagementPage> {
         }
       }
 
-      setState(() => _hasUnsavedChanges = false);
+      setState(() => hasUnsavedChanges = false);
 
       if (!mounted) return;
       Navigator.pop(context, true);
@@ -135,105 +139,6 @@ class _RaceManagementPageState extends State<RaceManagementPage> {
     }
   }
 
-  Future<void> _selectFolder(BuildContext context) async {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
-
-    final selected = await showModalBottomSheet<Folder>(
-      context: context,
-      backgroundColor: colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: 40,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Text(
-                    S.of(context).select_folder,
-                    style: textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Positioned(
-                    right: 0,
-                    child: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context),
-                      style: IconButton.styleFrom(
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Divider(),
-            const SizedBox(height: 8),
-
-            Expanded(
-              child: Material(
-                color: Colors.transparent,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: _raceFolders.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      return ListTile(
-                        leading: Icon(
-                          Icons.folder_off,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        title: Text(
-                          S.of(context).none,
-                          style: textTheme.bodyLarge,
-                        ),
-                        onTap: () => Navigator.pop(context, null),
-                      );
-                    }
-
-                    final folder = _raceFolders[index - 1];
-                    return ListTile(
-                      leading: Icon(
-                        Icons.folder,
-                        color: colorScheme.primary,
-                      ),
-                      title: Text(
-                        folder.name,
-                        style: textTheme.bodyLarge,
-                      ),
-                      trailing: _selectedFolder?.id == folder.id
-                          ? Icon(
-                              Icons.check,
-                              color: colorScheme.primary,
-                            )
-                          : null,
-                      onTap: () => Navigator.pop(context, folder),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    if (selected != null || _selectedFolder != null) {
-      setState(() {
-        _selectedFolder = selected;
-        _hasUnsavedChanges = true;
-      });
-    }
-  }
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -254,7 +159,7 @@ class _RaceManagementPageState extends State<RaceManagementPage> {
 
     return WillPopScope(
       onWillPop: () async {
-        if (!_hasUnsavedChanges) return true;
+        if (!hasUnsavedChanges) return true;
         final shouldSave = await UnsavedChangesDialog(
           saveText: s.save_race,
         ).show(context);
@@ -284,14 +189,22 @@ class _RaceManagementPageState extends State<RaceManagementPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildTagsInput(context),
+                TagsInputWidget(
+                  tags: _tags,
+                  onTagsChanged: (tags) {
+                    setState(() {
+                      _tags = tags;
+                      hasUnsavedChanges = true;
+                    });
+                  },
+                ),
                 const SizedBox(height: 24),
                 AvatarPicker(
                   currentAvatar: _logoBytes,
                   onAvatarChanged: (bytes) {
                     setState(() {
                       _logoBytes = bytes;
-                      _hasUnsavedChanges = true;
+                      hasUnsavedChanges = true;
                     });
                   },
                   size: _logoSize / 2,
@@ -304,56 +217,16 @@ class _RaceManagementPageState extends State<RaceManagementPage> {
                 ),
                 if (_raceFolders.isNotEmpty) ...[
                   const SizedBox(height: 16),
-                  InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () => _selectFolder(context),
-                    child: InputDecorator(
-                      decoration: InputDecoration(
-                        labelText: s.folder,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                        filled: true,
-                        fillColor: theme.colorScheme.surfaceContainerLow,
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.folder_outlined,
-                            color: theme.colorScheme.primary,
-                            size: 24,
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Text(
-                              _selectedFolder?.name ?? s.no_folder_selected,
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: _selectedFolder == null 
-                                  ? theme.colorScheme.onSurface 
-                                  : theme.colorScheme.onSurface,
-                              ),
-                            ),
-                          ),
-                          if (_selectedFolder != null)
-                            IconButton(
-                              icon: Icon(
-                                Icons.close,
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
-                              style: IconButton.styleFrom(
-                                visualDensity: VisualDensity.compact,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _selectedFolder = null;
-                                  _hasUnsavedChanges = true;
-                                });
-                              },
-                            ),
-                        ],
-                      ),
-                    ),
+                  FolderSelectorWidget(
+                    selectedFolder: _selectedFolder,
+                    onFolderSelected: (folder) {
+                      setState(() {
+                        _selectedFolder = folder;
+                        hasUnsavedChanges = true;
+                      });
+                    },
+                    folderService: _folderService,
+                    folderType: FolderType.race,
                   ),
                 ],
                 const SizedBox(height: 16),
@@ -387,74 +260,6 @@ class _RaceManagementPageState extends State<RaceManagementPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTagsInput(BuildContext context) {
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          S.of(context).tags,
-          style: theme.textTheme.titleMedium,
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: _tags.map((tag) => Chip(
-            label: Text(tag),
-            deleteIcon: const Icon(Icons.close, size: 18),
-            onDeleted: () {
-              setState(() {
-                _tags.remove(tag);
-                _hasUnsavedChanges = true;
-              });
-            },
-          )).toList(),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _tagController,
-                decoration: InputDecoration(
-                  hintText: S.of(context).add_tag,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  )
-                ),
-                onSubmitted: (tag) {
-                  if (tag.trim().isNotEmpty && !_tags.contains(tag)) {
-                    setState(() {
-                      _tags.add(tag.trim());
-                      _hasUnsavedChanges = true;
-                    });
-                    _tagController.clear();
-                  }
-                },
-              ),
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                final tag = _tagController.text.trim();
-                if (tag.isNotEmpty && !_tags.contains(tag)) {
-                  setState(() {
-                    _tags.add(tag);
-                    _hasUnsavedChanges = true;
-                  });
-                  _tagController.clear();
-                }
-              },
-              tooltip: S.of(context).add_tag,
-            ),
-          ],
-        ),
-      ],
     );
   }
 }

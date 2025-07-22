@@ -1,3 +1,6 @@
+import 'package:characterbook/ui/handlers/unsaved_changes_handler.dart';
+import 'package:characterbook/ui/widgets/folder_selector_widget.dart';
+import 'package:characterbook/ui/widgets/tags/tags_input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -23,30 +26,27 @@ class NoteEditPage extends StatefulWidget {
   State<NoteEditPage> createState() => _NoteEditPageState();
 }
 
-class _NoteEditPageState extends State<NoteEditPage> {
+class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler {
+  final _formKey = GlobalKey<FormState>();
   late final TextEditingController _titleController;
   late final TextEditingController _contentController;
   final List<String> _selectedCharacterIds = [];
   bool _isPreviewMode = false;
   final GlobalKey _contentFieldKey = GlobalKey();
-  bool _hasChanges = false;
-  final _formKey = GlobalKey<FormState>();
 
   late final FolderService _folderService;
   List<Folder> _noteFolders = [];
   Folder? _selectedFolder;
-
   List<String> _tags = [];
   final TextEditingController _tagController = TextEditingController();
-  
 
   @override
   void initState() {
     super.initState();
     _folderService = FolderService(Hive.box<Folder>('folders'));
-    final initialTitle = widget.note?.title ?? '';
     _titleController = TextEditingController(
-      text: widget.isCopyMode ? '${S.of(context).copy}: $initialTitle' : initialTitle,
+      text: widget.isCopyMode ? '${S.of(context).copy}: ${widget.note?.title ?? ''}' 
+                            : widget.note?.title ?? '',
     );
     _contentController = TextEditingController(text: widget.note?.content ?? '');
     _selectedCharacterIds.addAll(widget.note?.characterIds ?? []);
@@ -54,13 +54,15 @@ class _NoteEditPageState extends State<NoteEditPage> {
     _selectedFolder = widget.note?.folderId != null 
         ? _folderService.getFolderById(widget.note!.folderId!) 
         : null;
+    _tags = List.from(widget.note?.tags ?? []);
 
     _titleController.addListener(_checkForChanges);
     _contentController.addListener(_checkForChanges);
     _loadFolders();
-
-    _tags = List.from(widget.note?.tags ?? []);
   }
+
+  @override
+  Future<void> saveChanges() async => await _saveNote();
 
   Future<void> _loadFolders() async {
     final folders = _folderService.getFoldersByType(FolderType.note);
@@ -73,7 +75,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
     final hasTitleChanges = widget.note?.title != _titleController.text;
     final hasContentChanges = widget.note?.content != _contentController.text;
     setState(() {
-      _hasChanges = hasTitleChanges || hasContentChanges;
+      hasUnsavedChanges = hasTitleChanges || hasContentChanges;
     });
   }
 
@@ -141,7 +143,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
       }
     }
 
-    setState(() => _hasChanges = false);
+    setState(() => hasUnsavedChanges = false);
     if (mounted) Navigator.pop(context);
   }
 
@@ -164,175 +166,6 @@ class _NoteEditPageState extends State<NoteEditPage> {
     }
   }
 
-
-  Future<void> _selectFolder(BuildContext context) async {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
-
-    final selected = await showModalBottomSheet<Folder>(
-      context: context,
-      backgroundColor: colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: 40,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Text(
-                    S.of(context).select_folder,
-                    style: textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Positioned(
-                    right: 0,
-                    child: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context),
-                      style: IconButton.styleFrom(
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Divider(),
-            const SizedBox(height: 8),
-            Expanded(
-              child: Material(
-                color: Colors.transparent,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: _noteFolders.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      return ListTile(
-                        leading: Icon(
-                          Icons.folder_off,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        title: Text(
-                          S.of(context).none,
-                          style: textTheme.bodyLarge,
-                        ),
-                        onTap: () => Navigator.pop(context, null),
-                      );
-                    }
-
-                    final folder = _noteFolders[index - 1];
-                    return ListTile(
-                      leading: Icon(
-                        Icons.folder,
-                        color: colorScheme.primary,
-                      ),
-                      title: Text(
-                        folder.name,
-                        style: textTheme.bodyLarge,
-                      ),
-                      trailing: _selectedFolder?.id == folder.id
-                          ? Icon(
-                              Icons.check,
-                              color: colorScheme.primary,
-                            )
-                          : null,
-                      onTap: () => Navigator.pop(context, folder),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    if (selected != null || _selectedFolder != null) {
-      setState(() {
-        _selectedFolder = selected;
-        _hasChanges = true;
-      });
-    }
-  }
-
-  Widget _buildTagsInput(BuildContext context) {
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          S.of(context).tags,
-          style: theme.textTheme.titleMedium,
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: _tags.map((tag) => Chip(
-            label: Text(tag),
-            deleteIcon: const Icon(Icons.close, size: 18),
-            onDeleted: () {
-              setState(() {
-                _tags.remove(tag);
-                _hasChanges = true;
-              });
-            },
-          )).toList(),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _tagController,
-                decoration: InputDecoration(
-                  hintText: S.of(context).add_tag,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  )
-                ),
-                onSubmitted: (tag) {
-                  if (tag.trim().isNotEmpty && !_tags.contains(tag)) {
-                    setState(() {
-                      _tags.add(tag.trim());
-                      _hasChanges = true;
-                    });
-                    _tagController.clear();
-                  }
-                },
-              ),
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                final tag = _tagController.text.trim();
-                if (tag.isNotEmpty && !_tags.contains(tag)) {
-                  setState(() {
-                    _tags.add(tag);
-                    _hasChanges = true;
-                  });
-                  _tagController.clear();
-                }
-              },
-              tooltip: S.of(context).add_tag,
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -340,7 +173,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
 
     return WillPopScope(
       onWillPop: () async {
-        if (!_hasChanges) return true;
+        if (!hasUnsavedChanges) return true;
         final shouldSave = await UnsavedChangesDialog(
           saveText: S.of(context).save,
         ).show(context);
@@ -391,7 +224,15 @@ class _NoteEditPageState extends State<NoteEditPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildTagsInput(context),
+          TagsInputWidget(
+            tags: _tags,
+            onTagsChanged: (tags) {
+              setState(() {
+                _tags = tags;
+                hasUnsavedChanges = true;
+              });
+            },
+          ),
           const SizedBox(height: 24),
           CustomTextField(
             controller: _titleController,
@@ -401,56 +242,16 @@ class _NoteEditPageState extends State<NoteEditPage> {
           ),
           if (_noteFolders.isNotEmpty) ...[
             const SizedBox(height: 16),
-            InkWell(
-              borderRadius: BorderRadius.circular(12),
-              onTap: () => _selectFolder(context),
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  labelText: S.of(context).folder,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  filled: true,
-                  fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.folder_outlined,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 24,
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Text(
-                        _selectedFolder?.name ?? S.of(context).no_folder_selected,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: _selectedFolder == null 
-                            ? Theme.of(context).colorScheme.onSurface 
-                            : Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                    ),
-                    if (_selectedFolder != null)
-                      IconButton(
-                        icon: Icon(
-                          Icons.close,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        style: IconButton.styleFrom(
-                          visualDensity: VisualDensity.compact,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _selectedFolder = null;
-                            _hasChanges = true;
-                          });
-                        },
-                      ),
-                  ],
-                ),
-              ),
+            FolderSelectorWidget(
+              selectedFolder: _selectedFolder,
+              onFolderSelected: (folder) {
+                setState(() {
+                  _selectedFolder = folder;
+                  hasUnsavedChanges = true;
+                });
+              },
+              folderService: _folderService,
+              folderType: FolderType.note,
             ),
           ],
           const SizedBox(height: 16),
@@ -548,7 +349,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
                 _selectedCharacterIds.contains(value)
                     ? _selectedCharacterIds.remove(value)
                     : _selectedCharacterIds.add(value);
-                _hasChanges = true;
+                hasUnsavedChanges = true;
               });
             }
           },
@@ -579,7 +380,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
       label: Text(character.name),
       onDeleted: () => setState(() {
         _selectedCharacterIds.remove(characterId);
-        _hasChanges = true;
+        hasUnsavedChanges = true;
       }),
       deleteIcon: Icon(
         Icons.close,

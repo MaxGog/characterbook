@@ -8,6 +8,8 @@ import 'package:characterbook/ui/widgets/custom_app_bar.dart';
 import 'package:characterbook/ui/widgets/custom_floating_buttons.dart';
 import 'package:characterbook/ui/widgets/filter_chip_widget.dart';
 import 'package:characterbook/ui/widgets/list_views/race_list_view.dart';
+import 'package:characterbook/ui/widgets/mixins/tag_mixin.dart';
+import 'package:characterbook/ui/widgets/tags/tag_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -23,13 +25,16 @@ class RaceListPage extends StatefulWidget {
   State<RaceListPage> createState() => _RaceListPageState();
 }
 
-class _RaceListPageState extends State<RaceListPage> with ListPageMixin {
+class _RaceListPageState extends State<RaceListPage> with ListPageMixin, TagMixin<Race> {
   List<Race> filteredRaces = [];
   String? selectedTag;
 
+  @override
   List<String> getAllTags(List<Race> races) {
-    return races.expand((race) => race.tags).toSet().toList()..sort();
+    return generateAllTags(races, context, (r) => r.tags);
   }
+
+  bool _isShortName(Race r) => r.name.length <= 4;
 
   void filterRaces(String query, List<Race> allRaces) {
     setState(() {
@@ -38,9 +43,8 @@ class _RaceListPageState extends State<RaceListPage> with ListPageMixin {
             race.name.toLowerCase().contains(query.toLowerCase()) ||
             race.description.toLowerCase().contains(query.toLowerCase());
 
-        final matchesTag = selectedTag == null || race.tags.contains(selectedTag);
-
-        return matchesSearch && matchesTag;
+        return matchesSearch && matchesTagFilter(
+          selectedTag, context, race, (r) => r.tags, _isShortName);
       }).toList();
     });
   }
@@ -206,7 +210,17 @@ class _RaceListPageState extends State<RaceListPage> with ListPageMixin {
 
                 return Column(
                   children: [
-                    if (tags.isNotEmpty) _buildFiltersRow(tags),
+                    if (tags.isNotEmpty)
+                      TagFilter(
+                          tags: tags,
+                          selectedTag: selectedTag,
+                          onTagSelected: (tag) {
+                            setState(() => selectedTag = tag);
+                            filterRaces(searchController.text, allRaces);
+                          },
+                          context: context,
+                          isForCharacters: false
+                        ),
                     Expanded(
                       child: RaceListView(
                         scrollController: scrollController,
@@ -251,41 +265,6 @@ class _RaceListPageState extends State<RaceListPage> with ListPageMixin {
             },
           ) 
         : null,
-    );
-  }
-
-  Widget _buildFiltersRow(List<String> tags) {
-    return Container(
-      height: 56,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          if (tags.isNotEmpty)
-            FilterChipWidget(
-              label: S.of(context).all_tags,
-              selected: selectedTag == null,
-              onSelected: (isSelected) {
-                setState(() {
-                  selectedTag = null;
-                  filterRaces(searchController.text,
-                      Hive.box<Race>('races').values.toList());
-                });
-              },
-            ),
-          ...tags.map((tag) => FilterChipWidget(
-            label: tag,
-            selected: selectedTag == tag,
-            onSelected: (isSelected) {
-              setState(() {
-                selectedTag = selectedTag == tag ? null : tag;
-                filterRaces(searchController.text,
-                    Hive.box<Race>('races').values.toList());
-              });
-            },
-          )),
-        ],
-      ),
     );
   }
 

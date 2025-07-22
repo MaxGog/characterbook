@@ -3,7 +3,9 @@ import 'package:characterbook/ui/pages/folders/folder_list_page.dart';
 import 'package:characterbook/ui/widgets/mixins/list_page_mixin.dart';
 import 'package:characterbook/ui/widgets/filter_chip_widget.dart';
 import 'package:characterbook/ui/widgets/items/note_card.dart';
+import 'package:characterbook/ui/widgets/mixins/tag_mixin.dart';
 import 'package:characterbook/ui/widgets/notes_empty_state.dart';
+import 'package:characterbook/ui/widgets/tags/tag_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -21,37 +23,30 @@ class NotesListPage extends StatefulWidget {
   State<NotesListPage> createState() => _NotesListPageState();
 }
 
-class _NotesListPageState extends State<NotesListPage> with ListPageMixin {
+class _NotesListPageState extends State<NotesListPage> with ListPageMixin, TagMixin<Note> {
   List<Note> filteredNotes = [];
   String? selectedTag;
   String? selectedCharacter;
 
+  @override
   List<String> getAllTags(List<Note> notes) {
-    return notes.expand((note) => note.tags).toSet().toList()..sort();
+    return generateAllTags(notes, context, (n) => n.tags);
   }
 
-  List<String> getAllCharacterNames(List<Note> notes) {
-    final characterBox = Hive.box<Character>('characters');
-    final characterIds = notes.expand((note) => note.characterIds).toSet();
-    return characterIds
-        .map((id) => characterBox.get(id))
-        .whereType<Character>()
-        .map((c) => c.name)
-        .toSet()
-        .toList()
-      ..sort();
-  }
+  bool _isShortName(Note n) => n.title.length <= 4;
 
   void filterNotes(String query, List<Note> allNotes) {
     final characterBox = Hive.box<Character>('characters');
+    final queryLower = query.toLowerCase();
 
     setState(() {
       filteredNotes = allNotes.where((note) {
         final matchesSearch = query.isEmpty ||
-            note.title.toLowerCase().contains(query.toLowerCase()) ||
-            note.content.toLowerCase().contains(query.toLowerCase());
+            note.title.toLowerCase().contains(queryLower) ||
+            note.content.toLowerCase().contains(queryLower);
 
-        final matchesTag = selectedTag == null || note.tags.contains(selectedTag);
+        final matchesTag = matchesTagFilter(
+          selectedTag, context, note, (n) => n.tags, _isShortName);
 
         final matchesCharacter = selectedCharacter == null ||
             note.characterIds.any((id) {
@@ -64,62 +59,16 @@ class _NotesListPageState extends State<NotesListPage> with ListPageMixin {
     });
   }
 
-  Widget buildFiltersRow(List<String> tags, List<String> characterNames) {
-    return Container(
-      height: 56,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          if (characterNames.isNotEmpty)
-            FilterChipWidget(
-              label: '${S.of(context).all} ${S.of(context).characters.toLowerCase()}',
-              selected: selectedCharacter == null,
-              onSelected: (isSelected) {
-                setState(() {
-                  selectedCharacter = null;
-                  filterNotes(searchController.text,
-                      Hive.box<Note>('notes').values.toList().cast<Note>());
-                });
-              },
-            ),
-          ...characterNames.map((name) => FilterChipWidget(
-            label: name,
-            selected: selectedCharacter == name,
-            onSelected: (isSelected) {
-              setState(() {
-                selectedCharacter = selectedCharacter == name ? null : name;
-                filterNotes(searchController.text,
-                    Hive.box<Note>('notes').values.toList().cast<Note>());
-              });
-            },
-          )),
-          if (tags.isNotEmpty)
-            FilterChipWidget(
-              label: S.of(context).all_tags,
-              selected: selectedTag == null,
-              onSelected: (isSelected) {
-                setState(() {
-                  selectedTag = null;
-                  filterNotes(searchController.text,
-                      Hive.box<Note>('notes').values.toList().cast<Note>());
-                });
-              },
-            ),
-          ...tags.map((tag) => FilterChipWidget(
-            label: tag,
-            selected: selectedTag == tag,
-            onSelected: (isSelected) {
-              setState(() {
-                selectedTag = selectedTag == tag ? null : tag;
-                filterNotes(searchController.text,
-                    Hive.box<Note>('notes').values.toList().cast<Note>());
-              });
-            },
-          )),
-        ],
-      ),
-    );
+  List<String> getAllCharacterNames(List<Note> notes) {
+    final characterBox = Hive.box<Character>('characters');
+    final characterIds = notes.expand((note) => note.characterIds).toSet();
+    return characterIds
+        .map((id) => characterBox.get(id))
+        .whereType<Character>()
+        .map((c) => c.name)
+        .toSet()
+        .toList()
+      ..sort();
   }
 
   Future<void> deleteNote(Note note) async {
@@ -246,7 +195,18 @@ class _NotesListPageState extends State<NotesListPage> with ListPageMixin {
           return Column(
             children: [
               if (tags.isNotEmpty || characterNames.isNotEmpty)
-                buildFiltersRow(tags, characterNames),
+                TagFilter(
+                  tags: tags,
+                  selectedTag: selectedTag,
+                  onTagSelected: (tag) {
+                    setState(() => selectedTag = tag);
+                    filterNotes(searchController.text, 
+                        Hive.box<Note>('notes').values.toList().cast<Note>());
+                  },
+                  context: context,
+                  showAllOption: true,
+                  isForCharacters: false
+                ),
               Expanded(
                 child: buildNotesList(
                   isSearching || selectedTag != null || selectedCharacter != null

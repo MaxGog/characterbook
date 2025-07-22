@@ -1,7 +1,7 @@
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/models/character_model.dart';
 import 'package:characterbook/ui/widgets/items/character_card.dart';
-import 'package:characterbook/ui/widgets/tag_filter.dart';
+import 'package:characterbook/ui/widgets/tags/tag_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -64,7 +64,8 @@ class _CharacterListViewState extends State<CharacterListView> {
             tags: widget.tags,
             selectedTag: widget.selectedTag,
             onTagSelected: widget.onTagSelected,
-            allCharacters: widget.allCharacters,
+            context: context,
+            isForCharacters: true
           ),
         Expanded(
           child: _buildContent(theme),

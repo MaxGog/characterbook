@@ -3,7 +3,7 @@ import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/services/folder_service.dart';
 import 'package:characterbook/ui/pages/folders/folder_list_page.dart';
 import 'package:characterbook/ui/widgets/avatar_widget.dart';
-import 'package:characterbook/ui/widgets/build_section.dart';
+import 'package:characterbook/ui/widgets/sections/build_section.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import '../../../generated/l10n.dart';

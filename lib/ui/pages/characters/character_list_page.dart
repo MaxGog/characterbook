@@ -3,6 +3,7 @@ import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/ui/pages/folders/folder_list_page.dart';
 import 'package:characterbook/ui/widgets/mixins/list_page_mixin.dart';
 import 'package:characterbook/ui/widgets/list_views/character_list_view.dart';
+import 'package:characterbook/ui/widgets/mixins/tag_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../../generated/l10n.dart';
@@ -22,28 +23,18 @@ class CharacterListPage extends StatefulWidget {
   State<CharacterListPage> createState() => _CharacterListPageState();
 }
 
-class _CharacterListPageState extends State<CharacterListPage> with ListPageMixin {
+class _CharacterListPageState extends State<CharacterListPage> with ListPageMixin, TagMixin<Character> {
   List<Character> filteredCharacters = [];
   String? selectedTag;
 
+  @override
   List<String> generateTags(List<Character> characters) {
-    final s = S.of(context);
-    final allTags = <String>{
-      s.male, s.female, s.another,
-      s.children, s.young, s.adults, s.elderly,
-      s.short_name,
-      s.a_to_z, s.z_to_a, s.age_asc, s.age_desc
-    };
-
-    for (final character in characters) {
-      allTags.addAll(character.tags);
-    }
-
-    return allTags.toList();
+    return generateAllTags(characters, context, (c) => c.tags);
   }
 
+  bool _isShortName(Character c) => c.name.length <= 4;
+
   void filterCharacters(String query, List<Character> allCharacters) {
-    final s = S.of(context);
     final queryLower = query.toLowerCase();
     
     setState(() {
@@ -53,32 +44,11 @@ class _CharacterListPageState extends State<CharacterListPage> with ListPageMixi
             character.age.toString().contains(query) ||
             character.tags.any((tag) => tag.toLowerCase().contains(queryLower));
 
-        if (selectedTag == null) return matchesSearch;
-
-        final isSpecialTag = [
-          s.male, s.female, s.another,
-          s.children, s.young, s.adults, s.elderly,
-          s.short_name,
-          s.a_to_z, s.z_to_a, s.age_asc, s.age_desc
-        ].contains(selectedTag);
-
-        if (isSpecialTag) {
-          return matchesSearch && switch (selectedTag) {
-            _ when selectedTag == s.male => character.gender == 'male',
-            _ when selectedTag == s.female => character.gender == 'female',
-            _ when selectedTag == s.another => character.gender == 'another',
-            _ when selectedTag == s.short_name => character.name.length <= 4,
-            _ when selectedTag == s.children => character.age < 18,
-            _ when selectedTag == s.young => character.age < 30,
-            _ when selectedTag == s.adults => character.age < 50,
-            _ when selectedTag == s.elderly => character.age >= 50,
-            _ => true,
-          };
-        } else {
-          return matchesSearch && character.tags.contains(selectedTag);
-        }
+        return matchesSearch && matchesTagFilter(
+          selectedTag, context, character, (c) => c.tags, _isShortName);
       }).toList();
 
+      final s = S.of(context);
       if (selectedTag == s.a_to_z) {
         filteredCharacters.sort((a, b) => a.name.compareTo(b.name));
       } else if (selectedTag == s.z_to_a) {

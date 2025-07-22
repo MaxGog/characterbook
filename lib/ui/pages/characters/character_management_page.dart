@@ -1,4 +1,7 @@
 import 'dart:typed_data';
+import 'package:characterbook/ui/handlers/unsaved_changes_handler.dart';
+import 'package:characterbook/ui/widgets/folder_selector_widget.dart';
+import 'package:characterbook/ui/widgets/tags/tags_input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
@@ -30,21 +33,18 @@ class CharacterEditPage extends StatefulWidget {
   State<CharacterEditPage> createState() => _CharacterEditPageState();
 }
 
-class _CharacterEditPageState extends State<CharacterEditPage>  {
+class _CharacterEditPageState extends State<CharacterEditPage> with UnsavedChangesHandler {
   final _formKey = GlobalKey<FormState>();
   final _picker = ImagePicker();
   late final CharacterService _characterService;
+  late final FolderService _folderService;
 
   late Character _character;
   late List<Race> _races;
   late List<CustomField> _customFields;
   late List<Uint8List> _additionalImages;
-  bool _hasUnsavedChanges = false;
-
-  late final FolderService _folderService;
   List<Folder> _characterFolders = [];
   Folder? _selectedFolder;
-
   List<String> _tags = [];
   final TextEditingController _tagController = TextEditingController();
 
@@ -56,8 +56,7 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
     _initializeFields();
     _loadRaces();
     _loadFolders();
-    _hasUnsavedChanges = widget.character == null;
-    _tags = List.from(widget.character?.tags ?? []);
+    hasUnsavedChanges = widget.character == null;
   }
 
   @override
@@ -65,6 +64,9 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
     _tagController.dispose();
     super.dispose();
   }
+
+  @override
+  Future<void> saveChanges() async => await _saveCharacter();
 
 
   Future<void> _loadFolders() async {
@@ -130,7 +132,7 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
           } else {
             _character.referenceImageBytes = bytes;
           }
-          _hasUnsavedChanges = true;
+          hasUnsavedChanges = true;
         });
         await _updateCharacter();
       }
@@ -150,7 +152,7 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
         final bytes = await image.readAsBytes();
         setState(() {
           _additionalImages.add(bytes);
-          _hasUnsavedChanges = true;
+          hasUnsavedChanges = true;
         });
         await _updateCharacter();
       }
@@ -162,7 +164,7 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
   void _removeAdditionalImage(int index) {
     setState(() {
       _additionalImages.removeAt(index);
-      _hasUnsavedChanges = true;
+      hasUnsavedChanges = true;
     });
     _updateCharacter();
   }
@@ -211,7 +213,7 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
           }
         }
 
-        setState(() => _hasUnsavedChanges = false);
+        setState(() => hasUnsavedChanges = false);
 
         if (mounted) Navigator.pop(context);
       } catch (e) {
@@ -245,34 +247,10 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-
     return WillPopScope(
-      onWillPop: () async {
-        if (!_hasUnsavedChanges) return true;
-        final shouldSave = await UnsavedChangesDialog().show(context);
-        if (shouldSave == null) return false;
-        if (shouldSave) await _saveCharacter();
-        return true;
-      },
+      onWillPop: () => handleUnsavedChanges(context),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            widget.character == null
-                ? widget.template == null
-                ? S.of(context).new_character
-                : '${S.of(context).new_character} (${S.of(context).from_template})'
-                : S.of(context).edit,
-            style: textTheme.titleLarge,
-          ),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.save),
-              onPressed: _saveCharacter,
-              tooltip: S.of(context).save,
-            ),
-          ],
-        ),
+        appBar: _buildAppBar(),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Form(
@@ -280,131 +258,47 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildTagsInput(context),
+                TagsInputWidget(
+                  tags: _tags,
+                  onTagsChanged: (tags) {
+                    setState(() {
+                      _tags = tags;
+                      hasUnsavedChanges = true;
+                    });
+                  },
+                ),
                 const SizedBox(height: 24),
-                if (widget.template != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Chip(
-                      label: Text(
-                        '${S.of(context).template}: ${widget.template!.name}',
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onPrimaryContainer,
-                        ),
-                      ),
-                      backgroundColor: colorScheme.primaryContainer,
-                    ),
-                  ),
+                if (widget.template != null) _buildTemplateChip(),
                 AvatarPicker(
                   currentAvatar: _character.imageBytes,
                   onAvatarChanged: (bytes) {
                     setState(() {
                       _character.imageBytes = bytes;
-                      _hasUnsavedChanges = true;
+                      hasUnsavedChanges = true;
                     });
                     _updateCharacter();
                   },
                 ),
                 const SizedBox(height: 24),
-                CustomTextField(
-                  label: S.of(context).name,
-                  initialValue: _character.name,
-                  isRequired: true,
-                  onSaved: (value) => _character.name = value!,
-                  onChanged: (_) => _hasUnsavedChanges = true,
-                ),
+                _buildNameField(),
                 if (_characterFolders.isNotEmpty) ...[
                   const SizedBox(height: 16),
-                  InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () => _selectFolder(context),
-                    child: InputDecorator(
-                      decoration: InputDecoration(
-                        labelText: S.of(context).folder,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                        filled: true,
-                        fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.folder_outlined,
-                            color: Theme.of(context).colorScheme.primary,
-                            size: 24,
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Text(
-                              _selectedFolder?.name ?? S.of(context).no_folder_selected,
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: _selectedFolder == null 
-                                  ? Theme.of(context).colorScheme.onSurface 
-                                  : Theme.of(context).colorScheme.onSurface,
-                              ),
-                            ),
-                          ),
-                          if (_selectedFolder != null)
-                            IconButton(
-                              icon: Icon(
-                                Icons.close,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              ),
-                              style: IconButton.styleFrom(
-                                visualDensity: VisualDensity.compact,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _selectedFolder = null;
-                                  _character.folderId = null;
-                                  _hasUnsavedChanges = true;
-                                });
-                              },
-                            ),
-                        ],
-                      ),
-                    ),
+                  FolderSelectorWidget(
+                    selectedFolder: _selectedFolder,
+                    onFolderSelected: (folder) {
+                      setState(() {
+                        _selectedFolder = folder;
+                        _character.folderId = folder?.id;
+                        hasUnsavedChanges = true;
+                      });
+                    },
+                    folderService: _folderService,
+                    folderType: FolderType.character,
                   ),
                 ],
                 const SizedBox(height: 16),
                 if (_shouldShowField('age') || _shouldShowField('gender'))
-                  Row(
-                    children: [
-                      if (_shouldShowField('age'))
-                        Expanded(
-                          child: CustomTextField(
-                            label: S.of(context).age,
-                            initialValue: _character.age.toString(),
-                            isRequired: _shouldShowField('age'),
-                            keyboardType: TextInputType.number,
-                            validator: _shouldShowField('age') ? (value) {
-                              if (value?.isEmpty ?? true) return S.of(context).enter_age;
-                              final age = int.tryParse(value!);
-                              if (age == null || age <= 0) return S.of(context).invalid_age;
-                              return null;
-                            } : null,
-                            onSaved: _shouldShowField('age')
-                                ? (value) => _character.age = int.parse(value!)
-                                : null,
-                            onChanged: (_) => _hasUnsavedChanges = true,
-                          ),
-                        ),
-                      if (_shouldShowField('age') && _shouldShowField('gender'))
-                        const SizedBox(width: 16),
-                      if (_shouldShowField('gender'))
-                        Expanded(
-                          child: GenderSelectorField(
-                            initialValue: _normalizeGender(_character.gender, context),
-                            onChanged: (value) {
-                              _character.gender = value!;
-                              _hasUnsavedChanges = true;
-                            },
-                          ),
-                        ),
-                    ],
-                  ),
+                  _buildAgeAndGenderRow(),
                 if (_shouldShowField('age') || _shouldShowField('gender'))
                   const SizedBox(height: 16),
                 if (_shouldShowField('race'))
@@ -412,7 +306,7 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
                     initialRace: _character.race,
                     onChanged: (race) {
                       _character.race = race;
-                      _hasUnsavedChanges = true;
+                      hasUnsavedChanges = true;
                     },
                   ),
                 if (_shouldShowField('race')) const SizedBox(height: 16),
@@ -425,7 +319,7 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
                     initialValue: _character.appearance,
                     alignLabel: true,
                     onSaved: (value) => _character.appearance = value!,
-                    onChanged: (_) => _hasUnsavedChanges = true,
+                    onChanged: (_) => hasUnsavedChanges = true,
                     maxLines: 5,
                   ),
                 if (_shouldShowField('appearance')) const SizedBox(height: 16),
@@ -438,7 +332,7 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
                     initialValue: _character.personality,
                     alignLabel: true,
                     onSaved: (value) => _character.personality = value!,
-                    onChanged: (_) => _hasUnsavedChanges = true,
+                    onChanged: (_) => hasUnsavedChanges = true,
                     maxLines: 4,
                   ),
                 if (_shouldShowField('personality')) const SizedBox(height: 16),
@@ -448,7 +342,7 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
                     initialValue: _character.biography,
                     alignLabel: true,
                     onSaved: (value) => _character.biography = value!,
-                    onChanged: (_) => _hasUnsavedChanges = true,
+                    onChanged: (_) => hasUnsavedChanges = true,
                     maxLines: 7,
                   ),
                 if (_shouldShowField('biography')) const SizedBox(height: 16),
@@ -458,7 +352,7 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
                     initialValue: _character.abilities,
                     alignLabel: true,
                     onSaved: (value) => _character.abilities = value!,
-                    onChanged: (_) => _hasUnsavedChanges = true,
+                    onChanged: (_) => hasUnsavedChanges = true,
                     maxLines: 7,
                   ),
                 if (_shouldShowField('abilities')) const SizedBox(height: 16),
@@ -468,7 +362,7 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
                     initialValue: _character.other,
                     alignLabel: true,
                     onSaved: (value) => _character.other = value!,
-                    onChanged: (_) => _hasUnsavedChanges = true,
+                    onChanged: (_) => hasUnsavedChanges = true,
                     maxLines: 5,
                   ),
                 if (_shouldShowField('other')) const SizedBox(height: 32),
@@ -476,7 +370,7 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
                   initialFields: _customFields,
                   onFieldsChanged: (fields) {
                     _customFields = fields;
-                    _hasUnsavedChanges = true;
+                    hasUnsavedChanges = true;
                   },
                 ),
                 const SizedBox(height: 16),
@@ -490,6 +384,27 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
           ),
         ),
       ),
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      title: Text(
+        widget.character == null
+            ? widget.template == null
+                ? S.of(context).new_character
+                : '${S.of(context).new_character} (${S.of(context).from_template})'
+            : S.of(context).edit,
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
+      centerTitle: true,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.save),
+          onPressed: _saveCharacter,
+          tooltip: S.of(context).save,
+        ),
+      ],
     );
   }
 
@@ -554,175 +469,6 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
     );
   }
 
-  Widget _buildTagsInput(BuildContext context) {
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          S.of(context).tags,
-          style: theme.textTheme.titleMedium,
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: _tags.map((tag) => Chip(
-            label: Text(tag),
-            deleteIcon: const Icon(Icons.close, size: 18),
-            onDeleted: () {
-              setState(() {
-                _tags.remove(tag);
-                _hasUnsavedChanges = true;
-              });
-            },
-          )).toList(),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _tagController,
-                decoration: InputDecoration(
-                  hintText: S.of(context).add_tag,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  )
-                ),
-                onSubmitted: (tag) {
-                  if (tag.trim().isNotEmpty && !_tags.contains(tag)) {
-                    setState(() {
-                      _tags.add(tag.trim());
-                      _hasUnsavedChanges = true;
-                    });
-                    _tagController.clear();
-                  }
-                },
-              ),
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                final tag = _tagController.text.trim();
-                if (tag.isNotEmpty && !_tags.contains(tag)) {
-                  setState(() {
-                    _tags.add(tag);
-                    _hasUnsavedChanges = true;
-                  });
-                  _tagController.clear();
-                }
-              },
-              tooltip: S.of(context).add_tag,
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Future<void> _selectFolder(BuildContext context) async {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
-
-    final selected = await showModalBottomSheet<Folder>(
-      context: context,
-      backgroundColor: colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: 40,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Text(
-                    S.of(context).select_folder,
-                    style: textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Positioned(
-                    right: 0,
-                    child: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context),
-                      style: IconButton.styleFrom(
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Divider(),
-            const SizedBox(height: 8),
-
-            Expanded(
-              child: Material(
-                color: Colors.transparent,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: _characterFolders.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      return ListTile(
-                        leading: Icon(
-                          Icons.folder_off,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        title: Text(
-                          S.of(context).none,
-                          style: textTheme.bodyLarge,
-                        ),
-                        onTap: () => Navigator.pop(context, null),
-                      );
-                    }
-
-                    final folder = _characterFolders[index - 1];
-                    return ListTile(
-                      leading: Icon(
-                        Icons.folder,
-                        color: colorScheme.primary,
-                      ),
-                      title: Text(
-                        folder.name,
-                        style: textTheme.bodyLarge,
-                      ),
-                      trailing: _selectedFolder?.id == folder.id
-                          ? Icon(
-                              Icons.check,
-                              color: colorScheme.primary,
-                            )
-                          : null,
-                      onTap: () => Navigator.pop(context, folder),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    if (selected != null || _selectedFolder != null) {
-      setState(() {
-        _selectedFolder = selected;
-        _character.folderId = selected?.id;
-        _hasUnsavedChanges = true;
-      });
-    }
-  }
-
   Widget _buildReferenceImageSection(BuildContext context, ColorScheme colorScheme, TextTheme textTheme) {
     return Column(
       children: [
@@ -757,6 +503,86 @@ class _CharacterEditPageState extends State<CharacterEditPage>  {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildTemplateChip() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Chip(
+        label: Text(
+          '${S.of(context).template}: ${widget.template!.name}',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      ),
+    );
+  }
+
+  Widget _buildNameField() {
+    return CustomTextField(
+      label: S.of(context).name,
+      initialValue: _character.name,
+      isRequired: true,
+      onSaved: (value) => _character.name = value!,
+      onChanged: (_) => hasUnsavedChanges = true,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return S.of(context).name;
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildAgeAndGenderRow() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            if (_shouldShowField('age'))
+              Expanded(child: _buildAgeField()),
+            if (_shouldShowField('age') && _shouldShowField('gender'))
+              const SizedBox(width: 16),
+            if (_shouldShowField('gender'))
+              Expanded(child: _buildGenderField()),
+          ],
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  Widget _buildAgeField() {
+    return CustomTextField(
+      label: S.of(context).age,
+      initialValue: _character.age?.toString() ?? '',
+      isRequired: _shouldShowField('age'),
+      keyboardType: TextInputType.number,
+      validator: _shouldShowField('age') ? (value) {
+        if (value?.isEmpty ?? true) return S.of(context).enter_age;
+        final age = int.tryParse(value!);
+        if (age == null || age <= 0) return S.of(context).invalid_age;
+        return null;
+      } : null,
+      onSaved: _shouldShowField('age')
+          ? (value) => _character.age = int.tryParse(value ?? '0') ?? 0
+          : null,
+      onChanged: (_) => hasUnsavedChanges = true,
+    );
+  }
+
+  Widget _buildGenderField() {
+    return GenderSelectorField(
+      initialValue: _normalizeGender(_character.gender, context),
+      onChanged: (value) {
+        setState(() {
+          _character.gender = value!;
+          hasUnsavedChanges = true;
+        });
+      },
     );
   }
 }
