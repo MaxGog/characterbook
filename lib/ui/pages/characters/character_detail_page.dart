@@ -6,6 +6,7 @@ import 'package:characterbook/ui/widgets/avatar_widget.dart';
 import 'package:characterbook/ui/widgets/sections/build_section.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import '../../../generated/l10n.dart';
 import '../../../models/character_model.dart';
 import '../../../models/note_model.dart';
@@ -65,6 +66,16 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
       _genderFemale => s.female,
       _genderAnother => s.another,
       _ => gender,
+    };
+  }
+
+  Color _getGenderColor(String gender) {
+    final theme = Theme.of(context);
+    return switch (gender) {
+      _genderMale => theme.colorScheme.primaryContainer,
+      _genderFemale => theme.colorScheme.tertiaryContainer,
+      _genderAnother => theme.colorScheme.secondaryContainer,
+      _ => theme.colorScheme.surfaceContainerHighest,
     };
   }
 
@@ -298,24 +309,32 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
     );
   }
 
-  Widget _buildInfoRow(String label, String value, IconData icon) {
+  Widget _buildInfoRow(String label, String value, IconData icon, {Color? valueColor}) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: Theme.of(context).colorScheme.primary, size: 20),
+          Icon(icon, color: theme.colorScheme.primary, size: 20),
           const SizedBox(width: 8),
           SizedBox(
             width: 80,
             child: Text(
               label,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(width: 8),
-          Expanded(child: SelectableText(value)),
+          Expanded(
+            child: SelectableText(
+              value,
+              style: valueColor != null 
+                ? TextStyle(color: valueColor) 
+                : null,
+            ),
+          ),
         ],
       ),
     );
@@ -455,56 +474,55 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                '${S.of(context).last_updated}: ${widget.character.lastEdited}',
-                style: textTheme.bodySmall,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Icon(
+                  Icons.update,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '${S.of(context).last_updated}: ${_formatLastEdited(widget.character.lastEdited)}',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  )
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
 
-            if (_currentFolder != null) ...[
-              Center( 
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FoldersScreen(
-                          folderType: FolderType.character,
-                          //initialFolderId: _currentFolder!.id,
-                        ),
-                      ),
-                    );
-                  },
-                  child: Chip(
-                    avatar: Icon(Icons.folder, color: Theme.of(context).colorScheme.onPrimary),
-                    label: Text(
-                      _currentFolder!.name,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                    ),
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                )
-              ),
-              const SizedBox(height: 16),
-            ],
-            if (widget.character.tags.isNotEmpty) ...[
-              const SizedBox(height: 16),
+           if (_currentFolder != null || widget.character.tags.isNotEmpty)
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: widget.character.tags.map((tag) => Chip(
-                  label: Text(tag),
-                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                )).toList(),
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  if (_currentFolder != null)
+                    InputChip(
+                      avatar: Icon(Icons.folder, size: 18, 
+                          color: theme.colorScheme.onSecondaryContainer),
+                      label: Text(_currentFolder!.name),
+                      backgroundColor: theme.colorScheme.secondaryContainer,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FoldersScreen(
+                              folderType: FolderType.character,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ...widget.character.tags.map((tag) => InputChip(
+                    label: Text(tag),
+                    backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                    onPressed: () {},
+                  )),
+                ],
               ),
-              const SizedBox(height: 16),
-            ],
+            const SizedBox(height: 16),
 
             _buildSectionTitle(S.of(context).basic_info, 'basic', Icons.info),
             if (_expandedSections['basic']!) ...[
@@ -524,7 +542,12 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
               const SizedBox(height: 24),
               _buildInfoRow(S.of(context).name, widget.character.name, Icons.badge),
               _buildInfoRow(S.of(context).age, '${widget.character.age} ${S.of(context).years}', Icons.cake),
-              _buildInfoRow(S.of(context).gender, _getLocalizedGender(widget.character.gender), Icons.transgender),
+              _buildInfoRow(
+                S.of(context).gender, 
+                _getLocalizedGender(widget.character.gender), 
+                Icons.transgender,
+                valueColor: _getGenderColor(widget.character.gender),
+              ),
               if (widget.character.race != null)
                 _buildInfoRow(S.of(context).race, widget.character.race!.name, Icons.people),
               const SizedBox(height: 16),
@@ -572,5 +595,9 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
         ),
       ),
     );
+  }
+
+  String _formatLastEdited(DateTime date) {
+    return DateFormat('dd.MM.yyyy').format(date);
   }
 }

@@ -40,6 +40,7 @@ class RaceCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: onTap,
+        onLongPress: onLongPress,
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(
@@ -55,8 +56,11 @@ class RaceCard extends StatelessWidget {
                       children: [
                         Text(race.name, style: textTheme.bodyLarge),
                         Text(
-                          race.description.isNotEmpty ? race.description : S.of(context).no_description,
-                          style: textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface),
+                          race.description.isNotEmpty 
+                              ? race.description 
+                              : S.of(context).no_description,
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -64,32 +68,65 @@ class RaceCard extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.more_vert, color: theme.colorScheme.onSurfaceVariant),
+                    icon: Icon(
+                      Icons.more_vert, 
+                      color: theme.colorScheme.onSurfaceVariant),
                     onPressed: onLongPress,
                   ),
                 ],
               ),
-              if (folder != null) ...[
+              if (folder != null || race.tags.isNotEmpty) ...[
                 const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
                   child: Row(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.folder, 
-                        size: 16, 
-                        color: theme.colorScheme.onPrimaryContainer),
-                      const SizedBox(width: 4),
-                      Text(
-                        folder.name,
-                        style: textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onPrimaryContainer,
+                      if (folder != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.folder, 
+                                size: 16, 
+                                color: theme.colorScheme.onPrimaryContainer),
+                              const SizedBox(width: 4),
+                              Text(
+                                folder.name,
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onPrimaryContainer,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                      if (folder != null && race.tags.isNotEmpty)
+                        const SizedBox(width: 8),
+                      ...race.tags.map((tag) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surfaceContainerHighest,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              tag,
+                              style: textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
                     ],
                   ),
                 ),

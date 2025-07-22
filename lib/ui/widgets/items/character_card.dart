@@ -65,11 +65,26 @@ class CharacterCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(character.name, style: theme.textTheme.bodyLarge),
-                        Text(
-                          '${character.age} ${S.of(context).years}, ${_getLocalizedGender(context, character.gender)}',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface,
-                          ),
+                        Row(
+                          children: [
+                            // Возраст с иконкой
+                            _buildInfoChip(
+                              context,
+                              icon: Icons.cake_rounded,
+                              text: '${character.age} ${S.of(context).years}',
+                              color: theme.colorScheme.tertiaryContainer,
+                              iconColor: theme.colorScheme.onTertiaryContainer,
+                            ),
+                            const SizedBox(width: 8),
+                            // Пол с иконкой
+                            _buildInfoChip(
+                              context,
+                              icon: _getGenderIcon(character.gender),
+                              text: _getLocalizedGender(context, character.gender),
+                              color: _getGenderColor(context, character.gender),
+                              iconColor: _getGenderIconColor(context, character.gender),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -81,27 +96,55 @@ class CharacterCard extends StatelessWidget {
                   ),
                 ],
               ),
-              if (folder != null) ...[
+              if (folder != null || character.tags.isNotEmpty) ...[
                 const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
                   child: Row(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.folder, 
-                        size: 16, 
-                        color: theme.colorScheme.onPrimaryContainer),
-                      const SizedBox(width: 4),
-                      Text(
-                        folder.name,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onPrimaryContainer,
+                      if (folder != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.folder, 
+                                size: 16, 
+                                color: theme.colorScheme.onPrimaryContainer),
+                              const SizedBox(width: 4),
+                              Text(
+                                folder.name,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onPrimaryContainer,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                      if (folder != null && character.tags.isNotEmpty)
+                        const SizedBox(width: 8),
+                      ...character.tags.map((tag) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surfaceContainerHighest,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              tag,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
                     ],
                   ),
                 ),
@@ -113,6 +156,35 @@ class CharacterCard extends StatelessWidget {
     );
   }
 
+  Widget _buildInfoChip(
+    BuildContext context, {
+    required IconData icon,
+    required String text,
+    required Color color,
+    required Color iconColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: iconColor),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   String _getLocalizedGender(BuildContext context, String genderKey) {
     final s = S.of(context);
     return switch (genderKey) {
@@ -120,6 +192,32 @@ class CharacterCard extends StatelessWidget {
       'female' => s.female,
       'another' => s.another,
       _ => genderKey,
+    };
+  }
+
+  IconData _getGenderIcon(String genderKey) {
+    return switch (genderKey) {
+      'male' => Icons.male_rounded,
+      'female' => Icons.female_rounded,
+      _ => Icons.transgender_rounded,
+    };
+  }
+
+  Color _getGenderColor(BuildContext context, String genderKey) {
+    final theme = Theme.of(context);
+    return switch (genderKey) {
+      'male' => theme.colorScheme.primaryContainer,
+      'female' => theme.colorScheme.errorContainer,
+      _ => theme.colorScheme.secondaryContainer,
+    };
+  }
+
+  Color _getGenderIconColor(BuildContext context, String genderKey) {
+    final theme = Theme.of(context);
+    return switch (genderKey) {
+      'male' => theme.colorScheme.onPrimaryContainer,
+      'female' => theme.colorScheme.onErrorContainer,
+      _ => theme.colorScheme.onSecondaryContainer,
     };
   }
 }

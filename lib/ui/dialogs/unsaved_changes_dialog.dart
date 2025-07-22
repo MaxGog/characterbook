@@ -17,7 +17,7 @@ class UnsavedChangesDialog {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text(s.cancel),
+            child: Text(s.discard_changes),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),

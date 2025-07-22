@@ -21,7 +21,6 @@ import '../../widgets/fields/custom_text_field.dart';
 import '../../widgets/fields/gender_selector_field.dart';
 import '../../widgets/fields/race_selector_field.dart';
 import '../../widgets/save_button_widget.dart';
-import '../../dialogs/unsaved_changes_dialog.dart';
 
 class CharacterEditPage extends StatefulWidget {
   final Character? character;
