@@ -170,13 +170,4 @@ class SearchResultItem extends StatelessWidget {
       );
     }
   }
-
-  IconData _getFolderIcon(FolderType type) {
-    return switch (type) {
-      FolderType.character => Icons.person_outline,
-      FolderType.race => Icons.people_outline,
-      FolderType.note => Icons.note_outlined,
-      FolderType.template => Icons.library_books_outlined,
-    };
-  }
 }
