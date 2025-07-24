@@ -38,15 +38,8 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.15'
-      config.build_settings['FRAMEWORK_SEARCH_PATHS'] = [
-        '$(inherited)',
-        '$(PROJECT_DIR)/../Flutter/ephemeral'
-      ]
-      config.build_settings['LIBRARY_SEARCH_PATHS'] = [
-        '$(inherited)',
-        '$(PROJECT_DIR)/../Flutter/ephemeral'
-      ]
+      config.build_settings['ARCHS'] = 'x86_64 arm64'
+      config.build_settings['ONLY_ACTIVE_ARCH'] = 'NO'
     end
   end
 end
