@@ -223,8 +223,10 @@ class ContextMenu extends StatelessWidget {
               onEdit();
             },
           ),
-          if (showCopy) ...[
-            Divider(height: 1, color: theme.colorScheme.surfaceContainerHighest),
+          
+          Divider(height: 1, color: theme.colorScheme.surfaceContainerHighest),
+          
+          if (showCopy) 
             ListTile(
               leading: Icon(Icons.copy, color: theme.colorScheme.onSurface),
               title: Text(s.copy, style: theme.textTheme.bodyLarge),
@@ -233,20 +235,8 @@ class ContextMenu extends StatelessWidget {
                 _copyToClipboard(context);
               },
             ),
-          ],
-          if (showExportPdf) ...[
-            Divider(height: 1, color: theme.colorScheme.surfaceContainerHighest),
-            ListTile(
-              leading: Icon(Icons.picture_as_pdf, color: theme.colorScheme.onSurface),
-              title: Text(s.export, style: theme.textTheme.bodyLarge),
-              onTap: () {
-                Navigator.pop(context);
-                _exportToPdf(context);
-              },
-            ),
-          ],
-          if (showShare) ...[
-            Divider(height: 1, color: theme.colorScheme.surfaceContainerHighest),
+          
+          if (showShare)
             ListTile(
               leading: Icon(Icons.share, color: theme.colorScheme.onSurface),
               title: Text(s.share_character, style: theme.textTheme.bodyLarge),
@@ -255,8 +245,19 @@ class ContextMenu extends StatelessWidget {
                 _shareAsFile(context);
               },
             ),
-          ],
+          
+          if (showExportPdf)
+            ListTile(
+              leading: Icon(Icons.picture_as_pdf, color: theme.colorScheme.onSurface),
+              title: Text(s.export, style: theme.textTheme.bodyLarge),
+              onTap: () {
+                Navigator.pop(context);
+                _exportToPdf(context);
+              },
+            ),
+          
           Divider(height: 1, color: theme.colorScheme.surfaceContainerHighest),
+          
           ListTile(
             leading: Icon(Icons.delete, color: theme.colorScheme.error),
             title: Text(s.delete, style: theme.textTheme.bodyLarge?.copyWith(
@@ -267,6 +268,7 @@ class ContextMenu extends StatelessWidget {
               onDelete();
             },
           ),
+          
           const SizedBox(height: 8),
         ],
       ),

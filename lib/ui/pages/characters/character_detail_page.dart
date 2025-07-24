@@ -539,6 +539,121 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
     );
   }
 
+  Widget _buildBasicInfoSection() {
+    final theme = Theme.of(context);
+    return Column(
+      children: [
+        Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Container(
+              height: 40,
+              width: 2,
+              color: theme.colorScheme.outline,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: theme.colorScheme.surfaceContainer,
+              ),
+              padding: const EdgeInsets.all(8),
+              child: InkWell(
+                onTap: widget.character.imageBytes != null
+                    ? () => _showFullImage(
+                        widget.character.imageBytes!, 
+                        S.of(context).character_avatar)
+                    : null,
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: theme.colorScheme.outline,
+                      width: 1,
+                    ),
+                  ),
+                  child: AvatarWidget.character(
+                    imageBytes: widget.character.imageBytes,
+                    size: 80,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        
+        Container(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainer,
+            border: Border.all(
+              color: theme.colorScheme.outline),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              _buildInfoRow(S.of(context).name, widget.character.name, Icons.badge),
+              Divider(height: 20, color: theme.colorScheme.outline),
+              _buildInfoRow(S.of(context).age, '${widget.character.age} ${S.of(context).years}', Icons.cake),
+              Divider(height: 20, color: theme.colorScheme.outline),
+              _buildInfoRow(
+                S.of(context).gender, 
+                _getLocalizedGender(widget.character.gender), 
+                Icons.transgender,
+                valueColor: _getGenderColor(widget.character.gender),
+              ),
+              if (widget.character.race != null) ...[
+                Divider(height: 20, color: theme.colorScheme.outline),
+                _buildInfoRow(S.of(context).race, widget.character.race!.name, Icons.people),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showShareMenu(BuildContext context) {
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+    final RenderBox button = context.findRenderObject() as RenderBox;
+    
+    final position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        button.localToGlobal(button.size.topRight(Offset.zero)),
+        button.localToGlobal(button.size.bottomRight(Offset.zero)),
+      ),
+      Offset.zero & overlay.size,
+    );
+
+    showMenu<String>(
+      context: context,
+      position: position,
+      items: [
+        PopupMenuItem<String>(
+          value: 'file',
+          child: ListTile(
+            leading: Icon(Icons.insert_drive_file, color: Theme.of(context).colorScheme.onSurfaceVariant),
+            title: Text(S.of(context).file_character),
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'pdf',
+          child: ListTile(
+            leading: Icon(Icons.picture_as_pdf, color: Theme.of(context).colorScheme.onSurfaceVariant),
+            title: Text(S.of(context).file_pdf),
+          ),
+        ),
+      ],
+    ).then((value) {
+      if (value != null) {
+        switch (value) {
+          case 'file': _exportToJson(); break;
+          case 'pdf': _exportToPdf(); break;
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -546,41 +661,62 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.character.name, style: textTheme.headlineSmall?.copyWith(
-          fontWeight: FontWeight.bold)),
+        title: Text(
+          widget.character.name,
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
         actions: [
+          IconButton(
+            icon: Icon(Icons.share, color: Theme.of(context).colorScheme.onSurface),
+            onPressed: () => _showShareMenu(context),
+            tooltip: S.of(context).share_character,
+          ),
+
           PopupMenuButton<String>(
-            icon: const Icon(Icons.share),
+            icon: Icon(Icons.more_vert, color: Theme.of(context).colorScheme.onSurface),
+            position: PopupMenuPosition.under,
+            surfaceTintColor: Theme.of(context).colorScheme.surfaceContainerHighest,
             onSelected: (value) => switch (value) {
-              'file' => _exportToJson(),
-              'pdf' => _exportToPdf(),
+              'copy' => _copyToClipboard(),
+              'edit' => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CharacterEditPage(character: widget.character),
+                ),
+              ),
+              'delete' => _handleDelete(),
               _ => null,
             },
-            tooltip: S.of(context).share_character,
             itemBuilder: (context) => [
-              PopupMenuItem(value: 'file', child: Text(S.of(context).file_character)),
-              PopupMenuItem(value: 'pdf', child: Text(S.of(context).file_pdf)),
-            ],
-          ),
-          IconButton(
-            icon: const Icon(Icons.copy),
-            onPressed: _copyToClipboard,
-            tooltip: S.of(context).copy_character,
-          ),
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CharacterEditPage(character: widget.character),
+              PopupMenuItem<String>(
+                value: 'copy',
+                child: ListTile(
+                  leading: Icon(Icons.copy, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  title: Text(S.of(context).copy_character),
+                ),
               ),
-            ),
-            tooltip: S.of(context).edit_character,
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: _handleDelete,
-            tooltip: S.of(context).delete_character,
+              PopupMenuItem<String>(
+                value: 'edit',
+                child: ListTile(
+                  leading: Icon(Icons.edit, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  title: Text(S.of(context).edit_character),
+                ),
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem<String>(
+                value: 'delete',
+                child: ListTile(
+                  leading: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
+                  title: Text(
+                    S.of(context).delete_character,
+                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -638,35 +774,8 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                 ],
               ),
             const SizedBox(height: 16),
-
-            _buildSectionTitle(S.of(context).basic_info, 'basic', Icons.info),
-            if (_expandedSections['basic']!) ...[
-              Center(
-                child: InkWell(
-                  onTap: widget.character.imageBytes != null
-                      ? () => _showFullImage(
-                          widget.character.imageBytes!, 
-                          S.of(context).character_avatar)
-                      : null,
-                  child: AvatarWidget.character(
-                    imageBytes: widget.character.imageBytes,
-                    size: 80,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              _buildInfoRow(S.of(context).name, widget.character.name, Icons.badge),
-              _buildInfoRow(S.of(context).age, '${widget.character.age} ${S.of(context).years}', Icons.cake),
-              _buildInfoRow(
-                S.of(context).gender, 
-                _getLocalizedGender(widget.character.gender), 
-                Icons.transgender,
-                valueColor: _getGenderColor(widget.character.gender),
-              ),
-              if (widget.character.race != null)
-                _buildInfoRow(S.of(context).race, widget.character.race!.name, Icons.people),
-              const SizedBox(height: 16),
-            ],
+            _buildBasicInfoSection(),
+            const SizedBox(height: 16),
 
             _buildSectionTitle(S.of(context).character_reference, 'reference', Icons.image_search),
             if (_expandedSections['reference']!) ...[

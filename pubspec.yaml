@@ -16,6 +16,7 @@ flutter:
     - assets/fonts/NotoSans-Regular.ttf
     - assets/fonts/NotoSans-Bold.ttf
     - assets/fonts/NotoSans-Italic.ttf
+    - assets/fonts/GoogleSans.ttf
 
 dependencies:
   flutter:

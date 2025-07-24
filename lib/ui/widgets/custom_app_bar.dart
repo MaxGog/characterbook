@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../generated/l10n.dart';
 import '../pages/settings_page.dart';
 
@@ -13,6 +12,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? additionalActions;
   final VoidCallback? onTemplatesPressed;
   final VoidCallback? onViewModePressed;
+  final bool showViewModeToggle;
+  final bool showTemplatesToggle;
 
   const CustomAppBar({
     super.key,
@@ -25,120 +26,150 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.additionalActions,
     this.onTemplatesPressed,
     this.onViewModePressed,
+    this.showViewModeToggle = true,
+    this.showTemplatesToggle = true,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final colorScheme = theme.colorScheme;
     final s = S.of(context);
-
-    final searchAction = IconButton(
-      icon: Icon(isSearching ? Icons.close : Icons.search),
-      onPressed: onSearchToggle,
-      tooltip: s.search,
-    );
-
-    final settingsAction = IconButton(
-      icon: const Icon(Icons.settings_outlined),
-      onPressed: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const SettingsPage()),
-      ),
-      tooltip: s.settings,
-    );
-
-    final List<Widget> allActions = [
-      if (!isSearching && onTemplatesPressed != null)
-        IconButton(
-          icon: const Icon(Icons.library_books_outlined),
-          onPressed: onTemplatesPressed,
-          tooltip: s.templates,
-        ),
-      if (!isSearching && onViewModePressed != null)
-        IconButton(
-          icon: const Icon(Icons.grid_view),
-          onPressed: onViewModePressed,
-          tooltip: s.grid_view,
-        ),
-      ...(additionalActions ?? []),
-    ];
-
-    const int maxVisibleActions = 0;
-    final bool needToHideActions = allActions.length > maxVisibleActions;
-    
-    final List<Widget> visibleActions = needToHideActions
-        ? allActions.take(maxVisibleActions).toList()
-        : allActions;
-
-    final List<Widget> hiddenActions = needToHideActions
-        ? allActions.skip(maxVisibleActions).toList()
-        : [];
 
     return AppBar(
       title: isSearching
-          ? TextField(
-              controller: searchController,
-              autofocus: true,
-              decoration: InputDecoration(
-                hintText: searchHint ?? s.search_hint,
-                border: InputBorder.none,
-                hintStyle: textTheme.bodyLarge?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
-              ),
-              style: textTheme.bodyLarge,
-              onChanged: onSearchChanged,
-            )
+          ? _buildSearchField(context, theme, s)
           : Text(
               title,
-              style: textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontFamily: 'GoogleSans',
+                fontWeight: FontWeight.w500,
+                color: theme.colorScheme.onSurface,
+                letterSpacing: -0.5,
+                shadows: [
+                  Shadow(
+                    blurRadius: 1.0,
+                    color: theme.colorScheme.onSurface,
+                    offset: const Offset(0, 0.5),
+                  ),
+                ],
               ),
             ),
       centerTitle: true,
-      actions: [
-        searchAction,
-        ...visibleActions,
-        settingsAction,
-        if (hiddenActions.isNotEmpty)
-          PopupMenuButton(
-            icon: const Icon(Icons.more_vert),
-            itemBuilder: (context) => hiddenActions
-                .map((action) => PopupMenuItem(
-                      child: _getActionWidget(action),
-                      onTap: () => _triggerAction(action),
-                    ))
-                .toList(),
-          ),
-      ],
+      titleSpacing: 20,
+      elevation: 1,
+      shadowColor: theme.colorScheme.shadow,
+      surfaceTintColor: theme.colorScheme.surface,
+      actions: _buildActions(context, theme, s),
     );
   }
 
-  Widget _getActionWidget(Widget action) {
-    if (action is IconButton) {
-      return ListTile(
-        leading: action.icon,
-        title: Text(action.tooltip ?? ''),
-      );
-    } else if (action is ActionChip) {
-      return ListTile(
-        leading: action.avatar,
-        title: Text(action.label.toString()),
-      );
-    }
-    return action;
+  Widget _buildSearchField(BuildContext context, ThemeData theme, S s) {
+    return SizedBox(
+      height: 40,
+      child: TextField(
+        controller: searchController,
+        autofocus: true,
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(vertical: 0),
+          prefixIcon: Icon(Icons.search, color: theme.colorScheme.onSurfaceVariant),
+          hintText: searchHint ?? s.search_hint,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: theme.colorScheme.surfaceContainerHighest,
+          hintStyle: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        style: theme.textTheme.bodyLarge,
+        onChanged: onSearchChanged,
+      ),
+    );
   }
 
-  void _triggerAction(Widget action) {
-    if (action is IconButton) {
-      action.onPressed?.call();
-    } else if (action is ActionChip) {
-      action.onPressed?.call();
-    } else if (action is GestureDetector && action.onTap != null) {
-      action.onTap?.call();
+  List<Widget> _buildActions(BuildContext context, ThemeData theme, S s) {
+    final actions = <Widget>[];
+
+    if (isSearching) {
+      actions.add(
+        IconButton(
+          icon: Icon(Icons.close, color: theme.colorScheme.onSurface),
+          onPressed: onSearchToggle,
+          tooltip: s.cancel,
+        ),
+      );
+    } else {
+      actions.add(
+        IconButton(
+          icon: Icon(Icons.search, color: theme.colorScheme.onSurface),
+          onPressed: onSearchToggle,
+          tooltip: s.search,
+        ),
+      );
+
+      if (showViewModeToggle && onViewModePressed != null) {
+        actions.add(
+          IconButton(
+            icon: Icon(Icons.grid_view, color: theme.colorScheme.onSurface),
+            onPressed: onViewModePressed,
+            tooltip: s.grid_view,
+          ),
+        );
+      }
+
+      if (showTemplatesToggle && onTemplatesPressed != null) {
+        actions.add(
+          IconButton(
+            icon: Icon(Icons.library_books_outlined, 
+                color: theme.colorScheme.onSurface),
+            onPressed: onTemplatesPressed,
+            tooltip: s.templates,
+          ),
+        );
+      }
+
+      if (additionalActions != null) {
+        actions.addAll(additionalActions!);
+      }
+
+      actions.add(
+        IconButton(
+          icon: Icon(Icons.settings_outlined, 
+              color: theme.colorScheme.onSurface),
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SettingsPage()),
+          ),
+          tooltip: s.settings,
+        ),
+      );
+
+      if (actions.length > 4) {
+        final overflowActions = actions.sublist(3, actions.length - 1);
+        actions.removeRange(3, actions.length - 1);
+        actions.insert(3, _buildOverflowMenu(overflowActions));
+      }
     }
+
+    return actions;
+  }
+
+  Widget _buildOverflowMenu(List<Widget> actions) {
+    return PopupMenuButton(
+      icon: const Icon(Icons.more_vert),
+      itemBuilder: (context) => actions
+          .whereType<IconButton>()
+          .map((action) => PopupMenuItem(
+                child: ListTile(
+                  leading: action.icon,
+                  title: Text(action.tooltip ?? ''),
+                ),
+                onTap: action.onPressed,
+              ))
+          .toList(),
+    );
   }
 
   @override
