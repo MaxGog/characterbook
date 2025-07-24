@@ -234,5 +234,7 @@
   "folder_color": "Folder color",
 
   "tags": "Tags",
-  "add_tag": "Add tag"
+  "add_tag": "Add tag",
+
+  "items": "items"
 }

@@ -226,6 +226,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Импорт шаблона"),
         "invalid_age":
             MessageLookupByLibrary.simpleMessage("Введён неверный возраст"),
+        "items": MessageLookupByLibrary.simpleMessage("элементов"),
         "language": MessageLookupByLibrary.simpleMessage("Язык"),
         "last_updated": MessageLookupByLibrary.simpleMessage("Обновлено"),
         "licenses": MessageLookupByLibrary.simpleMessage("Лицензия"),

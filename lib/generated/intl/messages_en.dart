@@ -204,6 +204,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Import Template"),
         "invalid_age":
             MessageLookupByLibrary.simpleMessage("Invalid age entered"),
+        "items": MessageLookupByLibrary.simpleMessage("items"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
         "last_updated": MessageLookupByLibrary.simpleMessage("Last Updated"),
         "licenses": MessageLookupByLibrary.simpleMessage("Licenses"),

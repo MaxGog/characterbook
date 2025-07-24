@@ -2406,6 +2406,16 @@ class S {
       args: [],
     );
   }
+
+  /// `элементов`
+  String get items {
+    return Intl.message(
+      'элементов',
+      name: 'items',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

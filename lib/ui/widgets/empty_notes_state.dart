@@ -28,10 +28,6 @@ class NotesEmptyState extends StatelessWidget {
                 : '${S.of(context).empty_list} ${S.of(context).posts.toLowerCase()}',
             style: theme.textTheme.bodyLarge,
           ),
-          const SizedBox(height: 8),
-          Text(S.of(context).search_hint,
-            style: theme.textTheme.bodyMedium,
-          ),
           const SizedBox(height: 16),
           Padding(
               padding: const EdgeInsets.only(top: 20),

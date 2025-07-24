@@ -45,6 +45,7 @@ class CharacterListView extends StatefulWidget {
 }
 
 class _CharacterListViewState extends State<CharacterListView> {
+  // ignore: unused_field
   bool _isDragging = false;
 
   @override
