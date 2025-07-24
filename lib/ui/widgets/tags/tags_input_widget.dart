@@ -29,34 +29,38 @@ class _TagsInputWidgetState extends State<TagsInputWidget> {
   @override
   void didUpdateWidget(TagsInputWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.tags != widget.tags) {
-      _currentTags = List.from(widget.tags);
+    if (!_listEquals(oldWidget.tags, widget.tags)) {
+      setState(() {
+        _currentTags = List.from(widget.tags);
+      });
     }
   }
 
-  @override
-  void dispose() {
-    _tagController.dispose();
-    _focusNode.dispose();
-    super.dispose();
+  bool _listEquals(List<String>? a, List<String>? b) {
+    if (a == null) return b == null;
+    if (b == null || a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
   }
 
   void _addTag(String tag) {
     final trimmedTag = tag.trim();
     if (trimmedTag.isNotEmpty && !_currentTags.contains(trimmedTag)) {
       setState(() {
-        _currentTags.add(trimmedTag);
+        _currentTags = [..._currentTags, trimmedTag];
       });
-      widget.onTagsChanged(List.from(_currentTags));
+      widget.onTagsChanged(_currentTags);
       _tagController.clear();
     }
   }
 
   void _removeTag(String tag) {
     setState(() {
-      _currentTags.remove(tag);
+      _currentTags = _currentTags.where((t) => t != tag).toList();
     });
-    widget.onTagsChanged(List.from(_currentTags));
+    widget.onTagsChanged(_currentTags);
   }
 
   @override
@@ -87,12 +91,15 @@ class _TagsInputWidgetState extends State<TagsInputWidget> {
                 label: Text(tag),
                 onDeleted: () => _removeTag(tag),
                 deleteIcon: const Icon(Icons.close, size: 16),
-                side: BorderSide.none,
-                shape: StadiumBorder(
-                  side: BorderSide(
-                    color: theme.colorScheme.outline,
-                  ),
+                side: BorderSide(
+                  color: theme.colorScheme.outline,
+                  width: 1.0,
                 ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                backgroundColor: theme.colorScheme.surface,
+                labelStyle: theme.textTheme.bodyMedium,
               )),
               SizedBox(
                 width: _currentTags.isNotEmpty ? null : double.infinity,
