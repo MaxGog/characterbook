@@ -1,6 +1,10 @@
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/folder_model.dart';
+import 'package:characterbook/models/note_model.dart';
+import 'package:characterbook/models/race_model.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 mixin TagMixin<T> {
   List<String> generateStandardTags(BuildContext context) {
@@ -20,13 +24,46 @@ mixin TagMixin<T> {
   List<String> generateAllTags(List<T> items, BuildContext context, List<String> Function(T) getItemTags) {
     final standardTags = generateStandardTags(context);
     final customTags = items.expand((item) => getItemTags(item)).toSet();
+    final folderTags = generateFolderTags(context);
     
-    return [...standardTags, ...customTags]..sort();
+    return [...folderTags, ...standardTags, ...customTags]..sort();
+  }
+
+  List<String> generateFolderTags(BuildContext context) {
+    final folderBox = Hive.box<Folder>('folders');
+    final folders = folderBox.values.toList();
+    
+    return folders.map((folder) => '${Icons.folder.codePoint}:${folder.name}').toList();
+  }
+
+  bool isFolderTag(String tag) {
+    return tag.startsWith('${Icons.folder.codePoint}:');
+  }
+
+  String getFolderNameFromTag(String tag) {
+    return tag.replaceFirst('${Icons.folder.codePoint}:', '');
   }
 
   bool matchesTagFilter(String? selectedTag, BuildContext context, T item, 
       List<String> Function(T) getItemTags, bool Function(T) isShortName) {
     if (selectedTag == null) return true;
+    
+    if (isFolderTag(selectedTag)) {
+      final folderName = getFolderNameFromTag(selectedTag);
+      final folderBox = Hive.box<Folder>('folders');
+      final folder = folderBox.values.firstWhere(
+        (f) => f.name == folderName,
+      );
+      
+      if (item is Character) {
+        return folder.contentIds.contains(item.key.toString());
+      } else if (item is Note) {
+        return folder.contentIds.contains(item.id);
+      } else if (item is Race) {
+        return folder.contentIds.contains(item.key.toString());
+      }
+          return false;
+    }
     
     final s = S.of(context);
     if (isStandardTag(selectedTag, context)) {

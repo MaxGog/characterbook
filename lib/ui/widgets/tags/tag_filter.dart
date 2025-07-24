@@ -1,14 +1,10 @@
 import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/ui/widgets/mixins/tag_mixin.dart';
 import 'package:flutter/material.dart';
-import 'package:characterbook/models/folder_model.dart';
-
-class TagFilter extends StatelessWidget {
+class TagFilter extends StatelessWidget with TagMixin {
   final List<String> tags;
-  //final List<Folder> folders;
   final String? selectedTag;
-  //final String? selectedFolderId;
   final ValueChanged<String?> onTagSelected;
-  //final ValueChanged<String?> onFolderSelected;
   final BuildContext context;
   final bool showAllOption;
   final bool isForCharacters;
@@ -16,11 +12,8 @@ class TagFilter extends StatelessWidget {
   const TagFilter({
     super.key,
     required this.tags,
-    //required this.folders,
     required this.selectedTag,
-    //required this.selectedFolderId,
     required this.onTagSelected,
-    //required this.onFolderSelected,
     required this.context,
     this.showAllOption = true,
     this.isForCharacters = false,
@@ -39,6 +32,9 @@ class TagFilter extends StatelessWidget {
           ]
         : [];
 
+    final folderTags = generateFolderTags(context);
+    final regularTags = tags.where((tag) => !isFolderTag(tag)).toList();
+
     return SizedBox(
       height: 56,
       child: ListView(
@@ -48,37 +44,38 @@ class TagFilter extends StatelessWidget {
           if (showAllOption)
             FilterChip(
               label: Text(s.all),
-              selected: selectedTag == null, //&& selectedFolderId == null,
-              onSelected: (_) {
-                onTagSelected(null);
-                //onFolderSelected(null);
-              },
+              selected: selectedTag == null,
+              onSelected: (_) => onTagSelected(null),
               shape: StadiumBorder(side: BorderSide(color: theme.colorScheme.outline)),
               showCheckmark: false,
               selectedColor: theme.colorScheme.secondaryContainer,
               labelStyle: theme.textTheme.labelLarge?.copyWith(
-                color: selectedTag == null// && selectedFolderId == null
+                color: selectedTag == null
                     ? theme.colorScheme.onSecondaryContainer
                     : theme.colorScheme.onSurface,
               ),
             ),
-          /*...folders.map((folder) => Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: FilterChip(
-              label: Text(folder.name),
-              selected: selectedFolderId == folder.id,
-              onSelected: (selected) => onFolderSelected(selected ? folder.id : null),
-              shape: StadiumBorder(side: BorderSide(color: theme.colorScheme.outline)),
-              showCheckmark: false,
-              selectedColor: theme.colorScheme.primaryContainer,
-              labelStyle: theme.textTheme.labelLarge?.copyWith(
-                color: selectedFolderId == folder.id
-                    ? theme.colorScheme.onPrimaryContainer
-                    : theme.colorScheme.onSurface,
+          ...folderTags.map((folderTag) {
+            final folderName = getFolderNameFromTag(folderTag);
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: FilterChip(
+                avatar: const Icon(Icons.folder, size: 20),
+                label: Text(folderName),
+                selected: selectedTag == folderTag,
+                onSelected: (selected) => onTagSelected(selected ? folderTag : null),
+                shape: StadiumBorder(side: BorderSide(color: theme.colorScheme.outline)),
+                showCheckmark: false,
+                selectedColor: theme.colorScheme.primaryContainer,
+                labelStyle: theme.textTheme.labelLarge?.copyWith(
+                  color: selectedTag == folderTag
+                      ? theme.colorScheme.onPrimaryContainer
+                      : theme.colorScheme.onSurface,
+                ),
               ),
-            ),
-          )),*/
-          ...tags.map((tag) => Padding(
+            );
+          }),
+          ...regularTags.map((tag) => Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: FilterChip(
               label: Text(tag),
@@ -86,14 +83,26 @@ class TagFilter extends StatelessWidget {
               onSelected: (selected) => onTagSelected(selected ? tag : null),
               shape: StadiumBorder(side: BorderSide(color: theme.colorScheme.outline)),
               showCheckmark: false,
-              selectedColor: standardTags.contains(tag)
-                  ? theme.colorScheme.tertiaryContainer
-                  : theme.colorScheme.secondaryContainer,
+              selectedColor: theme.colorScheme.secondaryContainer,
               labelStyle: theme.textTheme.labelLarge?.copyWith(
                 color: selectedTag == tag
-                    ? standardTags.contains(tag)
-                        ? theme.colorScheme.onTertiaryContainer
-                        : theme.colorScheme.onSecondaryContainer
+                    ? theme.colorScheme.onSecondaryContainer
+                    : theme.colorScheme.onSurface,
+              ),
+            ),
+          )),
+          ...standardTags.map((tag) => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: FilterChip(
+              label: Text(tag),
+              selected: selectedTag == tag,
+              onSelected: (selected) => onTagSelected(selected ? tag : null),
+              shape: StadiumBorder(side: BorderSide(color: theme.colorScheme.outline)),
+              showCheckmark: false,
+              selectedColor: theme.colorScheme.tertiaryContainer,
+              labelStyle: theme.textTheme.labelLarge?.copyWith(
+                color: selectedTag == tag
+                    ? theme.colorScheme.onTertiaryContainer
                     : theme.colorScheme.onSurface,
               ),
             ),
