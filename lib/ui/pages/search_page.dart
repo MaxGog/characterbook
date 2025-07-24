@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:characterbook/ui/pages/folders/folder_list_page.dart';
 import 'package:characterbook/ui/widgets/debouncer.dart';
 import 'package:characterbook/ui/widgets/items/search_result_card.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:characterbook/models/character_model.dart';
 import 'package:characterbook/models/note_model.dart';
 import 'package:characterbook/models/race_model.dart';
 import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/models/folder_model.dart';
 
 import '../../generated/l10n.dart';
 import 'characters/character_management_page.dart';
@@ -15,7 +17,6 @@ import 'notes/note_management_page.dart';
 import 'races/race_management_page.dart';
 import 'templates/template_edit_page.dart';
 import 'settings_page.dart';
-
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -30,11 +31,12 @@ class _SearchPageState extends State<SearchPage> {
   List<Race> _races = [];
   List<Note> _notes = [];
   List<QuestionnaireTemplate> _templates = [];
+  List<Folder> _folders = [];
   List<dynamic> _filteredResults = [];
   bool _isLoading = true;
   late final FocusNode _searchFocusNode;
   bool _isSearching = false;
-  Debouncer _searchDebouncer = Debouncer(milliseconds: 300);
+  final Debouncer _searchDebouncer = Debouncer(milliseconds: 300);
 
   @override
   void initState() {
@@ -59,6 +61,7 @@ class _SearchPageState extends State<SearchPage> {
       final raceBox = await Hive.openBox<Race>('races');
       final noteBox = await Hive.openBox<Note>('notes');
       final templateBox = await Hive.openBox<QuestionnaireTemplate>('templates');
+      final folderBox = await Hive.openBox<Folder>('folders');
 
       if (mounted) {
         setState(() {
@@ -66,6 +69,7 @@ class _SearchPageState extends State<SearchPage> {
           _races = raceBox.values.cast<Race>().toList();
           _notes = noteBox.values.cast<Note>().toList();
           _templates = templateBox.values.cast<QuestionnaireTemplate>().toList();
+          _folders = folderBox.values.cast<Folder>().toList();
           _filteredResults = [];
           _isLoading = false;
         });
@@ -104,6 +108,7 @@ class _SearchPageState extends State<SearchPage> {
         ..._filterRaces(query),
         ..._filterNotes(query),
         ..._filterTemplates(query),
+        ..._filterFolders(query),
       ];
 
       if (mounted) {
@@ -151,6 +156,12 @@ class _SearchPageState extends State<SearchPage> {
           template.customFields.any((field) =>
               field.key.toLowerCase().contains(query) ||
               field.value.toLowerCase().contains(query));
+    }).toList();
+  }
+
+  List<Folder> _filterFolders(String query) {
+    return _folders.where((folder) {
+      return folder.name.toLowerCase().contains(query);
     }).toList();
   }
 
@@ -324,6 +335,14 @@ class _SearchPageState extends State<SearchPage> {
           builder: (context) => TemplateEditPage(template: item),
         ),
       );
+    } else if (item is Folder) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FoldersScreen(folderType: item.type),
+        ),
+      );
+      return null;
     }
     return null;
   }

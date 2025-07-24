@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:characterbook/models/character_model.dart';
 import 'package:characterbook/models/note_model.dart';
 import 'package:characterbook/models/race_model.dart';
+import 'package:characterbook/models/folder_model.dart';
 import '../../../../generated/l10n.dart';
 
 class SearchResultItem extends StatelessWidget {
@@ -19,10 +20,12 @@ class SearchResultItem extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
+    final s = S.of(context);
 
     final isCharacter = item is Character;
     final isRace = item is Race;
     final isNote = item is Note;
+    final isFolder = item is Folder;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
@@ -53,7 +56,9 @@ class SearchResultItem extends StatelessWidget {
                                 ? item.name
                                 : isNote
                                     ? item.title
-                                    : item.name,
+                                    : isFolder
+                                        ? item.name
+                                        : item.name,
                         style: textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w500,
                           color: colorScheme.onSurface,
@@ -64,17 +69,19 @@ class SearchResultItem extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         isCharacter
-                            ? item.race?.name ?? S.of(context).no_race
+                            ? item.race?.name ?? s.no_race
                             : isRace
                                 ? (item.description?.isNotEmpty ?? false)
                                     ? item.description!
-                                    : S.of(context).no_description
+                                    : s.no_description
                                 : isNote
                                     ? (item.content.isNotEmpty)
                                         ? item.content
-                                        : S.of(context).no_content
-                                    : S.of(context).fields_count(
-                                        item.standardFields.length + item.customFields.length),
+                                        : s.no_content
+                                    : isFolder
+                                        ? s.folder
+                                        : s.fields_count(
+                                            item.standardFields.length + item.customFields.length),
                         style: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
@@ -141,6 +148,16 @@ class SearchResultItem extends StatelessWidget {
           color: colorScheme.primary,
         ),
       );
+    } else if (item is Folder) {
+      return CircleAvatar(
+        radius: 20,
+        backgroundColor: colorScheme.surfaceContainerHigh,
+        child: Icon(
+          Icons.folder_outlined,
+          size: 20,
+          color: colorScheme.primary,
+        ),
+      );
     } else {
       return CircleAvatar(
         radius: 20,
@@ -152,5 +169,14 @@ class SearchResultItem extends StatelessWidget {
         ),
       );
     }
+  }
+
+  IconData _getFolderIcon(FolderType type) {
+    return switch (type) {
+      FolderType.character => Icons.person_outline,
+      FolderType.race => Icons.people_outline,
+      FolderType.note => Icons.note_outlined,
+      FolderType.template => Icons.library_books_outlined,
+    };
   }
 }
