@@ -52,67 +52,135 @@ class BackupHelper {
   }
 
   static bool validateBackupStructure(Map<String, dynamic> data) {
-    return _boxTypes.keys.every(data.containsKey);
+    try {
+      if (data is! Map<String, dynamic>) {
+        debugPrint('Backup data is not a Map');
+        return false;
+      }
+
+      final requiredKeys = ['characters', 'races'];
+      final missingKeys = requiredKeys.where((key) => !data.containsKey(key)).toList();
+      
+      if (missingKeys.isNotEmpty) {
+        debugPrint('Missing required keys: $missingKeys');
+        return false;
+      }
+      for (final key in requiredKeys) {
+        if (data[key] is! List) {
+          debugPrint('$key is not a List');
+          return false;
+        }
+      }
+
+      return true;
+    } catch (e) {
+      debugPrint('Validation error: $e');
+      return false;
+    }
   }
 
   static Future<void> restoreFromBackupData(Map<String, dynamic> data) async {
+    await HiveService.initHive();
     if (!validateBackupStructure(data)) {
-      throw FormatException('Invalid backup structure');
+      final errorMessage = 'Invalid backup structure. '
+          'Please ensure the backup contains all required data.';
+      throw FormatException(errorMessage);
     }
 
     try {
-      final characters = await HiveService.getBox<Character>('characters');
-      final notes = await HiveService.getBox<Note>('notes');
-      final races = await HiveService.getBox<Race>('races');
-      final templates = await HiveService.getBox<QuestionnaireTemplate>('templates');
-      final folders = await HiveService.getBox<Folder>('folders');
+      final charactersBox = await HiveService.getBox<Character>('characters');
+      final notesBox = await HiveService.getBox<Note>('notes');
+      final racesBox = await HiveService.getBox<Race>('races');
+      final templatesBox = await HiveService.getBox<QuestionnaireTemplate>('templates');
+      final foldersBox = await HiveService.getBox<Folder>('folders');
 
-      await characters.clear();
-      await notes.clear();
-      await races.clear();
-      await templates.clear();
-      await folders.clear();
+      await Future.wait([
+        charactersBox.clear(),
+        notesBox.clear(),
+        racesBox.clear(),
+        templatesBox.clear(),
+        foldersBox.clear(),
+      ]);
+      final futures = <Future>[];
+      
+      if (data.containsKey('characters')) {
+        futures.add(_restoreToBox<Character>(charactersBox, data['characters']));
+      }
+      
+      if (data.containsKey('races')) {
+        futures.add(_restoreToBox<Race>(racesBox, data['races']));
+      }
+      
+      if (data.containsKey('notes')) {
+        futures.add(_restoreToBox<Note>(notesBox, data['notes']));
+      }
+      
+      if (data.containsKey('templates')) {
+        futures.add(_restoreToBox<QuestionnaireTemplate>(templatesBox, data['templates']));
+      }
+      
+      if (data.containsKey('folders')) {
+        futures.add(_restoreToBox<Folder>(foldersBox, data['folders']));
+      }
 
-      await _restoreToBox<Character>(characters, data['characters'] as List<dynamic>?);
-      await _restoreToBox<Note>(notes, data['notes'] as List<dynamic>?);
-      await _restoreToBox<Race>(races, data['races'] as List<dynamic>?);
-      await _restoreToBox<QuestionnaireTemplate>(templates, data['templates'] as List<dynamic>?);
-      await _restoreToBox<Folder>(folders, data['folders'] as List<dynamic>?);
+      await Future.wait(futures);
     } catch (e) {
-      debugPrint('Restore error: $e');
+      debugPrint('Restore failed: $e');
       rethrow;
     }
   }
 
-  static Future<void> _restoreToBox<T>(Box<T> box, List<dynamic>? items) async {
-    if (items == null || items.isEmpty) return;
+  static Future<void> _restoreToBox<T>(Box<T> box, List<dynamic> items) async {
+    try {
+      for (final itemData in items) {
+        try {
+          if (itemData is! Map<String, dynamic>) {
+            debugPrint('Skipping invalid item (not a Map): $itemData');
+            continue;
+          }
 
-    for (final json in items.cast<Map<String, dynamic>>()) {
-      try {
-        final item = _createModel(T, json);
-        if (item != null) {
-          await box.add(item as T);
+          final item = _createModel(T, itemData);
+          if (item != null) {
+            if (item is HiveObject && (itemData['id'] == null || itemData['id'] == '')) {
+              await box.add(item as T);
+            } else if (itemData.containsKey('id')) {
+              await box.put(itemData['id'], item as T);
+            } else {
+              await box.add(item as T);
+            }
+          }
+        } catch (e) {
+          debugPrint('Failed to restore item: $e\nItem: $itemData');
         }
-      } catch (e) {
-        debugPrint('Error creating ${T.toString()} from json: $e\nJson: $json');
       }
+    } catch (e) {
+      debugPrint('Error restoring to box ${box.name}: $e');
+      rethrow;
     }
   }
 
+  static final _modelFactories = {
+    'Character': (Map<String, dynamic> json) => Character.fromJson(json),
+    'Race': (Map<String, dynamic> json) => Race.fromJson(json),
+    'QuestionnaireTemplate': (Map<String, dynamic> json) => QuestionnaireTemplate.fromJson(json),
+    'Folder': (Map<String, dynamic> json) => Folder.fromJson(json),
+    'Note': (Map<String, dynamic> json) => Note.fromJson(json),
+  };
+
   static dynamic _createModel(Type type, Map<String, dynamic> json) {
-    switch (type) {
-      case Character _:
-        return Character.fromJson(json);
-      case Note _:
-        return Note.fromJson(json);
-      case Race _:
-        return Race.fromJson(json);
-      case QuestionnaireTemplate _:
-        return QuestionnaireTemplate.fromJson(json);
-      case Folder _:
-        return Folder.fromJson(json);
-      default:
+    try {
+      final typeName = type.toString().split('.').last.replaceAll('\$', '');
+      final factory = _modelFactories[typeName];
+      
+      if (factory != null) {
+        return factory(json);
+      } else {
+        debugPrint('Unknown model type: $typeName');
         return null;
+      }
+    } catch (e) {
+      debugPrint('Failed to create model of type $type: $e\nData: $json');
+      return null;
     }
   }
 }

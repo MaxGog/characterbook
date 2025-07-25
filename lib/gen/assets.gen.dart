@@ -12,6 +12,9 @@ import 'package:flutter/widgets.dart';
 class $AssetsFontsGen {
   const $AssetsFontsGen();
 
+  /// File path: assets/fonts/GoogleSans.ttf
+  String get googleSans => 'assets/fonts/GoogleSans.ttf';
+
   /// File path: assets/fonts/NotoSans-Bold.ttf
   String get notoSansBold => 'assets/fonts/NotoSans-Bold.ttf';
 
@@ -22,7 +25,8 @@ class $AssetsFontsGen {
   String get notoSansRegular => 'assets/fonts/NotoSans-Regular.ttf';
 
   /// List of all assets
-  List<String> get values => [notoSansBold, notoSansItalic, notoSansRegular];
+  List<String> get values =>
+      [googleSans, notoSansBold, notoSansItalic, notoSansRegular];
 }
 
 class Assets {

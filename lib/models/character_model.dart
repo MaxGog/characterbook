@@ -60,7 +60,7 @@ class Character extends HiveObject {
   List<String> tags;
 
   Character({
-    required this.id,
+    String? id,
     this.name = '',
     this.age = 0,
     this.gender = '',
@@ -77,10 +77,11 @@ class Character extends HiveObject {
     List<Uint8List>? additionalImages,
     DateTime? lastEdited,
     this.folderId,
-  })  : customFields = customFields ?? [],
-        additionalImages = additionalImages ?? [],
-        lastEdited = lastEdited ?? DateTime.now(),
-        tags = List.from(tags);
+  })  : id = id ?? '',
+    customFields = customFields ?? [],
+    additionalImages = additionalImages ?? [],
+    lastEdited = lastEdited ?? DateTime.now(),
+    tags = List.from(tags);
 
   @override
   bool operator ==(Object other) =>

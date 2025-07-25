@@ -30,7 +30,7 @@ class Race extends HiveObject {
   List<String> tags;
 
   Race({
-    required this.id,
+    String? id,
     required this.name,
     this.description = '',
     this.biology = '',
@@ -38,7 +38,8 @@ class Race extends HiveObject {
     this.logo,
     this.folderId,
     List<String> tags = const [],
-  }) : tags = List.from(tags);
+  }) : id = id ?? '',
+   tags = List.from(tags);
 
   factory Race.empty() => Race(id: '', name: '');
 

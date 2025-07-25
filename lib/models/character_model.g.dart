@@ -17,7 +17,7 @@ class CharacterAdapter extends TypeAdapter<Character> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Character(
-      id: fields[0] as String,
+      id: fields[0] as String?,
       name: fields[1] as String,
       age: fields[2] as int,
       gender: fields[3] as String,
