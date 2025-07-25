@@ -155,7 +155,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         );
       }
 
-      // Templates toggle
       if (showTemplatesToggle && onTemplatesPressed != null) {
         actions.add(
           Padding(
@@ -173,7 +172,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         );
       }
 
-      // Additional actions
       if (additionalActions != null) {
         for (final action in additionalActions!) {
           if (action is IconButton) {
@@ -197,7 +195,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         }
       }
 
-      // Settings button
       actions.add(
         Padding(
           padding: const EdgeInsets.only(left: actionSpacing, right: 12),
@@ -216,7 +213,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       );
 
-      // Overflow menu for extra actions if needed
       if (actions.length > 5) {
         final overflowActions = actions.sublist(4, actions.length - 1);
         actions.removeRange(4, actions.length - 1);
