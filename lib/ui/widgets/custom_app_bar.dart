@@ -199,7 +199,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.only(left: actionSpacing, right: 12),
           child: IconButton.filledTonal(
-            icon: const Icon(Icons.settings_rounded),
+            icon: const Icon(Icons.settings_outlined),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const SettingsPage()),

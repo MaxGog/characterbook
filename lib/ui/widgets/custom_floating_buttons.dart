@@ -33,6 +33,8 @@ class _CustomFloatingButtonsState extends State<CustomFloatingButtons>
   late Animation<double> _translateAnimation;
   late Animation<double> _opacityAnimation;
   late Animation<double> _scaleAnimation;
+  late Animation<double> _fabScaleAnimation;
+  late Animation<Color?> _fabColorAnimation;
 
   bool _isExpanded = false;
 
@@ -49,35 +51,42 @@ class _CustomFloatingButtonsState extends State<CustomFloatingButtons>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 400),
     );
 
-    _translateAnimation = Tween<double>(begin: 80, end: 0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOutCubicEmphasized,
-      ),
+    final curvedAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOutCubicEmphasized,
     );
 
-    _opacityAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeIn,
-      ),
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
+    _translateAnimation = Tween<double>(begin: 80, end: 0).animate(curvedAnimation);
+    _opacityAnimation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
+    _scaleAnimation = Tween<double>(begin: 0.7, end: 1).animate(curvedAnimation);
+    _fabScaleAnimation = Tween<double>(begin: 1, end: 0.9).animate(curvedAnimation);
+    
+    _fabColorAnimation = ColorTween(
+      begin: Colors.transparent,
+      end: Colors.transparent,
+    ).animate(curvedAnimation);
   }
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final theme = Theme.of(context);
+    _fabColorAnimation = ColorTween(
+      begin: theme.colorScheme.primaryContainer,
+      end: theme.colorScheme.secondaryContainer,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOutCubicEmphasized,
+    ));
   }
 
   void _toggleExpanded() {
@@ -99,6 +108,9 @@ class _CustomFloatingButtonsState extends State<CustomFloatingButtons>
     required String tooltip,
     required int index,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
@@ -114,32 +126,37 @@ class _CustomFloatingButtonsState extends State<CustomFloatingButtons>
         );
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 6.0),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (_isExpanded) ...[
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: ShapeDecoration(
+                  color: colorScheme.surfaceContainerHigh,
+                  shape: const ContinuousRectangleBorder(
+                    borderRadius: BorderRadius.horizontal(
+                      left: Radius.circular(16),
+                      right: Radius.circular(32)),
+                  ),
+                  shadows: [
                     BoxShadow(
-                      color: Theme.of(context).colorScheme.shadow,
-                      blurRadius: 4,
+                      color: colorScheme.shadow.withOpacity(0.1),
+                      blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
                   ],
                 ),
                 child: Text(
                   label,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
             ],
             FloatingActionButton(
               heroTag: heroTag,
@@ -149,11 +166,12 @@ class _CustomFloatingButtonsState extends State<CustomFloatingButtons>
               },
               mini: true,
               tooltip: tooltip,
-              shape: const CircleBorder(),
-              elevation: 2,
-              highlightElevation: 4,
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-              foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+              shape: const ContinuousRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(16))),
+              elevation: 3,
+              highlightElevation: 6,
+              backgroundColor: colorScheme.tertiaryContainer,
+              foregroundColor: colorScheme.onTertiaryContainer,
               child: Icon(icon, size: 24),
             ),
           ],
@@ -166,6 +184,7 @@ class _CustomFloatingButtonsState extends State<CustomFloatingButtons>
   Widget build(BuildContext context) {
     final s = S.of(context);
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     if (_actionCount <= 1) {
       return FloatingActionButton(
@@ -180,12 +199,13 @@ class _CustomFloatingButtonsState extends State<CustomFloatingButtons>
             widget.onTemplate!();
           }
         },
-        shape: const CircleBorder(),
-        elevation: 3,
-        highlightElevation: 6,
-        backgroundColor: theme.colorScheme.primaryContainer,
-        foregroundColor: theme.colorScheme.onPrimaryContainer,
-        child: const Icon(Icons.add, size: 24),
+        shape: const ContinuousRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16))),
+        elevation: 4,
+        highlightElevation: 8,
+        backgroundColor: colorScheme.primaryContainer,
+        foregroundColor: colorScheme.onPrimaryContainer,
+        child: const Icon(Icons.add_rounded, size: 28),
       );
     }
 
@@ -197,7 +217,7 @@ class _CustomFloatingButtonsState extends State<CustomFloatingButtons>
           _buildActionButton(
             heroTag: 'create_btn',
             onPressed: widget.onAdd!,
-            icon: Icons.create_outlined,
+            icon: Icons.create_rounded,
             label: widget.createFromScratchTooltip ?? s.create,
             tooltip: widget.createFromScratchTooltip ?? s.create,
             index: 0,
@@ -206,7 +226,7 @@ class _CustomFloatingButtonsState extends State<CustomFloatingButtons>
           _buildActionButton(
             heroTag: 'import_btn',
             onPressed: widget.onImport!,
-            icon: Icons.download_outlined,
+            icon: Icons.download_rounded,
             label: widget.importTooltip ?? s.import,
             tooltip: widget.importTooltip ?? s.import_template_tooltip,
             index: 1,
@@ -215,40 +235,51 @@ class _CustomFloatingButtonsState extends State<CustomFloatingButtons>
           _buildActionButton(
             heroTag: 'template_btn',
             onPressed: widget.onTemplate!,
-            icon: Icons.library_books_outlined,
+            icon: Icons.library_books_rounded,
             label: widget.templateTooltip ?? s.template,
             tooltip: widget.templateTooltip ?? s.create_from_template_tooltip,
             index: 2,
           ),
-        FloatingActionButton(
-          heroTag: 'main_btn',
-          tooltip: widget.addTooltip ?? s.create,
-          onPressed: _toggleExpanded,
-          shape: const CircleBorder(),
-          elevation: 3,
-          highlightElevation: 6,
-          backgroundColor: theme.colorScheme.primaryContainer,
-          foregroundColor: theme.colorScheme.onPrimaryContainer,
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            switchInCurve: Curves.easeInOutCubicEmphasized,
-            switchOutCurve: Curves.easeInOutCubicEmphasized,
-            transitionBuilder: (child, animation) {
-              return RotationTransition(
-                turns: Tween(begin: 0.25, end: 1.0).animate(animation),
-                child: ScaleTransition(
-                  scale: animation,
-                  child: FadeTransition(
-                    opacity: animation,
-                    child: child,
-                  ),
+        AnimatedBuilder(
+          animation: _animationController,
+          builder: (context, child) {
+            return Transform.scale(
+              scale: _fabScaleAnimation.value,
+              child: FloatingActionButton(
+                heroTag: 'main_btn',
+                tooltip: widget.addTooltip ?? s.create,
+                onPressed: _toggleExpanded,
+                shape: const ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16))),
+                elevation: 4,
+                highlightElevation: 8,
+                backgroundColor: _fabColorAnimation.value,
+                foregroundColor: colorScheme.onSecondaryContainer,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 400),
+                  switchInCurve: Curves.easeInOutCubicEmphasized,
+                  switchOutCurve: Curves.easeInOutCubicEmphasized,
+                  transitionBuilder: (child, animation) {
+                    return RotationTransition(
+                      turns: Tween(begin: 0.5, end: 1.0).animate(animation),
+                      child: ScaleTransition(
+                        scale: animation,
+                        child: FadeTransition(
+                          opacity: animation,
+                          child: child,
+                        ),
+                      ),
+                    );
+                  },
+                  child: _isExpanded
+                      ? Icon(Icons.close_rounded, 
+                          key: const ValueKey('close'), size: 28)
+                      : Icon(Icons.add_rounded, 
+                          key: const ValueKey('add'), size: 28),
                 ),
-              );
-            },
-            child: _isExpanded
-                ? Icon(Icons.close, key: const ValueKey('close'))
-                : Icon(Icons.add, key: const ValueKey('add')),
-          ),
+              ),
+            );
+          },
         ),
       ],
     );
