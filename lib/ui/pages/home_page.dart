@@ -1,3 +1,4 @@
+import 'package:characterbook/ui/pages/random_number_page.dart';
 import 'package:flutter/material.dart';
 import '../../generated/l10n.dart';
 import 'characters/character_list_page.dart';
@@ -21,6 +22,7 @@ class _HomePageState extends State<HomePage> {
     RaceListPage(),
     NotesListPage(),
     SearchPage(),
+    RandomNumberPage(),
     SettingsPage(),
   ];
 

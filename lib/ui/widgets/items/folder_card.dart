@@ -28,6 +28,7 @@ class FolderItem extends StatelessWidget {
 
     final backgroundColor = folder.color.withOpacity(0.1);
 
+
     return Dismissible(
       key: Key(folder.id),
       direction: DismissDirection.horizontal,
@@ -157,7 +158,7 @@ class FolderItem extends StatelessWidget {
   void _showFolderContextMenu(BuildContext context, Folder folder, S s) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28))
       ),
