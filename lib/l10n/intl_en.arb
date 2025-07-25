@@ -236,5 +236,45 @@
   "tags": "Tags",
   "add_tag": "Add tag",
 
-  "items": "items"
+  "items": "items",
+  "color_purple": "Purple",
+  "@color_purple": {
+    "description": "Color name for purple"
+  },
+  "color_teal": "Teal",
+  "@color_teal": {
+    "description": "Color name for teal"
+  },
+  "color_red": "Red",
+  "@color_red": {
+    "description": "Color name for red"
+  },
+  "color_pink": "Pink",
+  "@color_pink": {
+    "description": "Color name for pink"
+  },
+  "color_dark": "Dark",
+  "@color_dark": {
+    "description": "Color name for dark"
+  },
+  "color_green": "Green",
+  "@color_green": {
+    "description": "Color name for green"
+  },
+  "color_blue": "Blue",
+  "@color_blue": {
+    "description": "Color name for blue"
+  },
+  "color_brown": "Brown",
+  "@color_brown": {
+    "description": "Color name for brown"
+  },
+  "color_orange": "Orange",
+  "@color_orange": {
+    "description": "Color name for orange"
+  },
+  "color_grey": "Grey",
+  "@color_grey": {
+    "description": "Color name for grey"
+  }
 }

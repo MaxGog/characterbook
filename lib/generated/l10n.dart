@@ -2416,6 +2416,106 @@ class S {
       args: [],
     );
   }
+
+  /// `Фиолетовый`
+  String get color_purple {
+    return Intl.message(
+      'Фиолетовый',
+      name: 'color_purple',
+      desc: 'Название фиолетового цвета',
+      args: [],
+    );
+  }
+
+  /// `Бирюзовый`
+  String get color_teal {
+    return Intl.message(
+      'Бирюзовый',
+      name: 'color_teal',
+      desc: 'Название бирюзового цвета',
+      args: [],
+    );
+  }
+
+  /// `Красный`
+  String get color_red {
+    return Intl.message(
+      'Красный',
+      name: 'color_red',
+      desc: 'Название красного цвета',
+      args: [],
+    );
+  }
+
+  /// `Розовый`
+  String get color_pink {
+    return Intl.message(
+      'Розовый',
+      name: 'color_pink',
+      desc: 'Название розового цвета',
+      args: [],
+    );
+  }
+
+  /// `Тёмный`
+  String get color_dark {
+    return Intl.message(
+      'Тёмный',
+      name: 'color_dark',
+      desc: 'Название тёмного цвета',
+      args: [],
+    );
+  }
+
+  /// `Зелёный`
+  String get color_green {
+    return Intl.message(
+      'Зелёный',
+      name: 'color_green',
+      desc: 'Название зелёного цвета',
+      args: [],
+    );
+  }
+
+  /// `Синий`
+  String get color_blue {
+    return Intl.message(
+      'Синий',
+      name: 'color_blue',
+      desc: 'Название синего цвета',
+      args: [],
+    );
+  }
+
+  /// `Коричневый`
+  String get color_brown {
+    return Intl.message(
+      'Коричневый',
+      name: 'color_brown',
+      desc: 'Название коричневого цвета',
+      args: [],
+    );
+  }
+
+  /// `Оранжевый`
+  String get color_orange {
+    return Intl.message(
+      'Оранжевый',
+      name: 'color_orange',
+      desc: 'Название оранжевого цвета',
+      args: [],
+    );
+  }
+
+  /// `Серый`
+  String get color_grey {
+    return Intl.message(
+      'Серый',
+      name: 'color_grey',
+      desc: 'Название серого цвета',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
