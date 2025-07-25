@@ -84,11 +84,6 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
     }
   }
 
-  double _getTitleSize() {
-    final progress = (_appBarHeight - _minAppBarHeight) / (_maxAppBarHeight - _minAppBarHeight);
-    return 24.0 + (8.0 * progress);
-  }
-
   Future<void> _loadFolder() async {
     if (widget.character.folderId != null) {
       final folder = _folderService.getFolderById(widget.character.folderId!);
@@ -598,7 +593,6 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isExpanded = _appBarHeight > _minAppBarHeight + 20;
 
     return Scaffold(
       body: CustomScrollView(
