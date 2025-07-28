@@ -125,24 +125,22 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
       ));
     }
 
-    if (noteKey != null) {
-      if (_selectedFolder == null) {
-        for (final folder in _noteFolders) {
-          if (folder.contentIds.contains(noteKey.toString())) {
-            await _folderService.removeFromFolder(folder.id, noteKey.toString());
-          }
+    if (_selectedFolder == null) {
+      for (final folder in _noteFolders) {
+        if (folder.contentIds.contains(noteKey.toString())) {
+          await _folderService.removeFromFolder(folder.id, noteKey.toString());
         }
-      } else {
-        for (final folder in _noteFolders) {
-          if (folder.id != _selectedFolder!.id && 
-              folder.contentIds.contains(noteKey.toString())) {
-            await _folderService.removeFromFolder(folder.id, noteKey.toString());
-          }
-        }
-        await _folderService.addToFolder(_selectedFolder!.id, noteKey.toString());
       }
+    } else {
+      for (final folder in _noteFolders) {
+        if (folder.id != _selectedFolder!.id && 
+            folder.contentIds.contains(noteKey.toString())) {
+          await _folderService.removeFromFolder(folder.id, noteKey.toString());
+        }
+      }
+      await _folderService.addToFolder(_selectedFolder!.id, noteKey.toString());
     }
-
+  
     setState(() => hasUnsavedChanges = false);
     if (mounted) Navigator.pop(context);
   }

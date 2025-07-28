@@ -115,24 +115,22 @@ class _RaceManagementPageState extends State<RaceManagementPage> with UnsavedCha
         raceKey = widget.race!.key;
       }
 
-      if (raceKey != null) {
-        if (_selectedFolder == null) {
-          for (final folder in _raceFolders) {
-            if (folder.contentIds.contains(raceKey.toString())) {
-              await _folderService.removeFromFolder(folder.id, raceKey.toString());
-            }
+      if (_selectedFolder == null) {
+        for (final folder in _raceFolders) {
+          if (folder.contentIds.contains(raceKey.toString())) {
+            await _folderService.removeFromFolder(folder.id, raceKey.toString());
           }
-        } else {
-          for (final folder in _raceFolders) {
-            if (folder.id != _selectedFolder!.id && 
-                folder.contentIds.contains(raceKey.toString())) {
-              await _folderService.removeFromFolder(folder.id, raceKey.toString());
-            }
-          }
-          await _folderService.addToFolder(_selectedFolder!.id, raceKey.toString());
         }
+      } else {
+        for (final folder in _raceFolders) {
+          if (folder.id != _selectedFolder!.id && 
+              folder.contentIds.contains(raceKey.toString())) {
+            await _folderService.removeFromFolder(folder.id, raceKey.toString());
+          }
+        }
+        await _folderService.addToFolder(_selectedFolder!.id, raceKey.toString());
       }
-
+    
       setState(() => hasUnsavedChanges = false);
 
       if (!mounted) return;

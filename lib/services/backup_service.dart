@@ -53,11 +53,6 @@ class BackupHelper {
 
   static bool validateBackupStructure(Map<String, dynamic> data) {
     try {
-      if (data is! Map<String, dynamic>) {
-        debugPrint('Backup data is not a Map');
-        return false;
-      }
-
       final requiredKeys = ['characters', 'races'];
       final missingKeys = requiredKeys.where((key) => !data.containsKey(key)).toList();
       
