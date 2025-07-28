@@ -16,15 +16,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  bool _isExpanded = true;
+  final bool _isExpanded = false;
 
   static final List<Widget> _pages = const [
     CharacterListPage(),
     RaceListPage(),
     NotesListPage(),
     SearchPage(),
-    RandomNumberPage(),
     SettingsPage(),
+    RandomNumberPage(),
   ];
 
   @override
@@ -63,70 +63,123 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildNavigationRail(BuildContext context) {
-    return SizedBox(
-      width: _isExpanded ? 200 : 72,
-      child: NavigationRail(
-        minWidth: _isExpanded ? 200 : 72,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        selectedIndex: _currentIndex,
-        onDestinationSelected: _updateIndex,
-        extended: _isExpanded,
-        labelType: _isExpanded
-            ? NavigationRailLabelType.all
-            : NavigationRailLabelType.selected,
-        destinations: [
-          NavigationRailDestination(
-            icon: const Icon(Icons.people_alt_outlined),
-            selectedIcon: const Icon(Icons.people_alt),
-            label: Text(S.of(context).characters),
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return NavigationRail(
+      minWidth: _isExpanded ? 180 : 72,
+      backgroundColor: colorScheme.surfaceContainerLowest,
+      elevation: 1,
+      selectedIndex: _currentIndex,
+      onDestinationSelected: _updateIndex,
+      extended: _isExpanded,
+      labelType: _isExpanded
+          ? NavigationRailLabelType.none
+          : NavigationRailLabelType.selected,
+      destinations: [
+        NavigationRailDestination(
+          icon: Icon(Icons.people_alt_outlined,
+              color: colorScheme.onSurfaceVariant),
+          selectedIcon: Icon(Icons.people_alt, color: colorScheme.primary),
+          label: Text(
+            S.of(context).characters,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: _currentIndex == 0
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
+            ),
           ),
-          NavigationRailDestination(
-            icon: const Icon(Icons.emoji_people_outlined),
-            selectedIcon: const Icon(Icons.emoji_people),
-            label: Text(S.of(context).races),
-          ),
-          NavigationRailDestination(
-            icon: const Icon(Icons.note_alt_outlined),
-            selectedIcon: const Icon(Icons.note_alt),
-            label: Text(S.of(context).posts),
-          ),
-          NavigationRailDestination(
-            icon: const Icon(Icons.search_outlined),
-            selectedIcon: const Icon(Icons.search),
-            label: Text(S.of(context).search),
-          ),
-        ],
-        trailing: IconButton(
-          icon: Icon(_isExpanded ? Icons.chevron_left : Icons.chevron_right),
-          onPressed: () => setState(() => _isExpanded = !_isExpanded),
         ),
-      ),
+        NavigationRailDestination(
+          icon: Icon(Icons.emoji_people_outlined,
+              color: colorScheme.onSurfaceVariant),
+          selectedIcon: Icon(Icons.emoji_people, color: colorScheme.primary),
+          label: Text(
+            S.of(context).races,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: _currentIndex == 1
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.note_alt_outlined,
+              color: colorScheme.onSurfaceVariant),
+          selectedIcon: Icon(Icons.note_alt, color: colorScheme.primary),
+          label: Text(
+            S.of(context).posts,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: _currentIndex == 2
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.search_outlined,
+              color: colorScheme.onSurfaceVariant),
+          selectedIcon: Icon(Icons.search, color: colorScheme.primary),
+          label: Text(
+            S.of(context).search,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: _currentIndex == 3
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+        /*NavigationRailDestination(
+          icon: Icon(Icons.settings_outlined,
+              color: colorScheme.onSurfaceVariant),
+          selectedIcon: Icon(Icons.settings, color: colorScheme.primary),
+          label: Text(
+            S.of(context).settings,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: _currentIndex == 3
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),*/
+      ],
     );
   }
 
   Widget _buildBottomNavigationBar(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return NavigationBar(
+      height: 80,
+      elevation: 1,
+      backgroundColor: colorScheme.surfaceContainerLowest,
       selectedIndex: _currentIndex,
       onDestinationSelected: _updateIndex,
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       destinations: [
         NavigationDestination(
-          icon: const Icon(Icons.people_alt_outlined),
-          selectedIcon: const Icon(Icons.people_alt),
+          icon: Icon(Icons.people_alt_outlined,
+              color: colorScheme.onSurfaceVariant),
+          selectedIcon: Icon(Icons.people_alt, color: colorScheme.primary),
           label: S.of(context).characters,
         ),
         NavigationDestination(
-          icon: const Icon(Icons.emoji_people_outlined),
-          selectedIcon: const Icon(Icons.emoji_people),
+          icon: Icon(Icons.emoji_people_outlined,
+              color: colorScheme.onSurfaceVariant),
+          selectedIcon: Icon(Icons.emoji_people, color: colorScheme.primary),
           label: S.of(context).races,
         ),
         NavigationDestination(
-          icon: const Icon(Icons.note_alt_outlined),
-          selectedIcon: const Icon(Icons.note_alt),
+          icon: Icon(Icons.note_alt_outlined,
+              color: colorScheme.onSurfaceVariant),
+          selectedIcon: Icon(Icons.note_alt, color: colorScheme.primary),
           label: S.of(context).posts,
         ),
         NavigationDestination(
-          icon: const Icon(Icons.search),
-          selectedIcon: const Icon(Icons.search_outlined),
+          icon: Icon(Icons.search_outlined,
+              color: colorScheme.onSurfaceVariant),
+          selectedIcon: Icon(Icons.search, color: colorScheme.primary),
           label: S.of(context).search,
         ),
       ],
