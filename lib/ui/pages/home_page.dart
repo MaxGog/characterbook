@@ -16,6 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
+  bool _isExpanded = true;
 
   static final List<Widget> _pages = const [
     CharacterListPage(),
@@ -27,16 +28,79 @@ class _HomePageState extends State<HomePage> {
   ];
 
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
+    final isWideScreen = MediaQuery.of(context).size.width >= 600;
+
+    return Scaffold(
+      body: SafeArea(
+        child: isWideScreen
+            ? _buildDesktopLayout(context)
+            : _buildMobileLayout(context),
+      ),
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_currentIndex],
-      bottomNavigationBar: _buildBottomNavigationBar(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+  Widget _buildDesktopLayout(BuildContext context) {
+    return Row(
+      children: [
+        _buildNavigationRail(context),
+        Expanded(
+          child: _pages[_currentIndex],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMobileLayout(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(
+          child: _pages[_currentIndex],
+        ),
+        _buildBottomNavigationBar(context),
+      ],
+    );
+  }
+
+  Widget _buildNavigationRail(BuildContext context) {
+    return SizedBox(
+      width: _isExpanded ? 200 : 72,
+      child: NavigationRail(
+        minWidth: _isExpanded ? 200 : 72,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        selectedIndex: _currentIndex,
+        onDestinationSelected: _updateIndex,
+        extended: _isExpanded,
+        labelType: _isExpanded
+            ? NavigationRailLabelType.all
+            : NavigationRailLabelType.selected,
+        destinations: [
+          NavigationRailDestination(
+            icon: const Icon(Icons.people_alt_outlined),
+            selectedIcon: const Icon(Icons.people_alt),
+            label: Text(S.of(context).characters),
+          ),
+          NavigationRailDestination(
+            icon: const Icon(Icons.emoji_people_outlined),
+            selectedIcon: const Icon(Icons.emoji_people),
+            label: Text(S.of(context).races),
+          ),
+          NavigationRailDestination(
+            icon: const Icon(Icons.note_alt_outlined),
+            selectedIcon: const Icon(Icons.note_alt),
+            label: Text(S.of(context).posts),
+          ),
+          NavigationRailDestination(
+            icon: const Icon(Icons.search_outlined),
+            selectedIcon: const Icon(Icons.search),
+            label: Text(S.of(context).search),
+          ),
+        ],
+        trailing: IconButton(
+          icon: Icon(_isExpanded ? Icons.chevron_left : Icons.chevron_right),
+          onPressed: () => setState(() => _isExpanded = !_isExpanded),
+        ),
+      ),
     );
   }
 
@@ -71,9 +135,7 @@ class _HomePageState extends State<HomePage> {
 
   void _updateIndex(int index) {
     if (_currentIndex != index) {
-      setState(() {
-        _currentIndex = index;
-      });
+      setState(() => _currentIndex = index);
     }
   }
 }

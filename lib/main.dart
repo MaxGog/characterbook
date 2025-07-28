@@ -99,7 +99,8 @@ class _AppState extends State<_App> with WidgetsBindingObserver {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: S.delegate.supportedLocales,
-      home: const FileHandlerWrapper(child: HomePage()),
+      //home: const FileHandlerWrapper(child: HomePage()),
+      home: const HomePage(),
     );
   }
 }

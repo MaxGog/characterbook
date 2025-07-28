@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "ru.maxgog" "\0"
-            VALUE "FileDescription", "characterbook" "\0"
+            VALUE "CompanyName", "MaxGog" "\0"
+            VALUE "FileDescription", "An application for creating and storing characters." "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "characterbook" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 ru.maxgog. All rights reserved." "\0"
+            VALUE "InternalName", "CharacterBook" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 MaxGog. All rights reserved." "\0"
             VALUE "OriginalFilename", "characterbook.exe" "\0"
-            VALUE "ProductName", "characterbook" "\0"
+            VALUE "ProductName", "CharacterBook" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
