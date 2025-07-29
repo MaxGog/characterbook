@@ -61,6 +61,7 @@ dependencies:
   window_manager: ^0.5.1
   url_launcher_macos: ^3.2.2
   shared_preferences_foundation: ^2.5.4
+  msix: ^3.16.10
 
 dev_dependencies:
   flutter_test:
@@ -89,3 +90,9 @@ flutter_launcher_icons:
   android: false
   ios: true
   image_path: "assets/icon.svg"
+
+msix_config:
+  display_name: CharacterBook
+  publisher_display_name: MaxGog
+  identity_name: ru.maxgog
+  msix_version: 1.6.8.0
