@@ -206,7 +206,7 @@ class _SearchPageState extends State<SearchPage> {
             colorScheme.surfaceContainerHigh,
           ),
           surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
-          overlayColor: WidgetStatePropertyAll(colorScheme.onSurface),
+          overlayColor: WidgetStatePropertyAll(colorScheme.surfaceContainer),
           onTap: () => _searchFocusNode.requestFocus(),
         ),
         centerTitle: false,
