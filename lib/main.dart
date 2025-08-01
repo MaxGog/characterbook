@@ -13,7 +13,6 @@ import 'generated/l10n.dart';
 import 'models/character_model.dart';
 import 'providers/locale_provider.dart';
 import 'providers/theme_provider.dart';
-import 'services/file_picker_service.dart';
 import 'services/file_handler.dart';
 import 'services/file_handler_wrapper.dart';
 import 'ui/pages/home_page.dart';
@@ -31,8 +30,6 @@ Future<void> _initializeHive() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await FilePickerService.setupPlatformChannels();
   
   await _initializeHive();
   FileHandler.initialize();

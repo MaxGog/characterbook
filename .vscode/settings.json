@@ -1,9 +1,0 @@
-{
-    "files.exclude": {
-        "**/*.rpyc": true,
-        "**/*.rpa": true,
-        "**/*.rpymc": true,
-        "**/cache/": true
-    },
-    "cmake.sourceDirectory": "D:/Development/repos/CharacterBook/windows"
-}

@@ -176,7 +176,7 @@ class CharacterCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: folder.color.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular((12 + random.nextInt(4)) as double),
+                              borderRadius: BorderRadius.circular((12 + random.nextInt(4)).toDouble()),
                               border: Border.all(
                                 color: folder.color.withOpacity(0.4),
                                 width: 1,
@@ -204,7 +204,7 @@ class CharacterCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: colorScheme.surfaceContainerHighest,
-                              borderRadius: BorderRadius.circular((12 + random.nextInt(4)) as double),
+                              borderRadius: BorderRadius.circular((12 + random.nextInt(4)).toDouble()),
                             ),
                             child: Text(
                               tag,

@@ -55,14 +55,16 @@ class FilePickerService {
 
   Future<File?> _pickFileNative({String? fileExtension}) async {
     try {
-      var filePath = await _channel.invokeMethod<String>('pickFile', {
-        'fileExtension': fileExtension,
-      });
-
-      if (Platform.isWindows)
-        filePath = await _showWindowsFileDialog(fileExtension: fileExtension);
-      else if (Platform.isMacOS)
-        filePath = await _showMacOSFileDialog(fileExtension: fileExtension);
+      String? filePath;
+      
+      if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+        filePath = await _showNativeFileDialog(fileExtension: fileExtension);
+      } else {
+        filePath = await _channel.invokeMethod<String>('pickFile', {
+          'fileExtension': fileExtension,
+        });
+      }
+      
       if (filePath == null || filePath.isEmpty) return null;
       return File(filePath);
     } catch (e) {
@@ -172,31 +174,13 @@ class FilePickerService {
     }
   }
 
-  // Native platform implementations for Windows and macOS
-  static Future<void> setupPlatformChannels() async {
-    if (kIsWeb) return;
-
-    const MethodChannel channel = MethodChannel('file_picker');
-    
-    channel.setMethodCallHandler((MethodCall call) async {
-      switch (call.method) {
-        case 'pickFile':
-          final String? fileExtension = call.arguments['fileExtension'];
-          return await _showNativeFileDialog(fileExtension: fileExtension);
-        default:
-          throw PlatformException(
-            code: 'Unimplemented',
-            details: "The file_picker plugin doesn't implement the method '${call.method}'",
-          );
-      }
-    });
-  }
-
   static Future<String?> _showNativeFileDialog({String? fileExtension}) async {
     if (Platform.isWindows) {
       return await _showWindowsFileDialog(fileExtension: fileExtension);
     } else if (Platform.isMacOS) {
       return await _showMacOSFileDialog(fileExtension: fileExtension);
+    } else if (Platform.isLinux) {
+      return await _showLinuxFileDialog(fileExtension: fileExtension);
     }
     return null;
   }
@@ -246,6 +230,40 @@ class FilePickerService {
       return null;
     } catch (e) {
       debugPrint('macOS file dialog error: $e');
+      return null;
+    }
+  }
+
+  static Future<String?> _showLinuxFileDialog({String? fileExtension}) async {
+    try {
+      final zenityCheck = await Process.run('which', ['zenity']);
+      if (zenityCheck.exitCode != 0) {
+        debugPrint('zenity not found, trying with kdialog');
+        final kdialogCheck = await Process.run('which', ['kdialog']);
+        if (kdialogCheck.exitCode != 0) {
+          debugPrint('Neither zenity nor kdialog found');
+          return null;
+        }
+        final result = await Process.run('kdialog', ['--getopenfilename']);
+        if (result.exitCode == 0 && result.stdout.toString().trim().isNotEmpty) {
+          return result.stdout.toString().trim();
+        }
+        return null;
+      }
+
+      final result = await Process.run('zenity', [
+        '--file-selection',
+        '--title=Select File',
+        '--file-filter=Supported files (*.json *.characterbook *.character *.race *.chax) | *.json *.characterbook *.character *.race *.chax',
+        '--file-filter=All files | *'
+      ]);
+
+      if (result.exitCode == 0 && result.stdout.toString().trim().isNotEmpty) {
+        return result.stdout.toString().trim();
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Linux file dialog error: $e');
       return null;
     }
   }

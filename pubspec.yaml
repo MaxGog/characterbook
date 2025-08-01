@@ -33,7 +33,7 @@ dependencies:
   hive_flutter: ^1.1.0
   shared_preferences: ^2.5.3
   path_provider: ^2.1.2
-  path_provider_foundation: ^2.2.1
+  #path_provider_foundation: ^2.2.1
 
   intl: ^0.20.2
 
@@ -59,8 +59,13 @@ dependencies:
   universal_html: ^2.2.1
 
   window_manager: ^0.5.1
+<<<<<<< HEAD
+  #shared_preferences_foundation: ^2.5.4
+=======
   url_launcher_macos: ^3.2.2
   shared_preferences_foundation: ^2.5.4
+  msix: ^3.16.10
+>>>>>>> 8025aeb9b52bfec5428658e3d2df4bc1f0b1bfe5
 
 dev_dependencies:
   flutter_test:
@@ -89,3 +94,9 @@ flutter_launcher_icons:
   android: false
   ios: true
   image_path: "assets/icon.svg"
+
+msix_config:
+  display_name: CharacterBook
+  publisher_display_name: MaxGog
+  identity_name: ru.maxgog
+  msix_version: 1.6.8.0
