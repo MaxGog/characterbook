@@ -310,45 +310,123 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
     }
   }
 
-  void _showShareMenu(BuildContext context) {
-    final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
-    final RenderBox button = context.findRenderObject() as RenderBox;
-    
-    final position = RelativeRect.fromRect(
-      Rect.fromPoints(
-        button.localToGlobal(button.size.topRight(Offset.zero)),
-        button.localToGlobal(button.size.bottomRight(Offset.zero)),
-      ),
-      Offset.zero & overlay.size,
-    );
+  void _showShareMenu() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
 
-    showMenu<String>(
+    showModalBottomSheet<String>(
       context: context,
-      position: position,
-      items: [
-        PopupMenuItem<String>(
-          value: 'file',
-          child: ListTile(
-            leading: Icon(Icons.insert_drive_file, color: Theme.of(context).colorScheme.onSurfaceVariant),
-            title: Text(S.of(context).file_character),
-          ),
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        margin: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHigh,
+          borderRadius: BorderRadius.circular(28),
         ),
-        PopupMenuItem<String>(
-          value: 'pdf',
-          child: ListTile(
-            leading: Icon(Icons.picture_as_pdf, color: Theme.of(context).colorScheme.onSurfaceVariant),
-            title: Text(S.of(context).file_pdf),
-          ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+              child: Text(
+                S.of(context).share_character,
+                style: textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+            ),
+            Divider(
+              height: 1,
+              color: colorScheme.outlineVariant,
+              indent: 16,
+              endIndent: 16,
+            ),
+            ListTile(
+              leading: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Icon(
+                  Icons.insert_drive_file_rounded,
+                  color: colorScheme.onPrimaryContainer,
+                ),
+              ),
+              title: Text(
+                S.of(context).file_character,
+                style: textTheme.bodyLarge,
+              ),
+              trailing: Icon(
+                Icons.chevron_right_rounded,
+                color: colorScheme.onSurfaceVariant,
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                _exportToJson();
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Divider(
+                height: 1,
+                color: colorScheme.outlineVariant,
+              ),
+            ),
+            ListTile(
+              leading: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Icon(
+                  Icons.picture_as_pdf_rounded,
+                  color: colorScheme.onPrimaryContainer,
+                ),
+              ),
+              title: Text(
+                S.of(context).file_pdf,
+                style: textTheme.bodyLarge,
+              ),
+              trailing: Icon(
+                Icons.chevron_right_rounded,
+                color: colorScheme.onSurfaceVariant,
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                _exportToPdf();
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 20),
+              child: OutlinedButton(
+                onPressed: () => Navigator.pop(context),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  side: BorderSide(color: colorScheme.outline),
+                ),
+                child: Text(S.of(context).cancel),
+              ),
+            ),
+          ],
         ),
-      ],
-    ).then((value) {
-      if (value != null) {
-        switch (value) {
-          case 'file': _exportToJson(); break;
-          case 'pdf': _exportToPdf(); break;
-        }
-      }
-    });
+      ),
+    );
   }
 
   @override
@@ -358,11 +436,16 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
     final textTheme = theme.textTheme;
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: _navigateToEdit,
+        tooltip: S.of(context).edit_character,
+        child: const Icon(Icons.edit_rounded),
+      ),
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
           SliverAppBar(
-            expandedHeight: 200,
+            expandedHeight: 120,
             collapsedHeight: 80,
             pinned: true,
             floating: false,
@@ -374,6 +457,8 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(32),
                 bottomRight: Radius.circular(32),
+                topLeft: Radius.circular(32),
+                topRight: Radius.circular(32),
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(
@@ -405,25 +490,13 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                     ],
                   ),
                 ),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 40),
-                    child: Hero(
-                      tag: 'character-avatar-${widget.character.key}',
-                      child: AvatarWidget.character(
-                        imageBytes: widget.character.imageBytes,
-                        size: 80,
-                      ),
-                    ),
-                  ),
-                ),
               ),
             ),
             actions: [
               IconButton.filledTonal(
-                onPressed: () => _showShareMenu,
-                icon: const Icon(Icons.share_rounded),
+                onPressed: _showShareMenu,
+                icon: const Icon(Icons.share_outlined),
+                tooltip: S.of(context).share_character,
                 style: IconButton.styleFrom(
                   shape: const CircleBorder(),
                   padding: const EdgeInsets.all(16),
@@ -437,6 +510,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                   PopupMenuItem(
                     value: 'copy',
                     child: ListTile(
+                      contentPadding: EdgeInsets.zero,
                       leading: Icon(Icons.copy_rounded, color: colorScheme.onSurfaceVariant),
                       title: Text(S.of(context).copy_character),
                     ),
@@ -444,6 +518,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                   PopupMenuItem(
                     value: 'edit',
                     child: ListTile(
+                      contentPadding: EdgeInsets.zero,
                       leading: Icon(Icons.edit_rounded, color: colorScheme.onSurfaceVariant),
                       title: Text(S.of(context).edit_character),
                     ),
@@ -452,6 +527,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                   PopupMenuItem(
                     value: 'delete',
                     child: ListTile(
+                      contentPadding: EdgeInsets.zero,
                       leading: Icon(Icons.delete_rounded, color: colorScheme.error),
                       title: Text(
                         S.of(context).delete_character,
@@ -482,11 +558,6 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton.large(
-        onPressed: _navigateToEdit,
-        tooltip: S.of(context).edit_character,
-        child: const Icon(Icons.edit_rounded),
       ),
     );
   }
@@ -704,46 +775,56 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
             const SizedBox(height: 24),
           ],
         ],
+
+        if (widget.character.appearance.isNotEmpty) ...[
+          _buildExpressiveContentSection(
+            title: S.of(context).appearance,
+            content: widget.character.appearance,
+            icon: Icons.face_retouching_natural_rounded,
+            isExpanded: _expandedSections['appearance']!,
+            onToggle: () => setState(() => _expandedSections['appearance'] = !_expandedSections['appearance']!),
+          ),
+        ],
+
+        if (widget.character.personality.isNotEmpty) ...[
+          _buildExpressiveContentSection(
+            title: S.of(context).personality,
+            content: widget.character.personality,
+            icon: Icons.psychology_rounded,
+            isExpanded: _expandedSections['personality']!,
+            onToggle: () => setState(() => _expandedSections['personality'] = !_expandedSections['personality']!),
+          ),
+        ],
         
-        _buildExpressiveContentSection(
-          title: S.of(context).appearance,
-          content: widget.character.appearance,
-          icon: Icons.face_retouching_natural_rounded,
-          isExpanded: _expandedSections['appearance']!,
-          onToggle: () => setState(() => _expandedSections['appearance'] = !_expandedSections['appearance']!),
-        ),
+        if (widget.character.biography.isNotEmpty) ...[
+          _buildExpressiveContentSection(
+            title: S.of(context).biography,
+            content: widget.character.biography,
+            icon: Icons.history_edu_rounded,
+            isExpanded: _expandedSections['biography']!,
+            onToggle: () => setState(() => _expandedSections['biography'] = !_expandedSections['biography']!),
+          ),
+        ],
         
-        _buildExpressiveContentSection(
-          title: S.of(context).personality,
-          content: widget.character.personality,
-          icon: Icons.psychology_rounded,
-          isExpanded: _expandedSections['personality']!,
-          onToggle: () => setState(() => _expandedSections['personality'] = !_expandedSections['personality']!),
-        ),
+        if (widget.character.abilities.isNotEmpty) ...[
+          _buildExpressiveContentSection(
+            title: S.of(context).abilities,
+            content: widget.character.abilities,
+            icon: Icons.auto_awesome_rounded,
+            isExpanded: _expandedSections['abilities']!,
+            onToggle: () => setState(() => _expandedSections['abilities'] = !_expandedSections['abilities']!),
+          ),
+        ],
         
-        _buildExpressiveContentSection(
-          title: S.of(context).biography,
-          content: widget.character.biography,
-          icon: Icons.history_edu_rounded,
-          isExpanded: _expandedSections['biography']!,
-          onToggle: () => setState(() => _expandedSections['biography'] = !_expandedSections['biography']!),
-        ),
-        
-        _buildExpressiveContentSection(
-          title: S.of(context).abilities,
-          content: widget.character.abilities,
-          icon: Icons.auto_awesome_rounded,
-          isExpanded: _expandedSections['abilities']!,
-          onToggle: () => setState(() => _expandedSections['abilities'] = !_expandedSections['abilities']!),
-        ),
-        
-        _buildExpressiveContentSection(
-          title: S.of(context).other,
-          content: widget.character.other,
-          icon: Icons.more_horiz_rounded,
-          isExpanded: _expandedSections['other']!,
-          onToggle: () => setState(() => _expandedSections['other'] = !_expandedSections['other']!),
-        ),
+        if (widget.character.other.isNotEmpty) ...[
+          _buildExpressiveContentSection(
+            title: S.of(context).other,
+            content: widget.character.other,
+            icon: Icons.more_horiz_rounded,
+            isExpanded: _expandedSections['other']!,
+            onToggle: () => setState(() => _expandedSections['other'] = !_expandedSections['other']!),
+          ),
+        ],
 
         if (widget.character.additionalImages.isNotEmpty) ...[
           _buildExpressiveSectionHeader(
@@ -888,6 +969,8 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
     required VoidCallback onToggle,
   }) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -897,22 +980,46 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
           isExpanded: isExpanded,
           onTap: onToggle,
         ),
-        if (isExpanded) ...[
-          const SizedBox(height: 8),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerLow,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              content,
-              style: theme.textTheme.bodyLarge,
-            ),
+        AnimatedCrossFade(
+          duration: const Duration(milliseconds: 300),
+          crossFadeState: isExpanded 
+              ? CrossFadeState.showSecond 
+              : CrossFadeState.showFirst,
+          firstChild: const SizedBox.shrink(),
+          secondChild: Column(
+            children: [
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  transitionBuilder: (child, animation) => FadeTransition(
+                    opacity: CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOut,
+                    ),
+                    child: SizeTransition(
+                      sizeFactor: animation,
+                      axisAlignment: -1.0,
+                      child: child,
+                    ),
+                  ),
+                  child: Text(
+                    key: ValueKey(content.hashCode),
+                    content,
+                    style: theme.textTheme.bodyLarge,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
-          const SizedBox(height: 24),
-        ],
+        ),
       ],
     );
   }
