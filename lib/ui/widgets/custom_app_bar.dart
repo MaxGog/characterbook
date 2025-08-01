@@ -33,35 +33,35 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final s = S.of(context);
 
     return AppBar(
-      title: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        switchInCurve: Curves.easeOutCubic,
-        switchOutCurve: Curves.easeInCubic,
-        transitionBuilder: (Widget child, Animation<double> animation) {
-          return FadeTransition(
-            opacity: animation,
-            child: SizeTransition(
-              sizeFactor: animation,
-              axis: Axis.horizontal,
-              child: child,
-            ),
-          );
-        },
-        child: isSearching
-            ? _buildSearchField(context, theme, s)
-            : _buildTitle(context, theme),
+      title: AnimatedCrossFade(
+        duration: const Duration(milliseconds: 200),
+        crossFadeState: isSearching 
+            ? CrossFadeState.showSecond 
+            : CrossFadeState.showFirst,
+        firstChild: Text(
+          title,
+          style: theme.textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: colorScheme.onSurface,
+            height: 1.1,
+            letterSpacing: -0.8,
+          ),
+        ),
+        secondChild: _buildSearchField(context, colorScheme, s),
       ),
       centerTitle: false,
       titleSpacing: 24,
+      toolbarHeight: 80,
       elevation: 0,
       scrolledUnderElevation: 3,
-      shadowColor: theme.colorScheme.shadow,
+      shadowColor: colorScheme.shadow,
       surfaceTintColor: Colors.transparent,
-      backgroundColor: theme.colorScheme.surfaceContainerLowest,
-      actions: _buildActions(context, theme, s),
+      backgroundColor: colorScheme.surfaceContainerLowest,
+      actions: _buildActions(context, colorScheme, s),
       shape: const ContinuousRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(32),
@@ -71,88 +71,58 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget _buildTitle(BuildContext context, ThemeData theme) {
-    return Text(
-      title,
-      key: const ValueKey('title'),
-      style: theme.textTheme.headlineMedium?.copyWith(
-        fontWeight: FontWeight.w700,
-        color: theme.colorScheme.onSurface,
-        height: 1.1,
-        letterSpacing: -0.8,
-      ),
-    );
-  }
-
-  Widget _buildSearchField(BuildContext context, ThemeData theme, S s) {
+  Widget _buildSearchField(BuildContext context, ColorScheme colorScheme, S s) {
     return ConstrainedBox(
-      key: const ValueKey('search'),
       constraints: const BoxConstraints(maxWidth: 500),
-      child: TextField(
+      child: SearchBar(
+        focusNode: FocusNode(),
         controller: searchController,
-        autofocus: true,
-        decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(vertical: 12),
-          prefixIcon: Container(
-            margin: const EdgeInsets.only(left: 8),
-            child: Icon(
-              Icons.search_rounded,
-              size: 24,
-              color: theme.colorScheme.onSurfaceVariant,
+        hintText: searchHint ?? s.search_hint,
+        leading: const Icon(Icons.search_rounded),
+        trailing: [
+          if (searchController?.text.isNotEmpty ?? false)
+            IconButton(
+              icon: const Icon(Icons.close_rounded),
+              onPressed: onSearchToggle,
             ),
-          ),
-          suffixIcon: IconButton(
-            icon: Icon(
-              Icons.close_rounded,
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-            onPressed: onSearchToggle,
-          ),
-          hintText: searchHint ?? s.search_hint,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(28),
-            borderSide: BorderSide.none,
-          ),
-          filled: true,
-          fillColor: theme.colorScheme.surfaceContainerHigh,
-          hintStyle: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-          floatingLabelBehavior: FloatingLabelBehavior.never,
+        ],
+        elevation: const WidgetStatePropertyAll(0),
+        shape: const WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(28)),
+          )
         ),
-        style: theme.textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.w500,
+        padding: const WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         ),
+        backgroundColor: WidgetStatePropertyAll(
+          colorScheme.surfaceContainerHigh,
+        ),
+        surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
+        overlayColor: WidgetStatePropertyAll(colorScheme.surfaceContainer),
         onChanged: onSearchChanged,
       ),
     );
   }
 
-  List<Widget> _buildActions(BuildContext context, ThemeData theme, S s) {
+  List<Widget> _buildActions(BuildContext context, ColorScheme colorScheme, S s) {
     final actions = <Widget>[];
-    const actionSpacing = 4.0;
+    const maxVisibleActions = 4;
+    const actionSpacing = 8.0;
 
     if (isSearching) {
       return [
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
-          transitionBuilder: (Widget child, Animation<double> animation) {
-            return ScaleTransition(scale: animation, child: child);
-          },
-          child: Center(
-            key: ValueKey(isSearching),
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: FilledButton.tonal(
-                onPressed: onSearchToggle,
-                style: FilledButton.styleFrom(
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(16),
-                ),
-                child: Icon(
-                  Icons.close_rounded,
-                  color: theme.colorScheme.onSurface,
-                ),
+          child: Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: IconButton.filledTonal(
+              key: const ValueKey('search-close'),
+              onPressed: onSearchToggle,
+              icon: const Icon(Icons.close_rounded),
+              style: IconButton.styleFrom(
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(16),
               ),
             ),
           ),
@@ -160,49 +130,32 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ];
     }
 
-    actions.add(
-      AnimatedSwitcher(
-        duration: const Duration(milliseconds: 200),
-        transitionBuilder: (Widget child, Animation<double> animation) {
-          return ScaleTransition(scale: animation, child: child);
-        },
-        child: Center(
-          key: ValueKey(!isSearching),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: actionSpacing),
-            child: IconButton.filledTonal(
-              icon: const Icon(Icons.search_rounded),
-              onPressed: onSearchToggle,
-              tooltip: s.search,
-              style: IconButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(16),
-                alignment: Alignment.center,
-              ),
-            ),
+    final mainActions = <Widget>[
+      Padding(
+        padding: const EdgeInsets.only(left: actionSpacing),
+        child: IconButton.filledTonal(
+          icon: const Icon(Icons.search_outlined),
+          onPressed: onSearchToggle,
+          tooltip: s.search,
+          style: IconButton.styleFrom(
+            shape: const CircleBorder(),
+            padding: const EdgeInsets.all(16),
           ),
         ),
       ),
-    );
+    ];
 
     if (showViewModeToggle && onViewModePressed != null) {
-      actions.add(
-        AnimatedOpacity(
-          opacity: isSearching ? 0 : 1,
-          duration: const Duration(milliseconds: 200),
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: actionSpacing),
-              child: IconButton.filledTonal(
-                icon: const Icon(Icons.grid_view_rounded),
-                onPressed: onViewModePressed,
-                tooltip: s.grid_view,
-                style: IconButton.styleFrom(
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(16),
-                  alignment: Alignment.center,
-                ),
-              ),
+      mainActions.add(
+        Padding(
+          padding: const EdgeInsets.only(left: actionSpacing),
+          child: IconButton.filledTonal(
+            icon: const Icon(Icons.grid_view_outlined),
+            onPressed: onViewModePressed,
+            tooltip: s.grid_view,
+            style: IconButton.styleFrom(
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(16),
             ),
           ),
         ),
@@ -210,131 +163,98 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
 
     if (showTemplatesToggle && onTemplatesPressed != null) {
-      actions.add(
-        AnimatedOpacity(
-          opacity: isSearching ? 0 : 1,
-          duration: const Duration(milliseconds: 200),
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: actionSpacing),
-              child: IconButton.filledTonal(
-                icon: const Icon(Icons.library_books_rounded),
-                onPressed: onTemplatesPressed,
-                tooltip: s.templates,
-                style: IconButton.styleFrom(
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(16),
-                  alignment: Alignment.center,
-                ),
-              ),
+      mainActions.add(
+        Padding(
+          padding: const EdgeInsets.only(left: actionSpacing),
+          child: IconButton.filledTonal(
+            icon: const Icon(Icons.library_books_outlined),
+            onPressed: onTemplatesPressed,
+            tooltip: s.templates,
+            style: IconButton.styleFrom(
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(16),
             ),
           ),
         ),
       );
     }
 
+    actions.addAll(mainActions);
+
     if (additionalActions != null) {
-      for (final action in additionalActions!) {
-        if (action is IconButton) {
-          actions.add(
-            AnimatedOpacity(
-              opacity: isSearching ? 0 : 1,
-              duration: const Duration(milliseconds: 200),
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: actionSpacing),
-                  child: IconButton.filledTonal(
+      for (var action in additionalActions!) {
+        actions.add(
+          Padding(
+            padding: const EdgeInsets.only(left: actionSpacing),
+            child: action is IconButton 
+                ? IconButton.filledTonal(
                     icon: action.icon,
                     onPressed: action.onPressed,
                     tooltip: action.tooltip,
                     style: IconButton.styleFrom(
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(16),
-                      alignment: Alignment.center,
                     ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        } else {
-          actions.add(
-            AnimatedOpacity(
-              opacity: isSearching ? 0 : 1,
-              duration: const Duration(milliseconds: 200),
-              child: action,
-            ),
-          );
-        }
+                  )
+                : action,
+          ),
+        );
       }
     }
 
-    actions.add(
-      AnimatedOpacity(
-        opacity: isSearching ? 0 : 1,
-        duration: const Duration(milliseconds: 200),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.only(left: actionSpacing, right: 12),
-            child: IconButton.filledTonal(
-              icon: const Icon(Icons.settings_outlined),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
-              ),
-              tooltip: s.settings,
-              style: IconButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(16),
-                alignment: Alignment.center,
-              ),
-            ),
+    final settingsAction = Padding(
+      padding: const EdgeInsets.only(left: actionSpacing, right: 12),
+      child: IconButton.filledTonal(
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SettingsPage()),
+        ),
+        icon: const Icon(Icons.settings_outlined),
+        style: IconButton.styleFrom(
+          shape: const CircleBorder(),
+          padding: const EdgeInsets.all(16),
+        ),
+      ),
+    );
+
+    if (actions.length + 1 > maxVisibleActions) {
+      final visibleActions = actions.take(maxVisibleActions - 1).toList();
+      
+      final menuActions = [
+        ...actions.skip(maxVisibleActions - 1),
+        settingsAction,
+      ];
+
+      return [
+        ...visibleActions,
+        Padding(
+          padding: const EdgeInsets.only(left: actionSpacing),
+          child: PopupMenuButton(
+            icon: Icon(Icons.more_vert, color: colorScheme.onSurface),
+            itemBuilder: (context) => menuActions.map((action) {
+              if (action is Padding && action.child is IconButton) {
+                final iconButton = action.child as IconButton;
+                return PopupMenuItem(
+                  onTap: () {
+                    Future.delayed(Duration.zero, () {
+                      iconButton.onPressed?.call();
+                    });
+                  },
+                  child: ListTile(
+                    leading: iconButton.icon,
+                    title: Text(iconButton.tooltip ?? ''),
+                  ),
+                );
+              }
+              return PopupMenuItem(child: action);
+            }).toList(),
           ),
         ),
-      ),
-    );
-
-    if (actions.length > 5) {
-      final overflowActions = actions.sublist(4, actions.length - 1);
-      actions.removeRange(4, actions.length - 1);
-      actions.insert(
-        4,
-        AnimatedOpacity(
-          opacity: isSearching ? 0 : 1,
-          duration: const Duration(milliseconds: 200),
-          child: _buildOverflowMenu(overflowActions),
-        ),
-      );
+      ];
+    } else {
+      actions.add(settingsAction);
+      return actions;
     }
-
-    return actions;
-  }
-
-  Widget _buildOverflowMenu(List<Widget> actions) {
-    return Center(
-      child: PopupMenuButton(
-        icon: const Icon(Icons.more_vert_rounded),
-        shape: const ContinuousRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(24)),
-        ),
-        itemBuilder: (context) => actions
-            .whereType<AnimatedOpacity>()
-            .map((animated) => animated.child)
-            .whereType<Padding>()
-            .map((padding) => padding.child as IconButton)
-            .map((action) => PopupMenuItem(
-                  height: 48,
-                  onTap: action.onPressed,
-                  child: ListTile(
-                    leading: action.icon,
-                    title: Text(action.tooltip ?? ''),
-                    minLeadingWidth: 24,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                  ),
-                ))
-            .toList(),
-      ),
-    );
   }
 
   @override
