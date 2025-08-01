@@ -20,7 +20,7 @@ class AboutSection extends StatelessWidget {
           trailing: Text(
             s.app_name,
             style: Theme.of(context).textTheme.bodyLarge,
-          )
+          ),
         ),
         const SizedBox(height: 8),
         ListTile(
@@ -29,43 +29,65 @@ class AboutSection extends StatelessWidget {
           trailing: Text(
             'Максим Гоглов',
             style: Theme.of(context).textTheme.bodyLarge,
-          )
+          ),
         ),
         const SizedBox(height: 8),
         ListTile(
           leading: const Icon(Icons.info_outline),
           title: Text(s.version),
           trailing: Text(
-            '1.6.8',
+            '1.6.9',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
         ),
-        const SizedBox(height: 8),
-        Card(
-          margin: EdgeInsets.zero,
-          elevation: 0,
-          color: colorScheme.surfaceContainerHigh,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(12),
-            onTap: () => _launchUrl('https://github.com/MaxGog/CharacterBook'),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Image.asset('assets/underdeveloped.png'),
-                  const SizedBox(height: 8),
-                  Text(
-                    s.githubRepo,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: colorScheme.primary,
-                    ),
-                  ),
-                ],
-              ),
+        const SizedBox(height: 16),
+        FilledButton.tonal(
+          onPressed: () => _launchUrl('https://github.com/MaxGog/CharacterBook'),
+          style: FilledButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/github-mark.png',
+                width: 24,
+                height: 24,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                s.githubRepo,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        FilledButton(
+          onPressed: () => _launchUrl('https://boosty.to/maxupshur/donate'),
+          style: FilledButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            backgroundColor: colorScheme.tertiaryContainer,
+            foregroundColor: colorScheme.onTertiaryContainer,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.favorite, size: 24),
+              const SizedBox(width: 12),
+              Text(
+                'Поддержать разработчика',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+            ],
           ),
         ),
       ],
