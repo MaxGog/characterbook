@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
       children: [
         _buildNavigationRail(context),
         Expanded(
-          child: _pages[_currentIndex],
+          child: _pages[_currentIndex >= _pages.length ? 0 : _currentIndex],
         ),
       ],
     );
@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
     return Column(
       children: [
         Expanded(
-          child: _pages[_currentIndex],
+          child: _pages[_currentIndex >= 4 ? 0 : _currentIndex],
         ),
         _buildBottomNavigationBar(context),
       ],
@@ -72,6 +72,7 @@ class _HomePageState extends State<HomePage> {
       elevation: 1,
       selectedIndex: _currentIndex,
       onDestinationSelected: _updateIndex,
+      groupAlignment: 0.0,
       extended: _isExpanded,
       labelType: _isExpanded
           ? NavigationRailLabelType.none
@@ -129,19 +130,19 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        /*NavigationRailDestination(
+        NavigationRailDestination(
           icon: Icon(Icons.settings_outlined,
               color: colorScheme.onSurfaceVariant),
           selectedIcon: Icon(Icons.settings, color: colorScheme.primary),
           label: Text(
             S.of(context).settings,
             style: theme.textTheme.labelMedium?.copyWith(
-              color: _currentIndex == 3
+              color: _currentIndex == 4
                   ? colorScheme.primary
                   : colorScheme.onSurfaceVariant,
             ),
           ),
-        ),*/
+        ),
       ],
     );
   }
@@ -154,8 +155,12 @@ class _HomePageState extends State<HomePage> {
       height: 80,
       elevation: 1,
       backgroundColor: colorScheme.surfaceContainerLowest,
-      selectedIndex: _currentIndex,
-      onDestinationSelected: _updateIndex,
+      selectedIndex: _currentIndex >= 4 ? 0 : _currentIndex,
+      onDestinationSelected: (index) {
+        if (index < 4) {
+          _updateIndex(index);
+        }
+      },
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       destinations: [
         NavigationDestination(
