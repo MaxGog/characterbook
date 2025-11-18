@@ -1,5 +1,9 @@
 import 'package:characterbook/ui/pages/characters/character_management_page.dart';
+import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
+import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
+import 'package:characterbook/ui/widgets/performance/optimized_value_listenable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:hive/hive.dart';
 import 'package:characterbook/models/template_model.dart';
 import 'package:characterbook/services/template_service.dart';
@@ -19,26 +23,31 @@ class TemplatesPage extends StatefulWidget {
 
 class _TemplatesPageState extends State<TemplatesPage> {
   final TemplateService _templateService = TemplateService();
-  final TextEditingController _searchController = TextEditingController();
-  bool _isSearching = false;
-  bool _isImporting = false;
-  String? _errorMessage;
+  final TextEditingController searchController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
+  
+  bool isSearching = false;
+  bool isImporting = false;
+  bool isFabVisible = true;
+  String? errorMessage;
   String _searchQuery = '';
   QuestionnaireTemplate? _selectedTemplate;
 
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(() {
+    searchController.addListener(() {
       setState(() {
-        _searchQuery = _searchController.text.toLowerCase();
+        _searchQuery = searchController.text.toLowerCase();
       });
     });
+    scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
-    _searchController.dispose();
+    searchController.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -47,31 +56,12 @@ class _TemplatesPageState extends State<TemplatesPage> {
   }
 
   Future<void> _deleteTemplate(String name) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(S.of(context).template_delete_title),
-        content: Text(S.of(context).template_delete_confirm),
-        actions: [
-          TextButton(
-            child: Text(
-              S.of(context).cancel,
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-            ),
-            onPressed: () => Navigator.of(context).pop(false),
-          ),
-          TextButton(
-            child: Text(
-              S.of(context).delete,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-            onPressed: () => Navigator.of(context).pop(true),
-          ),
-        ],
-      ),
+    final confirmed = await _showDeleteConfirmationDialog(
+      S.of(context).template_delete_title,
+      S.of(context).template_delete_confirm,
     );
 
-    if (confirmed ?? false) {
+    if (confirmed) {
       await _templateService.deleteTemplate(name);
       if (mounted) _showSnackBar(S.of(context).template_deleted);
       _refreshTemplates();
@@ -81,8 +71,8 @@ class _TemplatesPageState extends State<TemplatesPage> {
   Future<void> _importTemplate() async {
     try {
       setState(() {
-        _isImporting = true;
-        _errorMessage = null;
+        isImporting = true;
+        errorMessage = null;
       });
 
       final template = await _templateService.pickAndImportTemplate();
@@ -122,12 +112,12 @@ class _TemplatesPageState extends State<TemplatesPage> {
       }
     } catch (e) {
       setState(() {
-        _errorMessage = e.toString();
+        errorMessage = e.toString();
       });
       if (mounted) _showSnackBar(S.of(context).import_error(e.toString()));
     } finally {
       setState(() {
-        _isImporting = false;
+        isImporting = false;
       });
     }
   }
@@ -140,6 +130,29 @@ class _TemplatesPageState extends State<TemplatesPage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
+  }
+
+  Future<bool> _showDeleteConfirmationDialog(String title, String content) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(S.of(context).cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              S.of(context).delete,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
+        ],
+      ),
+    ) ?? false;
   }
 
   void _showTemplateContextMenu(QuestionnaireTemplate template, BuildContext context) {
@@ -192,121 +205,9 @@ class _TemplatesPageState extends State<TemplatesPage> {
     ).toList();
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildTemplateCard(BuildContext context, QuestionnaireTemplate template, int index) {
     final theme = Theme.of(context);
     final isWideScreen = MediaQuery.of(context).size.width > 1000;
-
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: S.of(context).templates,
-        isSearching: _isSearching,
-        searchController: _searchController,
-        searchHint: S.of(context).search,
-        onSearchToggle: () => setState(() {
-          _isSearching = !_isSearching;
-          if (!_isSearching) {
-            _searchController.clear();
-            _searchQuery = '';
-          }
-        }),
-      ),
-      body: Column(
-        children: [
-          if (_isImporting) const LinearProgressIndicator(),
-          if (_errorMessage != null)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: theme.colorScheme.errorContainer,
-              child: Row(
-                children: [
-                  Icon(Icons.error, color: theme.colorScheme.error),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      _errorMessage!,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onErrorContainer,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.close, color: theme.colorScheme.onErrorContainer),
-                    onPressed: () => setState(() => _errorMessage = null),
-                  ),
-                ],
-              ),
-            ),
-          Expanded(
-            child: ValueListenableBuilder<Box<QuestionnaireTemplate>>(
-              valueListenable: Hive.box<QuestionnaireTemplate>('templates').listenable(),
-              builder: (context, box, _) {
-                final allTemplates = box.values.toList().cast<QuestionnaireTemplate>();
-                final templates = _filterTemplates(allTemplates);
-
-                return isWideScreen
-                    ? _buildWideLayout(templates, theme)
-                    : _buildMobileLayout(templates, theme);
-              },
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: CustomFloatingButtons(
-        onImport: _importTemplate,
-        onAdd: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TemplateEditPage(onSaved: _refreshTemplates),
-          ),
-        ),
-        importTooltip: S.of(context).import_template_tooltip,
-        addTooltip: S.of(context).create_template_tooltip,
-        templateTooltip: S.of(context).create_from_template_tooltip,
-      ),
-    );
-  }
-
-  Widget _buildWideLayout(List<QuestionnaireTemplate> templates, ThemeData theme) {
-    return Row(
-      children: [
-        Container(
-          width: 400,
-          decoration: BoxDecoration(
-            border: Border(right: BorderSide(color: theme.dividerColor)),
-          ),
-          child: _buildTemplatesList(templates, theme),
-        ),
-        Expanded(
-          child: _selectedTemplate != null
-              ? _buildTemplateDetails(_selectedTemplate!, theme)
-              : Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.library_books_outlined,
-                  size: 48,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  S.of(context).select_template,
-                  style: theme.textTheme.bodyLarge,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMobileLayout(List<QuestionnaireTemplate> templates, ThemeData theme) {
-    return _buildTemplatesList(templates, theme);
-  }
-
-  Widget _buildTemplateCard(QuestionnaireTemplate template, ThemeData theme) {
     final isSelected = _selectedTemplate?.name == template.name;
 
     return Card(
@@ -328,7 +229,7 @@ class _TemplatesPageState extends State<TemplatesPage> {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
-          if (MediaQuery.of(context).size.width > 1000) {
+          if (isWideScreen) {
             setState(() => _selectedTemplate = template);
           } else {
             _createCharacterFromTemplate(template);
@@ -386,14 +287,14 @@ class _TemplatesPageState extends State<TemplatesPage> {
             ),
             const SizedBox(height: 16),
             Text(
-              _isSearching && _searchController.text.isNotEmpty
+              isSearching && searchController.text.isNotEmpty
                   ? S.of(context).templates_not_found
                   : S.of(context).no_templates,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurface,
               ),
             ),
-            if (!_isSearching)
+            if (!isSearching)
               TextButton(
                 onPressed: _importTemplate,
                 child: Text(S.of(context).import_template),
@@ -403,10 +304,12 @@ class _TemplatesPageState extends State<TemplatesPage> {
       );
     }
 
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      itemCount: templates.length,
-      itemBuilder: (context, index) => _buildTemplateCard(templates[index], theme),
+    return OptimizedListView<QuestionnaireTemplate>(
+      items: templates,
+      itemBuilder: _buildTemplateCard,
+      onReorder: (oldIndex, newIndex) => Future.value(),
+      scrollController: scrollController,
+      enableReorder: false,
     );
   }
 
@@ -460,5 +363,116 @@ class _TemplatesPageState extends State<TemplatesPage> {
         ],
       ),
     );
+  }
+
+  void _onScroll() {
+    final isScrollingDown = scrollController.position.userScrollDirection == 
+        ScrollDirection.reverse;
+    if (isScrollingDown && isFabVisible) {
+      setState(() => isFabVisible = false);
+    } else if (!isScrollingDown && !isFabVisible) {
+      setState(() => isFabVisible = true);
+    }
+  }
+
+  void _handleSearchToggle() {
+    setState(() {
+      isSearching = !isSearching;
+      if (!isSearching) {
+        searchController.clear();
+        _searchQuery = '';
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isWideScreen = MediaQuery.of(context).size.width > 1000;
+
+    return Scaffold(
+      appBar: CustomAppBar(
+        title: S.of(context).templates,
+        isSearching: isSearching,
+        searchController: searchController,
+        searchHint: S.of(context).search,
+        onSearchToggle: _handleSearchToggle,
+      ),
+      body: Column(
+        children: [
+          ListStateIndicator(
+            isLoading: isImporting,
+            errorMessage: errorMessage,
+            onErrorClose: () => setState(() => errorMessage = null),
+          ),
+          Expanded(
+            child: OptimizedValueListenable<QuestionnaireTemplate>(
+              box: Hive.box<QuestionnaireTemplate>('templates'),
+              listen: true,
+              builder: (context, allTemplates) {
+                final templates = _filterTemplates(allTemplates);
+
+                return isWideScreen
+                    ? _buildWideLayout(templates, theme)
+                    : _buildMobileLayout(templates, theme);
+              },
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: isFabVisible 
+          ? CustomFloatingButtons(
+              onImport: _importTemplate,
+              onAdd: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TemplateEditPage(onSaved: _refreshTemplates),
+                ),
+              ),
+              importTooltip: S.of(context).import_template_tooltip,
+              addTooltip: S.of(context).create_template_tooltip,
+              templateTooltip: S.of(context).create_from_template_tooltip,
+            )
+          : null,
+    );
+  }
+
+  Widget _buildWideLayout(List<QuestionnaireTemplate> templates, ThemeData theme) {
+    return Row(
+      children: [
+        Container(
+          width: 400,
+          decoration: BoxDecoration(
+            border: Border(right: BorderSide(color: theme.dividerColor)),
+          ),
+          child: _buildTemplatesList(templates, theme),
+        ),
+        Expanded(
+          child: _selectedTemplate != null
+              ? _buildTemplateDetails(_selectedTemplate!, theme)
+              : Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.library_books_outlined,
+                  size: 48,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  S.of(context).select_template,
+                  style: theme.textTheme.bodyLarge,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMobileLayout(List<QuestionnaireTemplate> templates, ThemeData theme) {
+    return _buildTemplatesList(templates, theme);
   }
 }

@@ -7,6 +7,8 @@ import 'package:characterbook/ui/widgets/items/character_card.dart';
 import 'package:characterbook/ui/widgets/items/folder_card.dart';
 import 'package:characterbook/ui/widgets/items/note_card.dart';
 import 'package:characterbook/ui/widgets/items/race_card.dart';
+import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
+import 'package:characterbook/ui/widgets/performance/optimized_value_listenable.dart';
 import 'package:flutter/material.dart';
 import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/models/character_model.dart';
@@ -15,6 +17,7 @@ import 'package:characterbook/models/note_model.dart';
 import 'package:characterbook/ui/widgets/custom_app_bar.dart';
 import 'package:characterbook/ui/widgets/custom_floating_buttons.dart';
 import 'package:characterbook/ui/widgets/context_menu.dart';
+import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../../generated/l10n.dart';
 
@@ -32,8 +35,13 @@ class _FoldersScreenState extends State<FoldersScreen> {
   late Box<Character> _characterBox;
   late Box<Race> _raceBox;
   late Box<Note> _noteBox;
-  bool _isSearching = false;
-  final TextEditingController _searchController = TextEditingController();
+  
+  final TextEditingController searchController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
+  
+  bool isSearching = false;
+  bool isFabVisible = true;
+  String? errorMessage;
   String _searchQuery = '';
 
   @override
@@ -43,53 +51,16 @@ class _FoldersScreenState extends State<FoldersScreen> {
     _characterBox = Hive.box<Character>('characters');
     _raceBox = Hive.box<Race>('races');
     _noteBox = Hive.box<Note>('notes');
+    
+    searchController.addListener(_onSearchChanged);
+    scrollController.addListener(_onScroll);
   }
 
   @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: _getTitle(s),
-        isSearching: _isSearching,
-        searchController: _searchController,
-        searchHint: s.search_hint,
-        onSearchToggle: _toggleSearch,
-        onSearchChanged: _onSearchChanged,
-      ),
-      body: ValueListenableBuilder(
-        valueListenable: _folderBox.listenable(),
-        builder: (context, box, _) {
-          final folders = _getFilteredFolders();
-          
-          if (folders.isEmpty) {
-            return EmptyFoldersState(
-              folderType: widget.folderType,
-              onCreate: _createNewFolder,
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.only(bottom: 88),
-            itemCount: folders.length,
-            itemBuilder: (context, index) {
-              final folder = folders[index];
-              return FolderItem(
-                folder: folder,
-                onEdit: () => _editFolder(folder, s),
-                onDelete: () => _deleteFolder(folder, s),
-                children: _buildFolderContents(folder),
-              );
-            },
-          );
-        },
-      ),
-      floatingActionButton: CustomFloatingButtons(
-        onAdd: _createNewFolder,
-        addTooltip: s.create,
-      ),
-    );
+  void dispose() {
+    searchController.dispose();
+    scrollController.dispose();
+    super.dispose();
   }
 
   String _getTitle(S s) {
@@ -202,25 +173,35 @@ class _FoldersScreenState extends State<FoldersScreen> {
 
   void _toggleSearch() {
     setState(() {
-      _isSearching = !_isSearching;
-      if (!_isSearching) {
-        _searchController.clear();
+      isSearching = !isSearching;
+      if (!isSearching) {
+        searchController.clear();
         _searchQuery = '';
       }
     });
   }
 
-  void _onSearchChanged(String query) {
+  void _onSearchChanged() {
     setState(() {
-      _searchQuery = query;
+      _searchQuery = searchController.text;
     });
   }
 
-  void _createNewFolder() {
-    _showFolderDialog(null, null, S.of(context));
+  void _onScroll() {
+    final isScrollingDown = scrollController.position.userScrollDirection == 
+        ScrollDirection.reverse;
+    if (isScrollingDown && isFabVisible) {
+      setState(() => isFabVisible = false);
+    } else if (!isScrollingDown && !isFabVisible) {
+      setState(() => isFabVisible = true);
+    }
   }
 
-  void _showFolderDialog(Folder? folder, Folder? parentFolder, S s) {
+  void _createNewFolder() {
+    _showFolderDialog(null, null);
+  }
+
+  void _showFolderDialog(Folder? folder, Folder? parentFolder) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -257,7 +238,8 @@ class _FoldersScreenState extends State<FoldersScreen> {
     }
   }
 
-  void _deleteFolder(Folder folder, S s) {
+  void _deleteFolder(Folder folder) {
+    final s = S.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     
     showDialog(
@@ -324,33 +306,15 @@ class _FoldersScreenState extends State<FoldersScreen> {
   }
 
   Future<void> _deleteCharacter(Character character) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(S.of(context).delete),
-        content: Text(S.of(context).character_delete_confirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(S.of(context).cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(
-              S.of(context).delete,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-          ),
-        ],
-      ),
+    final confirmed = await _showDeleteConfirmationDialog(
+      S.of(context).delete,
+      S.of(context).character_delete_confirm,
     );
 
-    if (confirmed == true) {
+    if (confirmed) {
       await character.delete();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(S.of(context).character_deleted)),
-        );
+        _showSnackBar(S.of(context).character_deleted);
       }
     }
   }
@@ -385,7 +349,7 @@ class _FoldersScreenState extends State<FoldersScreen> {
   }
 
   Future<void> _deleteRace(Race race) async {
-    final isUsed = await isRaceUsed(race);
+    final isUsed = await _isRaceUsed(race);
     if (isUsed) {
       if (mounted) {
         showDialog(
@@ -405,38 +369,20 @@ class _FoldersScreenState extends State<FoldersScreen> {
       return;
     }
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(S.of(context).delete),
-        content: Text(S.of(context).race_delete_confirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(S.of(context).cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(
-              S.of(context).delete,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-          ),
-        ],
-      ),
+    final confirmed = await _showDeleteConfirmationDialog(
+      S.of(context).delete,
+      S.of(context).race_delete_confirm,
     );
 
-    if (confirmed == true) {
+    if (confirmed) {
       await race.delete();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(S.of(context).race_deleted)),
-        );
+        _showSnackBar(S.of(context).race_deleted);
       }
     }
   }
 
-  Future<bool> isRaceUsed(Race race) async {
+  Future<bool> _isRaceUsed(Race race) async {
     final characters = _characterBox.values;
     return characters.any((character) => character.race?.key == race.key);
   }
@@ -454,7 +400,7 @@ class _FoldersScreenState extends State<FoldersScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>NoteEditPage(note: note),
+        builder: (context) => NoteEditPage(note: note),
       ),
     ).then((_) {
       if (mounted) setState(() {});
@@ -462,11 +408,31 @@ class _FoldersScreenState extends State<FoldersScreen> {
   }
 
   Future<void> _deleteNote(Note note) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await _showDeleteConfirmationDialog(
+      S.of(context).delete,
+      '${S.of(context).posts} "${note.title}" ${S.of(context).template_delete_confirm}',
+    );
+
+    if (confirmed) {
+      await note.delete();
+      if (mounted) {
+        _showSnackBar(
+          '${S.of(context).posts} "${note.title}" ${S.of(context).template_deleted}',
+          action: SnackBarAction(
+            label: S.of(context).cancel,
+            onPressed: () => _noteBox.add(note),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<bool> _showDeleteConfirmationDialog(String title, String content) async {
+    return await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(S.of(context).delete),
-        content: Text('${S.of(context).posts} "${note.title}" ${S.of(context).template_delete_confirm}'),
+        title: Text(title),
+        content: Text(content),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -481,25 +447,81 @@ class _FoldersScreenState extends State<FoldersScreen> {
           ),
         ],
       ),
-    );
-
-    if (confirmed == true) {
-      await note.delete();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${S.of(context).posts} "${note.title}" ${S.of(context).template_deleted}'),
-            action: SnackBarAction(
-              label: S.of(context).cancel,
-              onPressed: () => _noteBox.add(note),
-            ),
-          ),
-        );
-      }
-    }
+    ) ?? false;
   }
 
-  void _editFolder(Folder folder, S s) {
-    _showFolderDialog(folder, null, s);
+  void _showSnackBar(String message, {SnackBarAction? action}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        action: action,
+      ),
+    );
+  }
+
+  void _editFolder(Folder folder) {
+    _showFolderDialog(folder, null);
+  }
+
+  Widget _buildFolderItem(BuildContext context, Folder folder) {
+    return FolderItem(
+      folder: folder,
+      onEdit: () => _editFolder(folder),
+      onDelete: () => _deleteFolder(folder),
+      children: _buildFolderContents(folder),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+
+    return Scaffold(
+      appBar: CustomAppBar(
+        title: _getTitle(s),
+        isSearching: isSearching,
+        searchController: searchController,
+        searchHint: s.search_hint,
+        onSearchToggle: _toggleSearch,
+      ),
+      body: Column(
+        children: [
+          ListStateIndicator(
+            isLoading: false,
+            errorMessage: errorMessage,
+            onErrorClose: () => setState(() => errorMessage = null),
+          ),
+          Expanded(
+            child: OptimizedValueListenable<Folder>(
+              box: _folderBox,
+              listen: true,
+              builder: (context, allFolders) {
+                final folders = _getFilteredFolders();
+                
+                if (folders.isEmpty) {
+                  return EmptyFoldersState(
+                    folderType: widget.folderType,
+                    onCreate: _createNewFolder,
+                  );
+                }
+
+                return ListView.builder(
+                  controller: scrollController,
+                  padding: const EdgeInsets.only(bottom: 88),
+                  itemCount: folders.length,
+                  itemBuilder: (context, index) => _buildFolderItem(context, folders[index]),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: isFabVisible 
+          ? CustomFloatingButtons(
+              onAdd: _createNewFolder,
+              addTooltip: s.create,
+            )
+          : null,
+    );
   }
 }

@@ -1,15 +1,19 @@
 import 'dart:async';
 
 import 'package:characterbook/models/folder_model.dart';
+import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/ui/pages/folders/folder_list_page.dart';
-import 'package:characterbook/ui/widgets/mixins/list_page_mixin.dart';
 import 'package:characterbook/ui/widgets/context_menu.dart';
 import 'package:characterbook/ui/widgets/custom_app_bar.dart';
 import 'package:characterbook/ui/widgets/custom_floating_buttons.dart';
-import 'package:characterbook/ui/widgets/list_views/race_list_view.dart';
+import 'package:characterbook/ui/widgets/items/race_card.dart';
+import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
+import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
 import 'package:characterbook/ui/widgets/mixins/tag_mixin.dart';
+import 'package:characterbook/ui/widgets/performance/optimized_value_listenable.dart';
 import 'package:characterbook/ui/widgets/tags/tag_filter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../generated/l10n.dart';
@@ -24,68 +28,84 @@ class RaceListPage extends StatefulWidget {
   State<RaceListPage> createState() => _RaceListPageState();
 }
 
-class _RaceListPageState extends State<RaceListPage> with ListPageMixin, TagMixin<Race> {
-  List<Race> filteredRaces = [];
-  String? selectedTag;
+class _RaceListPageState extends State<RaceListPage> with TagMixin<Race> {
+  final List<Race> _filteredRaces = [];
+  String? _selectedTag;
+  Timer? _debounceTimer;
+  final Box<Race> _racesBox = Hive.box<Race>('races');
+  final Box<Character> _charactersBox = Hive.box<Character>('characters');
 
-  List<String> getAllTags(List<Race> races) {
+  final TextEditingController searchController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
+  
+  bool isSearching = false;
+  bool isImporting = false;
+  bool isFabVisible = true;
+  String? errorMessage;
+
+  List<String> _getAllTags(List<Race> races) {
     return generateAllTags(races, context, (r) => r.tags);
   }
 
   bool _isShortName(Race r) => r.name.length <= 4;
 
-  void filterRaces(String query, List<Race> allRaces) {
-    setState(() {
-      filteredRaces = allRaces.where((race) {
-        final matchesSearch = query.isEmpty ||
-            race.name.toLowerCase().contains(query.toLowerCase()) ||
-            race.description.toLowerCase().contains(query.toLowerCase());
+  void _filterRaces(String query, List<Race> allRaces) {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      
+      setState(() {
+        _filteredRaces.clear();
+        _filteredRaces.addAll(
+          allRaces.where((race) {
+            final matchesSearch = query.isEmpty ||
+                race.name.toLowerCase().contains(query.toLowerCase()) ||
+                race.description.toLowerCase().contains(query.toLowerCase());
 
-        return matchesSearch && matchesTagFilter(
-          selectedTag, context, race, (r) => r.tags, _isShortName);
-      }).toList();
+            return matchesSearch && matchesTagFilter(
+              _selectedTag, context, race, (r) => r.tags, _isShortName);
+          }),
+        );
+      });
     });
   }
 
-  Future<bool> isRaceUsed(Race race) async {
-    final charactersBox = Hive.box<Character>('characters');
-    final characters = charactersBox.values;
-    
+  Future<bool> _isRaceUsed(Race race) async {
+    final characters = _charactersBox.values;
     return characters.any((character) => character.race?.key == race.key);
   }
 
-  Future<void> deleteRace(Race race) async {
-    if (await isRaceUsed(race)) {
-      if (mounted) showRaceInUseDialog();
+  Future<void> _deleteRace(Race race) async {
+    if (await _isRaceUsed(race)) {
+      if (mounted) _showRaceInUseDialog();
       return;
     }
 
-    final confirmed = await showDeleteConfirmationDialog(
+    final confirmed = await _showDeleteConfirmationDialog(
       S.of(context).race_delete_title,
       S.of(context).race_delete_confirm,
     );
 
     if (confirmed) {
-      await Hive.box<Race>('races').delete(race.key);
-      if (mounted) showSnackBar(S.of(context).race_deleted);
+      await _racesBox.delete(race.key);
+      if (mounted) _showSnackBar(S.of(context).race_deleted);
     }
   }
 
-  Future<void> importRaceFromFile() async {
+  Future<void> _importRaceFromFile() async {
     try {
       setState(() {
         isImporting = true;
         errorMessage = null;
       });
-
+      FilePickerService filePickerService = FilePickerService();
       final race = await filePickerService.importRace();
       if (race == null) return;
 
-      final box = Hive.box<Race>('races');
-      await box.add(race);
+      await _racesBox.add(race);
 
       if (mounted) {
-        showSnackBar(S.of(context).race_imported(race.name));
+        _showSnackBar(S.of(context).race_imported(race.name));
       }
     } catch (e) {
       if (mounted) {
@@ -98,7 +118,7 @@ class _RaceListPageState extends State<RaceListPage> with ListPageMixin, TagMixi
     }
   }
 
-  void showRaceInUseDialog() {
+  void _showRaceInUseDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -114,33 +134,61 @@ class _RaceListPageState extends State<RaceListPage> with ListPageMixin, TagMixi
     );
   }
 
-  void showRaceContextMenu(Race race) {
+  Future<bool> _showDeleteConfirmationDialog(String title, String content) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(S.of(context).cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              S.of(context).delete,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
+        ],
+      ),
+    ) ?? false;
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  void _showRaceContextMenu(Race race) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => ContextMenu.race(
         race: race,
-        onEdit: () => editRace(race),
-        onDelete: () => deleteRace(race),
+        onEdit: () => _editRace(race),
+        onDelete: () => _deleteRace(race),
       ),
     );
   }
 
-  Future<void> editRace(Race race) async {
+  Future<void> _editRace(Race race) async {
     final result = await Navigator.push<bool>(
       context,
       MaterialPageRoute(builder: (context) => RaceManagementPage(race: race)),
     );
     if (result == true && mounted) {
-      filterRaces(searchController.text, Hive.box<Race>('races').values.toList());
+      _filterRaces(searchController.text, _racesBox.values.toList());
     }
   }
 
-  Future<void> reorderRaces(int oldIndex, int newIndex) async {
+  Future<void> _reorderRaces(int oldIndex, int newIndex) async {
     if (oldIndex == newIndex) return;
 
-    final box = Hive.box<Race>('races');
-    final races = box.values.toList();
+    final races = _racesBox.values.toList();
 
     if (oldIndex < newIndex) {
       newIndex -= 1;
@@ -149,14 +197,79 @@ class _RaceListPageState extends State<RaceListPage> with ListPageMixin, TagMixi
     final race = races.removeAt(oldIndex);
     races.insert(newIndex, race);
 
-    await box.clear();
-    await box.addAll(races);
+    await _racesBox.clear();
+    await _racesBox.addAll(races);
 
     if (mounted) {
       setState(() {
-        filterRaces(searchController.text, box.values.toList());
+        _filterRaces(searchController.text, _racesBox.values.toList());
       });
     }
+  }
+
+  void _handleSearchToggle() {
+    setState(() {
+      isSearching = !isSearching;
+      if (!isSearching) {
+        searchController.clear();
+        _selectedTag = null;
+        _filteredRaces.clear();
+      }
+    });
+  }
+
+  void _handleSearchChanged(String query) {
+    _filterRaces(query, _racesBox.values.toList());
+  }
+
+  Future<void> _handleCreateRace() async {
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (context) => const RaceManagementPage()),
+    );
+    if (result == true && mounted) {
+      _filterRaces(searchController.text, _racesBox.values.toList());
+    }
+  }
+
+  void _openFoldersScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const FoldersScreen(folderType: FolderType.race),
+      ),
+    );
+  }
+
+  Widget _buildRaceCard(BuildContext context, Race race, int index) {
+    return RaceCard(
+      key: ValueKey(race.key),
+      race: race,
+      onTap: () => _editRace(race),
+      onLongPress: () => _showRaceContextMenu(race),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController.addListener(() {
+      final isScrollingDown = scrollController.position.userScrollDirection == 
+          ScrollDirection.reverse;
+      if (isScrollingDown && isFabVisible) {
+        setState(() => isFabVisible = false);
+      } else if (!isScrollingDown && !isFabVisible) {
+        setState(() => isFabVisible = true);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    searchController.dispose();
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -167,78 +280,53 @@ class _RaceListPageState extends State<RaceListPage> with ListPageMixin, TagMixi
         isSearching: isSearching,
         searchController: searchController,
         searchHint: S.of(context).search_race_hint,
-        onSearchToggle: () {
-          setState(() {
-            isSearching = !isSearching;
-            if (!isSearching) {
-              searchController.clear();
-              selectedTag = null;
-              filteredRaces = [];
-            }
-          });
-        },
-        onSearchChanged: (query) => filterRaces(query, Hive.box<Race>('races').values.toList()),
+        onSearchToggle: _handleSearchToggle,
+        onSearchChanged: _handleSearchChanged,
         additionalActions: [
           IconButton(
             icon: const Icon(Icons.folder_outlined),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const FoldersScreen(folderType: FolderType.race),
-              ),
-            ),
+            onPressed: _openFoldersScreen,
             tooltip: S.of(context).folders,
           ),
         ],
       ),
       body: Column(
         children: [
-          if (isImporting) const LinearProgressIndicator(),
-          if (errorMessage != null)
-            _buildErrorWidget(errorMessage!),
+          ListStateIndicator(
+            isLoading: isImporting,
+            errorMessage: errorMessage,
+            onErrorClose: () => setState(() => errorMessage = null),
+          ),
           Expanded(
-            child: ValueListenableBuilder<Box<Race>>(
-              valueListenable: Hive.box<Race>('races').listenable(),
-              builder: (context, box, _) {
-                final allRaces = box.values.toList();
-                final tags = getAllTags(allRaces);
-                final racesToShow = isSearching || selectedTag != null
-                    ? filteredRaces
+            child: OptimizedValueListenable<Race>(
+              box: _racesBox,
+              listen: true,
+              builder: (context, allRaces) {
+                final tags = _getAllTags(allRaces);
+                final racesToShow = isSearching || _selectedTag != null
+                    ? _filteredRaces
                     : allRaces;
 
                 return Column(
                   children: [
                     if (tags.isNotEmpty)
                       TagFilter(
-                          tags: tags,
-                          selectedTag: selectedTag,
-                          onTagSelected: (tag) {
-                            setState(() => selectedTag = tag);
-                            filterRaces(searchController.text, allRaces);
-                          },
-                          context: context,
-                          isForCharacters: false,
-                        ),
-                    Expanded(
-                      child: RaceListView(
-                        scrollController: scrollController,
-                        allRaces: allRaces,
-                        racesToShow: racesToShow,
                         tags: tags,
-                        searchController: searchController,
-                        isSearching: isSearching,
-                        selectedTag: selectedTag,
-                        onReorder: reorderRaces,
-                        onRaceTap: editRace,
-                        onRaceLongPress: showRaceContextMenu,
-                        onImportRace: importRaceFromFile,
-                        onCreateRace: () async {
-                          await Navigator.push<bool>(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const RaceManagementPage()),
-                          );
-                        }
+                        selectedTag: _selectedTag,
+                        onTagSelected: (tag) {
+                          setState(() => _selectedTag = tag);
+                          _filterRaces(searchController.text, allRaces);
+                        },
+                        context: context,
+                        isForCharacters: false,
+                      ),
+                    Expanded(
+                      child: OptimizedListView<Race>(
+                        items: racesToShow,
+                        itemBuilder: _buildRaceCard,
+                        onReorder: _reorderRaces,
+                        scrollController: scrollController,
+                        enableReorder: !isSearching && _selectedTag == null,
                       ),
                     ),
                   ],
@@ -250,45 +338,10 @@ class _RaceListPageState extends State<RaceListPage> with ListPageMixin, TagMixi
       ),
       floatingActionButton: isFabVisible 
         ? CustomFloatingButtons(
-            onImport: importRaceFromFile,
-            onAdd: () async {
-              final result = await Navigator.push<bool>(
-                context,
-                MaterialPageRoute(builder: (context) => const RaceManagementPage()),
-              );
-              if (result == true && mounted) {
-                filterRaces(searchController.text,
-                    Hive.box<Race>('races').values.toList());
-              }
-            },
+            onImport: _importRaceFromFile,
+            onAdd: _handleCreateRace,
           ) 
         : null,
-    );
-  }
-
-  Widget _buildErrorWidget(String message) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: Theme.of(context).colorScheme.errorContainer,
-      child: Row(
-        children: [
-          Icon(Icons.error, color: Theme.of(context).colorScheme.error),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              message,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onErrorContainer,
-              ),
-            ),
-          ),
-          IconButton(
-            icon: Icon(Icons.close, 
-              color: Theme.of(context).colorScheme.onErrorContainer),
-            onPressed: () => setState(() => errorMessage = null),
-          ),
-        ],
-      ),
     );
   }
 }
