@@ -14,7 +14,6 @@ import '../../../services/folder_service.dart';
 import '../../widgets/fields/custom_text_field.dart';
 import '../../widgets/markdown_context_menu.dart';
 import '../../widgets/save_button_widget.dart';
-import '../../widgets/base_edit_page_scaffold.dart';
 
 class NoteEditPage extends StatefulWidget {
   final Note? note;
@@ -32,6 +31,7 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
   late final TextEditingController _contentController;
   final List<String> _selectedCharacterIds = [];
   bool _isPreviewMode = false;
+  bool _isMetaCardExpanded = true;
 
   late final FolderService _folderService;
   List<Folder> _noteFolders = [];
@@ -160,6 +160,10 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
     setState(() => _isPreviewMode = !_isPreviewMode);
   }
 
+  void _toggleMetaCard() {
+    setState(() => _isMetaCardExpanded = !_isMetaCardExpanded);
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -193,19 +197,68 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
       const SizedBox(width: 8),
     ];
 
-    return BaseEditPageScaffold(
-      onWillPop: () => handleUnsavedChanges(context),
+    return Scaffold(
       appBar: CommonEditAppBar(
         title: title,
         onSave: _saveNote,
         saveTooltip: s.save,
         additionalActions: additionalActions,
       ),
-      body: Form(
-        key: _formKey,
+      body: WillPopScope(
+        onWillPop: () => handleUnsavedChanges(context),
+        child: Form(
+          key: _formKey,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: _buildContentField(),
+              ),
+              
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                top: _isMetaCardExpanded ? 16 : 0,
+                left: 16,
+                right: 16,
+                child: _isMetaCardExpanded 
+                    ? _buildMetaCard() 
+                    : _buildCollapsedMetaCard(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMetaCard() {
+    return Card(
+      elevation: 8,
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextField(
+                    controller: _titleController,
+                    label: S.of(context).name,
+                    isRequired: true,
+                    onChanged: (value) => _checkForChanges(),
+                  ),
+                ),
+                IconButton(
+                  onPressed: _toggleMetaCard,
+                  icon: const Icon(Icons.keyboard_arrow_up),
+                  tooltip: "Collapse",
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 16),
+            
             TagsAndFolderSection(
               tags: _tags,
               onTagsChanged: (tags) {
@@ -225,14 +278,9 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
               },
               folders: _noteFolders,
             ),
-            const SizedBox(height: 24),
-            CustomTextField(
-              controller: _titleController,
-              label: S.of(context).name,
-              isRequired: true,
-              onChanged: (value) => _checkForChanges(),
-            ),
+            
             const SizedBox(height: 16),
+            
             _CharacterSelectorSection(
               selectedCharacterIds: _selectedCharacterIds,
               onCharactersChanged: (characterIds) {
@@ -243,9 +291,9 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
                 });
               },
             ),
+            
             const SizedBox(height: 16),
-            _buildContentField(),
-            const SizedBox(height: 24),
+            
             SaveButton(
               onPressed: _saveNote,
               text: S.of(context).save,
@@ -256,14 +304,54 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
     );
   }
 
+  Widget _buildCollapsedMetaCard() {
+    return Card(
+      elevation: 4,
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _titleController.text.isEmpty 
+                        ? S.of(context).name 
+                        : _titleController.text,
+                    style: Theme.of(context).textTheme.titleMedium,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (_tags.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      _tags.join(', '),
+                      style: Theme.of(context).textTheme.bodySmall,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            IconButton(
+              onPressed: _toggleMetaCard,
+              icon: const Icon(Icons.keyboard_arrow_down),
+              tooltip: "Expand",
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildContentField() {
     if (_isPreviewMode) {
       return Container(
+        margin: EdgeInsets.only(top: _isMetaCardExpanded ? 180 : 60),
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Theme.of(context).dividerColor),
-        ),
         child: MarkdownBody(
           data: _contentController.text,
           styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
@@ -271,19 +359,32 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
       );
     }
 
-    return CustomTextField(
-      controller: _contentController,
-      label: S.of(context).description,
-      maxLines: null,
-      alignLabel: true,
-      keyboardType: TextInputType.multiline,
-      onChanged: (value) => _checkForChanges(),
-      contextMenuBuilder: (context, editableTextState) {
-        return MarkdownContextMenu(
-          controller: _contentController,
-          editableTextState: editableTextState,
-        );
-      },
+    return Container(
+      margin: EdgeInsets.only(top: _isMetaCardExpanded ? 180 : 60),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: TextFormField(
+        controller: _contentController,
+        maxLines: null,
+        keyboardType: TextInputType.multiline,
+        textInputAction: TextInputAction.newline,
+        decoration: const InputDecoration(
+          border: InputBorder.none,
+          hintText: 'Start writing...',
+          hintStyle: TextStyle(fontSize: 16),
+          contentPadding: EdgeInsets.zero,
+        ),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          fontSize: 16,
+          height: 1.5,
+        ),
+        onChanged: (value) => _checkForChanges(),
+        contextMenuBuilder: (context, editableTextState) {
+          return MarkdownContextMenu(
+            controller: _contentController,
+            editableTextState: editableTextState,
+          );
+        },
+      ),
     );
   }
 }
