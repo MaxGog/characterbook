@@ -32,23 +32,31 @@ class MessageLookup extends MessageLookupByLibrary {
           foldersCount) =>
       "Successfully restored:\n${charactersCount} characters\n${notesCount} notes\n${racesCount} races\n${templatesCount} templates \n${foldersCount} folders";
 
-  static String m5(count) => "${count} полей";
+  static String m5(days) => "${days} назад";
 
-  static String m6(error) => "Image selection error: ${error}";
+  static String m6(count) => "${count} полей";
 
-  static String m7(error) => "Import error: ${error}";
+  static String m7(hours) => "${hours} назад";
 
-  static String m8(count) => "${count} еще";
+  static String m8(error) => "Image selection error: ${error}";
 
-  static String m9(name) => "Race \"${name}\" imported successfully";
+  static String m9(error) => "Import error: ${error}";
 
-  static String m10(name) => "Race file ${name}";
+  static String m10(months) => "${months} назад";
 
-  static String m11(name) => "Template \"${name}\" exported successfully";
+  static String m11(count) => "${count} еще";
 
-  static String m12(name) => "Template \"${name}\" imported successfully";
+  static String m12(name) => "Race \"${name}\" imported successfully";
 
-  static String m13(name) => "Template \"${name}\" already exists. Replace it?";
+  static String m13(name) => "Race file ${name}";
+
+  static String m14(name) => "Template \"${name}\" exported successfully";
+
+  static String m15(name) => "Template \"${name}\" imported successfully";
+
+  static String m16(name) => "Template \"${name}\" already exists. Replace it?";
+
+  static String m17(years) => "${years} лет назад";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -152,6 +160,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "copy_error": MessageLookupByLibrary.simpleMessage("Copy Error"),
         "create": MessageLookupByLibrary.simpleMessage("Create"),
         "createBackup": MessageLookupByLibrary.simpleMessage("Create Backup"),
+        "create_first_content": MessageLookupByLibrary.simpleMessage(
+            "Создайте первого персонажа или расу"),
         "create_from_template_tooltip":
             MessageLookupByLibrary.simpleMessage("Create from Template"),
         "create_template":
@@ -165,6 +175,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "custom": MessageLookupByLibrary.simpleMessage("пользовательских"),
         "custom_fields": MessageLookupByLibrary.simpleMessage("Custom Fields"),
         "dark": MessageLookupByLibrary.simpleMessage("Dark"),
+        "days_ago": m5,
         "delete": MessageLookupByLibrary.simpleMessage("Delete"),
         "delete_character":
             MessageLookupByLibrary.simpleMessage("Delete Character"),
@@ -194,7 +205,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "female": MessageLookupByLibrary.simpleMessage("Female"),
         "fields_asc":
             MessageLookupByLibrary.simpleMessage("По количеству полей (возр.)"),
-        "fields_count": m5,
+        "fields_count": m6,
         "fields_desc":
             MessageLookupByLibrary.simpleMessage("По количеству полей (убыв.)"),
         "file_character":
@@ -215,14 +226,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "githubRepo": MessageLookupByLibrary.simpleMessage("GitHub Repository"),
         "green": MessageLookupByLibrary.simpleMessage("Green"),
         "grid_view": MessageLookupByLibrary.simpleMessage("Grid view"),
+        "home_subtitle": MessageLookupByLibrary.simpleMessage(
+            "Ваша коллекция персонажей и рас"),
+        "hours_ago": m7,
         "image": MessageLookupByLibrary.simpleMessage("Image"),
-        "image_picker_error": m6,
+        "image_picker_error": m8,
         "import": MessageLookupByLibrary.simpleMessage("Import"),
         "import_cancelled":
             MessageLookupByLibrary.simpleMessage("Import cancelled"),
         "import_character":
             MessageLookupByLibrary.simpleMessage("Import Character"),
-        "import_error": m7,
+        "import_error": m9,
         "import_race": MessageLookupByLibrary.simpleMessage("Import Race"),
         "import_template":
             MessageLookupByLibrary.simpleMessage("Import Template"),
@@ -231,6 +245,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "invalid_age":
             MessageLookupByLibrary.simpleMessage("Invalid age entered"),
         "items": MessageLookupByLibrary.simpleMessage("items"),
+        "just_now": MessageLookupByLibrary.simpleMessage("Только что"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
         "last_updated": MessageLookupByLibrary.simpleMessage("Last Updated"),
         "licenses": MessageLookupByLibrary.simpleMessage("Licenses"),
@@ -257,7 +272,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Numbered List"),
         "markdown_quote": MessageLookupByLibrary.simpleMessage("Quote"),
         "markdown_underline": MessageLookupByLibrary.simpleMessage("Underline"),
-        "more_fields": m8,
+        "months_ago": m10,
+        "more_fields": m11,
         "my": MessageLookupByLibrary.simpleMessage("My"),
         "my_characters": MessageLookupByLibrary.simpleMessage("My Characters"),
         "name": MessageLookupByLibrary.simpleMessage("Name"),
@@ -271,6 +287,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("No images added"),
         "no_characters": MessageLookupByLibrary.simpleMessage("No characters"),
         "no_content": MessageLookupByLibrary.simpleMessage("No content"),
+        "no_content_home":
+            MessageLookupByLibrary.simpleMessage("Пока ничего нет"),
         "no_data_found": MessageLookupByLibrary.simpleMessage("No data found"),
         "no_description":
             MessageLookupByLibrary.simpleMessage("No description"),
@@ -310,9 +328,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "race_delete_title":
             MessageLookupByLibrary.simpleMessage("Delete Race"),
         "race_deleted": MessageLookupByLibrary.simpleMessage("Race deleted"),
-        "race_imported": m9,
+        "race_imported": m12,
         "race_name": MessageLookupByLibrary.simpleMessage("Race Name"),
-        "race_share_text": m10,
+        "race_share_text": m13,
         "races": MessageLookupByLibrary.simpleMessage("Races"),
         "red": MessageLookupByLibrary.simpleMessage("Red"),
         "reference_image": MessageLookupByLibrary.simpleMessage("Reference"),
@@ -338,6 +356,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Search characters..."),
         "search_hint": MessageLookupByLibrary.simpleMessage(
             "Search for characters, races, notes, and templates..."),
+        "search_home":
+            MessageLookupByLibrary.simpleMessage("Поиск персонажей и рас..."),
         "search_race_hint":
             MessageLookupByLibrary.simpleMessage("Search races..."),
         "select": MessageLookupByLibrary.simpleMessage("Selected"),
@@ -374,11 +394,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Template deleted"),
         "template_exists":
             MessageLookupByLibrary.simpleMessage("Template already exists"),
-        "template_exported": m11,
-        "template_imported": m12,
+        "template_exported": m14,
+        "template_imported": m15,
         "template_name_label":
             MessageLookupByLibrary.simpleMessage("Template Name"),
-        "template_replace_confirm": m13,
+        "template_replace_confirm": m16,
         "templates": MessageLookupByLibrary.simpleMessage("Templates"),
         "templates_not_found":
             MessageLookupByLibrary.simpleMessage("No templates found"),
@@ -392,6 +412,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "web_not_supported":
             MessageLookupByLibrary.simpleMessage("Not available for web"),
         "years": MessageLookupByLibrary.simpleMessage("years"),
+        "years_ago": m17,
         "young": MessageLookupByLibrary.simpleMessage("Young"),
         "z_to_a": MessageLookupByLibrary.simpleMessage("Z-A")
       };

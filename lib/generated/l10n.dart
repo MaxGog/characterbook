@@ -2566,6 +2566,96 @@ class S {
       args: [count],
     );
   }
+
+  /// `Ваша коллекция персонажей и рас`
+  String get home_subtitle {
+    return Intl.message(
+      'Ваша коллекция персонажей и рас',
+      name: 'home_subtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Поиск персонажей и рас...`
+  String get search_home {
+    return Intl.message(
+      'Поиск персонажей и рас...',
+      name: 'search_home',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Пока ничего нет`
+  String get no_content_home {
+    return Intl.message(
+      'Пока ничего нет',
+      name: 'no_content_home',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Создайте первого персонажа или расу`
+  String get create_first_content {
+    return Intl.message(
+      'Создайте первого персонажа или расу',
+      name: 'create_first_content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{years} лет назад`
+  String years_ago(Object years) {
+    return Intl.message(
+      '$years лет назад',
+      name: 'years_ago',
+      desc: '',
+      args: [years],
+    );
+  }
+
+  /// `{months} назад`
+  String months_ago(Object months) {
+    return Intl.message(
+      '$months назад',
+      name: 'months_ago',
+      desc: '',
+      args: [months],
+    );
+  }
+
+  /// `{days} назад`
+  String days_ago(Object days) {
+    return Intl.message(
+      '$days назад',
+      name: 'days_ago',
+      desc: '',
+      args: [days],
+    );
+  }
+
+  /// `{hours} назад`
+  String hours_ago(Object hours) {
+    return Intl.message(
+      '$hours назад',
+      name: 'hours_ago',
+      desc: '',
+      args: [hours],
+    );
+  }
+
+  /// `Только что`
+  String get just_now {
+    return Intl.message(
+      'Только что',
+      name: 'just_now',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -417,5 +417,14 @@
   "custom": "пользовательских", 
   "detailed": "Подробный",
   "more_fields": "{count} еще",
-  "fields_count": "{count} полей"
+  "fields_count": "{count} полей",
+  "home_subtitle": "Ваша коллекция персонажей и рас",
+  "search_home": "Поиск персонажей и рас...",
+  "no_content_home": "Пока ничего нет",
+  "create_first_content": "Создайте первого персонажа или расу",
+  "years_ago": "{years} лет назад",
+  "months_ago": "{months} назад",
+  "days_ago": "{days} назад",
+  "hours_ago": "{hours} назад",
+  "just_now": "Только что"
 }
