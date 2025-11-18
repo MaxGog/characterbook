@@ -1,5 +1,6 @@
 import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/services/file_picker_service.dart';
+import 'package:characterbook/ui/cards/character_modal_card.dart';
 import 'package:characterbook/ui/pages/folders/folder_list_page.dart';
 import 'package:characterbook/ui/widgets/list/base_list_page.dart';
 import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
@@ -15,7 +16,6 @@ import '../../../generated/l10n.dart';
 import '../../../models/character_model.dart';
 import '../../../models/template_model.dart';
 import '../templates/templates_page.dart';
-import 'character_detail_page.dart';
 import 'character_management_page.dart';
 
 class CharacterListPage extends BaseListPage<Character> {
@@ -61,11 +61,11 @@ class _CharacterListPageState extends BaseListPageState<Character, CharacterList
   }
 
   void navigateToDetail(Character character) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CharacterDetailPage(character: character),
-      ),
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => CharacterModalCard(character: character),
     );
   }
 

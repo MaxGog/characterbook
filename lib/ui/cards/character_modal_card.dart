@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/services/folder_service.dart';
+import 'package:characterbook/ui/pages/characters/character_management_page.dart';
 import 'package:characterbook/ui/pages/notes/note_management_page.dart';
 import 'package:characterbook/ui/widgets/avatar_widget.dart';
 import 'package:flutter/material.dart';
@@ -11,22 +12,17 @@ import '../../../models/character_model.dart';
 import '../../../models/note_model.dart';
 import '../../../services/character_service.dart';
 import '../../../services/clipboard_service.dart';
-import 'character_management_page.dart';
 
-class CharacterDetailPage extends StatefulWidget {
+class CharacterModalCard extends StatefulWidget {
   final Character character;
-  const CharacterDetailPage({super.key, required this.character});
+
+  const CharacterModalCard({super.key, required this.character});
 
   @override
-  State<CharacterDetailPage> createState() => _CharacterDetailPageState();
+  State<CharacterModalCard> createState() => _CharacterModalCardState();
 }
 
-class _CharacterDetailPageState extends State<CharacterDetailPage> {
-  final ScrollController _scrollController = ScrollController();
-  double _appBarHeight = 120.0;
-  final double _minAppBarHeight = kToolbarHeight;
-  final double _maxAppBarHeight = 120.0;
-
+class _CharacterModalCardState extends State<CharacterModalCard> {
   final _expandedSections = <String, bool>{
     'basic': true, 'reference': true, 'appearance': true,
     'personality': true, 'biography': true, 'abilities': true,
@@ -36,49 +32,20 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
 
   List<Note> _relatedNotes = [];
   late final CharacterService _exportService;
+  late final FolderService _folderService;
+  Folder? _currentFolder;
 
   static const _genderMale = 'male';
   static const _genderFemale = 'female';
   static const _genderAnother = 'another';
 
-  late final FolderService _folderService;
-  Folder? _currentFolder;
-
   @override
   void initState() {
     super.initState();
     _exportService = CharacterService.forExport(widget.character);
-    _loadRelatedNotes();
     _folderService = FolderService(Hive.box<Folder>('folders'));
     _loadRelatedNotes();
     _loadFolder();
-    _scrollController.addListener(_handleScroll);
-  }
-
-  @override
-  void dispose() {
-    _scrollController.removeListener(_handleScroll);
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _handleScroll() {
-    final offset = _scrollController.offset;
-    final newHeight = _maxAppBarHeight - offset;
-    
-    if (newHeight >= _minAppBarHeight && newHeight <= _maxAppBarHeight) {
-      setState(() {
-        _appBarHeight = newHeight;
-      });
-    } else if (newHeight < _minAppBarHeight && _appBarHeight != _minAppBarHeight) {
-      setState(() {
-        _appBarHeight = _minAppBarHeight;
-      });
-    } else if (newHeight > _maxAppBarHeight && _appBarHeight != _maxAppBarHeight) {
-      setState(() {
-        _appBarHeight = _maxAppBarHeight;
-      });
-    }
   }
 
   Future<void> _loadFolder() async {
@@ -239,13 +206,13 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
   }
 
   Future<void> _navigateToEdit() async {
+    Navigator.pop(context);
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => CharacterEditPage(character: widget.character),
       ),
     );
-    
   }
 
   void _showFullImage(Uint8List imageBytes, String title) => showDialog(
@@ -433,132 +400,162 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
 
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: _navigateToEdit,
-        tooltip: S.of(context).edit_character,
-        child: const Icon(Icons.edit_rounded),
-      ),
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 120,
-            collapsedHeight: 80,
-            pinned: true,
-            floating: false,
-            snap: false,
-            surfaceTintColor: Colors.transparent,
-            shadowColor: colorScheme.shadow,
-            backgroundColor: colorScheme.surfaceContainerLowest,
-            shape: const ContinuousRectangleBorder(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(32),
-                bottomRight: Radius.circular(32),
-                topLeft: Radius.circular(32),
-                topRight: Radius.circular(32),
-              ),
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.9,
+      minChildSize: 0.5,
+      maxChildSize: 0.95,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(32),
+              topRight: Radius.circular(32),
             ),
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              titlePadding: const EdgeInsets.only(bottom: 16),
-              title: Text(
-                widget.character.name,
-                style: textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  height: 1.2,
-                  letterSpacing: -0.5,
-                  shadows: [
-                    Shadow(
-                      color: colorScheme.surfaceContainerLowest.withOpacity(0.5),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-              ),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      colorScheme.surfaceContainerLowest,
-                      colorScheme.surfaceContainerLowest.withOpacity(0.3),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            actions: [
-              IconButton.filledTonal(
-                onPressed: _showShareMenu,
-                icon: const Icon(Icons.share_outlined),
-                tooltip: S.of(context).share_character,
-                style: IconButton.styleFrom(
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(16),
-                ),
-              ),
-              PopupMenuButton<String>(
-                icon: Icon(Icons.more_vert_rounded, color: colorScheme.onSurface),
-                position: PopupMenuPosition.under,
-                surfaceTintColor: colorScheme.surfaceContainerHighest,
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 'copy',
-                    child: ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(Icons.copy_rounded, color: colorScheme.onSurfaceVariant),
-                      title: Text(S.of(context).copy_character),
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'edit',
-                    child: ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(Icons.edit_rounded, color: colorScheme.onSurfaceVariant),
-                      title: Text(S.of(context).edit_character),
-                    ),
-                  ),
-                  const PopupMenuDivider(),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(Icons.delete_rounded, color: colorScheme.error),
-                      title: Text(
-                        S.of(context).delete_character,
-                        style: TextStyle(color: colorScheme.error),
-                      ),
-                    ),
-                  ),
-                ],
-                onSelected: (value) => switch (value) {
-                  'copy' => _copyToClipboard(),
-                  'edit' => _navigateToEdit(),
-                  'delete' => _handleDelete(),
-                  _ => null,
-                },
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 16,
+                offset: const Offset(0, -4),
               ),
             ],
           ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                _buildHeroSection(context),
-                const SizedBox(height: 24),
-                _buildMetadataSection(context),
-                const SizedBox(height: 24),
-                _buildContentSections(context),
-              ]),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            floatingActionButton: Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              child: FloatingActionButton(
+                onPressed: _navigateToEdit,
+                tooltip: S.of(context).edit_character,
+                child: const Icon(Icons.edit_rounded),
+              ),
+            ),
+            body: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(32),
+                topRight: Radius.circular(32),
+              ),
+              child: CustomScrollView(
+                controller: scrollController,
+                slivers: [
+                  SliverAppBar(
+                    expandedHeight: 120,
+                    collapsedHeight: 80,
+                    pinned: true,
+                    floating: false,
+                    snap: false,
+                    surfaceTintColor: Colors.transparent,
+                    shadowColor: colorScheme.shadow,
+                    backgroundColor: colorScheme.surfaceContainerLowest,
+                    shape: const ContinuousRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(32),
+                        bottomRight: Radius.circular(32),
+                      ),
+                    ),
+                    leading: IconButton(
+                      icon: const Icon(Icons.close_rounded),
+                      onPressed: () => Navigator.pop(context),
+                      tooltip: "Close",
+                    ),
+                    flexibleSpace: FlexibleSpaceBar(
+                      centerTitle: true,
+                      titlePadding: const EdgeInsets.only(bottom: 16),
+                      title: Text(
+                        widget.character.name,
+                        style: theme.textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          height: 1.2,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      background: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              colorScheme.surfaceContainerLowest,
+                              colorScheme.surfaceContainerLowest.withOpacity(0.3),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    actions: [
+                      IconButton.filledTonal(
+                        onPressed: _showShareMenu,
+                        icon: const Icon(Icons.share_outlined),
+                        tooltip: S.of(context).share_character,
+                        style: IconButton.styleFrom(
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(16),
+                        ),
+                      ),
+                      PopupMenuButton<String>(
+                        icon: Icon(Icons.more_vert_rounded, color: colorScheme.onSurface),
+                        position: PopupMenuPosition.under,
+                        surfaceTintColor: colorScheme.surfaceContainerHighest,
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 'copy',
+                            child: ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              leading: Icon(Icons.copy_rounded, color: colorScheme.onSurfaceVariant),
+                              title: Text(S.of(context).copy_character),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: 'edit',
+                            child: ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              leading: Icon(Icons.edit_rounded, color: colorScheme.onSurfaceVariant),
+                              title: Text(S.of(context).edit_character),
+                            ),
+                          ),
+                          const PopupMenuDivider(),
+                          PopupMenuItem(
+                            value: 'delete',
+                            child: ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              leading: Icon(Icons.delete_rounded, color: colorScheme.error),
+                              title: Text(
+                                S.of(context).delete_character,
+                                style: TextStyle(color: colorScheme.error),
+                              ),
+                            ),
+                          ),
+                        ],
+                        onSelected: (value) => switch (value) {
+                          'copy' => _copyToClipboard(),
+                          'edit' => _navigateToEdit(),
+                          'delete' => _handleDelete(),
+                          _ => null,
+                        },
+                      ),
+                    ],
+                  ),
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
+                        _buildHeroSection(context),
+                        const SizedBox(height: 24),
+                        _buildMetadataSection(context),
+                        const SizedBox(height: 24),
+                        _buildContentSections(context),
+                        const SizedBox(height: 32), // Добавляем отступ снизу для FAB
+                      ]),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -571,7 +568,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: colorScheme.outlineVariant,
           width: 1,
@@ -882,7 +879,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -994,7 +991,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: colorScheme.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 200),
