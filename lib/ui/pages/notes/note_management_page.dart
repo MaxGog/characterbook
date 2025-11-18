@@ -1,6 +1,6 @@
 import 'package:characterbook/ui/handlers/unsaved_changes_handler.dart';
-import 'package:characterbook/ui/widgets/folder_selector_widget.dart';
-import 'package:characterbook/ui/widgets/tags/tags_input_widget.dart';
+import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
+import 'package:characterbook/ui/widgets/sections/tags_and_folder_section.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -14,7 +14,7 @@ import '../../../services/folder_service.dart';
 import '../../widgets/fields/custom_text_field.dart';
 import '../../widgets/markdown_context_menu.dart';
 import '../../widgets/save_button_widget.dart';
-import '../../dialogs/unsaved_changes_dialog.dart';
+import '../../widgets/base_edit_page_scaffold.dart';
 
 class NoteEditPage extends StatefulWidget {
   final Note? note;
@@ -32,13 +32,11 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
   late final TextEditingController _contentController;
   final List<String> _selectedCharacterIds = [];
   bool _isPreviewMode = false;
-  final GlobalKey _contentFieldKey = GlobalKey();
 
   late final FolderService _folderService;
   List<Folder> _noteFolders = [];
   Folder? _selectedFolder;
   List<String> _tags = [];
-  final TextEditingController _tagController = TextEditingController();
 
   @override
   void initState() {
@@ -59,6 +57,7 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
     _titleController.addListener(_checkForChanges);
     _contentController.addListener(_checkForChanges);
     _loadFolders();
+    hasUnsavedChanges = widget.note == null || widget.isCopyMode;
   }
 
   @override
@@ -85,7 +84,6 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
     _contentController.removeListener(_checkForChanges);
     _titleController.dispose();
     _contentController.dispose();
-    _tagController.dispose();
     super.dispose();
   }
 
@@ -146,12 +144,6 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
   }
 
   Future<void> _copyToClipboard() async {
-    final charactersBox = Hive.box<Character>('characters');
-    final _ = _selectedCharacterIds.map((id) {
-      final character = charactersBox.get(id);
-      return character?.name ?? S.of(context).no_data_found;
-    }).toList();
-
     await ClipboardService.copyNoteToClipboard(
       context: context,
       content: _contentController.text,
@@ -164,118 +156,66 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
-    final s = S.of(context);
-
-    return WillPopScope(
-      onWillPop: () async {
-        if (!hasUnsavedChanges) return true;
-        final shouldSave = await UnsavedChangesDialog(
-          saveText: s.save,
-        ).show(context);
-        if (shouldSave == null) return false;
-        if (shouldSave) await _saveNote();
-        return true;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            widget.note == null
-                ? s.create
-                : widget.isCopyMode
-                    ? '${s.copy} ${s.posts.toLowerCase()}'
-                    : s.edit,
-            style: textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.w800,
-              height: 1.2,
-              letterSpacing: -0.5,
-            ),
-          ),
-          centerTitle: true,
-          titleSpacing: 24,
-          toolbarHeight: 80,
-          scrolledUnderElevation: 3,
-          shadowColor: colorScheme.shadow,
-          surfaceTintColor: Colors.transparent,
-          backgroundColor: colorScheme.surfaceContainerLowest,
-          shape: const ContinuousRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(32),
-              bottomRight: Radius.circular(32),
-            ),
-          ),
-          actions: [
-            IconButton.filledTonal(
-              onPressed: _copyToClipboard,
-              icon: const Icon(Icons.copy_rounded),
-              tooltip: s.copy,
-              style: IconButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(16),
-              ),
-            ),
-            const SizedBox(width: 8),
-            IconButton.filledTonal(
-              onPressed: () => setState(() => _isPreviewMode = !_isPreviewMode),
-              icon: Icon(_isPreviewMode ? Icons.edit_rounded : Icons.preview_rounded),
-              tooltip: s.edit,
-              style: IconButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(16),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: IconButton.filledTonal(
-                onPressed: _saveNote,
-                icon: const Icon(Icons.save_rounded),
-                tooltip: s.save,
-                style: IconButton.styleFrom(
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(16),
-                ),
-              ),
-            ),
-          ],
-        ),
-        body: Form(
-          key: _formKey,
-          child: _buildContent(context),
-        ),
-      ),
-    );
+  void _togglePreviewMode() {
+    setState(() => _isPreviewMode = !_isPreviewMode);
   }
 
-  Widget _buildContent(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TagsInputWidget(
-            tags: _tags,
-            onTagsChanged: (tags) {
-              setState(() {
-                _tags = tags;
-                hasUnsavedChanges = true;
-              });
-            },
-          ),
-          const SizedBox(height: 24),
-          CustomTextField(
-            controller: _titleController,
-            label: S.of(context).name,
-            isRequired: true,
-            onChanged: (value) => _checkForChanges(),
-          ),
-          if (_noteFolders.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            FolderSelectorWidget(
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    
+    final title = widget.note == null
+        ? s.create
+        : widget.isCopyMode
+            ? '${s.copy} ${s.posts.toLowerCase()}'
+            : s.edit;
+
+    final additionalActions = [
+      IconButton.filledTonal(
+        onPressed: _copyToClipboard,
+        icon: const Icon(Icons.copy_rounded),
+        tooltip: s.copy,
+        style: IconButton.styleFrom(
+          shape: const CircleBorder(),
+          padding: const EdgeInsets.all(16),
+        ),
+      ),
+      const SizedBox(width: 8),
+      IconButton.filledTonal(
+        onPressed: _togglePreviewMode,
+        icon: Icon(_isPreviewMode ? Icons.edit_rounded : Icons.preview_rounded),
+        tooltip: _isPreviewMode ? s.edit : s.grid_view,
+        style: IconButton.styleFrom(
+          shape: const CircleBorder(),
+          padding: const EdgeInsets.all(16),
+        ),
+      ),
+      const SizedBox(width: 8),
+    ];
+
+    return BaseEditPageScaffold(
+      onWillPop: () => handleUnsavedChanges(context),
+      appBar: CommonEditAppBar(
+        title: title,
+        onSave: _saveNote,
+        saveTooltip: s.save,
+        additionalActions: additionalActions,
+      ),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TagsAndFolderSection(
+              tags: _tags,
+              onTagsChanged: (tags) {
+                setState(() {
+                  _tags = tags;
+                  hasUnsavedChanges = true;
+                });
+              },
+              folderService: _folderService,
+              folderType: FolderType.note,
               selectedFolder: _selectedFolder,
               onFolderSelected: (folder) {
                 setState(() {
@@ -283,22 +223,35 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
                   hasUnsavedChanges = true;
                 });
               },
-              folderService: _folderService,
-              folderType: FolderType.note,
+              folders: _noteFolders,
+            ),
+            const SizedBox(height: 24),
+            CustomTextField(
+              controller: _titleController,
+              label: S.of(context).name,
+              isRequired: true,
+              onChanged: (value) => _checkForChanges(),
+            ),
+            const SizedBox(height: 16),
+            _CharacterSelectorSection(
+              selectedCharacterIds: _selectedCharacterIds,
+              onCharactersChanged: (characterIds) {
+                setState(() {
+                  _selectedCharacterIds.clear();
+                  _selectedCharacterIds.addAll(characterIds);
+                  hasUnsavedChanges = true;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildContentField(),
+            const SizedBox(height: 24),
+            SaveButton(
+              onPressed: _saveNote,
+              text: S.of(context).save,
             ),
           ],
-          const SizedBox(height: 16),
-          _buildCharacterSelector(context),
-          const SizedBox(height: 16),
-          _buildSelectedCharactersChips(context),
-          const SizedBox(height: 16),
-          _buildContentField(),
-          const SizedBox(height: 24),
-          SaveButton(
-            onPressed: _saveNote,
-            text: S.of(context).save,
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -319,7 +272,6 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
     }
 
     return CustomTextField(
-      key: _contentFieldKey,
       controller: _contentController,
       label: S.of(context).description,
       maxLines: null,
@@ -334,9 +286,52 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
       },
     );
   }
+}
 
-  Widget _buildCharacterSelector(BuildContext context) {
+class _CharacterSelectorSection extends StatefulWidget {
+  final List<String> selectedCharacterIds;
+  final ValueChanged<List<String>> onCharactersChanged;
+
+  const _CharacterSelectorSection({
+    required this.selectedCharacterIds,
+    required this.onCharactersChanged,
+  });
+
+  @override
+  State<_CharacterSelectorSection> createState() => _CharacterSelectorSectionState();
+}
+
+class _CharacterSelectorSectionState extends State<_CharacterSelectorSection> {
+  final List<String> _localSelectedIds = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _localSelectedIds.addAll(widget.selectedCharacterIds);
+  }
+
+  void _toggleCharacter(String characterId) {
+    setState(() {
+      if (_localSelectedIds.contains(characterId)) {
+        _localSelectedIds.remove(characterId);
+      } else {
+        _localSelectedIds.add(characterId);
+      }
+    });
+    widget.onCharactersChanged(_localSelectedIds);
+  }
+
+  void _removeCharacter(String characterId) {
+    setState(() {
+      _localSelectedIds.remove(characterId);
+    });
+    widget.onCharactersChanged(_localSelectedIds);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final characters = Hive.box<Character>('characters').values.toList();
+    final charactersBox = Hive.box<Character>('characters');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,10 +346,8 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
           style: Theme.of(context).textTheme.bodyLarge,
           borderRadius: BorderRadius.circular(12),
           items: characters.map((character) {
-            final characterKey = Hive.box<Character>('characters')
-                .keyAt(characters.indexOf(character))
-                .toString();
-            final isSelected = _selectedCharacterIds.contains(characterKey);
+            final characterKey = charactersBox.keyAt(characters.indexOf(character)).toString();
+            final isSelected = _localSelectedIds.contains(characterKey);
             return DropdownMenuItem(
               value: characterKey,
               child: Row(
@@ -378,52 +371,39 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
           }).toList(),
           onChanged: (value) {
             if (value != null) {
-              setState(() {
-                _selectedCharacterIds.contains(value)
-                    ? _selectedCharacterIds.remove(value)
-                    : _selectedCharacterIds.add(value);
-                hasUnsavedChanges = true;
-              });
+              _toggleCharacter(value);
             }
           },
         ),
+        const SizedBox(height: 16),
+        if (_localSelectedIds.isNotEmpty) 
+          _buildSelectedCharactersChips(charactersBox),
       ],
     );
   }
 
-  Widget _buildSelectedCharactersChips(BuildContext context) {
-    final charactersBox = Hive.box<Character>('characters');
-
-    if (_selectedCharacterIds.isEmpty) return const SizedBox();
-
+  Widget _buildSelectedCharactersChips(Box<Character> charactersBox) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: _selectedCharacterIds.map((characterId) {
+      children: _localSelectedIds.map((characterId) {
         final character = charactersBox.get(characterId);
         return character != null
-            ? _buildCharacterChip(character, characterId)
+            ? InputChip(
+                label: Text(character.name),
+                onDeleted: () => _removeCharacter(characterId),
+                deleteIcon: Icon(
+                  Icons.close,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              )
             : const SizedBox();
       }).toList(),
-    );
-  }
-
-  Widget _buildCharacterChip(Character character, String characterId) {
-    return InputChip(
-      label: Text(character.name),
-      onDeleted: () => setState(() {
-        _selectedCharacterIds.remove(characterId);
-        hasUnsavedChanges = true;
-      }),
-      deleteIcon: Icon(
-        Icons.close,
-        size: 18,
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
-      ),
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
     );
   }
 }

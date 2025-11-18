@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:characterbook/ui/handlers/unsaved_changes_handler.dart';
-import 'package:characterbook/ui/widgets/folder_selector_widget.dart';
-import 'package:characterbook/ui/widgets/tags/tags_input_widget.dart';
+import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
+import 'package:characterbook/ui/widgets/sections/tags_and_folder_section.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import '../../../generated/l10n.dart';
@@ -11,7 +11,7 @@ import '../../../services/folder_service.dart';
 import '../../widgets/avatar_picker_widget.dart';
 import '../../widgets/fields/custom_text_field.dart';
 import '../../widgets/save_button_widget.dart';
-import '../../dialogs/unsaved_changes_dialog.dart';
+import '../../widgets/base_edit_page_scaffold.dart';
 
 class RaceManagementPage extends StatefulWidget {
   final Race? race;
@@ -23,7 +23,7 @@ class RaceManagementPage extends StatefulWidget {
 }
 
 class _RaceManagementPageState extends State<RaceManagementPage> with UnsavedChangesHandler {
-    static const _logoSize = 120.0;
+  static const _logoSize = 120.0;
   static const _borderRadius = 12.0;
 
   final _formKey = GlobalKey<FormState>();
@@ -37,7 +37,6 @@ class _RaceManagementPageState extends State<RaceManagementPage> with UnsavedCha
   List<Folder> _raceFolders = [];
   Folder? _selectedFolder;
   List<String> _tags = [];
-  final TextEditingController _tagController = TextEditingController();
 
   @override
   void initState() {
@@ -64,10 +63,8 @@ class _RaceManagementPageState extends State<RaceManagementPage> with UnsavedCha
     _descriptionController.dispose();
     _biologyController.dispose();
     _backstoryController.dispose();
-    _tagController.dispose();
     super.dispose();
   }
-
 
   Future<void> _loadFolders() async {
     final folders = _folderService.getFoldersByType(FolderType.race);
@@ -140,7 +137,6 @@ class _RaceManagementPageState extends State<RaceManagementPage> with UnsavedCha
     }
   }
 
-
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -155,135 +151,85 @@ class _RaceManagementPageState extends State<RaceManagementPage> with UnsavedCha
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
     final s = S.of(context);
+    
+    final title = widget.race == null ? s.new_race : s.edit_race;
 
-    return WillPopScope(
-      onWillPop: () async {
-        if (!hasUnsavedChanges) return true;
-        final shouldSave = await UnsavedChangesDialog(
-          saveText: s.save_race,
-        ).show(context);
-        if (shouldSave == null) return false;
-        if (shouldSave) await _saveRace();
-        return true;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            widget.race == null ? s.new_race : s.edit_race,
-            style: textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.w800,
-              height: 1.2,
-              letterSpacing: -0.5,
+    return BaseEditPageScaffold(
+      onWillPop: () => handleUnsavedChanges(context),
+      appBar: CommonEditAppBar(
+        title: title,
+        onSave: _saveRace,
+        saveTooltip: s.save,
+      ),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            TagsAndFolderSection(
+              tags: _tags,
+              onTagsChanged: (tags) {
+                setState(() {
+                  _tags = tags;
+                  hasUnsavedChanges = true;
+                });
+              },
+              folderService: _folderService,
+              folderType: FolderType.race,
+              selectedFolder: _selectedFolder,
+              onFolderSelected: (folder) {
+                setState(() {
+                  _selectedFolder = folder;
+                  hasUnsavedChanges = true;
+                });
+              },
+              folders: _raceFolders,
             ),
-          ),
-          centerTitle: true,
-          titleSpacing: 24,
-          toolbarHeight: 80,
-          scrolledUnderElevation: 3,
-          shadowColor: colorScheme.shadow,
-          surfaceTintColor: Colors.transparent,
-          backgroundColor: colorScheme.surfaceContainerLowest,
-          shape: const ContinuousRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(32),
-              bottomRight: Radius.circular(32),
+            const SizedBox(height: 24),
+            AvatarPicker(
+              currentAvatar: _logoBytes,
+              onAvatarChanged: (bytes) {
+                setState(() {
+                  _logoBytes = bytes;
+                  hasUnsavedChanges = true;
+                });
+              },
+              size: _logoSize / 2,
             ),
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: IconButton.filledTonal(
-                onPressed: _saveRace,
-                icon: const Icon(Icons.save_rounded),
-                tooltip: s.save,
-                style: IconButton.styleFrom(
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(16),
-                ),
-              ),
+            const SizedBox(height: 24),
+            CustomTextField(
+              controller: _nameController,
+              label: s.race_name,
+              isRequired: true,
+            ),
+            const SizedBox(height: 16),
+            CustomTextField(
+              controller: _descriptionController,
+              label: s.description,
+              maxLines: 3,
+              alignLabel: true,
+            ),
+            const SizedBox(height: 16),
+            CustomTextField(
+              controller: _biologyController,
+              label: s.biology,
+              maxLines: 5,
+              alignLabel: true,
+            ),
+            const SizedBox(height: 16),
+            CustomTextField(
+              controller: _backstoryController,
+              label: s.backstory,
+              maxLines: 7,
+              alignLabel: true,
+            ),
+            const SizedBox(height: 32),
+            SaveButton(
+              onPressed: _saveRace,
+              text: s.save_race,
             ),
           ],
-        ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                TagsInputWidget(
-                  tags: _tags,
-                  onTagsChanged: (tags) {
-                    setState(() {
-                      _tags = tags;
-                      hasUnsavedChanges = true;
-                    });
-                  },
-                ),
-                const SizedBox(height: 24),
-                AvatarPicker(
-                  currentAvatar: _logoBytes,
-                  onAvatarChanged: (bytes) {
-                    setState(() {
-                      _logoBytes = bytes;
-                      hasUnsavedChanges = true;
-                    });
-                  },
-                  size: _logoSize / 2,
-                ),
-                const SizedBox(height: 24),
-                CustomTextField(
-                  controller: _nameController,
-                  label: s.race_name,
-                  isRequired: true,
-                ),
-                if (_raceFolders.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  FolderSelectorWidget(
-                    selectedFolder: _selectedFolder,
-                    onFolderSelected: (folder) {
-                      setState(() {
-                        _selectedFolder = folder;
-                        hasUnsavedChanges = true;
-                      });
-                    },
-                    folderService: _folderService,
-                    folderType: FolderType.race,
-                  ),
-                ],
-                const SizedBox(height: 16),
-                CustomTextField(
-                  controller: _descriptionController,
-                  label: s.description,
-                  maxLines: 3,
-                  alignLabel: true,
-                ),
-                const SizedBox(height: 16),
-                CustomTextField(
-                  controller: _biologyController,
-                  label: s.biology,
-                  maxLines: 5,
-                  alignLabel: true,
-                ),
-                const SizedBox(height: 16),
-                CustomTextField(
-                  controller: _backstoryController,
-                  label: s.backstory,
-                  maxLines: 7,
-                  alignLabel: true,
-                ),
-                const SizedBox(height: 32),
-                SaveButton(
-                  onPressed: _saveRace,
-                  text: s.save_race,
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );

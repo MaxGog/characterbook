@@ -1,7 +1,8 @@
 import 'dart:typed_data';
 import 'package:characterbook/ui/handlers/unsaved_changes_handler.dart';
-import 'package:characterbook/ui/widgets/folder_selector_widget.dart';
-import 'package:characterbook/ui/widgets/tags/tags_input_widget.dart';
+import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
+import 'package:characterbook/ui/widgets/sections/image_gallery_section.dart';
+import 'package:characterbook/ui/widgets/sections/tags_and_folder_section.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
@@ -21,6 +22,8 @@ import '../../widgets/fields/custom_text_field.dart';
 import '../../widgets/fields/gender_selector_field.dart';
 import '../../widgets/fields/race_selector_field.dart';
 import '../../widgets/save_button_widget.dart';
+import '../../widgets/base_edit_page_scaffold.dart';
+import '../../widgets/reference_image_picker.dart';
 
 class CharacterEditPage extends StatefulWidget {
   final Character? character;
@@ -45,7 +48,6 @@ class _CharacterEditPageState extends State<CharacterEditPage> with UnsavedChang
   List<Folder> _characterFolders = [];
   Folder? _selectedFolder;
   List<String> _tags = [];
-  final TextEditingController _tagController = TextEditingController();
 
   @override
   void initState() {
@@ -59,14 +61,7 @@ class _CharacterEditPageState extends State<CharacterEditPage> with UnsavedChang
   }
 
   @override
-  void dispose() {
-    _tagController.dispose();
-    super.dispose();
-  }
-
-  @override
   Future<void> saveChanges() async => await _saveCharacter();
-
 
   Future<void> _loadFolders() async {
     final folders = _folderService.getFoldersByType(FolderType.character);
@@ -244,293 +239,157 @@ class _CharacterEditPageState extends State<CharacterEditPage> with UnsavedChang
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
-    return WillPopScope(
-      onWillPop: () => handleUnsavedChanges(context),
-      child: Scaffold(
-        appBar: _buildAppBar(),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                TagsInputWidget(
-                  tags: _tags,
-                  onTagsChanged: (tags) {
-                    setState(() {
-                      _tags = tags;
-                      hasUnsavedChanges = true;
-                    });
-                  },
-                ),
-                const SizedBox(height: 24),
-                if (widget.template != null) _buildTemplateChip(),
-                AvatarPicker(
-                  currentAvatar: _character.imageBytes,
-                  onAvatarChanged: (bytes) {
-                    setState(() {
-                      _character.imageBytes = bytes;
-                      hasUnsavedChanges = true;
-                    });
-                    _updateCharacter();
-                  },
-                ),
-                const SizedBox(height: 24),
-                _buildNameField(),
-                if (_characterFolders.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  FolderSelectorWidget(
-                    selectedFolder: _selectedFolder,
-                    onFolderSelected: (folder) {
-                      setState(() {
-                        _selectedFolder = folder;
-                        _character.folderId = folder?.id;
-                        hasUnsavedChanges = true;
-                      });
-                    },
-                    folderService: _folderService,
-                    folderType: FolderType.character,
-                  ),
-                ],
-                const SizedBox(height: 16),
-                if (_shouldShowField('age') || _shouldShowField('gender'))
-                  _buildAgeAndGenderRow(),
-                if (_shouldShowField('age') || _shouldShowField('gender'))
-                  const SizedBox(height: 16),
-                if (_shouldShowField('race'))
-                  RaceSelectorField(
-                    initialRace: _character.race,
-                    onChanged: (race) {
-                      _character.race = race;
-                      hasUnsavedChanges = true;
-                    },
-                  ),
-                if (_shouldShowField('race')) const SizedBox(height: 16),
-                if (_shouldShowField('referenceImage'))
-                  _buildReferenceImageSection(context, colorScheme, textTheme),
-                  const SizedBox(height: 16),
-                if (_shouldShowField('appearance'))
-                  CustomTextField(
-                    label: S.of(context).appearance,
-                    initialValue: _character.appearance,
-                    alignLabel: true,
-                    onSaved: (value) => _character.appearance = value!,
-                    onChanged: (_) => hasUnsavedChanges = true,
-                    maxLines: 5,
-                  ),
-                if (_shouldShowField('appearance')) const SizedBox(height: 16),
-                if (_shouldShowField('additionalImages'))
-                  _buildAdditionalImagesSection(context, textTheme, colorScheme),
-                if (_shouldShowField('additionalImages')) const SizedBox(height: 16),
-                if (_shouldShowField('personality'))
-                  CustomTextField(
-                    label: S.of(context).personality,
-                    initialValue: _character.personality,
-                    alignLabel: true,
-                    onSaved: (value) => _character.personality = value!,
-                    onChanged: (_) => hasUnsavedChanges = true,
-                    maxLines: 4,
-                  ),
-                if (_shouldShowField('personality')) const SizedBox(height: 16),
-                if (_shouldShowField('biography'))
-                  CustomTextField(
-                    label: S.of(context).biography,
-                    initialValue: _character.biography,
-                    alignLabel: true,
-                    onSaved: (value) => _character.biography = value!,
-                    onChanged: (_) => hasUnsavedChanges = true,
-                    maxLines: 7,
-                  ),
-                if (_shouldShowField('biography')) const SizedBox(height: 16),
-                if (_shouldShowField('abilities'))
-                  CustomTextField(
-                    label: S.of(context).abilities,
-                    initialValue: _character.abilities,
-                    alignLabel: true,
-                    onSaved: (value) => _character.abilities = value!,
-                    onChanged: (_) => hasUnsavedChanges = true,
-                    maxLines: 7,
-                  ),
-                if (_shouldShowField('abilities')) const SizedBox(height: 16),
-                if (_shouldShowField('other'))
-                  CustomTextField(
-                    label: S.of(context).other,
-                    initialValue: _character.other,
-                    alignLabel: true,
-                    onSaved: (value) => _character.other = value!,
-                    onChanged: (_) => hasUnsavedChanges = true,
-                    maxLines: 5,
-                  ),
-                if (_shouldShowField('other')) const SizedBox(height: 32),
-                CustomFieldsEditor(
-                  initialFields: _customFields,
-                  onFieldsChanged: (fields) {
-                    _customFields = fields;
-                    hasUnsavedChanges = true;
-                  },
-                ),
-                const SizedBox(height: 16),
-                SaveButton(
-                  onPressed: _saveCharacter,
-                  text: S.of(context).save,
-                ),
-                const SizedBox(height: 16),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  AppBar _buildAppBar() {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
     final s = S.of(context);
+    
+    final title = widget.character == null
+        ? widget.template == null
+            ? s.new_character
+            : '${s.new_character} (${s.from_template})'
+        : s.edit_character;
 
-    return AppBar(
-      title: Text(
-        widget.character == null
-            ? widget.template == null
-                ? s.new_character
-                : '${s.new_character} (${s.from_template})'
-            : s.edit_character,
-        style: textTheme.headlineMedium?.copyWith(
-          fontWeight: FontWeight.w800,
-          height: 1.2,
-          letterSpacing: -0.5,
-        ),
+    return BaseEditPageScaffold(
+      onWillPop: () => handleUnsavedChanges(context),
+      appBar: CommonEditAppBar(
+        title: title,
+        onSave: _saveCharacter,
+        saveTooltip: s.save,
       ),
-      centerTitle: true,
-      titleSpacing: 24,
-      toolbarHeight: 80,
-      scrolledUnderElevation: 3,
-      shadowColor: colorScheme.shadow,
-      surfaceTintColor: Colors.transparent,
-      backgroundColor: colorScheme.surfaceContainerLowest,
-      shape: const ContinuousRectangleBorder(
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(32),
-          bottomRight: Radius.circular(32),
-        ),
-      ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 12),
-          child: IconButton.filledTonal(
-            onPressed: _saveCharacter,
-            icon: const Icon(Icons.save_rounded),
-            tooltip: s.save,
-            style: IconButton.styleFrom(
-              shape: const CircleBorder(),
-              padding: const EdgeInsets.all(16),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAdditionalImagesSection(BuildContext context, TextTheme textTheme, ColorScheme colorScheme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
+      body: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(S.of(context).additional_images, style: textTheme.titleMedium),
-            const Spacer(),
-            IconButton(
-              icon: const Icon(Icons.add_photo_alternate),
-              onPressed: _pickAdditionalImage,
-              tooltip: S.of(context).add_picture,
+            TagsAndFolderSection(
+              tags: _tags,
+              onTagsChanged: (tags) {
+                setState(() {
+                  _tags = tags;
+                  hasUnsavedChanges = true;
+                });
+              },
+              folderService: _folderService,
+              folderType: FolderType.character,
+              selectedFolder: _selectedFolder,
+              onFolderSelected: (folder) {
+                setState(() {
+                  _selectedFolder = folder;
+                  _character.folderId = folder?.id;
+                  hasUnsavedChanges = true;
+                });
+              },
+              folders: _characterFolders,
             ),
+            if (widget.template != null) _buildTemplateChip(),
+            AvatarPicker(
+              currentAvatar: _character.imageBytes,
+              onAvatarChanged: (bytes) {
+                setState(() {
+                  _character.imageBytes = bytes;
+                  hasUnsavedChanges = true;
+                });
+                _updateCharacter();
+              },
+            ),
+            const SizedBox(height: 24),
+            _buildNameField(),
+            const SizedBox(height: 16),
+            if (_shouldShowField('age') || _shouldShowField('gender'))
+              _buildAgeAndGenderRow(),
+            if (_shouldShowField('race')) ...[
+              RaceSelectorField(
+                initialRace: _character.race,
+                onChanged: (race) {
+                  _character.race = race;
+                  hasUnsavedChanges = true;
+                },
+              ),
+              const SizedBox(height: 16),
+            ],
+            if (_shouldShowField('referenceImage')) ...[
+              ReferenceImagePicker(
+                imageBytes: _character.referenceImageBytes,
+                onPickImage: _pickReferenceImage,
+                title: S.of(context).reference_image,
+              ),
+              const SizedBox(height: 16),
+            ],
+            if (_shouldShowField('appearance'))
+              CustomTextField(
+                label: S.of(context).appearance,
+                initialValue: _character.appearance,
+                alignLabel: true,
+                onSaved: (value) => _character.appearance = value!,
+                onChanged: (_) => hasUnsavedChanges = true,
+                maxLines: 5,
+              ),
+            if (_shouldShowField('appearance')) const SizedBox(height: 16),
+            if (_shouldShowField('additionalImages')) ...[
+              ImageGallerySection(
+                images: _additionalImages,
+                onAddImage: _pickAdditionalImage,
+                onRemoveImage: _removeAdditionalImage,
+                title: S.of(context).additional_images,
+                emptyText: S.of(context).no_additional_images,
+                addTooltip: S.of(context).add_picture,
+              ),
+              const SizedBox(height: 16),
+            ],
+            if (_shouldShowField('personality'))
+              CustomTextField(
+                label: S.of(context).personality,
+                initialValue: _character.personality,
+                alignLabel: true,
+                onSaved: (value) => _character.personality = value!,
+                onChanged: (_) => hasUnsavedChanges = true,
+                maxLines: 4,
+              ),
+            if (_shouldShowField('personality')) const SizedBox(height: 16),
+            if (_shouldShowField('biography'))
+              CustomTextField(
+                label: S.of(context).biography,
+                initialValue: _character.biography,
+                alignLabel: true,
+                onSaved: (value) => _character.biography = value!,
+                onChanged: (_) => hasUnsavedChanges = true,
+                maxLines: 7,
+              ),
+            if (_shouldShowField('biography')) const SizedBox(height: 16),
+            if (_shouldShowField('abilities'))
+              CustomTextField(
+                label: S.of(context).abilities,
+                initialValue: _character.abilities,
+                alignLabel: true,
+                onSaved: (value) => _character.abilities = value!,
+                onChanged: (_) => hasUnsavedChanges = true,
+                maxLines: 7,
+              ),
+            if (_shouldShowField('abilities')) const SizedBox(height: 16),
+            if (_shouldShowField('other'))
+              CustomTextField(
+                label: S.of(context).other,
+                initialValue: _character.other,
+                alignLabel: true,
+                onSaved: (value) => _character.other = value!,
+                onChanged: (_) => hasUnsavedChanges = true,
+                maxLines: 5,
+              ),
+            if (_shouldShowField('other')) const SizedBox(height: 32),
+            CustomFieldsEditor(
+              initialFields: _customFields,
+              onFieldsChanged: (fields) {
+                _customFields = fields;
+                hasUnsavedChanges = true;
+              },
+            ),
+            const SizedBox(height: 16),
+            SaveButton(
+              onPressed: _saveCharacter,
+              text: S.of(context).save,
+            ),
+            const SizedBox(height: 16),
           ],
         ),
-        const SizedBox(height: 8),
-        if (_additionalImages.isEmpty)
-          Text(
-            S.of(context).no_additional_images,
-            style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-          ),
-        if (_additionalImages.isNotEmpty)
-          SizedBox(
-            height: 120,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _additionalImages.length,
-              itemBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: SizedBox(
-                  width: 120,
-                  height: 120,
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.memory(
-                          _additionalImages[index],
-                          fit: BoxFit.cover,
-                          width: 120,
-                          height: 120,
-                        ),
-                      ),
-                      Positioned(
-                        top: 4,
-                        right: 4,
-                        child: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _removeAdditionalImage(index),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildReferenceImageSection(BuildContext context, ColorScheme colorScheme, TextTheme textTheme) {
-    return Column(
-      children: [
-        Text(
-          S.of(context).reference_image,
-          style: textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface),
-        ),
-        const SizedBox(height: 8),
-        InkWell(
-          borderRadius: BorderRadius.circular(12),
-          onTap: _pickReferenceImage,
-          child: Ink(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(12),
-              image: _character.referenceImageBytes != null
-                  ? DecorationImage(
-                image: MemoryImage(_character.referenceImageBytes!),
-                fit: BoxFit.cover,
-              )
-                  : null,
-            ),
-            child: _character.referenceImageBytes == null
-                ? Icon(
-              Icons.add_a_photo,
-              size: 40,
-              color: colorScheme.onSurfaceVariant,
-            )
-                : null,
-          ),
-        ),
-      ],
+      ),
     );
   }
 
