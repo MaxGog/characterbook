@@ -5,7 +5,7 @@ import 'package:characterbook/ui/widgets/performance/optimized_value_listenable.
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive/hive.dart';
-import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/models/characters/template_model.dart';
 import 'package:characterbook/services/template_service.dart';
 import 'package:characterbook/ui/widgets/context_menu.dart';
 import 'package:characterbook/ui/widgets/appbar/custom_app_bar.dart';

@@ -7,7 +7,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:hive/hive.dart';
-import '../models/character_model.dart';
+import '../models/characters/character_model.dart';
 
 class CharacterService {
   static const String _boxName = 'characters';

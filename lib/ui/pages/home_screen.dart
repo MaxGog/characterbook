@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/characters/character_model.dart';
 import 'package:characterbook/models/race_model.dart';
 import 'package:characterbook/services/character_service.dart';
 import 'package:characterbook/services/race_service.dart';

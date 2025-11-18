@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import '../../../generated/l10n.dart';
-import '../../../models/character_model.dart';
+import '../../models/characters/character_model.dart';
 import '../../../models/note_model.dart';
 import '../../../services/character_service.dart';
 import '../../../services/clipboard_service.dart';

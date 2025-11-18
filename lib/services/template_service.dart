@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
-import '../models/character_model.dart';
-import '../models/template_model.dart';
+import '../models/characters/character_model.dart';
+import '../models/characters/template_model.dart';
 import 'file_picker_service.dart';
 
 class TemplateService {

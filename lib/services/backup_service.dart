@@ -13,10 +13,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:universal_html/html.dart' as html;
 import '../generated/l10n.dart';
-import '../models/character_model.dart';
+import '../models/characters/character_model.dart';
 import '../models/note_model.dart';
 import '../models/race_model.dart';
-import '../models/template_model.dart';
+import '../models/characters/template_model.dart';
 import 'file_picker_service.dart';
 import 'notification_service.dart';
 

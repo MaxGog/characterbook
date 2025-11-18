@@ -10,10 +10,10 @@ import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/services/folder_service.dart';
 
 import '../../../generated/l10n.dart';
-import '../../../models/character_model.dart';
+import '../../../models/characters/character_model.dart';
 import '../../../models/custom_field_model.dart';
 import '../../../models/race_model.dart';
-import '../../../models/template_model.dart';
+import '../../../models/characters/template_model.dart';
 import '../../../services/character_service.dart';
 
 import '../../widgets/avatar_picker_widget.dart';

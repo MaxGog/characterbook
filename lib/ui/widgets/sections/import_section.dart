@@ -3,9 +3,9 @@ import 'package:characterbook/ui/widgets/import_button_widget.dart';
 import 'package:characterbook/ui/widgets/sections/settings_section.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/characters/character_model.dart';
 import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/models/characters/template_model.dart';
 import 'package:characterbook/services/file_picker_service.dart';
 
 class ImportSection extends StatelessWidget {

@@ -6,7 +6,7 @@ import 'package:hive/hive.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../../../generated/l10n.dart';
-import '../../../models/character_model.dart';
+import '../../../models/characters/character_model.dart';
 import '../../../models/folder_model.dart';
 import '../../../models/note_model.dart';
 import '../../../services/clipboard_service.dart';

@@ -11,7 +11,7 @@ import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
 import 'package:characterbook/ui/widgets/performance/optimized_value_listenable.dart';
 import 'package:flutter/material.dart';
 import 'package:characterbook/models/folder_model.dart';
-import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/characters/character_model.dart';
 import 'package:characterbook/models/race_model.dart';
 import 'package:characterbook/models/note_model.dart';
 import 'package:characterbook/ui/widgets/appbar/custom_app_bar.dart';

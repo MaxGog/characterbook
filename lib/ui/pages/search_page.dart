@@ -5,10 +5,10 @@ import 'package:characterbook/ui/widgets/items/search_result_card.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/characters/character_model.dart';
 import 'package:characterbook/models/note_model.dart';
 import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/models/characters/template_model.dart';
 import 'package:characterbook/models/folder_model.dart';
 
 import '../../generated/l10n.dart';

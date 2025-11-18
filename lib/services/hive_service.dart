@@ -1,9 +1,12 @@
-import 'package:characterbook/models/character_model.dart';
+// hive_service.dart
+import 'package:characterbook/models/characters/character_model.dart';
+import 'package:characterbook/models/characters/character_universal_model.dart';
 import 'package:characterbook/models/custom_field_model.dart';
 import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/models/note_model.dart';
 import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/models/characters/template_model.dart';
+import 'package:characterbook/services/migration_service.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class HiveService {
@@ -15,6 +18,10 @@ class HiveService {
       await Hive.initFlutter();
       _registerAdapters();
       _isInitialized = true;
+      
+      if (!Hive.isAdapterRegistered(CharacterUniversalAdapter().typeId)) {
+        Hive.registerAdapter(CharacterUniversalAdapter());
+      }
     }
   }
 
@@ -39,6 +46,30 @@ class HiveService {
     }
     if (!Hive.isAdapterRegistered(FolderTypeAdapter().typeId)) {
       Hive.registerAdapter(FolderTypeAdapter());
+    }
+  }
+
+  // Исправленный метод для получения бокса персонажей
+  static Future<Box<T>> getCharacterBox<T>() async {
+    final useUniversal = await MigrationService.shouldUseUniversal();
+    
+    if (useUniversal) {
+      return await getBox<T>('characters_universal');
+    } else {
+      return await getBox<T>('characters');
+    }
+  }
+
+  // Универсальный метод для получения всех персонажей
+  static Future<List<dynamic>> getAllCharacters() async {
+    final useUniversal = await MigrationService.shouldUseUniversal();
+    
+    if (useUniversal) {
+      final box = await getBox<CharacterUniversal>('characters_universal');
+      return box.values.toList();
+    } else {
+      final box = await getBox<Character>('characters');
+      return box.values.toList();
     }
   }
 

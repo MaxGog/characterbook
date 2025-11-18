@@ -1,8 +1,7 @@
+import 'package:characterbook/models/custom_field_model.dart';
 import 'package:characterbook/models/race_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
-
-import 'custom_field_model.dart';
 
 part 'character_model.g.dart';
 

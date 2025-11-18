@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/models/note_model.dart';
 import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/models/characters/template_model.dart';
 import 'package:characterbook/services/hive_service.dart';
 import 'package:characterbook/services/notification_service.dart';
 import 'package:flutter/foundation.dart';
@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'generated/l10n.dart';
-import 'models/character_model.dart';
+import 'models/characters/character_model.dart';
 import 'providers/locale_provider.dart';
 import 'providers/theme_provider.dart';
 import 'services/file_handler.dart';

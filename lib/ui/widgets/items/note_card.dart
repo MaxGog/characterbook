@@ -5,7 +5,7 @@ import 'package:characterbook/services/folder_service.dart';
 import 'package:characterbook/ui/widgets/context_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/characters/character_model.dart';
 
 class NoteCard extends StatelessWidget {
   final Note note;

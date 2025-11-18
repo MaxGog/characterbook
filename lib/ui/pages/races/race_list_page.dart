@@ -17,7 +17,7 @@ import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../generated/l10n.dart';
-import '../../../models/character_model.dart';
+import '../../../models/characters/character_model.dart';
 import '../../../models/race_model.dart';
 import 'race_management_page.dart';
 

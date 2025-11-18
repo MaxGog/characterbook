@@ -14,7 +14,7 @@ import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../generated/l10n.dart';
-import '../../../models/character_model.dart';
+import '../../../models/characters/character_model.dart';
 import '../../../models/note_model.dart';
 import '../../widgets/appbar/custom_app_bar.dart';
 import '../../widgets/custom_floating_buttons.dart';

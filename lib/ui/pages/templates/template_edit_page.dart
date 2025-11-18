@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/models/characters/template_model.dart';
 import 'package:characterbook/services/template_service.dart';
 import '../../../generated/l10n.dart';
 import '../../../models/custom_field_model.dart';

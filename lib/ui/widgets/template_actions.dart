@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../../../generated/l10n.dart';
-import '../../models/template_model.dart';
+import '../../models/characters/template_model.dart';
 
 class TemplateActions {
   static Future<void> exportTemplate(
