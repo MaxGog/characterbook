@@ -22,79 +22,102 @@ import 'services/file_handler_wrapper.dart';
 import 'ui/pages/home_page.dart';
 
 Future<void> _initializeHive() async {
-  await HiveService.initHive();
-  await Future.wait([
-    HiveService.getBox<Character>('characters'),
-    HiveService.getBox<Note>('notes'),
-    HiveService.getBox<Race>('races'),
-    HiveService.getBox<QuestionnaireTemplate>('templates'),
-    HiveService.getBox<Folder>('folders')
-  ]);
+  try {
+    await HiveService.initHive();
+    await Future.wait([
+      HiveService.getBox<Character>('characters'),
+      HiveService.getBox<Note>('notes'),
+      HiveService.getBox<Race>('races'),
+      HiveService.getBox<QuestionnaireTemplate>('templates'),
+      HiveService.getBox<Folder>('folders'),
+    ]);
+  } catch (error) {
+    debugPrint('Hive initialization error: $error');
+  }
+}
+
+Future<void> _initializeWindowManager() async {
+  if (!_isDesktopPlatform) return;
+  
+  await windowManager.ensureInitialized();
+  await windowManager.waitUntilReadyToShow();
+  
+  await windowManager.setTitleBarStyle(
+    TitleBarStyle.hidden,
+    windowButtonVisibility: false,
+  );
+  await windowManager.setSize(const Size(1200, 800));
+  await windowManager.setMinimumSize(const Size(800, 600));
+  await windowManager.center();
+  await windowManager.show();
+}
+
+bool get _isDesktopPlatform => Platform.isWindows || Platform.isMacOS;
+
+bool get _isMobilePlatform {
+  if (kIsWeb) return false;
+  try {
+    return Platform.isAndroid || Platform.isIOS;
+  } catch (e) {
+    return false;
+  }
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await Future.wait([
+    _initializeWindowManager(),
+    _initializeHive(),
+  ]);
 
-  if (Platform.isWindows || Platform.isMacOS) {
-    await windowManager.ensureInitialized();
-    await windowManager.waitUntilReadyToShow();
-  }
-  
-  await _initializeHive();
   FileHandler.initialize();
 
-  final themeProvider = ThemeProvider();
-  final localeProvider = LocaleProvider();
-  final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
-  final notificationService = NotificationService(scaffoldMessengerKey);
-
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(value: themeProvider),
-        ChangeNotifierProvider.value(value: localeProvider),
-        Provider<NotificationService>.value(value: notificationService),
-      ],
-      child: const _App(),
-    ),
-  );
+  runApp(const CharacterBookApp());
 }
 
-class _App extends StatefulWidget {
-  const _App();
+class CharacterBookApp extends StatelessWidget {
+  const CharacterBookApp({super.key});
 
   @override
-  State<_App> createState() => _AppState();
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        Provider<NotificationService>(
+          create: (_) => NotificationService(GlobalKey<ScaffoldMessengerState>()),
+        ),
+      ],
+      child: const _AppContent(),
+    );
+  }
 }
 
-class _AppState extends State<_App> with WidgetsBindingObserver, WindowListener {
+class _AppContent extends StatefulWidget {
+  const _AppContent();
+
+  @override
+  State<_AppContent> createState() => _AppContentState();
+}
+
+class _AppContentState extends State<_AppContent> 
+    with WidgetsBindingObserver, WindowListener {
+  
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-
-    if (Platform.isWindows || Platform.isMacOS) {
+    
+    if (_isDesktopPlatform) {
       windowManager.addListener(this);
-      _initWindow();
     }
-  }
-
-  Future<void> _initWindow() async {
-    await windowManager.setTitleBarStyle(
-      TitleBarStyle.hidden,
-      windowButtonVisibility: false,
-    );
-    await windowManager.setSize(const Size(1200, 800));
-    await windowManager.setMinimumSize(const Size(800, 600));
-    await windowManager.center();
-    await windowManager.show();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    if (Platform.isWindows || Platform.isMacOS) {
+    if (_isDesktopPlatform) {
       windowManager.removeListener(this);
     }
     super.dispose();
@@ -103,130 +126,176 @@ class _AppState extends State<_App> with WidgetsBindingObserver, WindowListener 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
-      Hive.box<Character>('characters').flush();
+      _flushHiveBoxes();
     }
   }
 
-  bool isMobile() {
-    if (kIsWeb) return false;
+  Future<void> _flushHiveBoxes() async {
     try {
-      return Platform.isAndroid || Platform.isIOS;
-    } catch (e) {
-      return false;
+      await Hive.box<Character>('characters').flush();
+    } catch (error) {
+      debugPrint('Error flushing Hive boxes: $error');
     }
   }
 
-  Widget _buildDesktopWindowFrame(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer3<ThemeProvider, LocaleProvider, NotificationService>(
+      builder: (context, themeProvider, localeProvider, notificationService, _) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          scaffoldMessengerKey: notificationService.messengerKey,
+          title: 'CharacterBook',
+          locale: localeProvider.locale,
+          theme: themeProvider.lightTheme,
+          darkTheme: themeProvider.darkTheme,
+          themeMode: themeProvider.themeMode,
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: _buildHome(),
+        );
+      },
+    );
+  }
+
+  Widget _buildHome() {
+    if (_isMobilePlatform) {
+      return const FileHandlerWrapper(child: HomePage());
+    } else {
+      return const _DesktopAppFrame();
+    }
+  }
+}
+
+class _DesktopAppFrame extends StatelessWidget {
+  const _DesktopAppFrame();
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
     return Scaffold(
       backgroundColor: theme.colorScheme.surfaceContainerLowest,
       body: Column(
         children: [
-          Container(
-            height: 36,
-            color: theme.colorScheme.surfaceContainerLowest,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ClipOval(
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        color: theme.colorScheme.surfaceContainerHigh,
-                        child: Image.asset(
-                          'assets/iconapp.png',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'CharacterBook',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-                
-                Positioned(
-                  right: 0,
-                  child: Row(
-                    children: [
-                      _WindowControlButton(
-                        icon: Icons.minimize,
-                        onPressed: () => windowManager.minimize(),
-                      ),
-                      _WindowControlButton(
-                        icon: Icons.crop_square,
-                        onPressed: () => windowManager.isMaximized()
-                            .then((isMaximized) => isMaximized
-                                ? windowManager.unmaximize()
-                                : windowManager.maximize()),
-                      ),
-                      _WindowControlButton(
-                        icon: Icons.close,
-                        onPressed: () => windowManager.close(),
-                        isClose: true,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: const HomePage(),
+          _DesktopTitleBar(),
+          const Expanded(child: HomePage()),
+        ],
+      ),
+    );
+  }
+}
+
+class _DesktopTitleBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return Container(
+      height: 36,
+      color: theme.colorScheme.surfaceContainerLowest,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          _AppTitle(),
+          const Positioned(
+            right: 0,
+            child: _WindowControls(),
           ),
         ],
       ),
     );
   }
+}
+
+class _AppTitle extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _AppIcon(),
+        const SizedBox(width: 8),
+        Text(
+          'CharacterBook',
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: theme.colorScheme.onSurface,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AppIcon extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return ClipOval(
+      child: Container(
+        width: 24,
+        height: 24,
+        color: theme.colorScheme.surfaceContainerHigh,
+        child: Image.asset(
+          'assets/iconapp.png',
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Icon(
+              Icons.book,
+              size: 16,
+              color: theme.colorScheme.primary,
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _WindowControls extends StatelessWidget {
+  const _WindowControls();
 
   @override
   Widget build(BuildContext context) {
-    final localeProvider = Provider.of<LocaleProvider>(context, listen: true);
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: true);
-    final notificationService = Provider.of<NotificationService>(context);
-    final homePage = isMobile() 
-        ? const FileHandlerWrapper(child: HomePage())
-        : _buildDesktopWindowFrame(context);
-
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      scaffoldMessengerKey: notificationService.messengerKey,
-      title: 'CharacterBook',
-      locale: localeProvider.locale,
-      theme: themeProvider.lightTheme,
-      darkTheme: themeProvider.darkTheme,
-      themeMode: themeProvider.themeMode,
-      localizationsDelegates: const [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+    return const Row(
+      children: [
+        _WindowControlButton(
+          icon: Icons.minimize,
+          action: WindowAction.minimize,
+        ),
+        _WindowControlButton(
+          icon: Icons.crop_square,
+          action: WindowAction.toggleMaximize,
+        ),
+        _WindowControlButton(
+          icon: Icons.close,
+          action: WindowAction.close,
+          isClose: true,
+        ),
       ],
-      supportedLocales: S.delegate.supportedLocales,
-      home: homePage,
     );
   }
 }
 
 class _WindowControlButton extends StatefulWidget {
-  final IconData icon;
-  final VoidCallback onPressed;
-  final bool isClose;
-
   const _WindowControlButton({
     required this.icon,
-    required this.onPressed,
+    required this.action,
     this.isClose = false,
   });
+
+  final IconData icon;
+  final WindowAction action;
+  final bool isClose;
 
   @override
   State<_WindowControlButton> createState() => _WindowControlButtonState();
@@ -235,67 +304,85 @@ class _WindowControlButton extends StatefulWidget {
 class _WindowControlButtonState extends State<_WindowControlButton> {
   bool _isHovered = false;
 
+  Future<void> _handleAction() async {
+    try {
+      switch (widget.action) {
+        case WindowAction.minimize:
+          await windowManager.minimize();
+          break;
+        case WindowAction.toggleMaximize:
+          final isMaximized = await windowManager.isMaximized();
+          if (isMaximized) {
+            await windowManager.unmaximize();
+          } else {
+            await windowManager.maximize();
+          }
+          break;
+        case WindowAction.close:
+          await windowManager.close();
+          break;
+      }
+    } catch (error) {
+      debugPrint('Window action error: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
 
-    Color backgroundColor = widget.isClose
-        ? colorScheme.error.withOpacity(isDark ? 0.12 : 0.08)
-        : colorScheme.onPrimaryContainer.withOpacity(isDark ? 0.08 : 0.04);
-    Color iconColor = widget.isClose
-        ? colorScheme.error
-        : colorScheme.onSurface.withOpacity(0.8);
-
-    if (_isHovered) {
-      backgroundColor = widget.isClose
-          ? colorScheme.error.withOpacity(isDark ? 0.24 : 0.16)
-          : colorScheme.onSurface.withOpacity(isDark ? 0.16 : 0.12);
-      
-      iconColor = widget.isClose
-          ? colorScheme.error
-          : colorScheme.onSurface;
-    }
+    final backgroundColor = _getBackgroundColor(colorScheme, isDark);
+    final iconColor = _getIconColor(colorScheme);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        width: 32,
-        height: 32,
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          shape: BoxShape.circle,
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(16),
-            onTap: widget.onPressed,
-            child: Center(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                transitionBuilder: (child, animation) {
-                  return ScaleTransition(
-                    scale: animation,
-                    child: child,
-                  );
-                },
-                child: Icon(
-                  widget.icon,
-                  key: ValueKey<bool>(_isHovered),
-                  size: 16,
-                  color: iconColor,
-                ),
-              ),
-            ),
+      child: GestureDetector(
+        onTap: _handleAction,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: 32,
+          height: 32,
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            widget.icon,
+            size: 16,
+            color: iconColor,
           ),
         ),
       ),
     );
   }
+
+  Color _getBackgroundColor(ColorScheme colorScheme, bool isDark) {
+    if (!_isHovered) {
+      return widget.isClose
+          ? colorScheme.error.withOpacity(isDark ? 0.12 : 0.08)
+          : colorScheme.onPrimaryContainer.withOpacity(isDark ? 0.08 : 0.04);
+    }
+    
+    return widget.isClose
+        ? colorScheme.error.withOpacity(isDark ? 0.24 : 0.16)
+        : colorScheme.onSurface.withOpacity(isDark ? 0.16 : 0.12);
+  }
+
+  Color _getIconColor(ColorScheme colorScheme) {
+    return widget.isClose
+        ? colorScheme.error
+        : _isHovered 
+            ? colorScheme.onSurface 
+            : colorScheme.onSurface.withOpacity(0.8);
+  }
+}
+
+enum WindowAction {
+  minimize,
+  toggleMaximize,
+  close,
 }
