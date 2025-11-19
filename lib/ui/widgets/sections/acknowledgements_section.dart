@@ -12,19 +12,16 @@ class AcknowledgementsSection extends StatelessWidget {
       title: s.acknowledgements,
       children: [
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: 4,
+          runSpacing: 4,
           children: [
-            _buildContributorChip(context, 'Данила Ганьков'),
-            _buildContributorChip(context, 'Makoto🐼'),
-            _buildContributorChip(context, 'Максим Семенков'),
             _buildContributorChip(context, 'Артём Голубев'),
             _buildContributorChip(context, 'Евгений Стратий'),
+            _buildContributorChip(context, 'Максим Семенков'),
+            _buildContributorChip(context, 'Makoto🐼'),
             _buildContributorChip(context, 'Александр Черняев'),
             _buildContributorChip(context, 'Мария Война'),
-            _buildContributorChip(context, 'Ксения Петунина'),
             _buildContributorChip(context, 'Дарья Воробьёва'),
-            _buildContributorChip(context, 'Ксения Дубровина'),
             _buildContributorChip(context, 'Никита Жевнерович'),
             _buildContributorChip(context, 'KellSmiley'),
             _buildContributorChip(context, 'Участники EnA'),
@@ -49,7 +46,7 @@ class AcknowledgementsSection extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       side: BorderSide.none,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
       visualDensity: VisualDensity.compact,
     );
   }
