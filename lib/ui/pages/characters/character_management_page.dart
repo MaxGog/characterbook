@@ -99,13 +99,11 @@ class _CharacterEditPageState extends State<CharacterEditPage>
     setState(() {
       _races = raceBox.values.toList();
 
-      // Add current race if it's not in the list
       if (_character.race != null &&
           !_races.any((r) => r.name == _character.race?.name)) {
         _races.add(_character.race!);
       }
 
-      // Set default race if none selected
       if (_character.race == null && _races.isNotEmpty) {
         _character.race = _races.first;
       }
@@ -214,7 +212,6 @@ class _CharacterEditPageState extends State<CharacterEditPage>
 
     final keyString = actualKey.toString();
 
-    // Remove from all folders if no folder selected
     if (_selectedFolder == null) {
       for (final folder in _characterFolders) {
         if (folder.contentIds.contains(keyString)) {
@@ -224,7 +221,6 @@ class _CharacterEditPageState extends State<CharacterEditPage>
       return;
     }
 
-    // Ensure character is only in the selected folder
     for (final folder in _characterFolders) {
       if (folder.id != _selectedFolder!.id &&
           folder.contentIds.contains(keyString)) {
@@ -419,7 +415,6 @@ class _CharacterEditPageState extends State<CharacterEditPage>
       ]);
     }
 
-    // Text description fields
     final textFields = [
       ('appearance', s.appearance, 5),
       ('personality', s.personality, 4),

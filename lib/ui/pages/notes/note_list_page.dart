@@ -5,7 +5,6 @@ import 'package:characterbook/ui/pages/folders/folder_list_page.dart';
 import 'package:characterbook/ui/widgets/items/note_card.dart';
 import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
 import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
-import 'package:characterbook/ui/widgets/mixins/tag_mixin.dart';
 import 'package:characterbook/ui/widgets/states/empty_notes_state.dart';
 import 'package:characterbook/ui/widgets/performance/optimized_value_listenable.dart';
 import 'package:characterbook/ui/widgets/tags/tag_filter.dart';
@@ -14,7 +13,6 @@ import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../generated/l10n.dart';
-import '../../../models/characters/character_model.dart';
 import '../../../models/note_model.dart';
 import '../../widgets/appbar/custom_app_bar.dart';
 import '../../widgets/custom_floating_buttons.dart';
@@ -27,13 +25,11 @@ class NotesListPage extends StatefulWidget {
   State<NotesListPage> createState() => _NotesListPageState();
 }
 
-class _NotesListPageState extends State<NotesListPage> with TagMixin<Note> {
+class _NotesListPageState extends State<NotesListPage> {
   final List<Note> _filteredNotes = [];
   String? _selectedTag;
-  String? _selectedCharacter;
   Timer? _debounceTimer;
   final Box<Note> _notesBox = Hive.box<Note>('notes');
-  final Box<Character> _charactersBox = Hive.box<Character>('characters');
 
   final TextEditingController searchController = TextEditingController();
   final ScrollController scrollController = ScrollController();
@@ -44,10 +40,17 @@ class _NotesListPageState extends State<NotesListPage> with TagMixin<Note> {
   String? errorMessage;
 
   List<String> _getAllTags(List<Note> notes) {
-    return generateAllTags(notes, context, (n) => n.tags);
+    final allTags = <String>{};
+    for (final note in notes) {
+      allTags.addAll(note.tags);
+    }
+    return allTags.toList()..sort();
   }
 
-  bool _isShortName(Note n) => n.title.length <= 4;
+  bool _matchesTagFilter(Note note) {
+    if (_selectedTag == null) return true;
+    return note.tags.contains(_selectedTag);
+  }
 
   void _filterNotes(String query, List<Note> allNotes) {
     _debounceTimer?.cancel();
@@ -63,30 +66,10 @@ class _NotesListPageState extends State<NotesListPage> with TagMixin<Note> {
               note.title.toLowerCase().contains(queryLower) ||
               note.content.toLowerCase().contains(queryLower);
 
-          final matchesTag = matchesTagFilter(
-            _selectedTag, context, note, (n) => n.tags, _isShortName);
-
-          final matchesCharacter = _selectedCharacter == null ||
-              note.characterIds.any((id) {
-                final character = _charactersBox.get(id);
-                return character?.name == _selectedCharacter;
-              });
-
-          return matchesSearch && matchesTag && matchesCharacter;
+          return matchesSearch && _matchesTagFilter(note);
         }));
       });
     });
-  }
-
-  List<String> _getAllCharacterNames(List<Note> notes) {
-    final characterIds = notes.expand((note) => note.characterIds).toSet();
-    return characterIds
-        .map((id) => _charactersBox.get(id))
-        .whereType<Character>()
-        .map((c) => c.name)
-        .toSet()
-        .toList()
-      ..sort();
   }
 
   Future<void> _deleteNote(Note note) async {
@@ -164,7 +147,6 @@ class _NotesListPageState extends State<NotesListPage> with TagMixin<Note> {
       if (!isSearching) {
         searchController.clear();
         _selectedTag = null;
-        _selectedCharacter = null;
         _filteredNotes.clear();
       }
     });
@@ -203,7 +185,7 @@ class _NotesListPageState extends State<NotesListPage> with TagMixin<Note> {
   }
 
   List<Note> _getNotesToShow(List<Note> allNotes) {
-    return isSearching || _selectedTag != null || _selectedCharacter != null
+    return isSearching || _selectedTag != null
         ? _filteredNotes
         : allNotes;
   }
@@ -294,19 +276,16 @@ class _NotesListPageState extends State<NotesListPage> with TagMixin<Note> {
               builder: (context, allNotes) {
                 final sortedNotes = _getSortedNotes(allNotes);
                 final tags = _getAllTags(sortedNotes);
-                final characterNames = _getAllCharacterNames(sortedNotes);
                 final notesToShow = _getNotesToShow(sortedNotes);
 
                 return Column(
                   children: [
-                    if (tags.isNotEmpty || characterNames.isNotEmpty)
+                    if (tags.isNotEmpty)
                       TagFilter(
                         tags: tags,
                         selectedTag: _selectedTag,
                         onTagSelected: _handleTagSelected,
-                        context: context,
-                        showAllOption: true,
-                        isForCharacters: false,
+                        context: context
                       ),
                     Expanded(
                       child: notesToShow.isEmpty
@@ -317,7 +296,7 @@ class _NotesListPageState extends State<NotesListPage> with TagMixin<Note> {
                               itemBuilder: _buildNoteCard,
                               onReorder: _reorderNotes,
                               scrollController: scrollController,
-                              enableReorder: !isSearching && _selectedTag == null && _selectedCharacter == null,
+                              enableReorder: !isSearching && _selectedTag == null,
                             ),
                     ),
                   ],

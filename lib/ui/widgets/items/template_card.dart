@@ -27,7 +27,6 @@ class TemplateCard extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final random = Random(template.name.hashCode);
     
-    final avatarSize = 44.0 + random.nextInt(8);
     final borderRadius = 20.0 + random.nextInt(4);
     final elevation = isSelected ? 4.0 : 2.0;
     final colorVariation = random.nextDouble() * 0.05;
@@ -62,7 +61,6 @@ class TemplateCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header with icon, name and menu
               Row(
                 children: [
                   _buildTemplateIcon(context, random),
@@ -100,12 +98,10 @@ class TemplateCard extends StatelessWidget {
               
               const SizedBox(height: 16),
               
-              // Quick stats chips
               _buildQuickStats(context, totalFields),
               
               const SizedBox(height: 12),
               
-              // Fields preview with scroll
               _buildFieldsPreview(context, hasManyFields),
             ],
           ),

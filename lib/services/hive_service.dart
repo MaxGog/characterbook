@@ -1,4 +1,3 @@
-// hive_service.dart
 import 'package:characterbook/models/characters/character_model.dart';
 import 'package:characterbook/models/characters/character_universal_model.dart';
 import 'package:characterbook/models/custom_field_model.dart';
@@ -49,7 +48,6 @@ class HiveService {
     }
   }
 
-  // Исправленный метод для получения бокса персонажей
   static Future<Box<T>> getCharacterBox<T>() async {
     final useUniversal = await MigrationService.shouldUseUniversal();
     
@@ -60,7 +58,6 @@ class HiveService {
     }
   }
 
-  // Универсальный метод для получения всех персонажей
   static Future<List<dynamic>> getAllCharacters() async {
     final useUniversal = await MigrationService.shouldUseUniversal();
     

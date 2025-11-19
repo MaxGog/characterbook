@@ -9,7 +9,6 @@ import 'package:characterbook/ui/widgets/custom_floating_buttons.dart';
 import 'package:characterbook/ui/widgets/items/race_card.dart';
 import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
 import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
-import 'package:characterbook/ui/widgets/mixins/tag_mixin.dart';
 import 'package:characterbook/ui/widgets/performance/optimized_value_listenable.dart';
 import 'package:characterbook/ui/widgets/tags/tag_filter.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +27,7 @@ class RaceListPage extends StatefulWidget {
   State<RaceListPage> createState() => _RaceListPageState();
 }
 
-class _RaceListPageState extends State<RaceListPage> with TagMixin<Race> {
+class _RaceListPageState extends State<RaceListPage> {
   final List<Race> _filteredRaces = [];
   String? _selectedTag;
   Timer? _debounceTimer;
@@ -44,10 +43,17 @@ class _RaceListPageState extends State<RaceListPage> with TagMixin<Race> {
   String? errorMessage;
 
   List<String> _getAllTags(List<Race> races) {
-    return generateAllTags(races, context, (r) => r.tags);
+    final allTags = <String>{};
+    for (final race in races) {
+      allTags.addAll(race.tags);
+    }
+    return allTags.toList()..sort();
   }
 
-  bool _isShortName(Race r) => r.name.length <= 4;
+  bool _matchesTagFilter(Race race) {
+    if (_selectedTag == null) return true;
+    return race.tags.contains(_selectedTag);
+  }
 
   void _filterRaces(String query, List<Race> allRaces) {
     _debounceTimer?.cancel();
@@ -62,8 +68,7 @@ class _RaceListPageState extends State<RaceListPage> with TagMixin<Race> {
                 race.name.toLowerCase().contains(query.toLowerCase()) ||
                 race.description.toLowerCase().contains(query.toLowerCase());
 
-            return matchesSearch && matchesTagFilter(
-              _selectedTag, context, race, (r) => r.tags, _isShortName);
+            return matchesSearch && _matchesTagFilter(race);
           }),
         );
       });
@@ -316,9 +321,8 @@ class _RaceListPageState extends State<RaceListPage> with TagMixin<Race> {
                         onTagSelected: (tag) {
                           setState(() => _selectedTag = tag);
                           _filterRaces(searchController.text, allRaces);
-                        },
+                        }, 
                         context: context,
-                        isForCharacters: false,
                       ),
                     Expanded(
                       child: OptimizedListView<Race>(
