@@ -2,447 +2,293 @@
   "@@locale": "ru",
   
   "app_name": "CharacterBook",
-  "@app_name": {
-    "description": "Название приложения"
-  },
   "back": "Назад",
-  "@back": {
-    "description": "Кнопка возврата"
-  },
   "cancel": "Отмена",
-  "@cancel": {
-    "description": "Кнопка отмены действия"
-  },
   "create": "Создать",
-  "@create": {
-    "description": "Кнопка создания"
-  },
   "delete": "Удалить",
-  "@delete": {
-    "description": "Кнопка удаления"
-  },
   "edit": "Редактировать",
-  "@edit": {
-    "description": "Кнопка редактирования"
-  },
   "error": "Ошибка",
-  "@error": {
-    "description": "Общее сообщение об ошибке"
-  },
   "ok": "Хорошо",
-  "@ok": {
-    "description": "Кнопка подтверждения"
-  },
   "save": "Сохранить",
-  "@save": {
-    "description": "Кнопка сохранения"
-  },
   "search": "Поиск",
-  "@search": {
-    "description": "Поле поиска"
-  },
   "select": "Выбрано",
-  "@select": {
-    "description": "Статус выбранного элемента"
-  },
   "settings": "Настройки",
-  "@settings": {
-    "description": "Раздел настроек"
-  },
   "version": "Версия",
-  "@version": {
-    "description": "Версия приложения"
-  },
+  "copy": "Копировать",
+  "import": "Импорт",
+  "export": "Экспорт",
+  "replace": "Заменить",
+  "processing": "Загрузка...",
+  "operationCompleted": "Операция выполнена успешно",
+  "copied_to_clipboard": "Скопировано в буфер обмена",
+  "required_field_error": "Обязательное поле",
+  "not_selected": "Не выбрано",
+  "none": "Пусто",
+  "all": "Все",
+  "items": "элементов",
 
   "character": "Персонаж",
-  "@character": {
-    "description": "Сущность персонажа"
-  },
   "characters": "Персонажи",
-  "@characters": {
-    "description": "Раздел персонажей"
-  },
   "my_characters": "Мои персонажи",
-  "@my_characters": {
-    "description": "Заголовок раздела персонажей пользователя"
-  },
   "new_character": "Новый персонаж",
-  "@new_character": {
-    "description": "Кнопка создания нового персонажа"
-  },
   "character_management": "Управление персонажами",
-  "@character_management": {
-    "description": "Заголовок раздела управления персонажами"
-  },
-  "character_delete_title": "Удалить персонажа?",
-  "@character_delete_title": {
-    "description": "Заголовок диалога удаления персонажа"
-  },
+  "edit_character": "Редактировать персонажа",
+  "delete_character": "Удалить персонажа",
+  "copy_character": "Скопировать персонажа",
+  "share_character": "Поделиться",
+  "select_character": "Выберите персонажа",
 
   "race": "Раса",
-  "@race": {
-    "description": "Сущность расы"
-  },
   "races": "Расы",
-  "@races": {
-    "description": "Раздел рас"
-  },
   "new_race": "Новая раса",
-  "@new_race": {
-    "description": "Кнопка создания новой расы"
-  },
   "race_management": "Управление расами",
-  "@race_management": {
-    "description": "Заголовок раздела управления расами"
-  },
+  "edit_race": "Редактировать расу",
+  "import_race": "Импорт расы",
 
   "template": "Шаблон",
-  "@template": {
-    "description": "Сущность шаблона"
-  },
   "templates": "Шаблоны",
-  "@templates": {
-    "description": "Раздел шаблонов"
-  },
   "new_template": "Новый шаблон",
-  "@new_template": {
-    "description": "Кнопка создания нового шаблона"
-  },
+  "edit_template": "Редактирование шаблона",
+  "create_template": "Создать шаблон",
+  "select_template": "Выберите шаблон",
 
   "folder": "Папка",
-  "@folder": {
-    "description": "Сущность папки"
-  },
   "folders": "Папки",
-  "@folders": {
-    "description": "Раздел папок"
-  },
   "new_folder": "Новая папка",
-  "@new_folder": {
-    "description": "Кнопка создания новой папки"
-  },
-  "folder_name": "Имя папки",
-  "@folder_name": {
-    "description": "Поле ввода имени папки"
-  },
-  "folder_color": "Цвет папки",
-  "@folder_color": {
-    "description": "Выбор цвета для папки"
-  },
   "edit_folder": "Редактирование папки",
-  "@edit_folder": {
-    "description": "Заголовок редактирования папки"
-  },
+  "folder_name": "Имя папки",
+  "folder_color": "Цвет папки",
+  "select_folder": "Выбрать папку",
+
+  "posts": "Заметки",
+  "related_notes": "Связанные заметки",
+
+  "name": "Имя",
+  "short_name": "Короткое имя",
+  "age": "Возраст",
+  "years": "лет",
+  "gender": "Пол",
+  "male": "Мужской",
+  "female": "Женский",
+  "another": "Другой",
+  "description": "Описание",
+  "biography": "Биография",
+  "personality": "Характер",
+  "appearance": "Внешность",
+  "abilities": "Способности",
+  "other": "Прочее",
+  "biology": "Биология",
+  "backstory": "Предыстория",
+  "tags": "Теги",
+  "add_tag": "Добавить тег",
+
+  "image": "Изображение",
+  "main_image": "Основное изображение",
+  "reference_image": "Референс",
+  "additional_images": "Дополнительные изображения",
+  "add_picture": "Добавить изображение",
+  "character_avatar": "Аватар персонажа",
+  "character_reference": "Референс персонажа",
+  "character_gallery": "Галерея персонажа",
+  "avatar_crop_title": "Обрезка аватара",
+  "avatar_crop_save": "Сохранить обрезку",
+
+  "template_name_label": "Название шаблона",
+  "standard_fields": "Стандартные поля",
+  "custom_fields": "Пользовательские поля",
+  "custom_fields_editor_title": "Пользовательские поля",
+  "add_field": "Добавить поле",
+  "no_custom_fields": "Нет пользовательских полей",
+  "field_name": "Название поля",
+  "field_name_hint": "Введите название поля",
+  "field_value": "Значение поля",
+  "field_value_hint": "Введите значение поля",
+  "standard": "стандартных",
+  "custom": "пользовательских",
+  "fields_count": "{count} полей",
+  "more_fields": "еще {count}",
+
+  "children": "Дети",
+  "young": "Молодые",
+  "adults": "Взрослые",
+  "elderly": "Пожилые",
 
   "color_purple": "Фиолетовый",
-  "@color_purple": {
-    "description": "Название фиолетового цвета"
-  },
   "color_teal": "Бирюзовый",
-  "@color_teal": {
-    "description": "Название бирюзового цвета"
-  },
   "color_red": "Красный",
-  "@color_red": {
-    "description": "Название красного цвета"
-  },
   "color_pink": "Розовый",
-  "@color_pink": {
-    "description": "Название розового цвета"
-  },
   "color_dark": "Тёмный",
-  "@color_dark": {
-    "description": "Название тёмного цвета"
-  },
   "color_green": "Зелёный",
-  "@color_green": {
-    "description": "Название зелёного цвета"
-  },
   "color_blue": "Синий",
-  "@color_blue": {
-    "description": "Название синего цвета"
-  },
   "color_brown": "Коричневый",
-  "@color_brown": {
-    "description": "Название коричневого цвета"
-  },
   "color_orange": "Оранжевый",
-  "@color_orange": {
-    "description": "Название оранжевого цвета"
-  },
   "color_grey": "Серый",
-  "@color_grey": {
-    "description": "Название серого цвета"
-  },
-
-  "aboutApp": "О приложении",
-  "@aboutApp": {
-    "description": "Раздел информации о приложении"
-  },
-  "acknowledgements": "Благодарности",
-  "@acknowledgements": {
-    "description": "Раздел благодарностей"
-  },
-  "developer": "Разработчик",
-  "@developer": {
-    "description": "Информация о разработчике"
-  },
-  "githubRepo": "GitHub репозиторий",
-  "@githubRepo": {
-    "description": "Ссылка на репозиторий GitHub"
-  },
-  "licenses": "Лицензия",
-  "@licenses": {
-    "description": "Раздел лицензий"
-  },
-  "usedLibraries": "Используемые библиотеки",
-  "@usedLibraries": {
-    "description": "Список используемых библиотек"
-  },
-
-  "operationCompleted": "Операция выполнена успешно",
-  "@operationCompleted": {
-    "description": "Сообщение об успешном выполнении операции"
-  },
-  "copied_to_clipboard": "Скопировано в буфер обмена",
-  "@copied_to_clipboard": {
-    "description": "Уведомление о копировании"
-  },
-  "unsaved_changes_title": "Несохраненные изменения",
-  "@unsaved_changes_title": {
-    "description": "Заголовок диалога несохраненных изменений"
-  },
-  "unsaved_changes_content": "У вас есть несохраненные изменения. Хотите сохранить перед выходом?",
-  "@unsaved_changes_content": {
-    "description": "Текст диалога несохраненных изменений"
-  },
-
-  "empty_list": "Здесь пусто!",
-  "@empty_list": {
-    "description": "Сообщение для пустого списка"
-  },
-  "no_data_found": "Данные не найдены",
-  "@no_data_found": {
-    "description": "Сообщение об отсутствии данных"
-  },
-  "nothing_found": "Ничего не найдено по запросу",
-  "@nothing_found": {
-    "description": "Сообщение о неудачном поиске"
-  },
-  "web_not_supported": "Недоступно для веба",
-  "@web_not_supported": {
-    "description": "Сообщение о неподдерживаемой функции в веб-версии"
-  },
-
-  "abilities": "Способности",
   "accentColor": "Акцентный цвет",
-  "add_picture": "Добавить изображение",
-  "adults": "Взрослые",
-  "age": "Возраст",
-  "age_asc": "Возраст ↑",
-  "age_desc": "Возраст ↓",
-  "all": "Все",
-  "all_tags": "Все теги",
-  "another": "Другой",
-  "appLanguage": "Язык приложения",
-  "appearance": "Внешность",
-  "auth_cancelled": "Авторизация отменена",
-  "auth_client_error": "Не удалось получить клиент для API",
-  "backup": "Резервное копирование",
-  "basic_info": "Основная информация",
-  "biography": "Биография",
-  "biology": "Биология",
-  "blue": "Синий",
-  "character_avatar": "Аватар персонажа",
-  "character_created_from_template": "Персонаж создан из шаблона \"{name}\"",
-  "character_delete_confirm": "Вы уверены, что хотите удалить этого персонажа? Это действие нельзя отменить.",
-  "character_deleted": "Персонаж удален",
-  "character_exported": "Персонаж \"{name}\" успешно экспортирован",
-  "character_gallery": "Галерея персонажа",
-  "character_imported": "Персонаж \"{name}\" успешно импортирован",
-  "character_reference": "Референс персонажа",
-  "character_share_text": "Файл персонажа {name}",
-  "children": "Дети",
-  "cloud_backup_characters_error": "Ошибка при создании резервной копии персонажей",
-  "cloud_backup_characters_success": "Резервная копия персонажей успешно создана",
-  "cloud_backup_error": "Ошибка при создании резервной копии",
-  "cloud_backup_full_success": "Полная резервная копия успешно создана в Google Drive",
-  "cloud_backup_not_found": "Резервные копии не найдены",
-  "cloud_export_error": "Ошибка при экспорте в Google Drive",
-  "cloud_import_error": "Ошибка при импорте из Google Drive",
-  "cloud_restore_error": "Ошибка при восстановлении данных",
-  "cloud_restore_success": "Успешно восстановлено:\n{charactersCount} персонажей\n{notesCount} заметок\n{racesCount} рас\n{templatesCount} шаблонов \n{foldersCount} папок",
   "colorScheme": "Цветовая схема",
-  "copy": "Копировать",
-  "copy_character": "Скопировать персонажа",
-  "copy_error": "Ошибка копирования",
-  "creating_pdf": "Создание PDF...",
-  "creating_file": "Создание файла...",
-  "create_from_template_tooltip": "Создать из шаблона",
-  "create_template_tooltip": "Создать шаблон",
-  "create_template": "Создать шаблон",
-  "custom_fields": "Пользовательские поля",
-  "dark": "Тёмная",
-  "delete_character": "Удалить персонажа",
-  "delete_error": "Ошибка при удалении",
-  "description": "Описание",
-  "discard_changes": "Не сохранять",
-  "edit_character": "Редактировать персонажа",
-  "edit_race": "Редактировать расу",
-  "edit_template": "Редактирование",
-  "elderly": "Пожилые",
-  "enter_age": "Введите возраст",
-  "enter_race_name": "Введите название расы",
-  "error_loading_notes": "Ошибка загрузки связанных постов",
-  "export": "Экспорт в PDF",
-  "export_error": "Ошибка экспорта",
-  "female": "Женский",
-  "file_character": "Файл (.character)",
-  "file_pdf": "Документ PDF (.pdf)",
-  "file_pick_error": "Ошибка выбора файла",
-  "file_ready": "Файл готов к отправке",
-  "fields_count": "{count} полей",
-  "from_template": "Из шаблона",
-  "gender": "Гендер",
-  "green": "Зеленый",
-  "grid_view": "Представление сетки",
-  "image": "Изображение",
-  "image_picker_error": "Ошибка при выборе изображения: {error}",
-  "import_cancelled": "Импорт отменен",
-  "import_character": "Импортировать персонажа",
-  "import_error": "Ошибка импорта: {error}",
-  "import_template": "Импортировать шаблон",
-  "import_template_tooltip": "Импорт шаблона",
-  "invalid_age": "Введён неверный возраст",
-  "language": "Язык",
-  "last_updated": "Обновлено",
-  "light": "Светлая",
-  "lightBlue": "Голубой",
-  "list_view": "Представление списка",
-  "main_image": "Основное изображение",
-  "male": "Мужской",
-  "markdown_bold": "Жирный",
-  "markdown_bullet_list": "Маркированный список",
-  "markdown_inline_code": "Код (inline)",
-  "markdown_italic": "Курсив",
-  "markdown_numbered_list": "Нумерованный список",
-  "markdown_quote": "Цитата",
-  "markdown_underline": "Подчеркнутый",
-  "my": "Мои",
-  "name": "Имя",
-  "new_character_from_template": "Новый персонаж (из шаблона)",
-  "no_additional_images": "Не добавлено ни одного изображение",
-  "no_characters": "Нет персонажей",
-  "no_content": "Содержание отсутствует",
-  "no_description": "Описание отсутствует",
-  "no_information": "Нет информации",
-  "no_race": "Без расы",
-  "no_races_created": "Нет созданных рас",
-  "no_templates": "Нет шаблонов",
-  "not_selected": "Не выбрано",
-  "orange": "Оранжевый",
-  "other": "Прочее",
-  "pdf_export_success": "PDF успешно экспортирован",
-  "personality": "Характер",
-  "pink": "Розовый",
-  "posts": "Посты",
-  "purple": "Фиолетовый",
-  "race_copied": "Раса скопирована в буфер",
-  "race_delete_confirm": "Вы уверены, что хотите удалить эту расу?",
-  "race_delete_error_content": "Эта раса используется персонажами. Сначала измените их расу.",
-  "race_delete_error_title": "Невозможно удалить расу",
-  "race_delete_title": "Удаление расы",
-  "race_deleted": "Раса удалена",
-  "race_imported": "Раса \"{name}\" успешно импортирована",
-  "race_name": "Название расы",
-  "race_share_text": "Файл расы {name}",
-  "red": "Красный",
-  "reference_image": "Референс",
-  "related_notes": "Связанные посты",
-  "replace": "Заменить",
-  "required_field_error": "Обязательное поле",
-  "restoreData": "Восстановить данные",
-  "save_error": "Ошибка сохранения",
-  "save_race": "Сохранить расу",
-  "save_template": "Сохранить шаблон",
-  "search_characters": "Поиск персонажей...",
-  "search_hint": "Поиск по персонажам, расам, заметкам и шаблонам...",
-  "search_race_hint": "Поиск рас...",
-  "select_character": "Выберите персонажа",
-  "select_gender_error": "Выберите пол",
-  "select_race": "Выберите расу",
-  "select_race_error": "Выберите расу",
-  "select_template": "Выберите шаблон",
-  "select_template_file": "Выберите файл шаблона",
-  "share_character": "Поделиться",
-  "short_name": "Короткое имя",
-  "standard_fields": "Стандартные поля",
-  "system": "Системная",
-  "template_delete_confirm": "Вы уверены, что хотите удалить этот шаблон?",
-  "template_delete_title": "Удаление шаблона",
-  "template_deleted": "Шаблон удален",
-  "template_exists": "Шаблон уже существует",
-  "template_exported": "Шаблон \"{name}\" успешно экспортирован",
-  "template_imported": "Шаблон \"{name}\" успешно импортирован",
-  "template_name_label": "Название шаблона",
-  "template_replace_confirm": "Шаблон \"{name}\" уже существует. Заменить его?",
-  "templates_not_found": "Шаблоны не найдены",
-  "teal": "Бирюзовый",
+
   "theme": "Тема",
-  "years": "лет",
-  "young": "Молодые",
-  "a_to_z": "А-Я",
-  "z_to_a": "Я-А",
-  "additional_images": "Доп. изображения",
-  "backstory": "Предыстория",
-  "creatingBackup": "Создать резервную копию",
-  "restoringBackup": "Восстановить из резервной копии",
-  "processing": "Загрузка...",
+  "dark": "Тёмная",
+  "light": "Светлая",
+  "system": "Системная",
+  "language": "Язык",
+  "appLanguage": "Язык приложения",
+
+  "home": "Главная",
+  "dnd_tools": "Инструменты D&D",
+  "more_options": "Дополнительные настройки",
+  "aboutApp": "О приложении",
+  "acknowledgements": "Благодарности",
+  "developer": "Разработчик",
+  "githubRepo": "GitHub репозиторий",
+  "licenses": "Лицензии",
+  "usedLibraries": "Используемые библиотеки",
+  "flutterLicense": "Лицензия Flutter",
+  "characterbookLicense": "Лицензия CharacterBook (GNU GPL v3.0)",
+
+  "backup": "Резервное копирование",
+  "createBackup": "Создать резервную копию",
+  "creatingBackup": "Создание резервной копии",
+  "restoringBackup": "Восстановление из резервной копии",
+  "restoreData": "Восстановить данные",
   "backup_options": "Варианты резервного копирования",
   "restore_options": "Варианты восстановления",
   "backup_to_cloud": "Сохранить в облако",
   "backup_to_file": "Сохранить в файл",
   "restore_from_cloud": "Восстановить из облака",
   "restore_from_file": "Восстановить из файла",
+
+  "file_character": "Файл (.character)",
+  "file_pdf": "Документ PDF (.pdf)",
+  "file_ready": "Файл готов к отправке",
+  "creating_pdf": "Создание PDF...",
+  "creating_file": "Создание файла...",
+
+  "save_error": "Ошибка сохранения",
+  "delete_error": "Ошибка при удалении",
+  "copy_error": "Ошибка копирования",
+  "export_error": "Ошибка экспорта",
+  "import_error": "Ошибка импорта: {error}",
+  "import_cancelled": "Импорт отменен",
+  "file_pick_error": "Ошибка выбора файла",
+  "image_picker_error": "Ошибка при выборе изображения: {error}",
+  "auth_cancelled": "Авторизация отменена",
+  "auth_client_error": "Не удалось получить клиент для API",
+  "web_not_supported": "Недоступно для веба",
+  "invalid_age": "Введён неверный возраст",
+  "select_gender_error": "Выберите пол",
+  "select_race_error": "Выберите расу",
+  "empty_file_error": "Выбранный файл пуст",
+
+  "cloud_backup_error": "Ошибка при создании резервной копии",
+  "cloud_backup_success": "Резервная копия успешно создана",
+  "cloud_backup_characters_error": "Ошибка при создании резервной копии персонажей",
+  "cloud_backup_characters_success": "Резервная копия персонажей успешно создана",
+  "cloud_backup_full_success": "Полная резервная копия успешно создана в Google Drive",
+  "cloud_backup_not_found": "Резервные копии не найдены",
+  "cloud_export_error": "Ошибка при экспорте в Google Drive",
+  "cloud_import_error": "Ошибка при импорте из Google Drive",
+  "cloud_restore_error": "Ошибка при восстановлении данных",
+  "cloud_restore_success": "Успешно восстановлено:\n{charactersCount} персонажей\n{notesCount} заметок\n{racesCount} рас\n{templatesCount} шаблонов\n{foldersCount} папок",
+
   "local_backup_success": "Резервная копия успешно создана",
   "local_backup_error": "Ошибка создания резервной копии",
-  "local_restore_success": "Восстановление произошло успешно",
+  "local_restore_success": "Данные успешно восстановлены",
   "local_restore_error": "Ошибка восстановления",
-  "share_backup_file": "Вот моя резервная копия CharacterBook",
-  "empty_file_error": "Выбранный файл пуст",
-  "import": "Импорт",
-  "import_race": "Импортирование расы",
-  "avatar_crop_title": "Обрезка аватарки",
-  "avatar_crop_save": "Сохранение обрезки",
-  "flutterLicense": "Flutter лицензия",
-  "characterbookLicense": "CharacterBook лицензия (GNU GPL v3.0)",
-  "select_folder": "Выбрать папку",
+
+  "character_created_from_template": "Персонаж создан из шаблона \"{name}\"",
+  "character_exported": "Персонаж \"{name}\" успешно экспортирован",
+  "character_imported": "Персонаж \"{name}\" успешно импортирован",
+  "character_deleted": "Персонаж удален",
+  "race_imported": "Раса \"{name}\" успешно импортирована",
+  "race_deleted": "Раса удалена",
+  "race_copied": "Раса скопирована в буфер обмена",
+  "template_exported": "Шаблон \"{name}\" успешно экспортирован",
+  "template_imported": "Шаблон \"{name}\" успешно импортирован",
+  "template_deleted": "Шаблон удален",
+  "pdf_export_success": "PDF успешно экспортирован",
+
+  "unsaved_changes_title": "Несохранённые изменения",
+  "unsaved_changes_content": "У вас есть несохранённые изменения. Хотите сохранить перед выходом?",
+  "character_delete_title": "Удалить персонажа?",
+  "character_delete_confirm": "Вы уверены, что хотите удалить этого персонажа? Это действие нельзя отменить.",
+  "race_delete_title": "Удаление расы",
+  "race_delete_confirm": "Вы уверены, что хотите удалить эту расу?",
+  "race_delete_error_title": "Невозможно удалить расу",
+  "race_delete_error_content": "Эта раса используется персонажами. Сначала измените их расу.",
+  "template_delete_title": "Удаление шаблона",
+  "template_delete_confirm": "Вы уверены, что хотите удалить этот шаблон?",
+  "template_replace_confirm": "Шаблон \"{name}\" уже существует. Заменить его?",
+  "discard_changes": "Не сохранять",
+
+  "empty_list": "Здесь пусто!",
+  "no_data_found": "Данные не найдены",
+  "nothing_found": "Ничего не найдено по запросу",
+  "no_characters": "Нет персонажей",
+  "no_races_created": "Нет созданных рас",
+  "no_templates": "Нет шаблонов",
+  "no_content": "Содержание отсутствует",
+  "no_description": "Описание отсутствует",
+  "no_information": "Нет информации",
+  "no_race": "Раса не выбрана",
+  "no_additional_images": "Не добавлено ни одного изображения",
   "no_folder_selected": "Нет выбранной папки",
-  "none": "Пусто",
-  "tags": "Теги",
-  "add_tag": "Добавить тег",
-  "items": "элементов",
-  "createBackup": "Создать резервную копию",
-  "fields_asc": "По количеству полей (возр.)",
-  "fields_desc": "По количеству полей (убыв.)",
-  "standard": "стандартных",
-  "custom": "пользовательских", 
-  "detailed": "Подробный",
-  "more_fields": "{count} еще",
-  "home_subtitle": "Ваша коллекция персонажей и рас",
-  "search_home": "Поиск персонажей и рас...",
   "no_content_home": "Пока ничего нет",
   "create_first_content": "Создайте первого персонажа или расу",
+
+  "search_characters": "Поиск персонажей...",
+  "search_race_hint": "Поиск рас...",
+  "search_hint": "Поиск по персонажам, расам, заметкам и шаблонам...",
+  "search_home": "Поиск персонажей и рас...",
+  "all_tags": "Все теги",
+  "basic_info": "Основная информация",
+
+  "a_to_z": "А-Я",
+  "z_to_a": "Я-А",
+  "age_asc": "Возраст ↑",
+  "age_desc": "Возраст ↓",
+  "fields_asc": "По количеству полей (по возрастанию)",
+  "fields_desc": "По количеству полей (по убыванию)",
+  "last_updated": "Обновлено",
+
   "years_ago": "{years} лет назад",
-  "months_ago": "{months} назад",
-  "days_ago": "{days} назад",
-  "hours_ago": "{hours} назад",
+  "months_ago": "{months} месяцев назад",
+  "days_ago": "{days} дней назад",
+  "hours_ago": "{hours} часов назад",
   "just_now": "Только что",
-  "custom_fields_editor_title": "Character information",
-  "add_field": "Add field",
-  "no_custom_fields": "No custom fields added",
-  "field_name": "Field Name",
-  "field_name_hint": "Enter field name",
-  "field_value": "Field Value",
-  "field_value_hint": "Enter field value"
+
+  "grid_view": "Вид сеткой",
+  "list_view": "Вид списком",
+  "detailed": "Подробный",
+  "my": "Мои",
+
+  "create_from_template_tooltip": "Создать из шаблона",
+  "create_template_tooltip": "Создать шаблон",
+  "import_template": "Импортировать шаблон",
+  "import_template_tooltip": "Импорт шаблона",
+  "from_template": "Из шаблона",
+  "new_character_from_template": "Новый персонаж (из шаблона)",
+  "save_template": "Сохранить шаблон",
+  "save_race": "Сохранить расу",
+
+  "enter_age": "Введите возраст",
+  "enter_race_name": "Введите название расы",
+  "select_template_file": "Выберите файл шаблона",
+
+  "share_backup_file": "Вот моя резервная копия CharacterBook",
+  "character_share_text": "Файл персонажа {name}",
+  "race_share_text": "Файл расы {name}",
+
+  "markdown_bold": "Жирный",
+  "markdown_italic": "Курсив",
+  "markdown_underline": "Подчёркнутый",
+  "markdown_bullet_list": "Маркированный список",
+  "markdown_numbered_list": "Нумерованный список",
+  "markdown_quote": "Цитата",
+  "markdown_inline_code": "Код (в строке)",
+
+  "home_subtitle": "Ваша коллекция персонажей и рас",
+
+  "template_exists": "Шаблон уже существует",
+  "templates_not_found": "Шаблоны не найдены",
+  "error_loading_notes": "Ошибка загрузки связанных заметок"
 }

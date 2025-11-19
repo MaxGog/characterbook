@@ -200,7 +200,7 @@ class _RaceManagementPageState extends State<RaceManagementPage> with UnsavedCha
             const SizedBox(height: 24),
             CustomTextField(
               controller: _nameController,
-              label: s.race_name,
+              label: s.enter_race_name,
               isRequired: true,
             ),
             const SizedBox(height: 16),

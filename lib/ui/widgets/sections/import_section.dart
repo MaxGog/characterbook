@@ -20,7 +20,7 @@ class ImportSection extends StatelessWidget {
       children: [
         ImportButton(
           icon: Icons.person,
-          label: s.import_character,
+          label: s.import,
           onPressed: () => _importCharacter(context),
         ),
         ImportButton(

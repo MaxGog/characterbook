@@ -14,14 +14,14 @@ class ThemeSection extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final s = S.of(context);
     final accentColors = {
-      s.blue: Colors.blue,
-      s.green: Colors.green,
-      s.red: Colors.red,
-      s.orange: Colors.orange,
-      s.purple: Colors.purple,
-      s.pink: Colors.pink,
-      s.teal: Colors.teal,
-      s.lightBlue: Colors.lightBlue,
+      s.color_blue: Colors.blue,
+      s.color_green: Colors.green,
+      s.color_red: Colors.red,
+      s.color_orange: Colors.orange,
+      s.color_purple: Colors.purple,
+      s.color_pink: Colors.pink,
+      s.color_teal: Colors.teal,
+      s.color_blue: Colors.lightBlue,
     };
 
     return SettingsSection(

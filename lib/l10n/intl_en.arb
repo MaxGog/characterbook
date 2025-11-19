@@ -2,436 +2,294 @@
   "@@locale": "en",
 
   "app_name": "CharacterBook",
-  "@app_name": {
-    "description": "Application name"
-  },
   "back": "Back",
-  "@back": {
-    "description": "Back button"
-  },
   "cancel": "Cancel",
-  "@cancel": {
-    "description": "Cancel action button"
-  },
   "create": "Create",
-  "@create": {
-    "description": "Create button"
-  },
   "delete": "Delete",
-  "@delete": {
-    "description": "Delete button"
-  },
   "edit": "Edit",
-  "@edit": {
-    "description": "Edit button"
-  },
   "error": "Error",
-  "@error": {
-    "description": "Generic error message"
-  },
   "ok": "OK",
-  "@ok": {
-    "description": "Confirmation button"
-  },
   "save": "Save",
-  "@save": {
-    "description": "Save button"
-  },
   "search": "Search",
-  "@search": {
-    "description": "Search field"
-  },
   "select": "Selected",
-  "@select": {
-    "description": "Selected item status"
-  },
   "settings": "Settings",
-  "@settings": {
-    "description": "Settings section"
-  },
   "version": "Version",
-  "@version": {
-    "description": "Application version"
-  },
+  "copy": "Copy",
+  "import": "Import",
+  "export": "Export",
+  "replace": "Replace",
+  "processing": "Loading...",
+  "operationCompleted": "Operation completed successfully",
+  "copied_to_clipboard": "Copied to clipboard",
+  "required_field_error": "Required field",
+  "not_selected": "Not selected",
+  "none": "None",
+  "all": "All",
+  "items": "items",
 
   "character": "Character",
-  "@character": {
-    "description": "Character entity"
-  },
   "characters": "Characters",
-  "@characters": {
-    "description": "Characters section"
-  },
   "my_characters": "My Characters",
-  "@my_characters": {
-    "description": "User's characters section header"
-  },
   "new_character": "New Character",
-  "@new_character": {
-    "description": "New character creation button"
-  },
+  "character_management": "Character Management",
+  "edit_character": "Edit Character",
+  "delete_character": "Delete Character",
+  "copy_character": "Copy Character",
+  "share_character": "Share Character",
+  "select_character": "Select Character",
+  "create_character": "Create Character",
 
   "race": "Race",
-  "@race": {
-    "description": "Race entity"
-  },
   "races": "Races",
-  "@races": {
-    "description": "Races section"
-  },
   "new_race": "New Race",
-  "@new_race": {
-    "description": "New race creation button"
-  },
+  "race_management": "Race Management",
+  "edit_race": "Edit Race",
+  "import_race": "Import Race",
 
   "template": "Template",
-  "@template": {
-    "description": "Template entity"
-  },
   "templates": "Templates",
-  "@templates": {
-    "description": "Templates section"
-  },
   "new_template": "New Template",
-  "@new_template": {
-    "description": "New template creation button"
-  },
+  "edit_template": "Edit Template",
+  "create_template": "Create Template",
+  "select_template": "Select Template",
 
   "folder": "Folder",
-  "@folder": {
-    "description": "Folder entity"
-  },
   "folders": "Folders",
-  "@folders": {
-    "description": "Folders section"
-  },
   "new_folder": "New Folder",
-  "@new_folder": {
-    "description": "New folder creation button"
-  },
+  "edit_folder": "Edit Folder",
   "folder_name": "Folder Name",
-  "@folder_name": {
-    "description": "Folder name input field"
-  },
   "folder_color": "Folder Color",
-  "@folder_color": {
-    "description": "Folder color selection"
-  },
+  "select_folder": "Select Folder",
 
-  "color_purple": "Purple",
-  "@color_purple": {
-    "description": "Purple color name"
-  },
-  "color_teal": "Teal",
-  "@color_teal": {
-    "description": "Teal color name"
-  },
-  "color_red": "Red",
-  "@color_red": {
-    "description": "Red color name"
-  },
-  "color_pink": "Pink",
-  "@color_pink": {
-    "description": "Pink color name"
-  },
-  "color_dark": "Dark",
-  "@color_dark": {
-    "description": "Dark color name"
-  },
-  "color_green": "Green",
-  "@color_green": {
-    "description": "Green color name"
-  },
-  "color_blue": "Blue",
-  "@color_blue": {
-    "description": "Blue color name"
-  },
-  "color_brown": "Brown",
-  "@color_brown": {
-    "description": "Brown color name"
-  },
-  "color_orange": "Orange",
-  "@color_orange": {
-    "description": "Orange color name"
-  },
-  "color_grey": "Grey",
-  "@color_grey": {
-    "description": "Grey color name"
-  },
+  "posts": "Posts",
+  "related_notes": "Related Posts",
 
-  "aboutApp": "About App",
-  "@aboutApp": {
-    "description": "Application information section"
-  },
-  "acknowledgements": "Acknowledgements",
-  "@acknowledgements": {
-    "description": "Acknowledgements section"
-  },
-  "developer": "Developer",
-  "@developer": {
-    "description": "Developer information"
-  },
-  "githubRepo": "GitHub Repository",
-  "@githubRepo": {
-    "description": "GitHub repository link"
-  },
-  "licenses": "Licenses",
-  "@licenses": {
-    "description": "Licenses section"
-  },
-  "usedLibraries": "Used Libraries",
-  "@usedLibraries": {
-    "description": "List of used libraries"
-  },
-
-  "operationCompleted": "Operation completed successfully",
-  "@operationCompleted": {
-    "description": "Success operation message"
-  },
-  "copied_to_clipboard": "Copied to clipboard",
-  "@copied_to_clipboard": {
-    "description": "Copy notification"
-  },
-  "unsaved_changes_title": "Unsaved Changes",
-  "@unsaved_changes_title": {
-    "description": "Unsaved changes dialog title"
-  },
-  "unsaved_changes_content": "You have unsaved changes. Do you want to save before exiting?",
-  "@unsaved_changes_content": {
-    "description": "Unsaved changes dialog text"
-  },
-
-  "empty_list": "It's empty here!",
-  "@empty_list": {
-    "description": "Empty list message"
-  },
-  "no_data_found": "No data found",
-  "@no_data_found": {
-    "description": "No data message"
-  },
-  "nothing_found": "Nothing found for the query",
-  "@nothing_found": {
-    "description": "Unsuccessful search message"
-  },
-  "web_not_supported": "Not available for web",
-  "@web_not_supported": {
-    "description": "Web-unsupported feature message"
-  },
-
-  "abilities": "Abilities",
-  "accentColor": "Accent Color",
-  "add_picture": "Add Image",
-  "adults": "Adults",
+  "name": "Name",
+  "short_name": "Short Name",
   "age": "Age",
-  "age_asc": "Age ↑",
-  "age_desc": "Age ↓",
-  "all": "All",
-  "all_tags": "All Tags",
+  "years": "years",
+  "gender": "Gender",
+  "male": "Male",
+  "female": "Female",
   "another": "Other",
-  "appLanguage": "App Language",
-  "appearance": "Appearance",
-  "auth_cancelled": "Authorization cancelled",
-  "auth_client_error": "Failed to get API client",
-  "backup": "Backup",
-  "basic_info": "Basic Info",
+  "description": "Description",
   "biography": "Biography",
+  "personality": "Personality",
+  "appearance": "Appearance",
+  "abilities": "Abilities",
+  "other": "Other",
   "biology": "Biology",
   "backstory": "Backstory",
-  "blue": "Blue",
-  "character_avatar": "Character Avatar",
-  "character_created_from_template": "Character created from template \"{name}\"",
-  "character_delete_title": "Delete Character?",
-  "character_delete_confirm": "Are you sure you want to delete this character? This action cannot be undone.",
-  "character_deleted": "Character deleted",
-  "character_exported": "Character \"{name}\" exported successfully",
-  "character_gallery": "Character Gallery",
-  "character_imported": "Character \"{name}\" imported successfully",
-  "character_management": "Character Management",
-  "character_reference": "Character Reference",
-  "character_share_text": "Character file {name}",
-  "children": "Children",
-  "cloud_backup_characters_error": "Error creating characters backup",
-  "cloud_backup_characters_success": "Characters backup created successfully",
-  "cloud_backup_error": "Backup Error",
-  "cloud_backup_full_success": "Full backup successfully created in Google Drive",
-  "cloud_backup_not_found": "No backups found",
-  "cloud_export_error": "Google Drive export error",
-  "cloud_import_error": "Google Drive import error",
-  "cloud_restore_error": "Restore Error",
-  "cloud_restore_success": "Successfully restored:\n{charactersCount} characters\n{notesCount} notes\n{racesCount} races\n{templatesCount} templates \n{foldersCount} folders",
-  "colorScheme": "Color Scheme",
-  "copy": "Copy",
-  "copy_character": "Copy Character",
-  "copy_error": "Copy Error",
-  "creating_pdf": "Creating PDF...",
-  "creating_file": "Creating file...",
-  "createBackup": "Create Backup",
-  "create_character": "Create Character",
-  "create_from_template_tooltip": "Create from Template",
-  "create_template_tooltip": "Create Template",
-  "create_template": "Create Template",
-  "custom_fields": "Custom Fields",
-  "dark": "Dark",
-  "delete_character": "Delete Character",
-  "delete_error": "Delete Error",
-  "description": "Description",
-  "discard_changes": "Discard",
-  "edit_character": "Edit Character",
-  "edit_race": "Edit Race",
-  "edit_template": "Edit",
-  "elderly": "Elderly",
-  "enter_age": "Enter age",
-  "enter_race_name": "Enter race name",
-  "error_loading_notes": "Error loading related posts",
-  "export": "Export",
-  "export_error": "Export Error",
-  "female": "Female",
-  "file_character": "File (.character)",
-  "file_pdf": "PDF Document (.pdf)",
-  "file_pick_error": "File selection error",
-  "file_ready": "File ready to send",
-  "fields_count": "{count} fields",
-  "from_template": "From Template",
-  "gender": "Gender",
-  "green": "Green",
-  "grid_view": "Grid view",
+  "tags": "Tags",
+  "add_tag": "Add Tag",
+
   "image": "Image",
-  "image_picker_error": "Image selection error: {error}",
-  "import_cancelled": "Import cancelled",
-  "import_character": "Import Character",
-  "import_error": "Import error: {error}",
-  "import_template": "Import Template",
-  "import_template_tooltip": "Import Template",
-  "invalid_age": "Invalid age entered",
-  "language": "Language",
-  "last_updated": "Last Updated",
-  "light": "Light",
-  "lightBlue": "Light Blue",
-  "list_view": "List view",
   "main_image": "Main Image",
-  "male": "Male",
-  "markdown_bold": "Bold",
-  "markdown_bullet_list": "Bullet List",
-  "markdown_inline_code": "Code (inline)",
-  "markdown_italic": "Italic",
-  "markdown_numbered_list": "Numbered List",
-  "markdown_quote": "Quote",
-  "markdown_underline": "Underline",
-  "my": "My",
-  "name": "Name",
-  "new_character_from_template": "New Character (from Template)",
-  "no_additional_images": "No images added",
-  "no_characters": "No characters",
-  "no_content": "No content",
-  "no_description": "No description",
-  "no_information": "No Information",
-  "no_race": "No race",
-  "no_races_created": "No races created",
-  "no_templates": "No templates",
-  "not_selected": "Not selected",
-  "orange": "Orange",
-  "other": "Other",
-  "pdf_export_success": "PDF exported successfully",
-  "personality": "Personality",
-  "pink": "Pink",
-  "posts": "Posts",
-  "purple": "Purple",
-  "race_copied": "Race copied to clipboard",
-  "race_delete_confirm": "Are you sure you want to delete this race?",
-  "race_delete_error_content": "This race is used by characters. Change their race first.",
-  "race_delete_error_title": "Cannot Delete Race",
-  "race_delete_title": "Delete Race",
-  "race_deleted": "Race deleted",
-  "race_imported": "Race \"{name}\" imported successfully",
-  "race_name": "Race Name",
-  "race_share_text": "Race file {name}",
-  "red": "Red",
   "reference_image": "Reference",
-  "related_notes": "Related Posts",
-  "replace": "Replace",
-  "required_field_error": "Required field",
-  "restoreData": "Restore Data",
-  "save_error": "Save Error",
-  "save_race": "Save Race",
-  "save_template": "Save Template",
-  "search_characters": "Search characters...",
-  "search_hint": "Search for characters, races, notes, and templates...",
-  "search_race_hint": "Search races...",
-  "select_character": "Select Character",
-  "select_gender_error": "Select gender",
-  "select_race": "Select Race",
-  "select_race_error": "Select race",
-  "select_template": "Select Template",
-  "select_template_file": "Select Template File",
-  "share_character": "Share Character",
-  "short_name": "Short Name",
-  "standard_fields": "Standard Fields",
-  "system": "System",
-  "template_delete_confirm": "Are you sure you want to delete this template?",
-  "template_delete_title": "Delete Template",
-  "template_deleted": "Template deleted",
-  "template_exists": "Template already exists",
-  "template_exported": "Template \"{name}\" exported successfully",
-  "template_imported": "Template \"{name}\" imported successfully",
-  "template_name_label": "Template Name",
-  "template_replace_confirm": "Template \"{name}\" already exists. Replace it?",
-  "templates_not_found": "No templates found",
-  "teal": "Teal",
-  "theme": "Theme",
-  "years": "years",
-  "young": "Young",
-  "a_to_z": "A-Z",
-  "z_to_a": "Z-A",
   "additional_images": "Additional Images",
+  "add_picture": "Add Image",
+  "character_avatar": "Character Avatar",
+  "character_reference": "Character Reference",
+  "character_gallery": "Character Gallery",
+  "avatar_crop_title": "Avatar Cropping",
+  "avatar_crop_save": "Save Crop",
+
+  "template_name_label": "Template Name",
+  "standard_fields": "Standard Fields",
+  "custom_fields": "Custom Fields",
+  "custom_fields_editor_title": "Custom Fields",
+  "add_field": "Add field",
+  "no_custom_fields": "No custom fields added",
+  "field_name": "Field Name",
+  "field_name_hint": "Enter field name",
+  "field_value": "Field Value",
+  "field_value_hint": "Enter field value",
+  "standard": "standard",
+  "custom": "custom",
+  "fields_count": "{count} fields",
+  "more_fields": "{count} more",
+
+  "children": "Children",
+  "young": "Young",
+  "adults": "Adults",
+  "elderly": "Elderly",
+
+  "color_purple": "Purple",
+  "color_teal": "Teal",
+  "color_red": "Red",
+  "color_pink": "Pink",
+  "color_dark": "Dark",
+  "color_green": "Green",
+  "color_blue": "Blue",
+  "color_brown": "Brown",
+  "color_orange": "Orange",
+  "color_grey": "Grey",
+  "accentColor": "Accent Color",
+  "colorScheme": "Color Scheme",
+
+  "theme": "Theme",
+  "dark": "Dark",
+  "light": "Light",
+  "system": "System",
+  "language": "Language",
+  "appLanguage": "App Language",
+
+  "home": "Home",
+  "dnd_tools": "D&D Tools",
+  "more_options": "More Options",
+  "aboutApp": "About App",
+  "acknowledgements": "Acknowledgements",
+  "developer": "Developer",
+  "githubRepo": "GitHub Repository",
+  "licenses": "Licenses",
+  "usedLibraries": "Used Libraries",
+  "flutterLicense": "Flutter License",
+  "characterbookLicense": "CharacterBook License (GNU GPL v3.0)",
+
+  "backup": "Backup",
+  "createBackup": "Create Backup",
   "creatingBackup": "Create Backup",
   "restoringBackup": "Restore from Backup",
-  "processing": "Loading...",
+  "restoreData": "Restore Data",
   "backup_options": "Backup Options",
   "restore_options": "Restore Options",
   "backup_to_cloud": "Backup to Cloud",
   "backup_to_file": "Backup to File",
   "restore_from_cloud": "Restore from Cloud",
   "restore_from_file": "Restore from File",
+
+  "file_character": "File (.character)",
+  "file_pdf": "PDF Document (.pdf)",
+  "file_ready": "File ready to send",
+  "creating_pdf": "Creating PDF...",
+  "creating_file": "Creating file...",
+
+  "save_error": "Save Error",
+  "delete_error": "Delete Error",
+  "copy_error": "Copy Error",
+  "export_error": "Export Error",
+  "import_error": "Import error: {error}",
+  "import_cancelled": "Import cancelled",
+  "file_pick_error": "File selection error",
+  "image_picker_error": "Image selection error: {error}",
+  "auth_cancelled": "Authorization cancelled",
+  "auth_client_error": "Failed to get API client",
+  "web_not_supported": "Not available for web",
+  "invalid_age": "Invalid age entered",
+  "select_gender_error": "Select gender",
+  "select_race_error": "Select race",
+  "empty_file_error": "The selected file is empty",
+
+  "cloud_backup_error": "Backup Error",
+  "cloud_backup_success": "Backup created successfully",
+  "cloud_backup_characters_error": "Error creating characters backup",
+  "cloud_backup_characters_success": "Characters backup created successfully",
+  "cloud_backup_full_success": "Full backup successfully created in Google Drive",
+  "cloud_backup_not_found": "No backups found",
+  "cloud_export_error": "Google Drive export error",
+  "cloud_import_error": "Google Drive import error",
+  "cloud_restore_error": "Restore Error",
+  "cloud_restore_success": "Successfully restored:\n{charactersCount} characters\n{notesCount} notes\n{racesCount} races\n{templatesCount} templates\n{foldersCount} folders",
+
   "local_backup_success": "Backup created successfully",
   "local_backup_error": "Backup error",
   "local_restore_success": "Restore completed successfully",
   "local_restore_error": "Restore error",
-  "share_backup_file": "Here's my CharacterBook backup file",
-  "empty_file_error": "The selected file is empty",
-  "import": "Import",
-  "import_race": "Import Race",
-  "avatar_crop_title": "Avatar Cropping",
-  "avatar_crop_save": "Save Crop",
-  "flutterLicense": "Flutter License",
-  "characterbookLicense": "CharacterBook License (GNU GPL v3.0)",
-  "select_folder": "Select Folder",
+
+  "character_created_from_template": "Character created from template \"{name}\"",
+  "character_exported": "Character \"{name}\" exported successfully",
+  "character_imported": "Character \"{name}\" imported successfully",
+  "character_deleted": "Character deleted",
+  "race_imported": "Race \"{name}\" imported successfully",
+  "race_deleted": "Race deleted",
+  "race_copied": "Race copied to clipboard",
+  "template_exported": "Template \"{name}\" exported successfully",
+  "template_imported": "Template \"{name}\" imported successfully",
+  "template_deleted": "Template deleted",
+  "pdf_export_success": "PDF exported successfully",
+
+  "unsaved_changes_title": "Unsaved Changes",
+  "unsaved_changes_content": "You have unsaved changes. Do you want to save before exiting?",
+  "character_delete_title": "Delete Character?",
+  "character_delete_confirm": "Are you sure you want to delete this character? This action cannot be undone.",
+  "race_delete_title": "Delete Race",
+  "race_delete_confirm": "Are you sure you want to delete this race?",
+  "race_delete_error_title": "Cannot Delete Race",
+  "race_delete_error_content": "This race is used by characters. Change their race first.",
+  "template_delete_title": "Delete Template",
+  "template_delete_confirm": "Are you sure you want to delete this template?",
+  "template_replace_confirm": "Template \"{name}\" already exists. Replace it?",
+  "discard_changes": "Discard",
+
+  "empty_list": "It's empty here!",
+  "no_data_found": "No data found",
+  "nothing_found": "Nothing found for the query",
+  "no_characters": "No characters",
+  "no_races_created": "No races created",
+  "no_templates": "No templates",
+  "no_content": "No content",
+  "no_description": "No description",
+  "no_information": "No Information",
+  "no_race": "No race",
+  "no_additional_images": "No images added",
   "no_folder_selected": "No folder selected",
-  "none": "None",
-  "tags": "Tags",
-  "add_tag": "Add Tag",
-  "items": "items",
-  "edit_folder": "Edit Folder",
-  "fields_asc": "По количеству полей (возр.)",
-  "fields_desc": "По количеству полей (убыв.)",
-  "standard": "стандартных",
-  "custom": "пользовательских", 
-  "detailed": "Подробный",
-  "more_fields": "{count} еще",
-  "fields_count": "{count} полей",
-  "home_subtitle": "Ваша коллекция персонажей и рас",
-  "search_home": "Поиск персонажей и рас...",
-  "no_content_home": "Пока ничего нет",
-  "create_first_content": "Создайте первого персонажа или расу",
-  "years_ago": "{years} лет назад",
-  "months_ago": "{months} назад",
-  "days_ago": "{days} назад",
-  "hours_ago": "{hours} назад",
-  "just_now": "Только что",
-  "custom_fields_editor_title": "Character information",
-  "add_field": "Add field",
-  "no_custom_fields": "No custom fields added",
-  "field_name": "Field Name",
-  "field_name_hint": "Enter field name",
-  "field_value": "Field Value",
-  "field_value_hint": "Enter field value"
+  "no_content_home": "Nothing here yet",
+  "create_first_content": "Create your first character or race",
+
+  "search_characters": "Search characters...",
+  "search_race_hint": "Search races...",
+  "search_hint": "Search for characters, races, notes, and templates...",
+  "search_home": "Search characters and races...",
+  "all_tags": "All Tags",
+  "basic_info": "Basic Info",
+
+  "a_to_z": "A-Z",
+  "z_to_a": "Z-A",
+  "age_asc": "Age ↑",
+  "age_desc": "Age ↓",
+  "fields_asc": "By field count (ascending)",
+  "fields_desc": "By field count (descending)",
+  "last_updated": "Last Updated",
+
+  "years_ago": "{years} years ago",
+  "months_ago": "{months} months ago",
+  "days_ago": "{days} days ago",
+  "hours_ago": "{hours} hours ago",
+  "just_now": "Just now",
+
+  "grid_view": "Grid view",
+  "list_view": "List view",
+  "detailed": "Detailed",
+  "my": "My",
+
+  "create_from_template_tooltip": "Create from Template",
+  "create_template_tooltip": "Create Template",
+  "import_template": "Import Template",
+  "import_template_tooltip": "Import Template",
+  "from_template": "From Template",
+  "new_character_from_template": "New Character (from Template)",
+  "save_template": "Save Template",
+  "save_race": "Save Race",
+
+  "enter_age": "Enter age",
+  "enter_race_name": "Enter race name",
+  "select_template_file": "Select Template File",
+
+  "share_backup_file": "Here's my CharacterBook backup file",
+  "character_share_text": "Character file {name}",
+  "race_share_text": "Race file {name}",
+
+  "markdown_bold": "Bold",
+  "markdown_italic": "Italic",
+  "markdown_underline": "Underline",
+  "markdown_bullet_list": "Bullet List",
+  "markdown_numbered_list": "Numbered List",
+  "markdown_quote": "Quote",
+  "markdown_inline_code": "Code (inline)",
+
+  "home_subtitle": "Your collection of characters and races",
+
+  "template_exists": "Template already exists",
+  "templates_not_found": "No templates found",
+  "error_loading_notes": "Error loading related posts"
 }
