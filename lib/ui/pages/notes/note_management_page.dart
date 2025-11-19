@@ -351,39 +351,45 @@ class _NoteEditPageState extends State<NoteEditPage> with UnsavedChangesHandler 
     if (_isPreviewMode) {
       return Container(
         margin: EdgeInsets.only(top: _isMetaCardExpanded ? 180 : 60),
-        padding: const EdgeInsets.all(16),
-        child: MarkdownBody(
-          data: _contentController.text,
-          styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.all(16),
+          child: MarkdownBody(
+            data: _contentController.text,
+            styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+          ),
         ),
       );
     }
 
     return Container(
       margin: EdgeInsets.only(top: _isMetaCardExpanded ? 180 : 60),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: TextFormField(
-        controller: _contentController,
-        maxLines: null,
-        keyboardType: TextInputType.multiline,
-        textInputAction: TextInputAction.newline,
-        decoration: const InputDecoration(
-          border: InputBorder.none,
-          hintText: 'Start writing...',
-          hintStyle: TextStyle(fontSize: 16),
-          contentPadding: EdgeInsets.zero,
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: TextFormField(
+          controller: _contentController,
+          maxLines: null,
+          keyboardType: TextInputType.multiline,
+          textInputAction: TextInputAction.newline,
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            hintText: 'Start writing...',
+            hintStyle: TextStyle(fontSize: 16),
+            contentPadding: EdgeInsets.zero,
+          ),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            fontSize: 16,
+            height: 1.5,
+          ),
+          onChanged: (value) => _checkForChanges(),
+          contextMenuBuilder: (context, editableTextState) {
+            return MarkdownContextMenu(
+              controller: _contentController,
+              editableTextState: editableTextState,
+            );
+          },
         ),
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          fontSize: 16,
-          height: 1.5,
-        ),
-        onChanged: (value) => _checkForChanges(),
-        contextMenuBuilder: (context, editableTextState) {
-          return MarkdownContextMenu(
-            controller: _contentController,
-            editableTextState: editableTextState,
-          );
-        },
       ),
     );
   }
