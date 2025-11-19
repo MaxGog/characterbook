@@ -2656,6 +2656,76 @@ class S {
       args: [],
     );
   }
+
+  /// `Character information`
+  String get custom_fields_editor_title {
+    return Intl.message(
+      'Character information',
+      name: 'custom_fields_editor_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add field`
+  String get add_field {
+    return Intl.message(
+      'Add field',
+      name: 'add_field',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No custom fields added`
+  String get no_custom_fields {
+    return Intl.message(
+      'No custom fields added',
+      name: 'no_custom_fields',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Field Name`
+  String get field_name {
+    return Intl.message(
+      'Field Name',
+      name: 'field_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter field name`
+  String get field_name_hint {
+    return Intl.message(
+      'Enter field name',
+      name: 'field_name_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Field Value`
+  String get field_value {
+    return Intl.message(
+      'Field Value',
+      name: 'field_value',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter field value`
+  String get field_value_hint {
+    return Intl.message(
+      'Enter field value',
+      name: 'field_value_hint',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

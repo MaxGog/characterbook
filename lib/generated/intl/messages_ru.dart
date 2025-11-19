@@ -66,6 +66,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "accentColor": MessageLookupByLibrary.simpleMessage("Акцентный цвет"),
         "acknowledgements":
             MessageLookupByLibrary.simpleMessage("Благодарности"),
+        "add_field": MessageLookupByLibrary.simpleMessage("Add field"),
         "add_picture":
             MessageLookupByLibrary.simpleMessage("Добавить изображение"),
         "add_tag": MessageLookupByLibrary.simpleMessage("Добавить тег"),
@@ -181,6 +182,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "custom": MessageLookupByLibrary.simpleMessage("пользовательских"),
         "custom_fields":
             MessageLookupByLibrary.simpleMessage("Пользовательские поля"),
+        "custom_fields_editor_title":
+            MessageLookupByLibrary.simpleMessage("Character information"),
         "dark": MessageLookupByLibrary.simpleMessage("Тёмная"),
         "days_ago": m5,
         "delete": MessageLookupByLibrary.simpleMessage("Удалить"),
@@ -212,6 +215,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "export": MessageLookupByLibrary.simpleMessage("Экспорт в PDF"),
         "export_error": MessageLookupByLibrary.simpleMessage("Ошибка экспорта"),
         "female": MessageLookupByLibrary.simpleMessage("Женский"),
+        "field_name": MessageLookupByLibrary.simpleMessage("Field Name"),
+        "field_name_hint":
+            MessageLookupByLibrary.simpleMessage("Enter field name"),
+        "field_value": MessageLookupByLibrary.simpleMessage("Field Value"),
+        "field_value_hint":
+            MessageLookupByLibrary.simpleMessage("Enter field value"),
         "fields_asc":
             MessageLookupByLibrary.simpleMessage("По количеству полей (возр.)"),
         "fields_count": m6,
@@ -305,6 +314,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Содержание отсутствует"),
         "no_content_home":
             MessageLookupByLibrary.simpleMessage("Пока ничего нет"),
+        "no_custom_fields":
+            MessageLookupByLibrary.simpleMessage("No custom fields added"),
         "no_data_found":
             MessageLookupByLibrary.simpleMessage("Данные не найдены"),
         "no_description":

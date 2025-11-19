@@ -426,5 +426,12 @@
   "months_ago": "{months} назад",
   "days_ago": "{days} назад",
   "hours_ago": "{hours} назад",
-  "just_now": "Только что"
+  "just_now": "Только что",
+  "custom_fields_editor_title": "Character information",
+  "add_field": "Add field",
+  "no_custom_fields": "No custom fields added",
+  "field_name": "Field Name",
+  "field_name_hint": "Enter field name",
+  "field_value": "Field Value",
+  "field_value_hint": "Enter field value"
 }

@@ -66,34 +66,53 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
       children: [
         Row(
           children: [
-            Text(
-              "Add information about the character",
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
+            Expanded(
+              child: Text(
+                s.custom_fields_editor_title,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: theme.colorScheme.onSurface,
+                ),
               ),
             ),
             const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.add_circle_outline),
+            FilledButton.tonalIcon(
               onPressed: _addField,
-              tooltip: s.create,
+              icon: const Icon(Icons.add_rounded),
+              label: Text(s.add_field),
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 24),
         ..._fields.asMap().entries.map((entry) {
           final index = entry.key;
           final field = entry.value;
           return _buildVerticalFieldItem(index, field, s, theme);
         }).toList(),
         if (_fields.isEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Text(
-              s.nothing_found,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.notes_rounded,
+                  size: 48,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  s.no_custom_fields,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ),
       ],
@@ -103,10 +122,10 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
   Widget _buildVerticalFieldItem(int index, CustomField field, S s, ThemeData theme) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: theme.colorScheme.outlineVariant,
           width: 1,
@@ -115,17 +134,21 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
       child: Column(
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: TextField(
                   decoration: InputDecoration(
-                    labelText: s.name,
-                    hintText: s.name,
-                    border: const OutlineInputBorder(),
+                    labelText: s.field_name,
+                    hintText: s.field_name_hint,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12,
+                      horizontal: 16,
                       vertical: 16,
                     ),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
                   onChanged: (value) => _updateField(index, value, field.value),
                   controller: TextEditingController(text: field.key),
@@ -134,24 +157,30 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
               const SizedBox(width: 12),
               IconButton(
                 icon: Icon(
-                  Icons.delete_outline,
+                  Icons.delete_rounded,
                   color: theme.colorScheme.error,
                 ),
                 onPressed: () => _removeField(index),
                 tooltip: s.delete,
+                style: IconButton.styleFrom(
+                  backgroundColor: theme.colorScheme.errorContainer,
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           TextField(
             decoration: InputDecoration(
-              labelText: s.custom_fields,
-              hintText: s.custom_fields,
-              border: const OutlineInputBorder(),
+              labelText: s.field_value,
+              hintText: s.field_value_hint,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
+                horizontal: 16,
                 vertical: 16,
               ),
+              floatingLabelBehavior: FloatingLabelBehavior.always,
             ),
             onChanged: (value) => _updateField(index, field.key, value),
             controller: TextEditingController(text: field.value),
@@ -169,24 +198,28 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
       children: [
         Row(
           children: [
-            Text(
-              s.custom_fields,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
+            Expanded(
+              child: Text(
+                s.custom_fields,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: theme.colorScheme.onSurface,
+                ),
               ),
             ),
             const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.add_circle_outline),
+            FilledButton.tonalIcon(
               onPressed: _addField,
-              tooltip: s.create,
+              icon: const Icon(Icons.add_rounded),
+              label: Text(s.add_field),
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 24),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: _fields.asMap().entries.map((entry) {
               final index = entry.key;
               final field = entry.value;
@@ -195,13 +228,29 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
           ),
         ),
         if (_fields.isEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Text(
-              s.nothing_found,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.notes_rounded,
+                  size: 48,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  s.no_custom_fields,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ),
       ],
@@ -210,12 +259,12 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
 
   Widget _buildHorizontalFieldItem(int index, CustomField field, S s, ThemeData theme) {
     return Container(
-      width: 200,
+      width: 280,
       margin: const EdgeInsets.only(right: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: theme.colorScheme.outlineVariant,
           width: 1,
@@ -225,41 +274,59 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
         children: [
           TextField(
             decoration: InputDecoration(
-              labelText: s.name,
-              hintText: s.name,
-              border: const OutlineInputBorder(),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 12,
+              labelText: s.field_name,
+              hintText: s.field_name_hint,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
+              floatingLabelBehavior: FloatingLabelBehavior.always,
             ),
             onChanged: (value) => _updateField(index, value, field.value),
             controller: TextEditingController(text: field.key),
           ),
-          const SizedBox(height: 12),
-          TextField(
-            decoration: InputDecoration(
-              labelText: s.custom_fields,
-              hintText: s.description,
-              border: const OutlineInputBorder(),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 12,
+          const SizedBox(height: 16),
+          Expanded(
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: s.field_value,
+                hintText: s.field_value_hint,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
+                floatingLabelBehavior: FloatingLabelBehavior.always,
               ),
+              onChanged: (value) => _updateField(index, field.key, value),
+              controller: TextEditingController(text: field.value),
+              maxLines: null,
+              expands: true,
             ),
-            onChanged: (value) => _updateField(index, field.key, value),
-            controller: TextEditingController(text: field.value),
-            maxLines: 3,
-            minLines: 1,
           ),
-          const SizedBox(height: 12),
-          IconButton(
-            icon: Icon(
-              Icons.delete_outline,
-              color: theme.colorScheme.error,
-            ),
+          const SizedBox(height: 16),
+          FilledButton.tonal(
             onPressed: () => _removeField(index),
-            tooltip: s.delete,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.delete_rounded,
+                  size: 18,
+                  color: theme.colorScheme.error,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  s.delete,
+                  style: TextStyle(color: theme.colorScheme.error),
+                ),
+              ],
+            ),
           ),
         ],
       ),
