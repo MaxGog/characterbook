@@ -4,7 +4,7 @@
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.13+-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.7+-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
-[![Platforms](https://img.shields.io/badge/Platforms-Android%20|%20Windows%20|%20Web-4CAF50?style=for-the-badge)](https://github.com/maxgog/characterbook)
+[![Platforms](https://img.shields.io/badge/Platforms-Android%20|%20Windows%20|%20macOS%20-4CAF50?style=for-the-badge)](https://github.com/maxgog/characterbook)
 [![License](https://img.shields.io/badge/License-GPL--3.0-4285F4?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 
 **Кроссплатформенное приложение для создания и управления персонажами RPG**
