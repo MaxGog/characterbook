@@ -1,12 +1,12 @@
 import 'package:characterbook/ui/pages/random_number_page.dart';
 import 'package:flutter/material.dart';
-import '../generated/l10n.dart';
-import '../ui/pages/characters/character_list_page.dart';
-import '../ui/pages/notes/note_list_page.dart';
-import '../ui/pages/races/race_list_page.dart';
-import '../ui/pages/search_page.dart';
-import '../ui/pages/settings_page.dart';
-import '../ui/pages/home_screen.dart';
+import '../../generated/l10n.dart';
+import 'characters/character_list_page.dart';
+import 'notes/note_list_page.dart';
+import 'races/race_list_page.dart';
+import 'search_page.dart';
+import 'settings_page.dart';
+import 'home_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
