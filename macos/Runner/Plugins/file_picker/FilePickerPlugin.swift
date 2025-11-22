@@ -19,31 +19,56 @@ public class FilePickerPlugin: NSObject, FlutterPlugin {
             result(FlutterMethodNotImplemented)
         }
     }
-    
+
     private func handlePickFile(call: FlutterMethodCall, result: @escaping FlutterResult) {
         DispatchQueue.main.async {
-            let panel = NSOpenPanel()
-            panel.canChooseFiles = true
-            panel.canChooseDirectories = false
-            panel.allowsMultipleSelection = false
-            
-            if let args = call.arguments as? [String: Any],
-               let extensions = args["fileExtension"] as? String {
-                let fileTypes = extensions
-                    .replacingOccurrences(of: ".", with: "")
-                    .components(separatedBy: ",")
-                    .filter { !$0.isEmpty }
-                panel.allowedFileTypes = fileTypes
-            } else {
-                panel.allowedFileTypes = ["json", "characterbook", "character", "race", "chax"]
+            NSApp.activate(ignoringOtherApps: true)
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.showFilePicker(call: call, result: result)
             }
-            
-            let response = panel.runModal()
-            if response == .OK, let url = panel.urls.first {
-                result(url.path)
-            } else {
-                result(nil)
+        }
+    }
+
+    private func showFilePicker(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
+        panel.allowsMultipleSelection = false
+        panel.title = "Select File"
+        panel.message = "Please select a backup file"
+        panel.prompt = "Choose"
+
+        var allowedFileTypes = ["json", "characterbook"]
+
+        if let args = call.arguments as? [String: Any],
+            let fileExtension = args["fileExtension"] as? String
+        {
+            print("Received file extensions: \(fileExtension)")
+
+            let extensions =
+                fileExtension
+                .replacingOccurrences(of: ".", with: "")
+                .components(separatedBy: CharacterSet(charactersIn: ",;"))
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+
+            if !extensions.isEmpty {
+                allowedFileTypes = extensions
             }
+        }
+
+        print("Setting allowed file types: \(allowedFileTypes)")
+        panel.allowedFileTypes = allowedFileTypes
+
+        let response = panel.runModal()
+
+        if response == .OK, let url = panel.urls.first {
+            print("User selected file: \(url.path)")
+            result(url.path)
+        } else {
+            print("User cancelled file selection")
+            result(nil)
         }
     }
 }

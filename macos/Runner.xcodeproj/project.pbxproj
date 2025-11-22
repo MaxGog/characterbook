@@ -27,6 +27,7 @@
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
+		B39D78142ED1D73A0018141B /* FilePickerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39D78132ED1D72A0018141B /* FilePickerPlugin.swift */; };
 		C60721BB5E019F99037F7DCD /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6200A259EBC23DA476A34725 /* Pods_RunnerTests.framework */; };
 		E940BA65D9008ECFB8585C02 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0075B0AB9CA5BA9C0730A4D /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
@@ -85,6 +86,7 @@
 		9352730262049D6030E17B99 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		97B23275655AC5765546572B /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		B39D78132ED1D72A0018141B /* FilePickerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePickerPlugin.swift; sourceTree = "<group>"; };
 		B3EE8A832E3D7474001B585B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		D0075B0AB9CA5BA9C0730A4D /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8CBD6346A5701A1FC2243DD /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
@@ -176,6 +178,7 @@
 		33FAB671232836740065AC1E /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				B39D78112ED1D7190018141B /* Plugins */,
 				33CC10F02044A3C60003C045 /* AppDelegate.swift */,
 				33CC11122044BFA00003C045 /* MainFlutterWindow.swift */,
 				33E51913231747F40026EE4D /* DebugProfile.entitlements */,
@@ -184,6 +187,22 @@
 				33BA886A226E78AF003329D5 /* Configs */,
 			);
 			path = Runner;
+			sourceTree = "<group>";
+		};
+		B39D78112ED1D7190018141B /* Plugins */ = {
+			isa = PBXGroup;
+			children = (
+				B39D78122ED1D7210018141B /* file_picker */,
+			);
+			path = Plugins;
+			sourceTree = "<group>";
+		};
+		B39D78122ED1D7210018141B /* file_picker */ = {
+			isa = PBXGroup;
+			children = (
+				B39D78132ED1D72A0018141B /* FilePickerPlugin.swift */,
+			);
+			path = file_picker;
 			sourceTree = "<group>";
 		};
 		D73912EC22F37F3D000D13A0 /* Frameworks */ = {
@@ -456,6 +475,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B39D78142ED1D73A0018141B /* FilePickerPlugin.swift in Sources */,
 				33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */,
 				33CC10F12044A3C60003C045 /* AppDelegate.swift in Sources */,
 				335BBD1B22A9A15E00E9071D /* GeneratedPluginRegistrant.swift in Sources */,
