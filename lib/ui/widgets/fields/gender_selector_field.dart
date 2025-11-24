@@ -25,8 +25,23 @@ class GenderSelectorField extends StatelessWidget {
       "another": s.another,
     };
 
+    String? currentValue;
+    if (initialValue != null && initialValue!.isNotEmpty) {
+      if (genders.contains(initialValue)) {
+        currentValue = initialValue;
+      } else {
+        final matchingKey = genderLocalizations.entries
+            .firstWhere(
+              (entry) => entry.value == initialValue,
+              orElse: () => const MapEntry('', ''),
+            )
+            .key;
+        currentValue = matchingKey.isEmpty ? null : matchingKey;
+      }
+    }
+
     return DropdownButtonFormField<String>(
-      value: genders.contains(initialValue) ? initialValue : null,
+      value: currentValue,
       items: genders.map((gender) {
         return DropdownMenuItem(
           value: gender,
@@ -35,9 +50,22 @@ class GenderSelectorField extends StatelessWidget {
       }).toList(),
       decoration: InputDecoration(
         labelText: s.gender,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        filled: true,
+        fillColor: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.4),
       ),
       style: Theme.of(context).textTheme.bodyLarge,
+      dropdownColor: Theme.of(context).colorScheme.surface,
+      borderRadius: BorderRadius.circular(12),
+      elevation: 4,
+      icon: Icon(
+        Icons.arrow_drop_down_rounded,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
       validator: (value) => isRequired && (value == null || value.isEmpty)
           ? s.select_gender_error
           : null,

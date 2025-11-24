@@ -234,18 +234,6 @@ class _CharacterEditPageState extends State<CharacterEditPage>
     return widget.template?.containsField(fieldName) ?? true;
   }
 
-  String _normalizeGender(String? gender, BuildContext context) {
-    if (gender == null) return 'male';
-
-    final s = S.of(context);
-    return switch (gender) {
-      'male' => s.male,
-      'female' => s.female,
-      'another' => s.another,
-      _ => gender,
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -503,7 +491,7 @@ class _CharacterEditPageState extends State<CharacterEditPage>
 
   Widget _buildGenderField() {
     return GenderSelectorField(
-      initialValue: _normalizeGender(_character.gender, context),
+      initialValue: _character.gender,
       onChanged: (value) {
         setState(() {
           _character.gender = value!;
