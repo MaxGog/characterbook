@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'desktop_title_bar.dart';
-import 'package:characterbook/ui/pages/home_page.dart';
+import 'package:characterbook/ui/pages/app_navigation_bar.dart';
 
 class DesktopAppFrame extends StatelessWidget {
   const DesktopAppFrame({super.key});
@@ -14,7 +14,7 @@ class DesktopAppFrame extends StatelessWidget {
       body: Column(
         children: [
           const DesktopTitleBar(),
-          const Expanded(child: HomePage()),
+          const Expanded(child: AppNavigationBar()),
         ],
       ),
     );

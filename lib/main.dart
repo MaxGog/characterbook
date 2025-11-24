@@ -12,7 +12,7 @@ import 'generated/l10n.dart';
 import 'models/characters/character_model.dart';
 import 'providers/locale_provider.dart';
 import 'providers/theme_provider.dart';
-import 'ui/pages/home_page.dart';
+import 'ui/pages/app_navigation_bar.dart';
 import 'ui/widgets/desktop/desktop_app_frame.dart';
 
 void main() async {
@@ -118,7 +118,7 @@ class _AppContentState extends State<_AppContent>
 
   Widget _buildHome() {
     if (InitializationService.isMobilePlatform) {
-      return const FileHandlerWrapper(child: HomePage());
+      return const FileHandlerWrapper(child: AppNavigationBar());
     } else {
       return const DesktopAppFrame();
     }
