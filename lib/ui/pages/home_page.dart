@@ -1,12 +1,17 @@
-import 'package:characterbook/ui/pages/random_number_page.dart';
+import 'package:characterbook/ui/pages/settings_page.dart';
+import 'package:characterbook/ui/widgets/buttons/custom_floating_buttons.dart';
+import 'package:characterbook/ui/widgets/cards/character_keep_card.dart';
+import 'package:characterbook/ui/widgets/cards/race_keep_card.dart';
+import 'package:characterbook/ui/widgets/tools_context_menu.dart';
 import 'package:flutter/material.dart';
-import '../../generated/l10n.dart';
-import 'characters/character_list_page.dart';
-import 'notes/note_list_page.dart';
-import 'races/race_list_page.dart';
-import 'search_page.dart';
-import 'settings_page.dart';
-import 'home_screen.dart';
+import 'package:characterbook/models/characters/character_model.dart';
+import 'package:characterbook/models/race_model.dart';
+import 'package:characterbook/services/character_service.dart';
+import 'package:characterbook/services/race_service.dart';
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/ui/pages/characters/character_management_page.dart';
+import 'package:characterbook/ui/pages/races/race_management_page.dart';
+import 'package:characterbook/ui/cards/character_modal_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,531 +20,440 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
-  static const List<Widget> _pages = [
-    HomeScreen(),
-    CharacterListPage(),
-    RaceListPage(),
-    NotesListPage(),
-    SearchPage(),
-    SettingsPage(),
-    RandomNumberPage(),
-  ];
+class _HomePageState extends State<HomePage> {
+  final CharacterService _characterService = CharacterService.forDatabase();
+  final RaceService _raceService = RaceService.forDatabase();
 
-  static const List<IconData> _pageIcons = [
-    Icons.home_outlined,
-    Icons.people_alt_outlined,
-    Icons.emoji_people_outlined,
-    Icons.note_alt_outlined,
-    Icons.search_outlined,
-    Icons.settings_outlined,
-    Icons.casino_outlined,
-  ];
-
-  static const List<IconData> _selectedPageIcons = [
-    Icons.home_rounded,
-    Icons.people_alt_rounded,
-    Icons.emoji_people_rounded,
-    Icons.note_alt_rounded,
-    Icons.search_rounded,
-    Icons.settings_rounded,
-    Icons.casino_rounded,
-  ];
-
-  int _currentIndex = 0;
-  late AnimationController _animationController;
-  late Animation<double> _widthAnimation;
-  bool _isExpanded = false;
+  List<Character> _characters = [];
+  List<Race> _races = [];
+  List<Character> _filteredCharacters = [];
+  List<Race> _filteredRaces = [];
+  String _searchQuery = '';
+  HomeContentType _selectedContentType = HomeContentType.characters;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _widthAnimation = Tween<double>(
-      begin: 80.0,
-      end: 200.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _loadData();
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
+  Future<void> _loadData() async {
+    final characters = await _characterService.getAllCharacters();
+    final races = await _raceService.getAllRaces();
 
-  List<String> _getPageTitles(BuildContext context) => [
-        S.of(context).home,
-        S.of(context).characters,
-        S.of(context).races,
-        S.of(context).posts,
-        S.of(context).search,
-        S.of(context).settings,
-        S.of(context).dnd_tools,
-      ];
-
-  void _toggleExpanded() {
     setState(() {
-      _isExpanded = !_isExpanded;
-      if (_isExpanded) {
-        _animationController.forward();
-      } else {
-        _animationController.reverse();
-      }
+      _characters = characters;
+      _races = races;
+      _filteredCharacters = characters;
+      _filteredRaces = races;
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth >= 600) {
-              return _DesktopLayout(
-                currentIndex: _currentIndex,
-                pages: _pages,
-                pageTitles: _getPageTitles(context),
-                pageIcons: _pageIcons,
-                selectedPageIcons: _selectedPageIcons,
-                onIndexChanged: _updateIndex,
-                isExpanded: _isExpanded,
-                widthAnimation: _widthAnimation,
-                onToggleExpanded: _toggleExpanded,
-              );
-            } else {
-              return _MobileLayout(
-                currentIndex: _currentIndex,
-                pages: _pages,
-                pageTitles: _getPageTitles(context),
-                pageIcons: _pageIcons,
-                selectedPageIcons: _selectedPageIcons,
-                onIndexChanged: _updateIndex,
-              );
-            }
-          },
-        ),
-      ),
+  void _changeContentType(HomeContentType type) {
+    setState(() {
+      _selectedContentType = type;
+    });
+  }
+
+  int _getCharacterCountForRace(Race race) {
+    return _characters
+        .where((character) => character.race?.id == race.id)
+        .length;
+  }
+
+  void _showCharacterDetail(Character character) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => CharacterModalCard(character: character),
     );
   }
 
-  void _updateIndex(int index) {
-    if (_currentIndex != index) {
-      setState(() => _currentIndex = index);
-    }
-  }
-}
-
-class _DesktopLayout extends StatelessWidget {
-  const _DesktopLayout({
-    required this.currentIndex,
-    required this.pages,
-    required this.pageTitles,
-    required this.pageIcons,
-    required this.selectedPageIcons,
-    required this.onIndexChanged,
-    required this.isExpanded,
-    required this.widthAnimation,
-    required this.onToggleExpanded,
-  });
-
-  final int currentIndex;
-  final List<Widget> pages;
-  final List<String> pageTitles;
-  final List<IconData> pageIcons;
-  final List<IconData> selectedPageIcons;
-  final ValueChanged<int> onIndexChanged;
-  final bool isExpanded;
-  final Animation<double> widthAnimation;
-  final VoidCallback onToggleExpanded;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _AnimatedNavigationRail(
-          currentIndex: currentIndex,
-          pageTitles: pageTitles,
-          pageIcons: pageIcons,
-          selectedPageIcons: selectedPageIcons,
-          onIndexChanged: onIndexChanged,
-          isExpanded: isExpanded,
-          widthAnimation: widthAnimation,
-          onToggleExpanded: onToggleExpanded,
-        ),
-        Expanded(
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: pages[currentIndex],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _MobileLayout extends StatelessWidget {
-  const _MobileLayout({
-    required this.currentIndex,
-    required this.pages,
-    required this.pageTitles,
-    required this.pageIcons,
-    required this.selectedPageIcons,
-    required this.onIndexChanged,
-  });
-
-  final int currentIndex;
-  final List<Widget> pages;
-  final List<String> pageTitles;
-  final List<IconData> pageIcons;
-  final List<IconData> selectedPageIcons;
-  final ValueChanged<int> onIndexChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Scaffold(
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: pages[currentIndex],
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerLow,
-          boxShadow: [
-            BoxShadow(
-              color: colorScheme.shadow.withOpacity(0.1),
-              blurRadius: 12,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          top: false,
-          child: NavigationBar(
-            selectedIndex: currentIndex,
-            onDestinationSelected: onIndexChanged,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            height: 72,
-            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-            animationDuration: const Duration(milliseconds: 400),
-            destinations: [
-              _buildExpressiveDestination(
-                context,
-                icon: pageIcons[0],
-                selectedIcon: selectedPageIcons[0],
-                label: pageTitles[0],
-              ),
-              _buildExpressiveDestination(
-                context,
-                icon: pageIcons[1],
-                selectedIcon: selectedPageIcons[1],
-                label: pageTitles[1],
-              ),
-              _buildExpressiveDestination(
-                context,
-                icon: pageIcons[2],
-                selectedIcon: selectedPageIcons[2],
-                label: pageTitles[2],
-              ),
-              _buildExpressiveDestination(
-                context,
-                icon: pageIcons[3],
-                selectedIcon: selectedPageIcons[3],
-                label: pageTitles[3],
-              ),
-              _buildExpressiveDestination(
-                context,
-                icon: pageIcons[4],
-                selectedIcon: selectedPageIcons[4],
-                label: pageTitles[4],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildExpressiveDestination(
-    BuildContext context, {
-    required IconData icon,
-    required IconData selectedIcon,
-    required String label,
-  }) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return NavigationDestination(
-      icon: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: colorScheme.surfaceContainerHighest.withOpacity(0.6),
-        ),
-        child: Icon(
-          icon,
-          color: colorScheme.onSurfaceVariant,
-          size: 24,
-        ),
-      ),
-      selectedIcon: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              colorScheme.primaryContainer,
-              colorScheme.secondaryContainer,
-            ],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: colorScheme.primary.withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Icon(
-          selectedIcon,
-          color: colorScheme.onPrimaryContainer,
-          size: 24,
-        ),
-      ),
-      label: label,
-    );
-  }
-
-}
-
-class _AnimatedNavigationRail extends StatelessWidget {
-  const _AnimatedNavigationRail({
-    required this.currentIndex,
-    required this.pageTitles,
-    required this.pageIcons,
-    required this.selectedPageIcons,
-    required this.onIndexChanged,
-    required this.isExpanded,
-    required this.widthAnimation,
-    required this.onToggleExpanded,
-  });
-
-  final int currentIndex;
-  final List<String> pageTitles;
-  final List<IconData> pageIcons;
-  final List<IconData> selectedPageIcons;
-  final ValueChanged<int> onIndexChanged;
-  final bool isExpanded;
-  final Animation<double> widthAnimation;
-  final VoidCallback onToggleExpanded;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return MouseRegion(
-      onEnter: (_) => onToggleExpanded(),
-      onExit: (_) => onToggleExpanded(),
-      child: AnimatedBuilder(
-        animation: widthAnimation,
-        builder: (context, child) {
-          return Container(
-            width: widthAnimation.value,
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerLowest,
-              border: Border(
-                right: BorderSide(
-                  color: colorScheme.outline.withOpacity(0.1),
-                  width: 1,
-                ),
-              ),
-            ),
-            child: Column(
-              children: [
-                _NavigationHeader(
-                  isExpanded: isExpanded,
-                  onToggle: onToggleExpanded,
-                  widthAnimation: widthAnimation,
-                ),
-                
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: List.generate(
-                        pageTitles.length,
-                        (index) => _AnimatedNavItem(
-                          icon: currentIndex == index 
-                              ? selectedPageIcons[index] 
-                              : pageIcons[index],
-                          label: pageTitles[index],
-                          isSelected: currentIndex == index,
-                          isExpanded: isExpanded,
-                          widthAnimation: widthAnimation,
-                          onTap: () => onIndexChanged(index),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
+  void _showCharacterContextMenu(Character character) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ContextMenu.character(
+        character: character,
+        onEdit: () {
+          Navigator.pop(context);
+          _editCharacter(character);
+        },
+        onDelete: () {
+          Navigator.pop(context);
+          _deleteCharacter(character);
         },
       ),
     );
   }
-}
 
-class _NavigationHeader extends StatelessWidget {
-  const _NavigationHeader({
-    required this.isExpanded,
-    required this.onToggle,
-    required this.widthAnimation,
-  });
-
-  final bool isExpanded;
-  final VoidCallback onToggle;
-  final Animation<double> widthAnimation;
-
-  @override
-  Widget build(BuildContext context) {
-    Theme.of(context);
-    
-    return AnimatedBuilder(
-      animation: widthAnimation,
-      builder: (context, child) {
-        return Container(
-          height: 60,
-          padding: EdgeInsets.symmetric(
-            horizontal: widthAnimation.value == 80 ? 16 : 24,
-          ),
-          child: Row(
-            mainAxisAlignment: widthAnimation.value == 80 
-                ? MainAxisAlignment.center 
-                : MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                onPressed: onToggle,
-                icon: AnimatedRotation(
-                  duration: const Duration(milliseconds: 300),
-                  turns: isExpanded ? 0.5 : 0,
-                  child: const Icon(Icons.arrow_back_ios_new_rounded),
-                ),
-                iconSize: 18,
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(
-                  minWidth: 32,
-                  minHeight: 32,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+  void _showRaceContextMenu(Race race) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ContextMenu.race(
+        race: race,
+        onEdit: () {
+          Navigator.pop(context);
+          _editRace(race);
+        },
+        onDelete: () {
+          Navigator.pop(context);
+          _deleteRace(race);
+        },
+      ),
     );
   }
-}
 
-class _AnimatedNavItem extends StatelessWidget {
-  const _AnimatedNavItem({
-    required this.icon,
-    required this.label,
-    required this.isSelected,
-    required this.isExpanded,
-    required this.widthAnimation,
-    required this.onTap,
-  });
+  void _editCharacter(Character character) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CharacterEditPage(character: character),
+      ),
+    ).then((_) => _loadData());
+  }
 
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final bool isExpanded;
-  final Animation<double> widthAnimation;
-  final VoidCallback onTap;
+  void _editRace(Race race) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RaceManagementPage(race: race),
+      ),
+    ).then((_) => _loadData());
+  }
+
+  Future<void> _deleteCharacter(Character character) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(S.of(context).character_delete_title),
+        content: Text(S.of(context).character_delete_confirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(S.of(context).cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              S.of(context).delete,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await _characterService.deleteCharacter(int.parse(character.id));
+      if (mounted) {
+        _loadData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(S.of(context).character_deleted)),
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteRace(Race race) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(S.of(context).race_delete_title),
+        content: Text(S.of(context).race_delete_confirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(S.of(context).cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              S.of(context).delete,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await _raceService.deleteRace(int.parse(race.id));
+      if (mounted) {
+        _loadData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(S.of(context).race_deleted)),
+        );
+      }
+    }
+  }
+
+  void _createNewContent() {
+    if (_selectedContentType == HomeContentType.characters) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const CharacterEditPage()),
+      ).then((_) => _loadData());
+    } else if (_selectedContentType == HomeContentType.races) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const RaceManagementPage()),
+      ).then((_) => _loadData());
+    }
+  }
+
+  void _importContent() {
+    // TODO: Реализовать импорт контента
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Импорт будет реализован позже')),
+    );
+  }
+
+  void _createFromTemplate() {
+    // TODO: Реализовать создание из шаблона
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Создание из шаблона будет реализовано позже')),
+    );
+  }
+
+  void _openSettings() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const SettingsPage()));
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+
+    if (difference.inDays == 0) {
+      return S.of(context).days_ago(date.day);
+    } else if (difference.inDays == 1) {
+      return S.of(context).days_ago(date.day);
+    } else if (difference.inDays < 7) {
+      return S.of(context).days_ago(difference.inDays);
+    } else if (difference.inDays < 30) {
+      return '${(difference.inDays / 7).floor()}w ago';
+    } else {
+      return '${(difference.inDays / 30).floor()}mo ago';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final s = S.of(context);
 
-    return AnimatedBuilder(
-      animation: widthAnimation,
-      builder: (context, child) {
-        return Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: widthAnimation.value == 80 ? 8 : 12,
-            vertical: 4,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'CharacterBook',
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w700,
           ),
-          child: Material(
-            color: isSelected ? colorScheme.primaryContainer : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: widthAnimation.value == 80 ? 12 : 16,
-                  vertical: 12,
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: _openSettings,
+            tooltip: s.settings,
+          ),
+        ],
+      ),
+      floatingActionButton: _selectedContentType != HomeContentType.tools
+          ? CustomFloatingButtons(
+              onAdd: _createNewContent,
+              onImport: _importContent,
+              onTemplate: _createFromTemplate,
+              showImportButton: true,
+              addTooltip: _selectedContentType == HomeContentType.characters
+                  ? 'Создать персонажа'
+                  : 'Создать расу',
+              importTooltip: 'Импортировать',
+              templateTooltip: 'Создать из шаблона',
+              createFromScratchTooltip:
+                  _selectedContentType == HomeContentType.characters
+                      ? 'Создать персонажа'
+                      : 'Создать расу',
+            )
+          : null,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: SegmentedButton<HomeContentType>(
+              segments: [
+                ButtonSegment<HomeContentType>(
+                  value: HomeContentType.characters,
+                  label: Text('${s.characters} (${_characters.length})'),
                 ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: isSelected
-                      ? Border.all(
-                          color: colorScheme.primary,
-                          width: 1.5,
-                        )
-                      : null,
+                ButtonSegment<HomeContentType>(
+                  value: HomeContentType.races,
+                  label: Text('${s.races} (${_races.length})'),
                 ),
-                child: Row(
-                  mainAxisAlignment: widthAnimation.value == 80 
-                      ? MainAxisAlignment.center 
-                      : MainAxisAlignment.start,
-                  children: [
-                    Icon(
-                      icon,
-                      color: isSelected 
-                          ? colorScheme.primary 
-                          : colorScheme.onSurfaceVariant,
-                      size: 22,
-                    ),
-                    if (widthAnimation.value > 80) ...[
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: AnimatedOpacity(
-                          duration: const Duration(milliseconds: 200),
-                          opacity: isExpanded ? 1.0 : 0.0,
-                          child: Text(
-                            label,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                              color: isSelected 
-                                  ? colorScheme.primary 
-                                  : colorScheme.onSurface,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
+                ButtonSegment<HomeContentType>(
+                  value: HomeContentType.tools,
+                  label: const Text('Инструменты'),
                 ),
-              ),
+              ],
+              selected: <HomeContentType>{_selectedContentType},
+              onSelectionChanged: (Set<HomeContentType> newSelection) {
+                _changeContentType(newSelection.first);
+              },
             ),
           ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: _selectedContentType == HomeContentType.tools
+                ? _buildToolsContent()
+                : _buildContentGrid(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildToolsContent() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.build_rounded,
+            size: 64,
+            color: colorScheme.onSurface.withOpacity(0.3),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Инструменты скоро появятся',
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.6),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Этот раздел находится в разработке',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContentGrid() {
+    if (_selectedContentType == HomeContentType.characters) {
+      if (_filteredCharacters.isEmpty) {
+        return _buildEmptyState();
+      }
+      return _buildCharactersKeepGrid();
+    } else {
+      if (_filteredRaces.isEmpty) {
+        return _buildEmptyState();
+      }
+      return _buildRacesKeepGrid();
+    }
+  }
+
+  Widget _buildEmptyState() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final s = S.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            _selectedContentType == HomeContentType.characters
+                ? Icons.person_outline_rounded
+                : Icons.people_outline_rounded,
+            size: 64,
+            color: colorScheme.onSurface.withOpacity(0.3),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            _searchQuery.isEmpty ? s.no_content_home : s.nothing_found,
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.6),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          if (_searchQuery.isEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              s.create_first_content,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: _createNewContent,
+              child: Text(s.create),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCharactersKeepGrid() {
+    return GridView.builder(
+      padding: const EdgeInsets.all(8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 0.85,
+      ),
+      itemCount: _filteredCharacters.length,
+      itemBuilder: (context, index) {
+        final character = _filteredCharacters[index];
+        return CharacterKeepCard(
+          character: character,
+          onTap: () => _showCharacterDetail(character),
+          onContextMenuTap: () => _showCharacterContextMenu(character),
+          formattedDate: _formatDate(character.lastEdited),
         );
       },
     );
   }
+
+  Widget _buildRacesKeepGrid() {
+    return GridView.builder(
+      padding: const EdgeInsets.all(8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 1.0,
+      ),
+      itemCount: _filteredRaces.length,
+      itemBuilder: (context, index) {
+        final race = _filteredRaces[index];
+        return RaceKeepCard(
+          race: race,
+          characterCount: _getCharacterCountForRace(race),
+          onTap: () => _editRace(race),
+          onContextMenuTap: () => _showRaceContextMenu(race),
+        );
+      },
+    );
+  }
+}
+
+enum HomeContentType {
+  characters,
+  races,
+  tools,
 }
