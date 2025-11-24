@@ -232,8 +232,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "folder_color": MessageLookupByLibrary.simpleMessage("Folder Color"),
         "folder_name": MessageLookupByLibrary.simpleMessage("Folder Name"),
         "folders": MessageLookupByLibrary.simpleMessage("Folders"),
+        "from": MessageLookupByLibrary.simpleMessage("From"),
         "from_template": MessageLookupByLibrary.simpleMessage("From Template"),
         "gender": MessageLookupByLibrary.simpleMessage("Gender"),
+        "generateNumber":
+            MessageLookupByLibrary.simpleMessage("Generate Number"),
+        "generating": MessageLookupByLibrary.simpleMessage("Generating..."),
         "githubRepo": MessageLookupByLibrary.simpleMessage("GitHub Repository"),
         "grid_view": MessageLookupByLibrary.simpleMessage("Grid view"),
         "home": MessageLookupByLibrary.simpleMessage("Home"),
@@ -341,6 +345,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Race Management"),
         "race_share_text": m13,
         "races": MessageLookupByLibrary.simpleMessage("Races"),
+        "randomNumberGenerator":
+            MessageLookupByLibrary.simpleMessage("Random Number Generator"),
         "reference_image": MessageLookupByLibrary.simpleMessage("Reference"),
         "related_notes": MessageLookupByLibrary.simpleMessage("Related Posts"),
         "replace": MessageLookupByLibrary.simpleMessage("Replace"),
@@ -369,6 +375,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "search_race_hint":
             MessageLookupByLibrary.simpleMessage("Search races..."),
         "select": MessageLookupByLibrary.simpleMessage("Selected"),
+        "selectRange": MessageLookupByLibrary.simpleMessage("SELECT RANGE"),
         "select_character":
             MessageLookupByLibrary.simpleMessage("Select Character"),
         "select_folder": MessageLookupByLibrary.simpleMessage("Select Folder"),
@@ -409,6 +416,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "templates_not_found":
             MessageLookupByLibrary.simpleMessage("No templates found"),
         "theme": MessageLookupByLibrary.simpleMessage("Theme"),
+        "to": MessageLookupByLibrary.simpleMessage("To"),
         "unsaved_changes_content": MessageLookupByLibrary.simpleMessage(
             "You have unsaved changes. Do you want to save before exiting?"),
         "unsaved_changes_title":

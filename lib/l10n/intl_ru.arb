@@ -290,5 +290,12 @@
 
   "template_exists": "Шаблон уже существует",
   "templates_not_found": "Шаблоны не найдены",
-  "error_loading_notes": "Ошибка загрузки связанных заметок"
+  "error_loading_notes": "Ошибка загрузки связанных заметок",
+
+  "randomNumberGenerator": "Генератор случайных чисел",
+  "selectRange": "ВЫБЕРИТЕ ДИАПАЗОН",
+  "from": "От",
+  "to": "До",
+  "generateNumber": "Сгенерировать число",
+  "generating": "Генерация..."
 }

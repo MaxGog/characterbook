@@ -291,5 +291,12 @@
 
   "template_exists": "Template already exists",
   "templates_not_found": "No templates found",
-  "error_loading_notes": "Error loading related posts"
+  "error_loading_notes": "Error loading related posts",
+
+  "randomNumberGenerator": "Random Number Generator",
+  "selectRange": "SELECT RANGE",
+  "from": "From",
+  "to": "To",
+  "generateNumber": "Generate Number",
+  "generating": "Generating..."
 }

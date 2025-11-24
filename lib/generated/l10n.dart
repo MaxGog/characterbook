@@ -2656,6 +2656,66 @@ class S {
       args: [],
     );
   }
+
+  /// `Генератор случайных чисел`
+  String get randomNumberGenerator {
+    return Intl.message(
+      'Генератор случайных чисел',
+      name: 'randomNumberGenerator',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ВЫБЕРИТЕ ДИАПАЗОН`
+  String get selectRange {
+    return Intl.message(
+      'ВЫБЕРИТЕ ДИАПАЗОН',
+      name: 'selectRange',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `От`
+  String get from {
+    return Intl.message(
+      'От',
+      name: 'from',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `До`
+  String get to {
+    return Intl.message(
+      'До',
+      name: 'to',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Сгенерировать число`
+  String get generateNumber {
+    return Intl.message(
+      'Сгенерировать число',
+      name: 'generateNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Генерация...`
+  String get generating {
+    return Intl.message(
+      'Генерация...',
+      name: 'generating',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

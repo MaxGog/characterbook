@@ -242,8 +242,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "folder_color": MessageLookupByLibrary.simpleMessage("Цвет папки"),
         "folder_name": MessageLookupByLibrary.simpleMessage("Имя папки"),
         "folders": MessageLookupByLibrary.simpleMessage("Папки"),
+        "from": MessageLookupByLibrary.simpleMessage("От"),
         "from_template": MessageLookupByLibrary.simpleMessage("Из шаблона"),
         "gender": MessageLookupByLibrary.simpleMessage("Пол"),
+        "generateNumber":
+            MessageLookupByLibrary.simpleMessage("Сгенерировать число"),
+        "generating": MessageLookupByLibrary.simpleMessage("Генерация..."),
         "githubRepo":
             MessageLookupByLibrary.simpleMessage("GitHub репозиторий"),
         "grid_view": MessageLookupByLibrary.simpleMessage("Вид сеткой"),
@@ -357,6 +361,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Управление расами"),
         "race_share_text": m13,
         "races": MessageLookupByLibrary.simpleMessage("Расы"),
+        "randomNumberGenerator":
+            MessageLookupByLibrary.simpleMessage("Генератор случайных чисел"),
         "reference_image": MessageLookupByLibrary.simpleMessage("Референс"),
         "related_notes":
             MessageLookupByLibrary.simpleMessage("Связанные заметки"),
@@ -388,6 +394,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "search_race_hint":
             MessageLookupByLibrary.simpleMessage("Поиск рас..."),
         "select": MessageLookupByLibrary.simpleMessage("Выбрано"),
+        "selectRange":
+            MessageLookupByLibrary.simpleMessage("ВЫБЕРИТЕ ДИАПАЗОН"),
         "select_character":
             MessageLookupByLibrary.simpleMessage("Выберите персонажа"),
         "select_folder": MessageLookupByLibrary.simpleMessage("Выбрать папку"),
@@ -427,6 +435,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "templates_not_found":
             MessageLookupByLibrary.simpleMessage("Шаблоны не найдены"),
         "theme": MessageLookupByLibrary.simpleMessage("Тема"),
+        "to": MessageLookupByLibrary.simpleMessage("До"),
         "unsaved_changes_content": MessageLookupByLibrary.simpleMessage(
             "У вас есть несохранённые изменения. Хотите сохранить перед выходом?"),
         "unsaved_changes_title":
