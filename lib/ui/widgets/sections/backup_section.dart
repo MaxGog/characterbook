@@ -1,7 +1,7 @@
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/services/backup_service.dart';
 import 'package:characterbook/services/notification_service.dart';
-import 'package:characterbook/ui/buttons/backup_buttons_widget.dart';
+import 'package:characterbook/ui/widgets/buttons/backup_buttons_widget.dart';
 import 'package:characterbook/ui/widgets/sections/settings_section.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

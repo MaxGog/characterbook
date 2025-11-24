@@ -13,7 +13,7 @@ import '../../../services/clipboard_service.dart';
 import '../../../services/folder_service.dart';
 import '../../widgets/fields/custom_text_field.dart';
 import '../../widgets/markdown_context_menu.dart';
-import '../../buttons/save_button_widget.dart';
+import '../../widgets/buttons/save_button_widget.dart';
 
 class NoteEditPage extends StatefulWidget {
   final Note? note;

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/ui/pages/folder_list_page.dart';
-import 'package:characterbook/ui/widgets/items/note_card.dart';
+import 'package:characterbook/ui/widgets/cards/note_card.dart';
 import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
 import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
 import 'package:characterbook/ui/widgets/states/empty_notes_state.dart';
@@ -15,7 +15,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../../generated/l10n.dart';
 import '../../../models/note_model.dart';
 import '../../widgets/appbar/custom_app_bar.dart';
-import '../../buttons/custom_floating_buttons.dart';
+import '../../widgets/buttons/custom_floating_buttons.dart';
 import 'note_management_page.dart';
 
 class NotesListPage extends StatefulWidget {

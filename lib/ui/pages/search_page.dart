@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:characterbook/ui/pages/folder_list_page.dart';
 import 'package:characterbook/ui/widgets/debouncer.dart';
-import 'package:characterbook/ui/widgets/items/search_result_card.dart';
+import 'package:characterbook/ui/widgets/cards/search_result_card.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 

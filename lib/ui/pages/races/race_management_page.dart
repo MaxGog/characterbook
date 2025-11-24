@@ -10,7 +10,7 @@ import '../../../models/folder_model.dart';
 import '../../../services/folder_service.dart';
 import '../../widgets/avatar_picker_widget.dart';
 import '../../widgets/fields/custom_text_field.dart';
-import '../../buttons/save_button_widget.dart';
+import '../../widgets/buttons/save_button_widget.dart';
 import '../../widgets/base_edit_page_scaffold.dart';
 
 class RaceManagementPage extends StatefulWidget {

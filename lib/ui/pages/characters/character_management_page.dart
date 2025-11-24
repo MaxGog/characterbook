@@ -21,7 +21,7 @@ import '../../widgets/fields/custom_text_field.dart';
 import '../../widgets/fields/gender_selector_field.dart';
 import '../../widgets/fields/race_selector_field.dart';
 import '../../widgets/reference_image_picker.dart';
-import '../../buttons/save_button_widget.dart';
+import '../../widgets/buttons/save_button_widget.dart';
 import '../../widgets/sections/image_gallery_section.dart';
 import '../../widgets/sections/tags_and_folder_section.dart';
 
