@@ -1,4 +1,7 @@
 import 'package:characterbook/ui/pages/settings_page.dart';
+import 'package:characterbook/ui/pages/export_pdf_settings_page.dart';
+import 'package:characterbook/ui/pages/random_number_page.dart';
+import 'package:characterbook/ui/pages/templates_page.dart';
 import 'package:characterbook/ui/widgets/buttons/custom_floating_buttons.dart';
 import 'package:characterbook/ui/widgets/cards/character_keep_card.dart';
 import 'package:characterbook/ui/widgets/cards/race_keep_card.dart';
@@ -223,6 +226,10 @@ class _HomePageState extends State<HomePage> {
         context, MaterialPageRoute(builder: (context) => const SettingsPage()));
   }
 
+  void _navigateToTool(Widget page) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+  }
+
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
@@ -318,33 +325,68 @@ class _HomePageState extends State<HomePage> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.build_rounded,
-            size: 64,
-            color: colorScheme.onSurface.withOpacity(0.3),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Инструменты скоро появятся',
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: colorScheme.onSurface.withOpacity(0.6),
+    final tools = [
+      _ToolItem(
+        title: 'Генератор случайных чисел',
+        subtitle: 'Генерация случайных чисел в заданном диапазоне',
+        icon: Icons.casino_rounded,
+        iconColor: colorScheme.primary,
+        onTap: () => _navigateToTool(const RandomNumberPage()),
+      ),
+      _ToolItem(
+        title: 'Настройки PDF экспорта',
+        subtitle: 'Настройка параметров экспорта персонажей в PDF',
+        icon: Icons.picture_as_pdf_rounded,
+        iconColor: colorScheme.primary,
+        onTap: () => _navigateToTool(const ExportPdfSettingsPage()),
+      ),
+      _ToolItem(
+        title: 'Шаблоны',
+        subtitle: 'Управление шаблонами персонажей',
+        icon: Icons.library_books_rounded,
+        iconColor: colorScheme.primary,
+        onTap: () => _navigateToTool(const TemplatesPage()),
+      ),
+    ];
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: tools.length,
+      itemBuilder: (context, index) {
+        final tool = tools[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: 12),
+          child: ListTile(
+            leading: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: tool.iconColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(tool.icon, color: tool.iconColor),
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Этот раздел находится в разработке',
-            style: theme.textTheme.bodyMedium?.copyWith(
+            title: Text(
+              tool.title,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            subtitle: Text(
+              tool.subtitle,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            trailing: Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 16,
               color: colorScheme.onSurfaceVariant,
             ),
-            textAlign: TextAlign.center,
+            onTap: tool.onTap,
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -450,6 +492,22 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
+}
+
+class _ToolItem {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color iconColor;
+  final VoidCallback onTap;
+
+  _ToolItem({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.iconColor,
+    required this.onTap,
+  });
 }
 
 enum HomeContentType {

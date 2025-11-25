@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'package:characterbook/services/hive_service.dart';
 import 'package:pdf/pdf.dart' as pw;
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart';
@@ -12,10 +12,22 @@ class PdfExportService {
   final Character character;
   final ExportPdfSettings settings;
 
+  static const String _settingsKey = 'export_pdf_settings';
+
   PdfExportService({
     required this.character,
     required this.settings,
   });
+
+  Future<ExportPdfSettings> getSettings() async {
+    final box = await HiveService.getBox<ExportPdfSettings>('pdf_settings');
+    return box.get(_settingsKey) ?? ExportPdfSettings();
+  }
+
+  Future<void> saveSettings(ExportPdfSettings settings) async {
+    final box = await HiveService.getBox<ExportPdfSettings>('pdf_settings');
+    await box.put(_settingsKey, settings);
+  }
 
   Future<Uint8List> generatePdf() async {
     final font = await _loadFont(_regularFontPath);

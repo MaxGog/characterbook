@@ -8,7 +8,7 @@ part of 'export_pdf_settings_model.dart';
 
 class ExportPdfSettingsAdapter extends TypeAdapter<ExportPdfSettings> {
   @override
-  final int typeId = 3;
+  final int typeId = 6;
 
   @override
   ExportPdfSettings read(BinaryReader reader) {

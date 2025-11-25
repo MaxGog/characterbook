@@ -11,7 +11,8 @@ class ExportPdfSettingsPage extends StatefulWidget {
 
 class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
   final ExportPdfSettingsService _settingsService = ExportPdfSettingsService();
-  late ExportPdfSettings _settings;
+  ExportPdfSettings? _settings;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -20,12 +21,21 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
   }
 
   Future<void> _loadSettings() async {
-    _settings = await _settingsService.getSettings();
-    setState(() {});
+    try {
+      _settings = await _settingsService.getSettings();
+    } catch (e) {
+      _settings = ExportPdfSettings();
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _saveSettings() async {
-    await _settingsService.saveSettings(_settings);
+    if (_settings == null) return;
+
+    await _settingsService.saveSettings(_settings!);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Настройки сохранены')),
     );
@@ -39,6 +49,28 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Настройки экспорта PDF'),
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (_settings == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Настройки экспорта PDF'),
+        ),
+        body: const Center(
+          child: Text('Ошибка загрузки настроек'),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Настройки экспорта PDF'),
@@ -51,113 +83,153 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
         ],
       ),
       body: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                _buildSectionHeader('Включаемые разделы'),
-                _buildSectionSwitch(
-                    'Основная информация', _settings.includeBasicInfo, (value) {
-                  setState(() {
-                    _settings = _settings.copyWith(includeBasicInfo: value);
-                  });
-                }),
-                _buildSectionSwitch('Биография', _settings.includeBiography,
-                    (value) {
-                  setState(() {
-                    _settings = _settings.copyWith(includeBiography: value);
-                  });
-                }),
-                _buildSectionSwitch('Характер', _settings.includePersonality,
-                    (value) {
-                  setState(() {
-                    _settings = _settings.copyWith(includePersonality: value);
-                  });
-                }),
-                _buildSectionSwitch('Внешность', _settings.includeAppearance,
-                    (value) {
-                  setState(() {
-                    _settings = _settings.copyWith(includeAppearance: value);
-                  });
-                }),
-                _buildSectionSwitch('Способности', _settings.includeAbilities,
-                    (value) {
-                  setState(() {
-                    _settings = _settings.copyWith(includeAbilities: value);
-                  });
-                }),
-                _buildSectionSwitch('Другое', _settings.includeOther, (value) {
-                  setState(() {
-                    _settings = _settings.copyWith(includeOther: value);
-                  });
-                }),
-                _buildSectionSwitch(
-                    'Дополнительные поля', _settings.includeCustomFields,
-                    (value) {
-                  setState(() {
-                    _settings = _settings.copyWith(includeCustomFields: value);
-                  });
-                }),
-                _buildSectionSwitch(
-                    'Изображение персонажа', _settings.includeCharacterImage,
-                    (value) {
-                  setState(() {
-                    _settings =
-                        _settings.copyWith(includeCharacterImage: value);
-                  });
-                }),
-                _buildSectionSwitch(
-                    'Референс изображение', _settings.includeReferenceImage,
-                    (value) {
-                  setState(() {
-                    _settings =
-                        _settings.copyWith(includeReferenceImage: value);
-                  });
-                }),
-                _buildSectionSwitch('Дополнительные изображения',
-                    _settings.includeAdditionalImages, (value) {
-                  setState(() {
-                    _settings =
-                        _settings.copyWith(includeAdditionalImages: value);
-                  });
-                }),
-                const SizedBox(height: 24),
-                _buildSectionHeader('Настройки шрифтов'),
-                _buildFontSizeSlider(
-                    'Размер шрифта заголовков', _settings.titleFontSize, 16, 32,
-                    (value) {
-                  setState(() {
-                    _settings = _settings.copyWith(titleFontSize: value);
-                  });
-                }),
-                _buildFontSizeSlider(
-                    'Размер шрифта текста', _settings.bodyFontSize, 10, 20,
-                    (value) {
-                  setState(() {
-                    _settings = _settings.copyWith(bodyFontSize: value);
-                  });
-                }),
-                const SizedBox(height: 24),
-                _buildSectionHeader('Настройки цветов'),
-                _buildColorPicker('Цвет заголовков', _settings.titleColor,
-                    (value) {
-                  setState(() {
-                    _settings = _settings.copyWith(titleColor: value);
-                  });
-                }),
-                _buildColorPicker('Цвет текста', _settings.bodyColor, (value) {
-                  setState(() {
-                    _settings = _settings.copyWith(bodyColor: value);
-                  });
-                }),
-                const SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: _saveSettings,
-                  child: const Text('Сохранить настройки'),
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
-                ),
-              ],
+        padding: const EdgeInsets.all(16),
+        children: [
+          _buildSectionHeader('Включаемые разделы'),
+          _buildSectionSwitch(
+            'Основная информация',
+            _settings!.includeBasicInfo,
+            (value) {
+              setState(() {
+                _settings = _settings!.copyWith(includeBasicInfo: value);
+              });
+            },
+          ),
+          _buildSectionSwitch(
+            'Биография',
+            _settings!.includeBiography,
+            (value) {
+              setState(() {
+                _settings = _settings!.copyWith(includeBiography: value);
+              });
+            },
+          ),
+          _buildSectionSwitch(
+            'Характер',
+            _settings!.includePersonality,
+            (value) {
+              setState(() {
+                _settings = _settings!.copyWith(includePersonality: value);
+              });
+            },
+          ),
+          _buildSectionSwitch(
+            'Внешность',
+            _settings!.includeAppearance,
+            (value) {
+              setState(() {
+                _settings = _settings!.copyWith(includeAppearance: value);
+              });
+            },
+          ),
+          _buildSectionSwitch(
+            'Способности',
+            _settings!.includeAbilities,
+            (value) {
+              setState(() {
+                _settings = _settings!.copyWith(includeAbilities: value);
+              });
+            },
+          ),
+          _buildSectionSwitch(
+            'Другое',
+            _settings!.includeOther,
+            (value) {
+              setState(() {
+                _settings = _settings!.copyWith(includeOther: value);
+              });
+            },
+          ),
+          _buildSectionSwitch(
+            'Дополнительные поля',
+            _settings!.includeCustomFields,
+            (value) {
+              setState(() {
+                _settings = _settings!.copyWith(includeCustomFields: value);
+              });
+            },
+          ),
+          _buildSectionSwitch(
+            'Изображение персонажа',
+            _settings!.includeCharacterImage,
+            (value) {
+              setState(() {
+                _settings = _settings!.copyWith(includeCharacterImage: value);
+              });
+            },
+          ),
+          _buildSectionSwitch(
+            'Референс изображение',
+            _settings!.includeReferenceImage,
+            (value) {
+              setState(() {
+                _settings = _settings!.copyWith(includeReferenceImage: value);
+              });
+            },
+          ),
+          _buildSectionSwitch(
+            'Дополнительные изображения',
+            _settings!.includeAdditionalImages,
+            (value) {
+              setState(() {
+                _settings = _settings!.copyWith(includeAdditionalImages: value);
+              });
+            },
+          ),
+          const SizedBox(height: 24),
+          _buildSectionHeader('Настройки шрифтов'),
+          _buildFontSizeSlider(
+            'Размер шрифта заголовков',
+            _settings!.titleFontSize,
+            16,
+            32,
+            (value) {
+              setState(() {
+                _settings = _settings!.copyWith(titleFontSize: value);
+              });
+            },
+          ),
+          _buildFontSizeSlider(
+            'Размер шрифта текста',
+            _settings!.bodyFontSize,
+            10,
+            20,
+            (value) {
+              setState(() {
+                _settings = _settings!.copyWith(bodyFontSize: value);
+              });
+            },
+          ),
+          const SizedBox(height: 24),
+          _buildSectionHeader('Настройки цветов'),
+          _buildColorPicker(
+            'Цвет заголовков',
+            _settings!.titleColor,
+            (value) {
+              setState(() {
+                _settings = _settings!.copyWith(titleColor: value);
+              });
+            },
+          ),
+          _buildColorPicker(
+            'Цвет текста',
+            _settings!.bodyColor,
+            (value) {
+              setState(() {
+                _settings = _settings!.copyWith(bodyColor: value);
+              });
+            },
+          ),
+          const SizedBox(height: 32),
+          ElevatedButton(
+            onPressed: _saveSettings,
+            child: const Text('Сохранить настройки'),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 50),
             ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -183,8 +255,13 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
     );
   }
 
-  Widget _buildFontSizeSlider(String label, double value, double min,
-      double max, ValueChanged<double> onChanged) {
+  Widget _buildFontSizeSlider(
+    String label,
+    double value,
+    double min,
+    double max,
+    ValueChanged<double> onChanged,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -201,7 +278,10 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
   }
 
   Widget _buildColorPicker(
-      String label, String currentColor, ValueChanged<String> onChanged) {
+    String label,
+    String currentColor,
+    ValueChanged<String> onChanged,
+  ) {
     final colors = [
       '#000000', // Черный
       '#333333', // Темно-серый

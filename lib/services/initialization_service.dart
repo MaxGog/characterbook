@@ -7,6 +7,7 @@ import '../models/characters/template_model.dart';
 import '../models/folder_model.dart';
 import '../models/note_model.dart';
 import '../models/race_model.dart';
+import '../models/export_pdf_settings_model.dart';
 import 'hive_service.dart';
 
 class InitializationService {
@@ -31,6 +32,7 @@ class InitializationService {
         HiveService.getBox<Race>('races'),
         HiveService.getBox<QuestionnaireTemplate>('templates'),
         HiveService.getBox<Folder>('folders'),
+        HiveService.getBox<ExportPdfSettings>('pdf_settings'),
       ]);
     } catch (error) {
       debugPrint('Hive initialization error: $error');

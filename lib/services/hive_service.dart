@@ -1,6 +1,7 @@
 import 'package:characterbook/models/characters/character_model.dart';
 import 'package:characterbook/models/characters/character_universal_model.dart';
 import 'package:characterbook/models/custom_field_model.dart';
+import 'package:characterbook/models/export_pdf_settings_model.dart';
 import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/models/note_model.dart';
 import 'package:characterbook/models/race_model.dart';
@@ -17,10 +18,6 @@ class HiveService {
       await Hive.initFlutter();
       _registerAdapters();
       _isInitialized = true;
-      
-      if (!Hive.isAdapterRegistered(CharacterUniversalAdapter().typeId)) {
-        Hive.registerAdapter(CharacterUniversalAdapter());
-      }
     }
   }
 
@@ -46,6 +43,13 @@ class HiveService {
     if (!Hive.isAdapterRegistered(FolderTypeAdapter().typeId)) {
       Hive.registerAdapter(FolderTypeAdapter());
     }
+    if (!Hive.isAdapterRegistered(ExportPdfSettingsAdapter().typeId)) {
+      Hive.registerAdapter(ExportPdfSettingsAdapter());
+    }
+    if (!Hive.isAdapterRegistered(CharacterUniversalAdapter().typeId)) {
+      Hive.registerAdapter(CharacterUniversalAdapter());
+    }
+    
   }
 
   static Future<Box<T>> getCharacterBox<T>() async {
