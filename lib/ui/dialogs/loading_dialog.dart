@@ -9,7 +9,8 @@ void showLoadingDialog({
   showDialog(
     context: context,
     barrierDismissible: barrierDismissible,
-    barrierColor: barrierColor ?? Theme.of(context).colorScheme.scrim,
+    barrierColor:
+        barrierColor ?? Colors.black.withOpacity(0.2),
     builder: (BuildContext context) {
       return PopScope(
         canPop: barrierDismissible,
