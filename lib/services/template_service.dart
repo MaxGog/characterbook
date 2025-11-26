@@ -74,7 +74,7 @@ class TemplateService {
     return QuestionnaireTemplate(
       name: name,
       standardFields: includedStandardFields,
-      customFields: character.customFields!.map((f) => f.copyWith()).toList(),
+      customFields: character.customFields.map((f) => f.copyWith()).toList(),
     );
   }
 
