@@ -7,8 +7,7 @@ class MainFlutterWindow: NSWindow {
     let windowFrame = self.frame
     self.contentViewController = flutterViewController
     self.setFrame(windowFrame, display: true)
-    
-    FilePickerPlugin.register(with: flutterViewController.registrar(forPlugin: "FilePickerPlugin"))
+    self.titleVisibility = .hidden
 
     RegisterGeneratedPlugins(registry: flutterViewController)
 

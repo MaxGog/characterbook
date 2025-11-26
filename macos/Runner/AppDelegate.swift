@@ -15,14 +15,12 @@ class AppDelegate: FlutterAppDelegate {
     }
 
     override func applicationDidFinishLaunching(_ notification: Notification) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            NSApp.activate(ignoringOtherApps: true)
-
-            if let window = self.mainFlutterWindow {
-                window.makeKeyAndOrderFront(nil)
-                window.center()
-                window.orderFrontRegardless()
-            }
+        NSApp.activate(ignoringOtherApps: true)
+        
+        if let window = self.mainFlutterWindow {
+            window.makeKeyAndOrderFront(nil)
+            window.center()
+            window.orderFrontRegardless()
         }
 
         super.applicationDidFinishLaunching(notification)
@@ -37,6 +35,24 @@ class AppDelegate: FlutterAppDelegate {
     }
 
     @IBAction func openFile(_ sender: Any?) {
-        print("Open file menu item clicked")
+        let dialog = NSOpenPanel()
+        dialog.title = "Choose a file"
+        dialog.showsResizeIndicator = true
+        dialog.showsHiddenFiles = false
+        dialog.allowsMultipleSelection = false
+        dialog.canChooseDirectories = false
+
+        if dialog.runModal() == .OK {
+            if let result = dialog.url {
+                self.sendFilePathToFlutter(path: result.path)
+            }
+        }
+    }
+
+    private func sendFilePathToFlutter(path: String) {
+        guard let controller = mainFlutterWindow?.contentViewController as? FlutterViewController else { return }
+        
+        let channel = FlutterMethodChannel(name: "native_channel", binaryMessenger: controller.engine.binaryMessenger)
+        channel.invokeMethod("fileSelected", arguments: path)
     }
 }
