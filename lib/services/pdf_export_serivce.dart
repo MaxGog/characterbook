@@ -1,4 +1,5 @@
 import 'package:characterbook/services/hive_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pdf/pdf.dart' as pw;
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart';
@@ -276,8 +277,15 @@ class PdfExportService {
   }
 
   Future<pw.Font> _loadFont(String path) async {
-    final fontData = await rootBundle.load(path);
-    return pw.Font.ttf(fontData);
+    try {
+      final fontData = await rootBundle.load(path);
+      return pw.Font.ttf(fontData);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Ошибка загрузки шрифта $path: $e');
+      }
+      return pw.Font.courier();
+    }
   }
 
   pw.PdfColor _parsePdfColor(String hexColor) {

@@ -1,4 +1,4 @@
-// [file name]: character_service.dart (упрощенная версия)
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -44,11 +44,24 @@ class CharacterService {
   }
 
   Future<void> exportToPdf(BuildContext context) async {
-    if (character == null) throw Exception("Character is not set for export");
+    if (character == null) {
+      hideLoadingDialog(context);
+      throw Exception("Character is not set for export");
+    }
 
     showLoadingDialog(context: context, message: S.of(context).creating_pdf);
-    await Future.delayed(const Duration(milliseconds: 50));
 
+    try {
+      final bytes = await _generatePdfWithTimeout();
+      hideLoadingDialog(context);
+      await _sharePdf(bytes);
+    } catch (e) {
+      hideLoadingDialog(context);
+      _showErrorDialog(context, 'Ошибка экспорта в PDF: ${e.toString()}');
+    }
+  }
+
+  Future<Uint8List> _generatePdfWithTimeout() async {
     try {
       final settingsService = ExportPdfSettingsService();
       final settings = await settingsService.getSettings();
@@ -58,14 +71,33 @@ class CharacterService {
         settings: settings,
       );
 
-      final bytes = await pdfService.generatePdf();
-
-      hideLoadingDialog(context);
-      await _sharePdf(bytes);
+      return await pdfService.generatePdf().timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw TimeoutException('Генерация PDF заняла слишком много времени');
+        },
+      );
     } catch (e) {
-      hideLoadingDialog(context);
-      throw Exception('Ошибка экспорта в PDF: ${e.toString()}');
+      throw Exception('Ошибка при создании PDF: ${e.toString()}');
     }
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Ошибка'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Future<void> exportToJson(BuildContext context) async {

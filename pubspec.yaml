@@ -96,7 +96,7 @@ msix_config:
   display_name: CharacterBook
   publisher_display_name: MaxGog
   identity_name: 52304FeatherProjects.CBook
-  msix_version: 1.6.8.1
+  msix_version: 1.7.0.0
   publisher: CN=B9003DCF-59B1-401C-9896-9F045D0A6C6D
   logo_path: "assets/iconapp.png"
   start_menu_icon_path: "assets/iconapp.png"
