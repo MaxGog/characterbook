@@ -95,7 +95,7 @@ class _RandomNumberPageState extends State<RandomNumberPage> {
                         child: _NumberWheel(
                           title: l10n.from,
                           value: _minValue,
-                          min: -999,
+                          min: 0,
                           max: _maxValue - 1,
                           onChanged: _updateMinValue,
                         ),
@@ -106,7 +106,7 @@ class _RandomNumberPageState extends State<RandomNumberPage> {
                           title: l10n.to,
                           value: _maxValue,
                           min: _minValue + 1,
-                          max: 9999,
+                          max: 20,
                           onChanged: _updateMaxValue,
                         ),
                       ),
@@ -117,7 +117,6 @@ class _RandomNumberPageState extends State<RandomNumberPage> {
             ),
             const SizedBox(height: 32),
 
-            // Number Display
             Container(
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
@@ -153,7 +152,6 @@ class _RandomNumberPageState extends State<RandomNumberPage> {
             ),
             const SizedBox(height: 32),
 
-            // Generate Button
             FilledButton(
               onPressed: _generateRandomNumber,
               style: FilledButton.styleFrom(
