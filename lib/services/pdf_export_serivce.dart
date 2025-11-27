@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:characterbook/models/character_model.dart';
 import 'package:characterbook/models/race_model.dart';
@@ -15,39 +14,56 @@ class PdfExportService {
 
   final Object model;
   final ExportPdfSettings settings;
+  final PdfLocalizationData localization;
   final Completer<Uint8List> _completer = Completer<Uint8List>();
 
   PdfExportService({
     required this.model,
     required this.settings,
+    required this.localization,
   });
 
   static Future<PdfExportService> createForCharacter(
-      Character character) async {
+      Character character, PdfLocalizationData localization) async {
     try {
       final settingsService = ExportPdfSettingsService();
       final settings = await settingsService.getSettings();
-      return PdfExportService(model: character, settings: settings);
+      return PdfExportService(
+        model: character,
+        settings: settings,
+        localization: localization,
+      );
     } catch (e) {
-      throw Exception('Ошибка создания сервиса для персонажа: ${e.toString()}');
+      throw Exception('${localization.serviceCreationError}: ${e.toString()}');
     }
   }
 
-  static Future<PdfExportService> createForRace(Race race) async {
+  static Future<PdfExportService> createForRace(
+      Race race, PdfLocalizationData localization) async {
     try {
       final settingsService = ExportPdfSettingsService();
       final settings = await settingsService.getSettings();
-      return PdfExportService(model: race, settings: settings);
+      return PdfExportService(
+        model: race,
+        settings: settings,
+        localization: localization,
+      );
     } catch (e) {
-      throw Exception('Ошибка создания сервиса для расы: ${e.toString()}');
+      throw Exception(
+          '${localization.raceServiceCreationError}: ${e.toString()}');
     }
   }
 
   static Future<PdfExportService> createWithCustomSettings(
     Object model,
     ExportPdfSettings settings,
+    PdfLocalizationData localization,
   ) async {
-    return PdfExportService(model: model, settings: settings);
+    return PdfExportService(
+      model: model,
+      settings: settings,
+      localization: localization,
+    );
   }
 
   Future<Uint8List> generatePdf() async {
@@ -64,7 +80,7 @@ class PdfExportService {
       } else if (model is Race) {
         exportData = _raceToExportMap(model as Race);
       } else {
-        throw Exception('Неподдерживаемый тип модели для экспорта PDF');
+        throw Exception(localization.unsupportedModelType);
       }
 
       _addMainPage(pdf, theme, exportData);
@@ -82,11 +98,10 @@ class PdfExportService {
       if (!_completer.isCompleted) {
         _completer.completeError(e);
       }
-      throw Exception('Ошибка генерации PDF: ${e.toString()}');
+      throw Exception('${localization.pdfGenerationError}: ${e.toString()}');
     }
   }
 
-  // Остальные методы остаются без изменений...
   Map<String, dynamic> _characterToExportMap(Character character) {
     return {
       'type': 'character',
@@ -137,7 +152,9 @@ class PdfExportService {
     if (!settings.includeBasicInfo) return;
 
     final isCharacter = data['type'] == 'character';
-    final title = isCharacter ? 'Характеристика персонажа' : 'Описание расы';
+    final title = isCharacter
+        ? localization.characterProfileTitle
+        : localization.raceProfileTitle;
 
     pdf.addPage(
       pw.Page(
@@ -173,27 +190,28 @@ class PdfExportService {
       Map<String, dynamic> data, bool isCharacter) {
     final details = data['details'] as Map<String, dynamic>;
     final infoRows = <pw.Widget>[
-      _buildInfoRow('Название:', data['name']),
+      _buildInfoRow('${localization.name}:', data['name']),
     ];
 
     if (isCharacter) {
       infoRows.addAll([
         if (details['age'] != null && details['age'].toString().isNotEmpty)
-          _buildInfoRow('Возраст:', details['age'].toString()),
+          _buildInfoRow('${localization.age}:', details['age'].toString()),
         if (details['gender'] != null &&
             details['gender'].toString().isNotEmpty)
-          _buildInfoRow('Пол:', details['gender']),
+          _buildInfoRow('${localization.gender}:', details['gender']),
         if (details['race'] != null && details['race'].toString().isNotEmpty)
-          _buildInfoRow('Раса:', details['race']),
+          _buildInfoRow('${localization.race}:', details['race']),
       ]);
     }
 
     if (data['description'] != null &&
         data['description'].toString().isNotEmpty) {
-      infoRows.add(_buildInfoRow('Описание:', data['description']));
+      infoRows.add(
+          _buildInfoRow('${localization.description}:', data['description']));
     }
 
-    return _buildSection('Основная информация', infoRows);
+    return _buildSection(localization.basicInfo, infoRows);
   }
 
   void _addOptionalSections(
@@ -219,11 +237,15 @@ class PdfExportService {
   void _addCharacterSections(
       pw.Document pdf, pw.ThemeData theme, Map<String, dynamic> details) {
     final sections = [
-      _Section('Биография', details['biography'], settings.includeBiography),
-      _Section('Характер', details['personality'], settings.includePersonality),
-      _Section('Внешность', details['appearance'], settings.includeAppearance),
-      _Section('Способности', details['abilities'], settings.includeAbilities),
-      _Section('Другое', details['other'], settings.includeOther),
+      _Section(localization.biography, details['biography'],
+          settings.includeBiography),
+      _Section(localization.personality, details['personality'],
+          settings.includePersonality),
+      _Section(localization.appearance, details['appearance'],
+          settings.includeAppearance),
+      _Section(localization.abilities, details['abilities'],
+          settings.includeAbilities),
+      _Section(localization.other, details['other'], settings.includeOther),
     ];
 
     for (final section in sections) {
@@ -236,16 +258,19 @@ class PdfExportService {
 
     if (settings.includeReferenceImage && details['referenceImage'] != null) {
       _addImageSection(
-          pdf, theme, 'Референс изображение', details['referenceImage']!);
+          pdf, theme, localization.referenceImage, details['referenceImage']!);
     }
   }
 
   void _addRaceSections(
       pw.Document pdf, pw.ThemeData theme, Map<String, dynamic> details) {
     final sections = [
-      _Section('Биология', details['biology'], settings.includeBiography),
-      _Section('История', details['backstory'], settings.includePersonality),
-      _Section('Описание', details['description'], settings.includeAppearance),
+      _Section(
+          localization.biology, details['biology'], settings.includeBiography),
+      _Section(localization.backstory, details['backstory'],
+          settings.includePersonality),
+      _Section(localization.description, details['description'],
+          settings.includeAppearance),
     ];
 
     for (final section in sections) {
@@ -329,7 +354,7 @@ class PdfExportService {
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.Text(
-                'Дополнительные поля',
+                localization.customFields,
                 style: pw.TextStyle(
                   fontSize: settings.titleFontSize,
                   color: _parsePdfColor(settings.titleColor),
@@ -358,7 +383,7 @@ class PdfExportService {
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.Text(
-                'Дополнительные изображения',
+                localization.additionalImages,
                 style: pw.TextStyle(
                   fontSize: settings.titleFontSize,
                   color: _parsePdfColor(settings.titleColor),
@@ -447,7 +472,7 @@ class PdfExportService {
       final fontData = await rootBundle.load(path).timeout(
         const Duration(seconds: 5),
         onTimeout: () {
-          throw TimeoutException('Таймаут загрузки шрифта: $path');
+          throw TimeoutException(localization.fontLoadTimeout);
         },
       );
       return pw.Font.ttf(fontData);
@@ -489,7 +514,8 @@ class ExportPdfSettingsService {
       final box = await _box;
       return box.get(_settingsKey) ?? ExportPdfSettings();
     } catch (e) {
-      throw Exception('Ошибка загрузки настроек PDF: ${e.toString()}');
+      throw Exception(
+          '${PdfLocalizationData.defaultLocalization().settingsLoadError}: ${e.toString()}');
     }
   }
 
@@ -498,7 +524,129 @@ class ExportPdfSettingsService {
       final box = await _box;
       await box.put(_settingsKey, settings);
     } catch (e) {
-      throw Exception('Ошибка сохранения настроек PDF: ${e.toString()}');
+      throw Exception(
+          '${PdfLocalizationData.defaultLocalization().settingsSaveError}: ${e.toString()}');
     }
+  }
+}
+
+class PdfLocalizationData {
+  final String serviceCreationError;
+  final String raceServiceCreationError;
+  final String unsupportedModelType;
+  final String pdfGenerationError;
+  final String fontLoadTimeout;
+  final String settingsLoadError;
+  final String settingsSaveError;
+
+  final String characterProfileTitle;
+  final String raceProfileTitle;
+  final String basicInfo;
+  final String name;
+  final String age;
+  final String gender;
+  final String race;
+  final String description;
+  final String biography;
+  final String personality;
+  final String appearance;
+  final String abilities;
+  final String other;
+  final String referenceImage;
+  final String customFields;
+  final String additionalImages;
+  final String biology;
+  final String backstory;
+
+  const PdfLocalizationData({
+    required this.serviceCreationError,
+    required this.raceServiceCreationError,
+    required this.unsupportedModelType,
+    required this.pdfGenerationError,
+    required this.fontLoadTimeout,
+    required this.settingsLoadError,
+    required this.settingsSaveError,
+    required this.characterProfileTitle,
+    required this.raceProfileTitle,
+    required this.basicInfo,
+    required this.name,
+    required this.age,
+    required this.gender,
+    required this.race,
+    required this.description,
+    required this.biography,
+    required this.personality,
+    required this.appearance,
+    required this.abilities,
+    required this.other,
+    required this.referenceImage,
+    required this.customFields,
+    required this.additionalImages,
+    required this.biology,
+    required this.backstory,
+  });
+
+  factory PdfLocalizationData.russian() {
+    return const PdfLocalizationData(
+      serviceCreationError: 'Ошибка создания сервиса для персонажа',
+      raceServiceCreationError: 'Ошибка создания сервиса для расы',
+      unsupportedModelType: 'Неподдерживаемый тип модели для экспорта PDF',
+      pdfGenerationError: 'Ошибка генерации PDF',
+      fontLoadTimeout: 'Таймаут загрузки шрифта',
+      settingsLoadError: 'Ошибка загрузки настроек PDF',
+      settingsSaveError: 'Ошибка сохранения настроек PDF',
+      characterProfileTitle: 'Характеристика персонажа',
+      raceProfileTitle: 'Описание расы',
+      basicInfo: 'Основная информация',
+      name: 'Название',
+      age: 'Возраст',
+      gender: 'Пол',
+      race: 'Раса',
+      description: 'Описание',
+      biography: 'Биография',
+      personality: 'Характер',
+      appearance: 'Внешность',
+      abilities: 'Способности',
+      other: 'Другое',
+      referenceImage: 'Референс изображение',
+      customFields: 'Дополнительные поля',
+      additionalImages: 'Дополнительные изображения',
+      biology: 'Биология',
+      backstory: 'История',
+    );
+  }
+
+  factory PdfLocalizationData.english() {
+    return const PdfLocalizationData(
+      serviceCreationError: 'Error creating service for character',
+      raceServiceCreationError: 'Error creating service for race',
+      unsupportedModelType: 'Unsupported model type for PDF export',
+      pdfGenerationError: 'PDF generation error',
+      fontLoadTimeout: 'Font load timeout',
+      settingsLoadError: 'PDF settings load error',
+      settingsSaveError: 'PDF settings save error',
+      characterProfileTitle: 'Character Profile',
+      raceProfileTitle: 'Race Description',
+      basicInfo: 'Basic Information',
+      name: 'Name',
+      age: 'Age',
+      gender: 'Gender',
+      race: 'Race',
+      description: 'Description',
+      biography: 'Biography',
+      personality: 'Personality',
+      appearance: 'Appearance',
+      abilities: 'Abilities',
+      other: 'Other',
+      referenceImage: 'Reference Image',
+      customFields: 'Custom Fields',
+      additionalImages: 'Additional Images',
+      biology: 'Biology',
+      backstory: 'Backstory',
+    );
+  }
+
+  static PdfLocalizationData defaultLocalization() {
+    return PdfLocalizationData.russian();
   }
 }

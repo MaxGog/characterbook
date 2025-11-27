@@ -2,6 +2,7 @@ import 'package:characterbook/ui/pages/settings_page.dart';
 import 'package:characterbook/ui/pages/export_pdf_settings_page.dart';
 import 'package:characterbook/ui/pages/random_number_page.dart';
 import 'package:characterbook/ui/pages/templates_page.dart';
+import 'package:characterbook/ui/pages/calendar_page.dart';
 import 'package:characterbook/ui/widgets/buttons/custom_floating_buttons.dart';
 import 'package:characterbook/ui/widgets/cards/character_keep_card.dart';
 import 'package:characterbook/ui/widgets/cards/race_keep_card.dart';
@@ -161,7 +162,9 @@ class _HomePageState extends State<HomePage> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Ошибка удаления: ${e.toString()}')),
+            SnackBar(
+                content:
+                    Text('${S.of(context).delete_error}: ${e.toString()}')),
           );
         }
       }
@@ -202,7 +205,9 @@ class _HomePageState extends State<HomePage> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Ошибка удаления: ${e.toString()}')),
+            SnackBar(
+                content:
+                    Text('${S.of(context).delete_error}: ${e.toString()}')),
           );
         }
       }
@@ -224,16 +229,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _importContent() {
-    // TODO: Реализовать импорт контента
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Импорт будет реализован позже')),
+      SnackBar(content: Text(S.of(context).import_cancelled)),
     );
   }
 
   void _createFromTemplate() {
-    // TODO: Реализовать создание из шаблона
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Создание из шаблона будет реализовано позже')),
+      SnackBar(
+          content: Text(
+              '${S.of(context).templates_not_found} - ${S.of(context).import_cancelled}')),
     );
   }
 
@@ -251,15 +256,17 @@ class _HomePageState extends State<HomePage> {
     final difference = now.difference(date);
 
     if (difference.inDays == 0) {
-      return S.of(context).days_ago(date.day);
+      return S.of(context).just_now;
     } else if (difference.inDays == 1) {
-      return S.of(context).days_ago(date.day);
+      return S.of(context).days_ago(1);
     } else if (difference.inDays < 7) {
       return S.of(context).days_ago(difference.inDays);
     } else if (difference.inDays < 30) {
-      return '${(difference.inDays / 7).floor()}w ago';
+      final weeks = (difference.inDays / 7).floor();
+      return '${weeks} ${S.of(context).week}';
     } else {
-      return '${(difference.inDays / 30).floor()}mo ago';
+      final months = (difference.inDays / 30).floor();
+      return '${months} ${S.of(context).month}';
     }
   }
 
@@ -271,7 +278,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'CharacterBook',
+          s.app_name,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w700,
           ),
@@ -291,14 +298,14 @@ class _HomePageState extends State<HomePage> {
               onTemplate: _createFromTemplate,
               showImportButton: true,
               addTooltip: _selectedContentType == HomeContentType.characters
-                  ? 'Создать персонажа'
-                  : 'Создать расу',
-              importTooltip: 'Импортировать',
-              templateTooltip: 'Создать из шаблона',
+                  ? s.new_character
+                  : s.new_race,
+              importTooltip: s.import,
+              templateTooltip: s.create_from_template_tooltip,
               createFromScratchTooltip:
                   _selectedContentType == HomeContentType.characters
-                      ? 'Создать персонажа'
-                      : 'Создать расу',
+                      ? s.new_character
+                      : s.new_race,
             )
           : null,
       body: Column(
@@ -317,7 +324,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 ButtonSegment<HomeContentType>(
                   value: HomeContentType.tools,
-                  label: const Text('Инструменты'),
+                  label: Text(s.dnd_tools),
                 ),
               ],
               selected: <HomeContentType>{_selectedContentType},
@@ -340,28 +347,36 @@ class _HomePageState extends State<HomePage> {
   Widget _buildToolsContent() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final s = S.of(context);
 
     final tools = [
       _ToolItem(
-        title: 'Генератор случайных чисел',
-        subtitle: 'Генерация случайных чисел в заданном диапазоне',
+        title: s.randomNumberGenerator,
+        subtitle: s.selectRange,
         icon: Icons.casino_rounded,
         iconColor: colorScheme.primary,
         onTap: () => _navigateToTool(const RandomNumberPage()),
       ),
       _ToolItem(
-        title: 'Настройки PDF экспорта',
-        subtitle: 'Настройка параметров экспорта персонажей в PDF',
+        title: s.export_pdf_settings,
+        subtitle: s.export,
         icon: Icons.picture_as_pdf_rounded,
         iconColor: colorScheme.primary,
         onTap: () => _navigateToTool(const ExportPdfSettingsPage()),
       ),
       _ToolItem(
-        title: 'Шаблоны',
-        subtitle: 'Управление шаблонами персонажей',
+        title: s.templates,
+        subtitle: s.template_management,
         icon: Icons.library_books_rounded,
         iconColor: colorScheme.primary,
         onTap: () => _navigateToTool(const TemplatesPage()),
+      ),
+      _ToolItem(
+        title: s.calendar,
+        subtitle: s.event_calendar,
+        icon: Icons.calendar_today_rounded,
+        iconColor: colorScheme.primary,
+        onTap: () => _navigateToTool(const CalendarPage()),
       ),
     ];
 

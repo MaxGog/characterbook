@@ -1,6 +1,7 @@
 import 'package:characterbook/services/pdf_export_serivce.dart';
 import 'package:flutter/material.dart';
 import 'package:characterbook/models/export_pdf_settings_model.dart';
+import 'package:characterbook/generated/l10n.dart';
 
 import '../widgets/appbar/common_edit_app_bar.dart';
 import '../widgets/buttons/save_button_widget.dart';
@@ -42,7 +43,7 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
     await _settingsService.saveSettings(_settings!);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Настройки сохранены'),
+        content: Text(S.of(context).settings_saved),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
@@ -57,10 +58,12 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
+
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Настройки экспорта PDF'),
+          title: Text(s.export_pdf_settings),
         ),
         body: const Center(
           child: CircularProgressIndicator(),
@@ -71,36 +74,36 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
     if (_settings == null) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Настройки экспорта PDF'),
+          title: Text(s.export_pdf_settings),
         ),
-        body: const Center(
-          child: Text('Ошибка загрузки настроек'),
+        body: Center(
+          child: Text(s.settings_load_error),
         ),
       );
     }
 
     return Scaffold(
       appBar: CommonEditAppBar(
-        title: 'Настройки экспорта PDF',
+        title: s.export_pdf_settings,
         additionalActions: [
           IconButton(
             icon: const Icon(Icons.restore),
             onPressed: _resetToDefaults,
-            tooltip: 'Сбросить настройки',
+            tooltip: s.reset_settings,
           ),
         ],
         onSave: _saveSettings,
-        saveTooltip: 'Сохранить настройки',
+        saveTooltip: s.save_settings,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             SettingsSection(
-              title: 'Включаемые разделы',
+              title: s.sections_to_include,
               children: [
                 _buildSectionSwitch(
-                  'Основная информация',
+                  s.basic_info,
                   _settings!.includeBasicInfo,
                   (value) {
                     setState(() {
@@ -109,7 +112,7 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
                   },
                 ),
                 _buildSectionSwitch(
-                  'Биография',
+                  s.biography,
                   _settings!.includeBiography,
                   (value) {
                     setState(() {
@@ -118,16 +121,17 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
                   },
                 ),
                 _buildSectionSwitch(
-                  'Характер',
+                  s.personality,
                   _settings!.includePersonality,
                   (value) {
                     setState(() {
-                      _settings = _settings!.copyWith(includePersonality: value);
+                      _settings =
+                          _settings!.copyWith(includePersonality: value);
                     });
                   },
                 ),
                 _buildSectionSwitch(
-                  'Внешность',
+                  s.appearance,
                   _settings!.includeAppearance,
                   (value) {
                     setState(() {
@@ -136,7 +140,7 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
                   },
                 ),
                 _buildSectionSwitch(
-                  'Способности',
+                  s.abilities,
                   _settings!.includeAbilities,
                   (value) {
                     setState(() {
@@ -145,7 +149,7 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
                   },
                 ),
                 _buildSectionSwitch(
-                  'Другое',
+                  s.other,
                   _settings!.includeOther,
                   (value) {
                     setState(() {
@@ -154,51 +158,53 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
                   },
                 ),
                 _buildSectionSwitch(
-                  'Дополнительные поля',
+                  s.custom_fields,
                   _settings!.includeCustomFields,
                   (value) {
                     setState(() {
-                      _settings = _settings!.copyWith(includeCustomFields: value);
+                      _settings =
+                          _settings!.copyWith(includeCustomFields: value);
                     });
                   },
                 ),
                 _buildSectionSwitch(
-                  'Изображение персонажа',
+                  s.main_image,
                   _settings!.includeCharacterImage,
                   (value) {
                     setState(() {
-                      _settings = _settings!.copyWith(includeCharacterImage: value);
+                      _settings =
+                          _settings!.copyWith(includeCharacterImage: value);
                     });
                   },
                 ),
                 _buildSectionSwitch(
-                  'Референс изображение',
+                  s.reference_image,
                   _settings!.includeReferenceImage,
                   (value) {
                     setState(() {
-                      _settings = _settings!.copyWith(includeReferenceImage: value);
+                      _settings =
+                          _settings!.copyWith(includeReferenceImage: value);
                     });
                   },
                 ),
                 _buildSectionSwitch(
-                  'Дополнительные изображения',
+                  s.additional_images,
                   _settings!.includeAdditionalImages,
                   (value) {
                     setState(() {
-                      _settings = _settings!.copyWith(includeAdditionalImages: value);
+                      _settings =
+                          _settings!.copyWith(includeAdditionalImages: value);
                     });
                   },
                 ),
               ],
             ),
-
             const SizedBox(height: 16),
-
             SettingsSection(
-              title: 'Настройки шрифтов',
+              title: s.font_settings,
               children: [
                 _buildFontSizeSlider(
-                  'Размер шрифта заголовков',
+                  s.title_font_size,
                   _settings!.titleFontSize,
                   16,
                   32,
@@ -210,7 +216,7 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
                 ),
                 const SizedBox(height: 20),
                 _buildFontSizeSlider(
-                  'Размер шрифта текста',
+                  s.body_font_size,
                   _settings!.bodyFontSize,
                   10,
                   20,
@@ -222,14 +228,12 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
                 ),
               ],
             ),
-
             const SizedBox(height: 16),
-
             SettingsSection(
-              title: 'Настройки цветов',
+              title: s.color_settings,
               children: [
                 _buildColorPicker(
-                  'Цвет заголовков',
+                  s.title_color,
                   _settings!.titleColor,
                   (value) {
                     setState(() {
@@ -239,7 +243,7 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
                 ),
                 const SizedBox(height: 16),
                 _buildColorPicker(
-                  'Цвет текста',
+                  s.body_color,
                   _settings!.bodyColor,
                   (value) {
                     setState(() {
@@ -249,12 +253,10 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
                 ),
               ],
             ),
-
             const SizedBox(height: 24),
-
             SaveButton(
               onPressed: _saveSettings,
-              text: 'Сохранить настройки',
+              text: s.save_settings,
               height: 56,
             ),
           ],
@@ -287,7 +289,7 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
     ValueChanged<double> onChanged,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -368,9 +370,8 @@ class _ExportPdfSettingsPageState extends State<ExportPdfSettingsPage> {
                   color: _parseColor(color),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected
-                        ? colorScheme.primary
-                        : Colors.transparent,
+                    color:
+                        isSelected ? colorScheme.primary : Colors.transparent,
                     width: isSelected ? 3 : 0,
                   ),
                   boxShadow: [
