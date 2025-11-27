@@ -127,6 +127,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Лицензия CharacterBook (GNU GPL v3.0)"),
         "characters": MessageLookupByLibrary.simpleMessage("Персонажи"),
         "children": MessageLookupByLibrary.simpleMessage("Дети"),
+        "choose_character":
+            MessageLookupByLibrary.simpleMessage("Выбранные персонажи"),
         "cloud_backup_characters_error": MessageLookupByLibrary.simpleMessage(
             "Ошибка при создании резервной копии персонажей"),
         "cloud_backup_characters_success": MessageLookupByLibrary.simpleMessage(
@@ -418,6 +420,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "standard": MessageLookupByLibrary.simpleMessage("стандартных"),
         "standard_fields":
             MessageLookupByLibrary.simpleMessage("Стандартные поля"),
+        "start_writing":
+            MessageLookupByLibrary.simpleMessage("Начните писать здесь..."),
         "system": MessageLookupByLibrary.simpleMessage("Системная"),
         "tags": MessageLookupByLibrary.simpleMessage("Теги"),
         "template": MessageLookupByLibrary.simpleMessage("Шаблон"),

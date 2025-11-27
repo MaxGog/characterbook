@@ -64,6 +64,8 @@
 
   "posts": "Posts",
   "related_notes": "Related Posts",
+  "start_writing": "Start writing...",
+  "choose_character": "Choose character",
 
   "name": "Name",
   "short_name": "Short Name",

@@ -620,6 +620,26 @@ class S {
     );
   }
 
+  /// `Начните писать здесь...`
+  String get start_writing {
+    return Intl.message(
+      'Начните писать здесь...',
+      name: 'start_writing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Выбранные персонажи`
+  String get choose_character {
+    return Intl.message(
+      'Выбранные персонажи',
+      name: 'choose_character',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Имя`
   String get name {
     return Intl.message(

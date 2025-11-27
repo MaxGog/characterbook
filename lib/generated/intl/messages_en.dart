@@ -390,6 +390,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "select_template_file":
             MessageLookupByLibrary.simpleMessage("Select Template File"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+        "share": MessageLookupByLibrary.simpleMessage("Share"),
         "share_backup_file": MessageLookupByLibrary.simpleMessage(
             "Here\'s my CharacterBook backup file"),
         "share_character":
@@ -398,6 +399,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "standard": MessageLookupByLibrary.simpleMessage("standard"),
         "standard_fields":
             MessageLookupByLibrary.simpleMessage("Standard Fields"),
+        "start_writing":
+            MessageLookupByLibrary.simpleMessage("Start writing..."),
         "system": MessageLookupByLibrary.simpleMessage("System"),
         "tags": MessageLookupByLibrary.simpleMessage("Tags"),
         "template": MessageLookupByLibrary.simpleMessage("Template"),

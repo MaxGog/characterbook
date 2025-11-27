@@ -1,4 +1,3 @@
-import 'package:characterbook/services/note_service.dart';
 import 'package:characterbook/ui/handlers/unsaved_changes_handler.dart';
 import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
 import 'package:characterbook/ui/widgets/sections/tags_and_folder_section.dart';
@@ -10,8 +9,10 @@ import '../../generated/l10n.dart';
 import '../../models/character_model.dart';
 import '../../models/folder_model.dart';
 import '../../models/note_model.dart';
+import '../../services/note_service.dart';
 import '../../services/clipboard_service.dart';
 import '../../services/folder_service.dart';
+import '../widgets/avatar_widget.dart';
 import '../widgets/fields/custom_text_field.dart';
 import '../widgets/markdown_context_menu.dart';
 import '../widgets/buttons/save_button_widget.dart';
@@ -343,6 +344,13 @@ class _NoteEditPageState extends State<NoteEditPage>
   }
 
   Widget _buildCollapsedMetaCard() {
+    final charactersBox = Hive.box<Character>('characters');
+    final selectedCharacters = _selectedCharacterIds
+        .map((id) => charactersBox.get(id))
+        .where((character) => character != null)
+        .cast<Character>()
+        .toList();
+
     return Card(
       elevation: 4,
       margin: EdgeInsets.zero,
@@ -370,6 +378,10 @@ class _NoteEditPageState extends State<NoteEditPage>
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
+                  ],
+                  if (selectedCharacters.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    _buildSelectedCharactersPreview(selectedCharacters),
                   ],
                 ],
               ),
@@ -410,10 +422,10 @@ class _NoteEditPageState extends State<NoteEditPage>
           maxLines: null,
           keyboardType: TextInputType.multiline,
           textInputAction: TextInputAction.newline,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             border: InputBorder.none,
-            hintText: 'Start writing...',
-            hintStyle: TextStyle(fontSize: 16),
+            hintText: S.of(context).start_writing,
+            hintStyle: const TextStyle(fontSize: 16),
             contentPadding: EdgeInsets.zero,
           ),
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -429,6 +441,33 @@ class _NoteEditPageState extends State<NoteEditPage>
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildSelectedCharactersPreview(List<Character> characters) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 4,
+      children: characters.map((character) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AvatarWidget.character(
+              imageBytes: character.imageBytes,
+              size: 16,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              character.name,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontSize: 12,
+                  ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        );
+      }).toList(),
     );
   }
 }
@@ -483,10 +522,10 @@ class _CharacterSelectorSectionState extends State<_CharacterSelectorSection> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DropdownButtonFormField<String>(
-          value: null,
+          initialValue: null,
           decoration: InputDecoration(
             labelText:
-                '${S.of(context).create} ${S.of(context).character.toLowerCase()}',
+                '${S.of(context).choose_character} ${S.of(context).character.toLowerCase()}',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
           dropdownColor: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -503,6 +542,11 @@ class _CharacterSelectorSectionState extends State<_CharacterSelectorSection> {
                   if (isSelected)
                     Icon(Icons.check,
                         color: Theme.of(context).colorScheme.primary, size: 20),
+                  const SizedBox(width: 8),
+                  AvatarWidget.character(
+                    imageBytes: character.imageBytes,
+                    size: 20,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     character.name,
@@ -537,6 +581,10 @@ class _CharacterSelectorSectionState extends State<_CharacterSelectorSection> {
         final character = charactersBox.get(characterId);
         return character != null
             ? InputChip(
+                avatar: AvatarWidget.character(
+                  imageBytes: character.imageBytes,
+                  size: 20,
+                ),
                 label: Text(character.name),
                 onDeleted: () => _removeCharacter(characterId),
                 deleteIcon: Icon(
