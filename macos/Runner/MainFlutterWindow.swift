@@ -9,6 +9,8 @@ class MainFlutterWindow: NSWindow {
     self.setFrame(windowFrame, display: true)
     self.titleVisibility = .hidden
 
+    FilePickerPlugin.register(with: flutterViewController.registrar(forPlugin: "FilePickerPlugin"))
+
     RegisterGeneratedPlugins(registry: flutterViewController)
 
     super.awakeFromNib()

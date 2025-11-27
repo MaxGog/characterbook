@@ -17,7 +17,7 @@ class DesktopTitleBar extends StatelessWidget {
         children: [
           const AppTitle(),
           const Positioned(
-            right: 0,
+            left: 16,
             child: WindowControls(),
           ),
         ],

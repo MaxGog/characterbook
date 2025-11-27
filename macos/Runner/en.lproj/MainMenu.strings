@@ -1,0 +1,42 @@
+
+/* Class = "NSMenuItem"; title = "CharacterBook"; ObjectID = "1Xt-HY-uBw"; */
+"1Xt-HY-uBw.title" = "CharacterBook";
+
+/* Class = "NSMenuItem"; title = "Quit CharacterBook"; ObjectID = "4Sa-88-RAU"; */
+"4Sa-88-RAU.title" = "Quit CharacterBook";
+
+/* Class = "NSMenuItem"; title = "Edit"; ObjectID = "5QF-Oa-p0T"; */
+"5QF-Oa-p0T.title" = "Edit";
+
+/* Class = "NSMenuItem"; title = "About CharacterBook"; ObjectID = "5kV-Vb-QxS"; */
+"5kV-Vb-QxS.title" = "About CharacterBook";
+
+/* Class = "NSMenuItem"; title = "Redo"; ObjectID = "6dh-zS-Vam"; */
+"6dh-zS-Vam.title" = "Redo";
+
+/* Class = "NSMenu"; title = "Main Menu"; ObjectID = "AYu-sK-qS6"; */
+"AYu-sK-qS6.title" = "Main Menu";
+
+/* Class = "NSWindow"; title = "CharacterBook"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "CharacterBook";
+
+/* Class = "NSMenuItem"; title = "Select All"; ObjectID = "Ruw-6m-B2m"; */
+"Ruw-6m-B2m.title" = "Select All";
+
+/* Class = "NSMenuItem"; title = "Cut"; ObjectID = "bRt-dg-1uy"; */
+"bRt-dg-1uy.title" = "Cut";
+
+/* Class = "NSMenuItem"; title = "Undo"; ObjectID = "dRJ-4n-Y2I"; */
+"dRJ-4n-Y2I.title" = "Undo";
+
+/* Class = "NSMenuItem"; title = "Paste"; ObjectID = "gVA-U4-sdL"; */
+"gVA-U4-sdL.title" = "Paste";
+
+/* Class = "NSMenu"; title = "Edit"; ObjectID = "u62-7E-BM7"; */
+"u62-7E-BM7.title" = "Edit";
+
+/* Class = "NSMenu"; title = "CharacterBook"; ObjectID = "uQy-DD-JDr"; */
+"uQy-DD-JDr.title" = "CharacterBook";
+
+/* Class = "NSMenuItem"; title = "Copy"; ObjectID = "x0w-LL-Xgl"; */
+"x0w-LL-Xgl.title" = "Copy";

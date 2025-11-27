@@ -11,17 +11,15 @@ class WindowControls extends StatelessWidget {
     return const Row(
       children: [
         WindowControlButton(
-          icon: Icons.minimize,
+          action: WindowAction.close,
+        ),
+        SizedBox(width: 10),
+        WindowControlButton(
           action: WindowAction.minimize,
         ),
+        SizedBox(width: 10),
         WindowControlButton(
-          icon: Icons.crop_square,
           action: WindowAction.toggleMaximize,
-        ),
-        WindowControlButton(
-          icon: Icons.close,
-          action: WindowAction.close,
-          isClose: true,
         ),
       ],
     );
@@ -31,14 +29,10 @@ class WindowControls extends StatelessWidget {
 class WindowControlButton extends StatefulWidget {
   const WindowControlButton({
     super.key,
-    required this.icon,
     required this.action,
-    this.isClose = false,
   });
 
-  final IconData icon;
   final WindowAction action;
-  final bool isClose;
 
   @override
   State<WindowControlButton> createState() => _WindowControlButtonState();
@@ -70,14 +64,74 @@ class _WindowControlButtonState extends State<WindowControlButton> {
     }
   }
 
+  Color _getColor(ThemeData theme) {
+    final isDark = theme.brightness == Brightness.dark;
+
+    switch (widget.action) {
+      case WindowAction.close:
+        return _isHovered
+            ? const Color(0xFF5C5C5C)
+            : isDark
+                ? const Color(0xFFE74C3C)
+                : const Color(0xFFCFCFCF);
+      case WindowAction.minimize:
+        return _isHovered
+            ? const Color(0xFF5C5C5C)
+            : isDark
+                ? const Color(0xFFF39C12)
+                : const Color(0xFFCFCFCF);
+      case WindowAction.toggleMaximize:
+        return _isHovered
+            ? const Color(0xFF5C5C5C)
+            : isDark
+                ? const Color(0xFF27AE60)
+                : const Color(0xFFCFCFCF);
+    }
+  }
+
+  Widget _getIcon(ThemeData theme) {
+    final isDark = theme.brightness == Brightness.dark;
+    final iconColor = _isHovered
+        ? Colors.white
+        : isDark
+            ? const Color(0xFF8E8E8E)
+            : const Color(0xFF7A7A7A);
+
+    switch (widget.action) {
+      case WindowAction.close:
+        return Container(
+          width: 6,
+          height: 6,
+          decoration: BoxDecoration(
+            color: iconColor,
+            shape: BoxShape.circle,
+          ),
+        );
+      case WindowAction.minimize:
+        return Container(
+          width: 6,
+          height: 2,
+          color: iconColor,
+        );
+      case WindowAction.toggleMaximize:
+        return Container(
+          width: 6,
+          height: 6,
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            border: Border.all(
+              color: iconColor,
+              width: 1.5,
+            ),
+            borderRadius: BorderRadius.circular(1),
+          ),
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
-
-    final backgroundColor = _getBackgroundColor(colorScheme, isDark);
-    final iconColor = _getIconColor(colorScheme);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -85,41 +139,18 @@ class _WindowControlButtonState extends State<WindowControlButton> {
       child: GestureDetector(
         onTap: _handleAction,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: 32,
-          height: 32,
-          margin: const EdgeInsets.symmetric(horizontal: 4),
+          duration: const Duration(milliseconds: 150),
+          width: 14,
+          height: 14,
           decoration: BoxDecoration(
-            color: backgroundColor,
+            color: _getColor(theme),
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            widget.icon,
-            size: 16,
-            color: iconColor,
+          child: Center(
+            child: _getIcon(theme),
           ),
         ),
       ),
     );
-  }
-
-  Color _getBackgroundColor(ColorScheme colorScheme, bool isDark) {
-    if (!_isHovered) {
-      return widget.isClose
-          ? colorScheme.error.withOpacity(isDark ? 0.12 : 0.08)
-          : colorScheme.onPrimaryContainer.withOpacity(isDark ? 0.08 : 0.04);
-    }
-
-    return widget.isClose
-        ? colorScheme.error.withOpacity(isDark ? 0.24 : 0.16)
-        : colorScheme.onSurface.withOpacity(isDark ? 0.16 : 0.12);
-  }
-
-  Color _getIconColor(ColorScheme colorScheme) {
-    return widget.isClose
-        ? colorScheme.error
-        : _isHovered
-            ? colorScheme.onSurface
-            : colorScheme.onSurface.withOpacity(0.8);
   }
 }
