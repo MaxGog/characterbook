@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:characterbook/services/default_templates.dart';
+import 'package:characterbook/services/file_share_service.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import '../models/character_model.dart';
@@ -83,6 +85,23 @@ class TemplateService {
       return await FilePickerService().importTemplate();
     } catch (e) {
       throw Exception('Ошибка импорта шаблона: ${e.toString()}');
+    }
+  }
+
+  Future<void> shareTemplate(QuestionnaireTemplate template) async {
+    try {
+      final String templateJson = jsonEncode(template.toJson());
+
+      final Uint8List bytes = Uint8List.fromList(utf8.encode(templateJson));
+
+      await FileShareService.shareFile(
+        bytes,
+        '${template.name}.chax',
+        text: 'Шаблон персонажа: ${template.name}',
+        subject: 'Шаблон персонажа',
+      );
+    } catch (e) {
+      throw Exception('Ошибка при шаринге шаблона: ${e.toString()}');
     }
   }
 }
