@@ -3,8 +3,8 @@ import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
 import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
 import 'package:characterbook/ui/widgets/cards/template_card.dart';
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
-import 'package:characterbook/ui/widgets/appbar/custom_app_bar.dart';
-import 'package:characterbook/ui/widgets/buttons/custom_floating_buttons.dart';
+import 'package:characterbook/ui/widgets/appbar/common_main_app_bar.dart';
+import 'package:characterbook/ui/widgets/buttons/common_list_floating_buttons.dart';
 import 'package:characterbook/ui/pages/template_edit_page.dart';
 import 'package:characterbook/ui/pages/character_management_page.dart';
 import 'package:characterbook/ui/widgets/tags/tag_filter.dart';
@@ -505,7 +505,7 @@ class _TemplatesPageState extends BaseListPageState<QuestionnaireTemplate, Templ
         ],
       ),
       floatingActionButton: isFabVisible 
-          ? CustomFloatingButtons(
+          ? CommonListFloatingButtons(
               onImport: importItem,
               onAdd: navigateToCreate,
               importTooltip: S.of(context).import_template_tooltip,

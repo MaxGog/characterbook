@@ -4,8 +4,8 @@ import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/ui/pages/folder_list_page.dart';
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
-import 'package:characterbook/ui/widgets/appbar/custom_app_bar.dart';
-import 'package:characterbook/ui/widgets/buttons/custom_floating_buttons.dart';
+import 'package:characterbook/ui/widgets/appbar/common_main_app_bar.dart';
+import 'package:characterbook/ui/widgets/buttons/common_list_floating_buttons.dart';
 import 'package:characterbook/ui/widgets/cards/race_card.dart';
 import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
 import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
@@ -341,7 +341,7 @@ class _RaceListPageState extends State<RaceListPage> {
         ],
       ),
       floatingActionButton: isFabVisible 
-        ? CustomFloatingButtons(
+        ? CommonListFloatingButtons(
             onImport: _importRaceFromFile,
             onAdd: _handleCreateRace,
             heroTag: "race_list",

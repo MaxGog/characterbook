@@ -6,8 +6,8 @@ import '../../models/race_model.dart';
 import '../../services/character_service.dart';
 import '../../services/race_service.dart';
 import '../cards/character_modal_card.dart';
-import '../widgets/appbar/custom_app_bar.dart';
-import '../widgets/buttons/custom_floating_buttons.dart';
+import '../widgets/appbar/common_main_app_bar.dart';
+import '../widgets/buttons/common_list_floating_buttons.dart';
 import '../widgets/cards/character_keep_card.dart';
 import '../widgets/cards/race_keep_card.dart';
 import '../widgets/tools_context_menu.dart';
@@ -338,7 +338,7 @@ class _HomePageState extends State<HomePage> {
         showTemplatesToggle: false,
       ),
       floatingActionButton: _selectedContentType != HomeContentType.tools
-          ? CustomFloatingButtons(
+          ? CommonListFloatingButtons(
               onAdd: _createNewContent,
               onImport: _importContent,
               onTemplate: _createFromTemplate,

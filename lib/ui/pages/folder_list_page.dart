@@ -14,8 +14,8 @@ import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/models/character_model.dart';
 import 'package:characterbook/models/race_model.dart';
 import 'package:characterbook/models/note_model.dart';
-import 'package:characterbook/ui/widgets/appbar/custom_app_bar.dart';
-import 'package:characterbook/ui/widgets/buttons/custom_floating_buttons.dart';
+import 'package:characterbook/ui/widgets/appbar/common_main_app_bar.dart';
+import 'package:characterbook/ui/widgets/buttons/common_list_floating_buttons.dart';
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -517,7 +517,7 @@ class _FoldersScreenState extends State<FoldersScreen> {
         ],
       ),
       floatingActionButton: isFabVisible 
-          ? CustomFloatingButtons(
+          ? CommonListFloatingButtons(
               onAdd: _createNewFolder,
               addTooltip: s.create,
               heroTag: "folder_list",

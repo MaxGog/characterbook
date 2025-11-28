@@ -14,8 +14,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../generated/l10n.dart';
 import '../../models/note_model.dart';
-import '../widgets/appbar/custom_app_bar.dart';
-import '../widgets/buttons/custom_floating_buttons.dart';
+import '../widgets/appbar/common_main_app_bar.dart';
+import '../widgets/buttons/common_list_floating_buttons.dart';
 import 'note_management_page.dart';
 
 class NotesListPage extends StatefulWidget {
@@ -312,7 +312,7 @@ class _NotesListPageState extends State<NotesListPage> {
         ],
       ),
       floatingActionButton: isFabVisible
-          ? CustomFloatingButtons(
+          ? CommonListFloatingButtons(
               showImportButton: false,
               onAdd: _openNoteCreation,
               heroTag: "note_list",

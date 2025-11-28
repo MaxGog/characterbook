@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../generated/l10n.dart';
 
-class CustomFloatingButtons extends StatefulWidget {
+class CommonListFloatingButtons extends StatefulWidget {
   final VoidCallback? onImport;
   final VoidCallback? onAdd;
   final bool showImportButton;
@@ -12,7 +12,7 @@ class CustomFloatingButtons extends StatefulWidget {
   final String? createFromScratchTooltip;
   final String heroTag;
 
-  const CustomFloatingButtons({
+  const CommonListFloatingButtons({
     super.key,
     this.onImport,
     this.onAdd,
@@ -26,10 +26,10 @@ class CustomFloatingButtons extends StatefulWidget {
   });
 
   @override
-  State<CustomFloatingButtons> createState() => _CustomFloatingButtonsState();
+  State<CommonListFloatingButtons> createState() => _CustomFloatingButtonsState();
 }
 
-class _CustomFloatingButtonsState extends State<CustomFloatingButtons>
+class _CustomFloatingButtonsState extends State<CommonListFloatingButtons>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   bool _isExpanded = false;
