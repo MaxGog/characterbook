@@ -4,6 +4,8 @@ import 'package:characterbook/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../widgets/appbar/common_app_bar.dart';
+
 class RandomNumberPage extends StatefulWidget {
   const RandomNumberPage({super.key});
 
@@ -66,8 +68,9 @@ class _RandomNumberPageState extends State<RandomNumberPage> {
     final l10n = S.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.randomNumberGenerator),
+      appBar: CommonAppBar.standard(
+        context: context,
+        title: l10n.randomNumberGenerator,
         centerTitle: true,
       ),
       body: Padding(
@@ -95,7 +98,7 @@ class _RandomNumberPageState extends State<RandomNumberPage> {
                         child: _NumberWheel(
                           title: l10n.from,
                           value: _minValue,
-                          min: 0,
+                          min: _minValue,
                           max: _maxValue - 1,
                           onChanged: _updateMinValue,
                         ),
@@ -106,7 +109,7 @@ class _RandomNumberPageState extends State<RandomNumberPage> {
                           title: l10n.to,
                           value: _maxValue,
                           min: _minValue + 1,
-                          max: 20,
+                          max: _maxValue,
                           onChanged: _updateMaxValue,
                         ),
                       ),
@@ -116,7 +119,6 @@ class _RandomNumberPageState extends State<RandomNumberPage> {
               ),
             ),
             const SizedBox(height: 32),
-
             Container(
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
@@ -151,7 +153,6 @@ class _RandomNumberPageState extends State<RandomNumberPage> {
               ),
             ),
             const SizedBox(height: 32),
-
             FilledButton(
               onPressed: _generateRandomNumber,
               style: FilledButton.styleFrom(
