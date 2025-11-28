@@ -60,1761 +60,1751 @@ class S {
     );
   }
 
-  /// `Back`
+  /// `Назад`
   String get back {
     return Intl.message(
-      'Back',
+      'Назад',
       name: 'back',
       desc: '',
       args: [],
     );
   }
 
-  /// `Cancel`
+  /// `Отмена`
   String get cancel {
     return Intl.message(
-      'Cancel',
+      'Отмена',
       name: 'cancel',
       desc: '',
       args: [],
     );
   }
 
-  /// `Create`
+  /// `Создать`
   String get create {
     return Intl.message(
-      'Create',
+      'Создать',
       name: 'create',
       desc: '',
       args: [],
     );
   }
 
-  /// `Delete`
+  /// `Удалить`
   String get delete {
     return Intl.message(
-      'Delete',
+      'Удалить',
       name: 'delete',
       desc: '',
       args: [],
     );
   }
 
-  /// `Edit`
+  /// `Редактировать`
   String get edit {
     return Intl.message(
-      'Edit',
+      'Редактировать',
       name: 'edit',
       desc: '',
       args: [],
     );
   }
 
-  /// `Error`
+  /// `Ошибка`
   String get error {
     return Intl.message(
-      'Error',
+      'Ошибка',
       name: 'error',
       desc: '',
       args: [],
     );
   }
 
-  /// `OK`
+  /// `Хорошо`
   String get ok {
     return Intl.message(
-      'OK',
+      'Хорошо',
       name: 'ok',
       desc: '',
       args: [],
     );
   }
 
-  /// `Save`
+  /// `Сохранить`
   String get save {
     return Intl.message(
-      'Save',
+      'Сохранить',
       name: 'save',
       desc: '',
       args: [],
     );
   }
 
-  /// `Search`
+  /// `Поиск`
   String get search {
     return Intl.message(
-      'Search',
+      'Поиск',
       name: 'search',
       desc: '',
       args: [],
     );
   }
 
-  /// `Selected`
+  /// `Выбрано`
   String get select {
     return Intl.message(
-      'Selected',
+      'Выбрано',
       name: 'select',
       desc: '',
       args: [],
     );
   }
 
-  /// `Settings`
+  /// `Настройки`
   String get settings {
     return Intl.message(
-      'Settings',
+      'Настройки',
       name: 'settings',
       desc: '',
       args: [],
     );
   }
 
-  /// `Version`
+  /// `Версия`
   String get version {
     return Intl.message(
-      'Version',
+      'Версия',
       name: 'version',
       desc: '',
       args: [],
     );
   }
 
-  /// `Copy`
+  /// `Копировать`
   String get copy {
     return Intl.message(
-      'Copy',
+      'Копировать',
       name: 'copy',
       desc: '',
       args: [],
     );
   }
 
-  /// `Import`
+  /// `Импорт`
   String get import {
     return Intl.message(
-      'Import',
+      'Импорт',
       name: 'import',
       desc: '',
       args: [],
     );
   }
 
-  /// `Export`
+  /// `Экспорт`
   String get export {
     return Intl.message(
-      'Export',
+      'Экспорт',
       name: 'export',
       desc: '',
       args: [],
     );
   }
 
-  /// `Replace`
+  /// `Заменить`
   String get replace {
     return Intl.message(
-      'Replace',
+      'Заменить',
       name: 'replace',
       desc: '',
       args: [],
     );
   }
 
-  /// `Loading...`
+  /// `Загрузка...`
   String get processing {
     return Intl.message(
-      'Loading...',
+      'Загрузка...',
       name: 'processing',
       desc: '',
       args: [],
     );
   }
 
-  /// `Operation completed successfully`
+  /// `Операция выполнена успешно`
   String get operationCompleted {
     return Intl.message(
-      'Operation completed successfully',
+      'Операция выполнена успешно',
       name: 'operationCompleted',
       desc: '',
       args: [],
     );
   }
 
-  /// `Copied to clipboard`
+  /// `Скопировано в буфер обмена`
   String get copied_to_clipboard {
     return Intl.message(
-      'Copied to clipboard',
+      'Скопировано в буфер обмена',
       name: 'copied_to_clipboard',
       desc: '',
       args: [],
     );
   }
 
-  /// `Required field`
+  /// `Обязательное поле`
   String get required_field_error {
     return Intl.message(
-      'Required field',
+      'Обязательное поле',
       name: 'required_field_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Not selected`
+  /// `Не выбрано`
   String get not_selected {
     return Intl.message(
-      'Not selected',
+      'Не выбрано',
       name: 'not_selected',
       desc: '',
       args: [],
     );
   }
 
-  /// `None`
+  /// `Пусто`
   String get none {
     return Intl.message(
-      'None',
+      'Пусто',
       name: 'none',
       desc: '',
       args: [],
     );
   }
 
-  /// `All`
+  /// `Все`
   String get all {
     return Intl.message(
-      'All',
+      'Все',
       name: 'all',
       desc: '',
       args: [],
     );
   }
 
-  /// `items`
+  /// `элементов`
   String get items {
     return Intl.message(
-      'items',
+      'элементов',
       name: 'items',
       desc: '',
       args: [],
     );
   }
 
-  /// `Share`
+  /// `Поделиться`
   String get share {
     return Intl.message(
-      'Share',
+      'Поделиться',
       name: 'share',
       desc: '',
       args: [],
     );
   }
 
-  /// `Character`
+  /// `Персонаж`
   String get character {
     return Intl.message(
-      'Character',
+      'Персонаж',
       name: 'character',
       desc: '',
       args: [],
     );
   }
 
-  /// `Characters`
+  /// `Персонажи`
   String get characters {
     return Intl.message(
-      'Characters',
+      'Персонажи',
       name: 'characters',
       desc: '',
       args: [],
     );
   }
 
-  /// `My Characters`
+  /// `Мои персонажи`
   String get my_characters {
     return Intl.message(
-      'My Characters',
+      'Мои персонажи',
       name: 'my_characters',
       desc: '',
       args: [],
     );
   }
 
-  /// `New Character`
+  /// `Новый персонаж`
   String get new_character {
     return Intl.message(
-      'New Character',
+      'Новый персонаж',
       name: 'new_character',
       desc: '',
       args: [],
     );
   }
 
-  /// `Character Management`
+  /// `Управление персонажами`
   String get character_management {
     return Intl.message(
-      'Character Management',
+      'Управление персонажами',
       name: 'character_management',
       desc: '',
       args: [],
     );
   }
 
-  /// `Edit Character`
+  /// `Редактировать персонажа`
   String get edit_character {
     return Intl.message(
-      'Edit Character',
+      'Редактировать персонажа',
       name: 'edit_character',
       desc: '',
       args: [],
     );
   }
 
-  /// `Delete Character`
+  /// `Удалить персонажа`
   String get delete_character {
     return Intl.message(
-      'Delete Character',
+      'Удалить персонажа',
       name: 'delete_character',
       desc: '',
       args: [],
     );
   }
 
-  /// `Copy Character`
+  /// `Скопировать персонажа`
   String get copy_character {
     return Intl.message(
-      'Copy Character',
+      'Скопировать персонажа',
       name: 'copy_character',
       desc: '',
       args: [],
     );
   }
 
-  /// `Share Character`
+  /// `Поделиться`
   String get share_character {
     return Intl.message(
-      'Share Character',
+      'Поделиться',
       name: 'share_character',
       desc: '',
       args: [],
     );
   }
 
-  /// `Select Character`
+  /// `Выберите персонажа`
   String get select_character {
     return Intl.message(
-      'Select Character',
+      'Выберите персонажа',
       name: 'select_character',
       desc: '',
       args: [],
     );
   }
 
-  /// `Create Character`
-  String get create_character {
-    return Intl.message(
-      'Create Character',
-      name: 'create_character',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Race`
+  /// `Раса`
   String get race {
     return Intl.message(
-      'Race',
+      'Раса',
       name: 'race',
       desc: '',
       args: [],
     );
   }
 
-  /// `Races`
+  /// `Расы`
   String get races {
     return Intl.message(
-      'Races',
+      'Расы',
       name: 'races',
       desc: '',
       args: [],
     );
   }
 
-  /// `New Race`
+  /// `Новая раса`
   String get new_race {
     return Intl.message(
-      'New Race',
+      'Новая раса',
       name: 'new_race',
       desc: '',
       args: [],
     );
   }
 
-  /// `Race Management`
+  /// `Управление расами`
   String get race_management {
     return Intl.message(
-      'Race Management',
+      'Управление расами',
       name: 'race_management',
       desc: '',
       args: [],
     );
   }
 
-  /// `Edit Race`
+  /// `Редактировать расу`
   String get edit_race {
     return Intl.message(
-      'Edit Race',
+      'Редактировать расу',
       name: 'edit_race',
       desc: '',
       args: [],
     );
   }
 
-  /// `Import Race`
+  /// `Импорт расы`
   String get import_race {
     return Intl.message(
-      'Import Race',
+      'Импорт расы',
       name: 'import_race',
       desc: '',
       args: [],
     );
   }
 
-  /// `Template`
+  /// `Шаблон`
   String get template {
     return Intl.message(
-      'Template',
+      'Шаблон',
       name: 'template',
       desc: '',
       args: [],
     );
   }
 
-  /// `Templates`
+  /// `Шаблоны`
   String get templates {
     return Intl.message(
-      'Templates',
+      'Шаблоны',
       name: 'templates',
       desc: '',
       args: [],
     );
   }
 
-  /// `New Template`
+  /// `Новый шаблон`
   String get new_template {
     return Intl.message(
-      'New Template',
+      'Новый шаблон',
       name: 'new_template',
       desc: '',
       args: [],
     );
   }
 
-  /// `Edit Template`
+  /// `Редактирование шаблона`
   String get edit_template {
     return Intl.message(
-      'Edit Template',
+      'Редактирование шаблона',
       name: 'edit_template',
       desc: '',
       args: [],
     );
   }
 
-  /// `Create Template`
+  /// `Создать шаблон`
   String get create_template {
     return Intl.message(
-      'Create Template',
+      'Создать шаблон',
       name: 'create_template',
       desc: '',
       args: [],
     );
   }
 
-  /// `Select Template`
+  /// `Выберите шаблон`
   String get select_template {
     return Intl.message(
-      'Select Template',
+      'Выберите шаблон',
       name: 'select_template',
       desc: '',
       args: [],
     );
   }
 
-  /// `Folder`
+  /// `Папка`
   String get folder {
     return Intl.message(
-      'Folder',
+      'Папка',
       name: 'folder',
       desc: '',
       args: [],
     );
   }
 
-  /// `Folders`
+  /// `Папки`
   String get folders {
     return Intl.message(
-      'Folders',
+      'Папки',
       name: 'folders',
       desc: '',
       args: [],
     );
   }
 
-  /// `New Folder`
+  /// `Новая папка`
   String get new_folder {
     return Intl.message(
-      'New Folder',
+      'Новая папка',
       name: 'new_folder',
       desc: '',
       args: [],
     );
   }
 
-  /// `Edit Folder`
+  /// `Редактирование папки`
   String get edit_folder {
     return Intl.message(
-      'Edit Folder',
+      'Редактирование папки',
       name: 'edit_folder',
       desc: '',
       args: [],
     );
   }
 
-  /// `Folder Name`
+  /// `Имя папки`
   String get folder_name {
     return Intl.message(
-      'Folder Name',
+      'Имя папки',
       name: 'folder_name',
       desc: '',
       args: [],
     );
   }
 
-  /// `Folder Color`
+  /// `Цвет папки`
   String get folder_color {
     return Intl.message(
-      'Folder Color',
+      'Цвет папки',
       name: 'folder_color',
       desc: '',
       args: [],
     );
   }
 
-  /// `Select Folder`
+  /// `Выбрать папку`
   String get select_folder {
     return Intl.message(
-      'Select Folder',
+      'Выбрать папку',
       name: 'select_folder',
       desc: '',
       args: [],
     );
   }
 
-  /// `Posts`
+  /// `Заметки`
   String get posts {
     return Intl.message(
-      'Posts',
+      'Заметки',
       name: 'posts',
       desc: '',
       args: [],
     );
   }
 
-  /// `Related Posts`
+  /// `Связанные заметки`
   String get related_notes {
     return Intl.message(
-      'Related Posts',
+      'Связанные заметки',
       name: 'related_notes',
       desc: '',
       args: [],
     );
   }
 
-  /// `Start writing...`
+  /// `Начните писать здесь...`
   String get start_writing {
     return Intl.message(
-      'Start writing...',
+      'Начните писать здесь...',
       name: 'start_writing',
       desc: '',
       args: [],
     );
   }
 
-  /// `Choose character`
+  /// `Выбранные персонажи`
   String get choose_character {
     return Intl.message(
-      'Choose character',
+      'Выбранные персонажи',
       name: 'choose_character',
       desc: '',
       args: [],
     );
   }
 
-  /// `Name`
+  /// `Название`
   String get name {
     return Intl.message(
-      'Name',
+      'Название',
       name: 'name',
       desc: '',
       args: [],
     );
   }
 
-  /// `Short Name`
+  /// `Короткое имя`
   String get short_name {
     return Intl.message(
-      'Short Name',
+      'Короткое имя',
       name: 'short_name',
       desc: '',
       args: [],
     );
   }
 
-  /// `Age`
+  /// `Возраст`
   String get age {
     return Intl.message(
-      'Age',
+      'Возраст',
       name: 'age',
       desc: '',
       args: [],
     );
   }
 
-  /// `years`
+  /// `лет`
   String get years {
     return Intl.message(
-      'years',
+      'лет',
       name: 'years',
       desc: '',
       args: [],
     );
   }
 
-  /// `Gender`
+  /// `Пол`
   String get gender {
     return Intl.message(
-      'Gender',
+      'Пол',
       name: 'gender',
       desc: '',
       args: [],
     );
   }
 
-  /// `Male`
+  /// `Мужской`
   String get male {
     return Intl.message(
-      'Male',
+      'Мужской',
       name: 'male',
       desc: '',
       args: [],
     );
   }
 
-  /// `Female`
+  /// `Женский`
   String get female {
     return Intl.message(
-      'Female',
+      'Женский',
       name: 'female',
       desc: '',
       args: [],
     );
   }
 
-  /// `Other`
+  /// `Другой`
   String get another {
     return Intl.message(
-      'Other',
+      'Другой',
       name: 'another',
       desc: '',
       args: [],
     );
   }
 
-  /// `Description`
+  /// `Описание`
   String get description {
     return Intl.message(
-      'Description',
+      'Описание',
       name: 'description',
       desc: '',
       args: [],
     );
   }
 
-  /// `Biography`
+  /// `Биография`
   String get biography {
     return Intl.message(
-      'Biography',
+      'Биография',
       name: 'biography',
       desc: '',
       args: [],
     );
   }
 
-  /// `Personality`
+  /// `Характер`
   String get personality {
     return Intl.message(
-      'Personality',
+      'Характер',
       name: 'personality',
       desc: '',
       args: [],
     );
   }
 
-  /// `Appearance`
+  /// `Внешность`
   String get appearance {
     return Intl.message(
-      'Appearance',
+      'Внешность',
       name: 'appearance',
       desc: '',
       args: [],
     );
   }
 
-  /// `Abilities`
+  /// `Способности`
   String get abilities {
     return Intl.message(
-      'Abilities',
+      'Способности',
       name: 'abilities',
       desc: '',
       args: [],
     );
   }
 
-  /// `Other`
+  /// `Другое`
   String get other {
     return Intl.message(
-      'Other',
+      'Другое',
       name: 'other',
       desc: '',
       args: [],
     );
   }
 
-  /// `Biology`
+  /// `Биология`
   String get biology {
     return Intl.message(
-      'Biology',
+      'Биология',
       name: 'biology',
       desc: '',
       args: [],
     );
   }
 
-  /// `Backstory`
+  /// `История`
   String get backstory {
     return Intl.message(
-      'Backstory',
+      'История',
       name: 'backstory',
       desc: '',
       args: [],
     );
   }
 
-  /// `Tags`
+  /// `Теги`
   String get tags {
     return Intl.message(
-      'Tags',
+      'Теги',
       name: 'tags',
       desc: '',
       args: [],
     );
   }
 
-  /// `Add Tag`
+  /// `Добавить тег`
   String get add_tag {
     return Intl.message(
-      'Add Tag',
+      'Добавить тег',
       name: 'add_tag',
       desc: '',
       args: [],
     );
   }
 
-  /// `Image`
+  /// `Изображение`
   String get image {
     return Intl.message(
-      'Image',
+      'Изображение',
       name: 'image',
       desc: '',
       args: [],
     );
   }
 
-  /// `Main Image`
+  /// `Основное изображение`
   String get main_image {
     return Intl.message(
-      'Main Image',
+      'Основное изображение',
       name: 'main_image',
       desc: '',
       args: [],
     );
   }
 
-  /// `Reference Image`
+  /// `Референс изображение`
   String get reference_image {
     return Intl.message(
-      'Reference Image',
+      'Референс изображение',
       name: 'reference_image',
       desc: '',
       args: [],
     );
   }
 
-  /// `Additional Images`
+  /// `Дополнительные изображения`
   String get additional_images {
     return Intl.message(
-      'Additional Images',
+      'Дополнительные изображения',
       name: 'additional_images',
       desc: '',
       args: [],
     );
   }
 
-  /// `Add Image`
+  /// `Добавить изображение`
   String get add_picture {
     return Intl.message(
-      'Add Image',
+      'Добавить изображение',
       name: 'add_picture',
       desc: '',
       args: [],
     );
   }
 
-  /// `Character Avatar`
+  /// `Аватар персонажа`
   String get character_avatar {
     return Intl.message(
-      'Character Avatar',
+      'Аватар персонажа',
       name: 'character_avatar',
       desc: '',
       args: [],
     );
   }
 
-  /// `Character Reference`
+  /// `Референс персонажа`
   String get character_reference {
     return Intl.message(
-      'Character Reference',
+      'Референс персонажа',
       name: 'character_reference',
       desc: '',
       args: [],
     );
   }
 
-  /// `Character Gallery`
+  /// `Галерея персонажа`
   String get character_gallery {
     return Intl.message(
-      'Character Gallery',
+      'Галерея персонажа',
       name: 'character_gallery',
       desc: '',
       args: [],
     );
   }
 
-  /// `Avatar Cropping`
+  /// `Обрезка аватара`
   String get avatar_crop_title {
     return Intl.message(
-      'Avatar Cropping',
+      'Обрезка аватара',
       name: 'avatar_crop_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Save Crop`
+  /// `Сохранить обрезку`
   String get avatar_crop_save {
     return Intl.message(
-      'Save Crop',
+      'Сохранить обрезку',
       name: 'avatar_crop_save',
       desc: '',
       args: [],
     );
   }
 
-  /// `Template Name`
+  /// `Название шаблона`
   String get template_name_label {
     return Intl.message(
-      'Template Name',
+      'Название шаблона',
       name: 'template_name_label',
       desc: '',
       args: [],
     );
   }
 
-  /// `Standard Fields`
+  /// `Стандартные поля`
   String get standard_fields {
     return Intl.message(
-      'Standard Fields',
+      'Стандартные поля',
       name: 'standard_fields',
       desc: '',
       args: [],
     );
   }
 
-  /// `Custom Fields`
+  /// `Дополнительные поля`
   String get custom_fields {
     return Intl.message(
-      'Custom Fields',
+      'Дополнительные поля',
       name: 'custom_fields',
       desc: '',
       args: [],
     );
   }
 
-  /// `Custom Fields`
+  /// `Пользовательские поля`
   String get custom_fields_editor_title {
     return Intl.message(
-      'Custom Fields',
+      'Пользовательские поля',
       name: 'custom_fields_editor_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Add field`
+  /// `Добавить поле`
   String get add_field {
     return Intl.message(
-      'Add field',
+      'Добавить поле',
       name: 'add_field',
       desc: '',
       args: [],
     );
   }
 
-  /// `No custom fields added`
+  /// `Нет пользовательских полей`
   String get no_custom_fields {
     return Intl.message(
-      'No custom fields added',
+      'Нет пользовательских полей',
       name: 'no_custom_fields',
       desc: '',
       args: [],
     );
   }
 
-  /// `Field Name`
+  /// `Название поля`
   String get field_name {
     return Intl.message(
-      'Field Name',
+      'Название поля',
       name: 'field_name',
       desc: '',
       args: [],
     );
   }
 
-  /// `Enter field name`
+  /// `Введите название поля`
   String get field_name_hint {
     return Intl.message(
-      'Enter field name',
+      'Введите название поля',
       name: 'field_name_hint',
       desc: '',
       args: [],
     );
   }
 
-  /// `Field Value`
+  /// `Значение поля`
   String get field_value {
     return Intl.message(
-      'Field Value',
+      'Значение поля',
       name: 'field_value',
       desc: '',
       args: [],
     );
   }
 
-  /// `Enter field value`
+  /// `Введите значение поля`
   String get field_value_hint {
     return Intl.message(
-      'Enter field value',
+      'Введите значение поля',
       name: 'field_value_hint',
       desc: '',
       args: [],
     );
   }
 
-  /// `standard`
+  /// `стандартных`
   String get standard {
     return Intl.message(
-      'standard',
+      'стандартных',
       name: 'standard',
       desc: '',
       args: [],
     );
   }
 
-  /// `custom`
+  /// `пользовательских`
   String get custom {
     return Intl.message(
-      'custom',
+      'пользовательских',
       name: 'custom',
       desc: '',
       args: [],
     );
   }
 
-  /// `{count} fields`
+  /// `{count} полей`
   String fields_count(Object count) {
     return Intl.message(
-      '$count fields',
+      '$count полей',
       name: 'fields_count',
       desc: '',
       args: [count],
     );
   }
 
-  /// `{count} more`
+  /// `еще {count}`
   String more_fields(Object count) {
     return Intl.message(
-      '$count more',
+      'еще $count',
       name: 'more_fields',
       desc: '',
       args: [count],
     );
   }
 
-  /// `Children`
+  /// `Дети`
   String get children {
     return Intl.message(
-      'Children',
+      'Дети',
       name: 'children',
       desc: '',
       args: [],
     );
   }
 
-  /// `Young`
+  /// `Молодые`
   String get young {
     return Intl.message(
-      'Young',
+      'Молодые',
       name: 'young',
       desc: '',
       args: [],
     );
   }
 
-  /// `Adults`
+  /// `Взрослые`
   String get adults {
     return Intl.message(
-      'Adults',
+      'Взрослые',
       name: 'adults',
       desc: '',
       args: [],
     );
   }
 
-  /// `Elderly`
+  /// `Пожилые`
   String get elderly {
     return Intl.message(
-      'Elderly',
+      'Пожилые',
       name: 'elderly',
       desc: '',
       args: [],
     );
   }
 
-  /// `Purple`
+  /// `Фиолетовый`
   String get color_purple {
     return Intl.message(
-      'Purple',
+      'Фиолетовый',
       name: 'color_purple',
       desc: '',
       args: [],
     );
   }
 
-  /// `Teal`
+  /// `Бирюзовый`
   String get color_teal {
     return Intl.message(
-      'Teal',
+      'Бирюзовый',
       name: 'color_teal',
       desc: '',
       args: [],
     );
   }
 
-  /// `Red`
+  /// `Красный`
   String get color_red {
     return Intl.message(
-      'Red',
+      'Красный',
       name: 'color_red',
       desc: '',
       args: [],
     );
   }
 
-  /// `Pink`
+  /// `Розовый`
   String get color_pink {
     return Intl.message(
-      'Pink',
+      'Розовый',
       name: 'color_pink',
       desc: '',
       args: [],
     );
   }
 
-  /// `Dark`
+  /// `Тёмный`
   String get color_dark {
     return Intl.message(
-      'Dark',
+      'Тёмный',
       name: 'color_dark',
       desc: '',
       args: [],
     );
   }
 
-  /// `Green`
+  /// `Зелёный`
   String get color_green {
     return Intl.message(
-      'Green',
+      'Зелёный',
       name: 'color_green',
       desc: '',
       args: [],
     );
   }
 
-  /// `Blue`
+  /// `Синий`
   String get color_blue {
     return Intl.message(
-      'Blue',
+      'Синий',
       name: 'color_blue',
       desc: '',
       args: [],
     );
   }
 
-  /// `Brown`
+  /// `Коричневый`
   String get color_brown {
     return Intl.message(
-      'Brown',
+      'Коричневый',
       name: 'color_brown',
       desc: '',
       args: [],
     );
   }
 
-  /// `Orange`
+  /// `Оранжевый`
   String get color_orange {
     return Intl.message(
-      'Orange',
+      'Оранжевый',
       name: 'color_orange',
       desc: '',
       args: [],
     );
   }
 
-  /// `Grey`
+  /// `Серый`
   String get color_grey {
     return Intl.message(
-      'Grey',
+      'Серый',
       name: 'color_grey',
       desc: '',
       args: [],
     );
   }
 
-  /// `Accent Color`
+  /// `Акцентный цвет`
   String get accentColor {
     return Intl.message(
-      'Accent Color',
+      'Акцентный цвет',
       name: 'accentColor',
       desc: '',
       args: [],
     );
   }
 
-  /// `Color Scheme`
+  /// `Цветовая схема`
   String get colorScheme {
     return Intl.message(
-      'Color Scheme',
+      'Цветовая схема',
       name: 'colorScheme',
       desc: '',
       args: [],
     );
   }
 
-  /// `Theme`
+  /// `Тема`
   String get theme {
     return Intl.message(
-      'Theme',
+      'Тема',
       name: 'theme',
       desc: '',
       args: [],
     );
   }
 
-  /// `Dark`
+  /// `Тёмная`
   String get dark {
     return Intl.message(
-      'Dark',
+      'Тёмная',
       name: 'dark',
       desc: '',
       args: [],
     );
   }
 
-  /// `Light`
+  /// `Светлая`
   String get light {
     return Intl.message(
-      'Light',
+      'Светлая',
       name: 'light',
       desc: '',
       args: [],
     );
   }
 
-  /// `System`
+  /// `Системная`
   String get system {
     return Intl.message(
-      'System',
+      'Системная',
       name: 'system',
       desc: '',
       args: [],
     );
   }
 
-  /// `Language`
+  /// `Язык`
   String get language {
     return Intl.message(
-      'Language',
+      'Язык',
       name: 'language',
       desc: '',
       args: [],
     );
   }
 
-  /// `App Language`
+  /// `Язык приложения`
   String get appLanguage {
     return Intl.message(
-      'App Language',
+      'Язык приложения',
       name: 'appLanguage',
       desc: '',
       args: [],
     );
   }
 
-  /// `Home`
+  /// `Главная`
   String get home {
     return Intl.message(
-      'Home',
+      'Главная',
       name: 'home',
       desc: '',
       args: [],
     );
   }
 
-  /// `D&D Tools`
+  /// `Инструменты D&D`
   String get dnd_tools {
     return Intl.message(
-      'D&D Tools',
+      'Инструменты D&D',
       name: 'dnd_tools',
       desc: '',
       args: [],
     );
   }
 
-  /// `More Options`
+  /// `Дополнительные настройки`
   String get more_options {
     return Intl.message(
-      'More Options',
+      'Дополнительные настройки',
       name: 'more_options',
       desc: '',
       args: [],
     );
   }
 
-  /// `About App`
+  /// `О приложении`
   String get aboutApp {
     return Intl.message(
-      'About App',
+      'О приложении',
       name: 'aboutApp',
       desc: '',
       args: [],
     );
   }
 
-  /// `Acknowledgements`
+  /// `Благодарности`
   String get acknowledgements {
     return Intl.message(
-      'Acknowledgements',
+      'Благодарности',
       name: 'acknowledgements',
       desc: '',
       args: [],
     );
   }
 
-  /// `Developer`
+  /// `Разработчик`
   String get developer {
     return Intl.message(
-      'Developer',
+      'Разработчик',
       name: 'developer',
       desc: '',
       args: [],
     );
   }
 
-  /// `GitHub Repository`
+  /// `GitHub репозиторий`
   String get githubRepo {
     return Intl.message(
-      'GitHub Repository',
+      'GitHub репозиторий',
       name: 'githubRepo',
       desc: '',
       args: [],
     );
   }
 
-  /// `Licenses`
+  /// `Лицензии`
   String get licenses {
     return Intl.message(
-      'Licenses',
+      'Лицензии',
       name: 'licenses',
       desc: '',
       args: [],
     );
   }
 
-  /// `Used Libraries`
+  /// `Используемые библиотеки`
   String get usedLibraries {
     return Intl.message(
-      'Used Libraries',
+      'Используемые библиотеки',
       name: 'usedLibraries',
       desc: '',
       args: [],
     );
   }
 
-  /// `Flutter License`
+  /// `Лицензия Flutter`
   String get flutterLicense {
     return Intl.message(
-      'Flutter License',
+      'Лицензия Flutter',
       name: 'flutterLicense',
       desc: '',
       args: [],
     );
   }
 
-  /// `CharacterBook License (GNU GPL v3.0)`
+  /// `Лицензия CharacterBook (GNU GPL v3.0)`
   String get characterbookLicense {
     return Intl.message(
-      'CharacterBook License (GNU GPL v3.0)',
+      'Лицензия CharacterBook (GNU GPL v3.0)',
       name: 'characterbookLicense',
       desc: '',
       args: [],
     );
   }
 
-  /// `Export PDF settings`
+  /// `Настройки PDF экспорта`
   String get export_pdf_settings {
     return Intl.message(
-      'Export PDF settings',
+      'Настройки PDF экспорта',
       name: 'export_pdf_settings',
       desc: '',
       args: [],
     );
   }
 
-  /// `Backup`
+  /// `Резервное копирование`
   String get backup {
     return Intl.message(
-      'Backup',
+      'Резервное копирование',
       name: 'backup',
       desc: '',
       args: [],
     );
   }
 
-  /// `Create Backup`
+  /// `Создать резервную копию`
   String get createBackup {
     return Intl.message(
-      'Create Backup',
+      'Создать резервную копию',
       name: 'createBackup',
       desc: '',
       args: [],
     );
   }
 
-  /// `Create Backup`
+  /// `Создание резервной копии`
   String get creatingBackup {
     return Intl.message(
-      'Create Backup',
+      'Создание резервной копии',
       name: 'creatingBackup',
       desc: '',
       args: [],
     );
   }
 
-  /// `Restore from Backup`
+  /// `Восстановление из резервной копии`
   String get restoringBackup {
     return Intl.message(
-      'Restore from Backup',
+      'Восстановление из резервной копии',
       name: 'restoringBackup',
       desc: '',
       args: [],
     );
   }
 
-  /// `Restore Data`
+  /// `Восстановить данные`
   String get restoreData {
     return Intl.message(
-      'Restore Data',
+      'Восстановить данные',
       name: 'restoreData',
       desc: '',
       args: [],
     );
   }
 
-  /// `Backup Options`
+  /// `Варианты резервного копирования`
   String get backup_options {
     return Intl.message(
-      'Backup Options',
+      'Варианты резервного копирования',
       name: 'backup_options',
       desc: '',
       args: [],
     );
   }
 
-  /// `Restore Options`
+  /// `Варианты восстановления`
   String get restore_options {
     return Intl.message(
-      'Restore Options',
+      'Варианты восстановления',
       name: 'restore_options',
       desc: '',
       args: [],
     );
   }
 
-  /// `Backup to Cloud`
+  /// `Сохранить в облако`
   String get backup_to_cloud {
     return Intl.message(
-      'Backup to Cloud',
+      'Сохранить в облако',
       name: 'backup_to_cloud',
       desc: '',
       args: [],
     );
   }
 
-  /// `Backup to File`
+  /// `Сохранить в файл`
   String get backup_to_file {
     return Intl.message(
-      'Backup to File',
+      'Сохранить в файл',
       name: 'backup_to_file',
       desc: '',
       args: [],
     );
   }
 
-  /// `Restore from Cloud`
+  /// `Восстановить из облака`
   String get restore_from_cloud {
     return Intl.message(
-      'Restore from Cloud',
+      'Восстановить из облака',
       name: 'restore_from_cloud',
       desc: '',
       args: [],
     );
   }
 
-  /// `Restore from File`
+  /// `Восстановить из файла`
   String get restore_from_file {
     return Intl.message(
-      'Restore from File',
+      'Восстановить из файла',
       name: 'restore_from_file',
       desc: '',
       args: [],
     );
   }
 
-  /// `File (.character)`
+  /// `Файл (.character)`
   String get file_character {
     return Intl.message(
-      'File (.character)',
+      'Файл (.character)',
       name: 'file_character',
       desc: '',
       args: [],
     );
   }
 
-  /// `PDF Document (.pdf)`
+  /// `Документ PDF (.pdf)`
   String get file_pdf {
     return Intl.message(
-      'PDF Document (.pdf)',
+      'Документ PDF (.pdf)',
       name: 'file_pdf',
       desc: '',
       args: [],
     );
   }
 
-  /// `File ready to send`
+  /// `Файл готов к отправке`
   String get file_ready {
     return Intl.message(
-      'File ready to send',
+      'Файл готов к отправке',
       name: 'file_ready',
       desc: '',
       args: [],
     );
   }
 
-  /// `Creating PDF...`
+  /// `Создание PDF...`
   String get creating_pdf {
     return Intl.message(
-      'Creating PDF...',
+      'Создание PDF...',
       name: 'creating_pdf',
       desc: '',
       args: [],
     );
   }
 
-  /// `Creating file...`
+  /// `Создание файла...`
   String get creating_file {
     return Intl.message(
-      'Creating file...',
+      'Создание файла...',
       name: 'creating_file',
       desc: '',
       args: [],
     );
   }
 
-  /// `Save Error`
+  /// `Ошибка сохранения`
   String get save_error {
     return Intl.message(
-      'Save Error',
+      'Ошибка сохранения',
       name: 'save_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Delete Error`
+  /// `Ошибка при удалении`
   String get delete_error {
     return Intl.message(
-      'Delete Error',
+      'Ошибка при удалении',
       name: 'delete_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Copy Error`
+  /// `Ошибка копирования`
   String get copy_error {
     return Intl.message(
-      'Copy Error',
+      'Ошибка копирования',
       name: 'copy_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Export Error`
+  /// `Ошибка экспорта`
   String get export_error {
     return Intl.message(
-      'Export Error',
+      'Ошибка экспорта',
       name: 'export_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Import error: {error}`
+  /// `Ошибка импорта: {error}`
   String import_error(Object error) {
     return Intl.message(
-      'Import error: $error',
+      'Ошибка импорта: $error',
       name: 'import_error',
       desc: '',
       args: [error],
     );
   }
 
-  /// `Import cancelled`
+  /// `Импорт отменен`
   String get import_cancelled {
     return Intl.message(
-      'Import cancelled',
+      'Импорт отменен',
       name: 'import_cancelled',
       desc: '',
       args: [],
     );
   }
 
-  /// `File selection error`
+  /// `Ошибка выбора файла`
   String get file_pick_error {
     return Intl.message(
-      'File selection error',
+      'Ошибка выбора файла',
       name: 'file_pick_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Image selection error: {error}`
+  /// `Ошибка при выборе изображения: {error}`
   String image_picker_error(Object error) {
     return Intl.message(
-      'Image selection error: $error',
+      'Ошибка при выборе изображения: $error',
       name: 'image_picker_error',
       desc: '',
       args: [error],
     );
   }
 
-  /// `Authorization cancelled`
+  /// `Авторизация отменена`
   String get auth_cancelled {
     return Intl.message(
-      'Authorization cancelled',
+      'Авторизация отменена',
       name: 'auth_cancelled',
       desc: '',
       args: [],
     );
   }
 
-  /// `Failed to get API client`
+  /// `Не удалось получить клиент для API`
   String get auth_client_error {
     return Intl.message(
-      'Failed to get API client',
+      'Не удалось получить клиент для API',
       name: 'auth_client_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Not available for web`
+  /// `Недоступно для веба`
   String get web_not_supported {
     return Intl.message(
-      'Not available for web',
+      'Недоступно для веба',
       name: 'web_not_supported',
       desc: '',
       args: [],
     );
   }
 
-  /// `Invalid age entered`
+  /// `Введён неверный возраст`
   String get invalid_age {
     return Intl.message(
-      'Invalid age entered',
+      'Введён неверный возраст',
       name: 'invalid_age',
       desc: '',
       args: [],
     );
   }
 
-  /// `Select gender`
+  /// `Выберите пол`
   String get select_gender_error {
     return Intl.message(
-      'Select gender',
+      'Выберите пол',
       name: 'select_gender_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Select race`
+  /// `Выберите расу`
   String get select_race_error {
     return Intl.message(
-      'Select race',
+      'Выберите расу',
       name: 'select_race_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `The selected file is empty`
+  /// `Выбранный файл пуст`
   String get empty_file_error {
     return Intl.message(
-      'The selected file is empty',
+      'Выбранный файл пуст',
       name: 'empty_file_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Backup Error`
+  /// `Ошибка при создании резервной копии`
   String get cloud_backup_error {
     return Intl.message(
-      'Backup Error',
+      'Ошибка при создании резервной копии',
       name: 'cloud_backup_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Backup created successfully`
+  /// `Резервная копия успешно создана`
   String get cloud_backup_success {
     return Intl.message(
-      'Backup created successfully',
+      'Резервная копия успешно создана',
       name: 'cloud_backup_success',
       desc: '',
       args: [],
     );
   }
 
-  /// `Error creating characters backup`
+  /// `Ошибка при создании резервной копии персонажей`
   String get cloud_backup_characters_error {
     return Intl.message(
-      'Error creating characters backup',
+      'Ошибка при создании резервной копии персонажей',
       name: 'cloud_backup_characters_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Characters backup created successfully`
+  /// `Резервная копия персонажей успешно создана`
   String get cloud_backup_characters_success {
     return Intl.message(
-      'Characters backup created successfully',
+      'Резервная копия персонажей успешно создана',
       name: 'cloud_backup_characters_success',
       desc: '',
       args: [],
     );
   }
 
-  /// `Full backup successfully created in Google Drive`
+  /// `Полная резервная копия успешно создана в Google Drive`
   String get cloud_backup_full_success {
     return Intl.message(
-      'Full backup successfully created in Google Drive',
+      'Полная резервная копия успешно создана в Google Drive',
       name: 'cloud_backup_full_success',
       desc: '',
       args: [],
     );
   }
 
-  /// `No backups found`
+  /// `Резервные копии не найдены`
   String get cloud_backup_not_found {
     return Intl.message(
-      'No backups found',
+      'Резервные копии не найдены',
       name: 'cloud_backup_not_found',
       desc: '',
       args: [],
     );
   }
 
-  /// `Google Drive export error`
+  /// `Ошибка при экспорте в Google Drive`
   String get cloud_export_error {
     return Intl.message(
-      'Google Drive export error',
+      'Ошибка при экспорте в Google Drive',
       name: 'cloud_export_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Google Drive import error`
+  /// `Ошибка при импорте из Google Drive`
   String get cloud_import_error {
     return Intl.message(
-      'Google Drive import error',
+      'Ошибка при импорте из Google Drive',
       name: 'cloud_import_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Restore Error`
+  /// `Ошибка при восстановлении данных`
   String get cloud_restore_error {
     return Intl.message(
-      'Restore Error',
+      'Ошибка при восстановлении данных',
       name: 'cloud_restore_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Successfully restored:\n{charactersCount} characters\n{notesCount} notes\n{racesCount} races\n{templatesCount} templates\n{foldersCount} folders`
+  /// `Успешно восстановлено:\n{charactersCount} персонажей\n{notesCount} заметок\n{racesCount} рас\n{templatesCount} шаблонов\n{foldersCount} папок`
   String cloud_restore_success(Object charactersCount, Object notesCount,
       Object racesCount, Object templatesCount, Object foldersCount) {
     return Intl.message(
-      'Successfully restored:\n$charactersCount characters\n$notesCount notes\n$racesCount races\n$templatesCount templates\n$foldersCount folders',
+      'Успешно восстановлено:\n$charactersCount персонажей\n$notesCount заметок\n$racesCount рас\n$templatesCount шаблонов\n$foldersCount папок',
       name: 'cloud_restore_success',
       desc: '',
       args: [
@@ -1827,2900 +1817,2910 @@ class S {
     );
   }
 
-  /// `Backup created successfully`
+  /// `Резервная копия успешно создана`
   String get local_backup_success {
     return Intl.message(
-      'Backup created successfully',
+      'Резервная копия успешно создана',
       name: 'local_backup_success',
       desc: '',
       args: [],
     );
   }
 
-  /// `Backup error`
+  /// `Ошибка создания резервной копии`
   String get local_backup_error {
     return Intl.message(
-      'Backup error',
+      'Ошибка создания резервной копии',
       name: 'local_backup_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Restore completed successfully`
+  /// `Данные успешно восстановлены`
   String get local_restore_success {
     return Intl.message(
-      'Restore completed successfully',
+      'Данные успешно восстановлены',
       name: 'local_restore_success',
       desc: '',
       args: [],
     );
   }
 
-  /// `Restore error`
+  /// `Ошибка восстановления`
   String get local_restore_error {
     return Intl.message(
-      'Restore error',
+      'Ошибка восстановления',
       name: 'local_restore_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Character created from template "{name}"`
+  /// `Персонаж создан из шаблона "{name}"`
   String character_created_from_template(Object name) {
     return Intl.message(
-      'Character created from template "$name"',
+      'Персонаж создан из шаблона "$name"',
       name: 'character_created_from_template',
       desc: '',
       args: [name],
     );
   }
 
-  /// `Character "{name}" successfully exported to PDF`
+  /// `Персонаж "{name}" успешно экспортирован в PDF`
   String character_exported(Object name) {
     return Intl.message(
-      'Character "$name" successfully exported to PDF',
+      'Персонаж "$name" успешно экспортирован в PDF',
       name: 'character_exported',
       desc: '',
       args: [name],
     );
   }
 
-  /// `Character "{name}" imported successfully`
+  /// `Персонаж "{name}" успешно импортирован`
   String character_imported(Object name) {
     return Intl.message(
-      'Character "$name" imported successfully',
+      'Персонаж "$name" успешно импортирован',
       name: 'character_imported',
       desc: '',
       args: [name],
     );
   }
 
-  /// `Character deleted`
+  /// `Персонаж удален`
   String get character_deleted {
     return Intl.message(
-      'Character deleted',
+      'Персонаж удален',
       name: 'character_deleted',
       desc: '',
       args: [],
     );
   }
 
-  /// `Race "{name}" imported successfully`
+  /// `Раса "{name}" успешно импортирована`
   String race_imported(Object name) {
     return Intl.message(
-      'Race "$name" imported successfully',
+      'Раса "$name" успешно импортирована',
       name: 'race_imported',
       desc: '',
       args: [name],
     );
   }
 
-  /// `Race deleted`
+  /// `Раса удалена`
   String get race_deleted {
     return Intl.message(
-      'Race deleted',
+      'Раса удалена',
       name: 'race_deleted',
       desc: '',
       args: [],
     );
   }
 
-  /// `Race copied to clipboard`
+  /// `Раса скопирована в буфер обмена`
   String get race_copied {
     return Intl.message(
-      'Race copied to clipboard',
+      'Раса скопирована в буфер обмена',
       name: 'race_copied',
       desc: '',
       args: [],
     );
   }
 
-  /// `Template "{name}" exported successfully`
+  /// `Шаблон "{name}" успешно экспортирован`
   String template_exported(Object name) {
     return Intl.message(
-      'Template "$name" exported successfully',
+      'Шаблон "$name" успешно экспортирован',
       name: 'template_exported',
       desc: '',
       args: [name],
     );
   }
 
-  /// `Template "{name}" imported successfully`
+  /// `Шаблон "{name}" успешно импортирован`
   String template_imported(Object name) {
     return Intl.message(
-      'Template "$name" imported successfully',
+      'Шаблон "$name" успешно импортирован',
       name: 'template_imported',
       desc: '',
       args: [name],
     );
   }
 
-  /// `Template deleted`
+  /// `Шаблон удален`
   String get template_deleted {
     return Intl.message(
-      'Template deleted',
+      'Шаблон удален',
       name: 'template_deleted',
       desc: '',
       args: [],
     );
   }
 
-  /// `PDF exported successfully`
+  /// `PDF успешно экспортирован`
   String get pdf_export_success {
     return Intl.message(
-      'PDF exported successfully',
+      'PDF успешно экспортирован',
       name: 'pdf_export_success',
       desc: '',
       args: [],
     );
   }
 
-  /// `Unsaved Changes`
+  /// `Несохранённые изменения`
   String get unsaved_changes_title {
     return Intl.message(
-      'Unsaved Changes',
+      'Несохранённые изменения',
       name: 'unsaved_changes_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `You have unsaved changes. Do you want to save before exiting?`
+  /// `У вас есть несохранённые изменения. Хотите сохранить перед выходом?`
   String get unsaved_changes_content {
     return Intl.message(
-      'You have unsaved changes. Do you want to save before exiting?',
+      'У вас есть несохранённые изменения. Хотите сохранить перед выходом?',
       name: 'unsaved_changes_content',
       desc: '',
       args: [],
     );
   }
 
-  /// `Delete Character?`
+  /// `Удалить персонажа?`
   String get character_delete_title {
     return Intl.message(
-      'Delete Character?',
+      'Удалить персонажа?',
       name: 'character_delete_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Are you sure you want to delete this character? This action cannot be undone.`
+  /// `Вы уверены, что хотите удалить этого персонажа? Это действие нельзя отменить.`
   String get character_delete_confirm {
     return Intl.message(
-      'Are you sure you want to delete this character? This action cannot be undone.',
+      'Вы уверены, что хотите удалить этого персонажа? Это действие нельзя отменить.',
       name: 'character_delete_confirm',
       desc: '',
       args: [],
     );
   }
 
-  /// `Delete Race`
+  /// `Удаление расы`
   String get race_delete_title {
     return Intl.message(
-      'Delete Race',
+      'Удаление расы',
       name: 'race_delete_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Are you sure you want to delete this race?`
+  /// `Вы уверены, что хотите удалить эту расу?`
   String get race_delete_confirm {
     return Intl.message(
-      'Are you sure you want to delete this race?',
+      'Вы уверены, что хотите удалить эту расу?',
       name: 'race_delete_confirm',
       desc: '',
       args: [],
     );
   }
 
-  /// `Cannot Delete Race`
+  /// `Невозможно удалить расу`
   String get race_delete_error_title {
     return Intl.message(
-      'Cannot Delete Race',
+      'Невозможно удалить расу',
       name: 'race_delete_error_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `This race is used by characters. Change their race first.`
+  /// `Эта раса используется персонажами. Сначала измените их расу.`
   String get race_delete_error_content {
     return Intl.message(
-      'This race is used by characters. Change their race first.',
+      'Эта раса используется персонажами. Сначала измените их расу.',
       name: 'race_delete_error_content',
       desc: '',
       args: [],
     );
   }
 
-  /// `Delete Template`
+  /// `Удаление шаблона`
   String get template_delete_title {
     return Intl.message(
-      'Delete Template',
+      'Удаление шаблона',
       name: 'template_delete_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Are you sure you want to delete this template?`
+  /// `Вы уверены, что хотите удалить этот шаблон?`
   String get template_delete_confirm {
     return Intl.message(
-      'Are you sure you want to delete this template?',
+      'Вы уверены, что хотите удалить этот шаблон?',
       name: 'template_delete_confirm',
       desc: '',
       args: [],
     );
   }
 
-  /// `Template "{name}" already exists. Replace it?`
+  /// `Шаблон "{name}" уже существует. Заменить его?`
   String template_replace_confirm(Object name) {
     return Intl.message(
-      'Template "$name" already exists. Replace it?',
+      'Шаблон "$name" уже существует. Заменить его?',
       name: 'template_replace_confirm',
       desc: '',
       args: [name],
     );
   }
 
-  /// `Discard`
+  /// `Не сохранять`
   String get discard_changes {
     return Intl.message(
-      'Discard',
+      'Не сохранять',
       name: 'discard_changes',
       desc: '',
       args: [],
     );
   }
 
-  /// `It's empty here!`
+  /// `Здесь пусто!`
   String get empty_list {
     return Intl.message(
-      'It\'s empty here!',
+      'Здесь пусто!',
       name: 'empty_list',
       desc: '',
       args: [],
     );
   }
 
-  /// `No data found`
+  /// `Данные не найдены`
   String get no_data_found {
     return Intl.message(
-      'No data found',
+      'Данные не найдены',
       name: 'no_data_found',
       desc: '',
       args: [],
     );
   }
 
-  /// `Nothing found for the query`
+  /// `Ничего не найдено по запросу`
   String get nothing_found {
     return Intl.message(
-      'Nothing found for the query',
+      'Ничего не найдено по запросу',
       name: 'nothing_found',
       desc: '',
       args: [],
     );
   }
 
-  /// `No characters`
+  /// `Нет персонажей`
   String get no_characters {
     return Intl.message(
-      'No characters',
+      'Нет персонажей',
       name: 'no_characters',
       desc: '',
       args: [],
     );
   }
 
-  /// `No races created`
+  /// `Нет созданных рас`
   String get no_races_created {
     return Intl.message(
-      'No races created',
+      'Нет созданных рас',
       name: 'no_races_created',
       desc: '',
       args: [],
     );
   }
 
-  /// `No templates`
+  /// `Нет шаблонов`
   String get no_templates {
     return Intl.message(
-      'No templates',
+      'Нет шаблонов',
       name: 'no_templates',
       desc: '',
       args: [],
     );
   }
 
-  /// `No content`
+  /// `Содержание отсутствует`
   String get no_content {
     return Intl.message(
-      'No content',
+      'Содержание отсутствует',
       name: 'no_content',
       desc: '',
       args: [],
     );
   }
 
-  /// `No description`
+  /// `Описание отсутствует`
   String get no_description {
     return Intl.message(
-      'No description',
+      'Описание отсутствует',
       name: 'no_description',
       desc: '',
       args: [],
     );
   }
 
-  /// `No Information`
+  /// `Нет информации`
   String get no_information {
     return Intl.message(
-      'No Information',
+      'Нет информации',
       name: 'no_information',
       desc: '',
       args: [],
     );
   }
 
-  /// `No race`
+  /// `Раса не выбрана`
   String get no_race {
     return Intl.message(
-      'No race',
+      'Раса не выбрана',
       name: 'no_race',
       desc: '',
       args: [],
     );
   }
 
-  /// `No images added`
+  /// `Не добавлено ни одного изображения`
   String get no_additional_images {
     return Intl.message(
-      'No images added',
+      'Не добавлено ни одного изображения',
       name: 'no_additional_images',
       desc: '',
       args: [],
     );
   }
 
-  /// `No folder selected`
+  /// `Нет выбранной папки`
   String get no_folder_selected {
     return Intl.message(
-      'No folder selected',
+      'Нет выбранной папки',
       name: 'no_folder_selected',
       desc: '',
       args: [],
     );
   }
 
-  /// `Nothing here yet`
+  /// `Пока ничего нет`
   String get no_content_home {
     return Intl.message(
-      'Nothing here yet',
+      'Пока ничего нет',
       name: 'no_content_home',
       desc: '',
       args: [],
     );
   }
 
-  /// `Create your first character or race`
+  /// `Создайте первого персонажа или расу`
   String get create_first_content {
     return Intl.message(
-      'Create your first character or race',
+      'Создайте первого персонажа или расу',
       name: 'create_first_content',
       desc: '',
       args: [],
     );
   }
 
-  /// `Search characters...`
+  /// `Поиск персонажей...`
   String get search_characters {
     return Intl.message(
-      'Search characters...',
+      'Поиск персонажей...',
       name: 'search_characters',
       desc: '',
       args: [],
     );
   }
 
-  /// `Search races...`
+  /// `Поиск рас...`
   String get search_race_hint {
     return Intl.message(
-      'Search races...',
+      'Поиск рас...',
       name: 'search_race_hint',
       desc: '',
       args: [],
     );
   }
 
-  /// `Search for characters, races, notes, and templates...`
+  /// `Поиск по персонажам, расам, заметкам и шаблонам...`
   String get search_hint {
     return Intl.message(
-      'Search for characters, races, notes, and templates...',
+      'Поиск по персонажам, расам, заметкам и шаблонам...',
       name: 'search_hint',
       desc: '',
       args: [],
     );
   }
 
-  /// `Search characters and races...`
+  /// `Поиск персонажей и рас...`
   String get search_home {
     return Intl.message(
-      'Search characters and races...',
+      'Поиск персонажей и рас...',
       name: 'search_home',
       desc: '',
       args: [],
     );
   }
 
-  /// `All Tags`
+  /// `Все теги`
   String get all_tags {
     return Intl.message(
-      'All Tags',
+      'Все теги',
       name: 'all_tags',
       desc: '',
       args: [],
     );
   }
 
-  /// `Basic Information`
+  /// `Основная информация`
   String get basic_info {
     return Intl.message(
-      'Basic Information',
+      'Основная информация',
       name: 'basic_info',
       desc: '',
       args: [],
     );
   }
 
-  /// `A-Z`
+  /// `А-Я`
   String get a_to_z {
     return Intl.message(
-      'A-Z',
+      'А-Я',
       name: 'a_to_z',
       desc: '',
       args: [],
     );
   }
 
-  /// `Z-A`
+  /// `Я-А`
   String get z_to_a {
     return Intl.message(
-      'Z-A',
+      'Я-А',
       name: 'z_to_a',
       desc: '',
       args: [],
     );
   }
 
-  /// `Age ↑`
+  /// `Возраст ↑`
   String get age_asc {
     return Intl.message(
-      'Age ↑',
+      'Возраст ↑',
       name: 'age_asc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Age ↓`
+  /// `Возраст ↓`
   String get age_desc {
     return Intl.message(
-      'Age ↓',
+      'Возраст ↓',
       name: 'age_desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `By field count (ascending)`
+  /// `По количеству полей (по возрастанию)`
   String get fields_asc {
     return Intl.message(
-      'By field count (ascending)',
+      'По количеству полей (по возрастанию)',
       name: 'fields_asc',
       desc: '',
       args: [],
     );
   }
 
-  /// `By field count (descending)`
+  /// `По количеству полей (по убыванию)`
   String get fields_desc {
     return Intl.message(
-      'By field count (descending)',
+      'По количеству полей (по убыванию)',
       name: 'fields_desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Last Updated`
+  /// `Обновлено`
   String get last_updated {
     return Intl.message(
-      'Last Updated',
+      'Обновлено',
       name: 'last_updated',
       desc: '',
       args: [],
     );
   }
 
-  /// `{years} years ago`
+  /// `{years} лет назад`
   String years_ago(Object years) {
     return Intl.message(
-      '$years years ago',
+      '$years лет назад',
       name: 'years_ago',
       desc: '',
       args: [years],
     );
   }
 
-  /// `{months} months ago`
+  /// `{months} месяцев назад`
   String months_ago(Object months) {
     return Intl.message(
-      '$months months ago',
+      '$months месяцев назад',
       name: 'months_ago',
       desc: '',
       args: [months],
     );
   }
 
-  /// `{days} days ago`
+  /// `{days} дней назад`
   String days_ago(Object days) {
     return Intl.message(
-      '$days days ago',
+      '$days дней назад',
       name: 'days_ago',
       desc: '',
       args: [days],
     );
   }
 
-  /// `{hours} hours ago`
+  /// `{hours} часов назад`
   String hours_ago(Object hours) {
     return Intl.message(
-      '$hours hours ago',
+      '$hours часов назад',
       name: 'hours_ago',
       desc: '',
       args: [hours],
     );
   }
 
-  /// `Just now`
+  /// `Только что`
   String get just_now {
     return Intl.message(
-      'Just now',
+      'Только что',
       name: 'just_now',
       desc: '',
       args: [],
     );
   }
 
-  /// `Grid view`
+  /// `Вид сеткой`
   String get grid_view {
     return Intl.message(
-      'Grid view',
+      'Вид сеткой',
       name: 'grid_view',
       desc: '',
       args: [],
     );
   }
 
-  /// `List view`
+  /// `Вид списком`
   String get list_view {
     return Intl.message(
-      'List view',
+      'Вид списком',
       name: 'list_view',
       desc: '',
       args: [],
     );
   }
 
-  /// `Detailed`
+  /// `Подробный`
   String get detailed {
     return Intl.message(
-      'Detailed',
+      'Подробный',
       name: 'detailed',
       desc: '',
       args: [],
     );
   }
 
-  /// `My`
+  /// `Мои`
   String get my {
     return Intl.message(
-      'My',
+      'Мои',
       name: 'my',
       desc: '',
       args: [],
     );
   }
 
-  /// `Create from Template`
+  /// `Создать из шаблона`
   String get create_from_template_tooltip {
     return Intl.message(
-      'Create from Template',
+      'Создать из шаблона',
       name: 'create_from_template_tooltip',
       desc: '',
       args: [],
     );
   }
 
-  /// `Create Template`
+  /// `Создать шаблон`
   String get create_template_tooltip {
     return Intl.message(
-      'Create Template',
+      'Создать шаблон',
       name: 'create_template_tooltip',
       desc: '',
       args: [],
     );
   }
 
-  /// `Import Template`
+  /// `Импортировать шаблон`
   String get import_template {
     return Intl.message(
-      'Import Template',
+      'Импортировать шаблон',
       name: 'import_template',
       desc: '',
       args: [],
     );
   }
 
-  /// `Import Template`
+  /// `Импорт шаблона`
   String get import_template_tooltip {
     return Intl.message(
-      'Import Template',
+      'Импорт шаблона',
       name: 'import_template_tooltip',
       desc: '',
       args: [],
     );
   }
 
-  /// `From Template`
+  /// `Из шаблона`
   String get from_template {
     return Intl.message(
-      'From Template',
+      'Из шаблона',
       name: 'from_template',
       desc: '',
       args: [],
     );
   }
 
-  /// `New Character (from Template)`
+  /// `Новый персонаж (из шаблона)`
   String get new_character_from_template {
     return Intl.message(
-      'New Character (from Template)',
+      'Новый персонаж (из шаблона)',
       name: 'new_character_from_template',
       desc: '',
       args: [],
     );
   }
 
-  /// `Save Template`
+  /// `Сохранить шаблон`
   String get save_template {
     return Intl.message(
-      'Save Template',
+      'Сохранить шаблон',
       name: 'save_template',
       desc: '',
       args: [],
     );
   }
 
-  /// `Save Race`
+  /// `Сохранить расу`
   String get save_race {
     return Intl.message(
-      'Save Race',
+      'Сохранить расу',
       name: 'save_race',
       desc: '',
       args: [],
     );
   }
 
-  /// `Enter age`
+  /// `Введите возраст`
   String get enter_age {
     return Intl.message(
-      'Enter age',
+      'Введите возраст',
       name: 'enter_age',
       desc: '',
       args: [],
     );
   }
 
-  /// `Enter race name`
+  /// `Введите название расы`
   String get enter_race_name {
     return Intl.message(
-      'Enter race name',
+      'Введите название расы',
       name: 'enter_race_name',
       desc: '',
       args: [],
     );
   }
 
-  /// `Select Template File`
+  /// `Выберите файл шаблона`
   String get select_template_file {
     return Intl.message(
-      'Select Template File',
+      'Выберите файл шаблона',
       name: 'select_template_file',
       desc: '',
       args: [],
     );
   }
 
-  /// `Here's my CharacterBook backup file`
+  /// `Вот моя резервная копия CharacterBook`
   String get share_backup_file {
     return Intl.message(
-      'Here\'s my CharacterBook backup file',
+      'Вот моя резервная копия CharacterBook',
       name: 'share_backup_file',
       desc: '',
       args: [],
     );
   }
 
-  /// `Character file {name}`
+  /// `Файл персонажа {name}`
   String character_share_text(Object name) {
     return Intl.message(
-      'Character file $name',
+      'Файл персонажа $name',
       name: 'character_share_text',
       desc: '',
       args: [name],
     );
   }
 
-  /// `Race file {name}`
+  /// `Файл расы {name}`
   String race_share_text(Object name) {
     return Intl.message(
-      'Race file $name',
+      'Файл расы $name',
       name: 'race_share_text',
       desc: '',
       args: [name],
     );
   }
 
-  /// `Bold`
+  /// `Жирный`
   String get markdown_bold {
     return Intl.message(
-      'Bold',
+      'Жирный',
       name: 'markdown_bold',
       desc: '',
       args: [],
     );
   }
 
-  /// `Italic`
+  /// `Курсив`
   String get markdown_italic {
     return Intl.message(
-      'Italic',
+      'Курсив',
       name: 'markdown_italic',
       desc: '',
       args: [],
     );
   }
 
-  /// `Underline`
+  /// `Подчёркнутый`
   String get markdown_underline {
     return Intl.message(
-      'Underline',
+      'Подчёркнутый',
       name: 'markdown_underline',
       desc: '',
       args: [],
     );
   }
 
-  /// `Bullet List`
+  /// `Маркированный список`
   String get markdown_bullet_list {
     return Intl.message(
-      'Bullet List',
+      'Маркированный список',
       name: 'markdown_bullet_list',
       desc: '',
       args: [],
     );
   }
 
-  /// `Numbered List`
+  /// `Нумерованный список`
   String get markdown_numbered_list {
     return Intl.message(
-      'Numbered List',
+      'Нумерованный список',
       name: 'markdown_numbered_list',
       desc: '',
       args: [],
     );
   }
 
-  /// `Quote`
+  /// `Цитата`
   String get markdown_quote {
     return Intl.message(
-      'Quote',
+      'Цитата',
       name: 'markdown_quote',
       desc: '',
       args: [],
     );
   }
 
-  /// `Code (inline)`
+  /// `Код (в строке)`
   String get markdown_inline_code {
     return Intl.message(
-      'Code (inline)',
+      'Код (в строке)',
       name: 'markdown_inline_code',
       desc: '',
       args: [],
     );
   }
 
-  /// `Your collection of characters and races`
+  /// `Ваша коллекция персонажей и рас`
   String get home_subtitle {
     return Intl.message(
-      'Your collection of characters and races',
+      'Ваша коллекция персонажей и рас',
       name: 'home_subtitle',
       desc: '',
       args: [],
     );
   }
 
-  /// `Template already exists`
+  /// `Шаблон уже существует`
   String get template_exists {
     return Intl.message(
-      'Template already exists',
+      'Шаблон уже существует',
       name: 'template_exists',
       desc: '',
       args: [],
     );
   }
 
-  /// `No templates found`
+  /// `Шаблоны не найдены`
   String get templates_not_found {
     return Intl.message(
-      'No templates found',
+      'Шаблоны не найдены',
       name: 'templates_not_found',
       desc: '',
       args: [],
     );
   }
 
-  /// `Error loading related posts`
+  /// `Ошибка загрузки связанных заметок`
   String get error_loading_notes {
     return Intl.message(
-      'Error loading related posts',
+      'Ошибка загрузки связанных заметок',
       name: 'error_loading_notes',
       desc: '',
       args: [],
     );
   }
 
-  /// `Random Number Generator`
+  /// `Генератор случайных чисел`
   String get randomNumberGenerator {
     return Intl.message(
-      'Random Number Generator',
+      'Генератор случайных чисел',
       name: 'randomNumberGenerator',
       desc: '',
       args: [],
     );
   }
 
-  /// `SELECT RANGE`
+  /// `ВЫБЕРИТЕ ДИАПАЗОН`
   String get selectRange {
     return Intl.message(
-      'SELECT RANGE',
+      'ВЫБЕРИТЕ ДИАПАЗОН',
       name: 'selectRange',
       desc: '',
       args: [],
     );
   }
 
-  /// `From`
+  /// `От`
   String get from {
     return Intl.message(
-      'From',
+      'От',
       name: 'from',
       desc: '',
       args: [],
     );
   }
 
-  /// `To`
+  /// `До`
   String get to {
     return Intl.message(
-      'To',
+      'До',
       name: 'to',
       desc: '',
       args: [],
     );
   }
 
-  /// `Generate Number`
+  /// `Сгенерировать число`
   String get generateNumber {
     return Intl.message(
-      'Generate Number',
+      'Сгенерировать число',
       name: 'generateNumber',
       desc: '',
       args: [],
     );
   }
 
-  /// `Generating...`
+  /// `Генерация...`
   String get generating {
     return Intl.message(
-      'Generating...',
+      'Генерация...',
       name: 'generating',
       desc: '',
       args: [],
     );
   }
 
-  /// `Calendar`
+  /// `Календарь`
   String get calendar {
     return Intl.message(
-      'Calendar',
+      'Календарь',
       name: 'calendar',
       desc: '',
       args: [],
     );
   }
 
-  /// `Event Calendar`
+  /// `Календарь событий`
   String get event_calendar {
     return Intl.message(
-      'Event Calendar',
+      'Календарь событий',
       name: 'event_calendar',
       desc: '',
       args: [],
     );
   }
 
-  /// `All Events`
+  /// `Все события`
   String get all_events {
     return Intl.message(
-      'All Events',
+      'Все события',
       name: 'all_events',
       desc: '',
       args: [],
     );
   }
 
-  /// `Character Events`
+  /// `События персонажей`
   String get character_events {
     return Intl.message(
-      'Character Events',
+      'События персонажей',
       name: 'character_events',
       desc: '',
       args: [],
     );
   }
 
-  /// `Race Events`
+  /// `События рас`
   String get race_events {
     return Intl.message(
-      'Race Events',
+      'События рас',
       name: 'race_events',
       desc: '',
       args: [],
     );
   }
 
-  /// `Note Events`
+  /// `События заметок`
   String get note_events {
     return Intl.message(
-      'Note Events',
+      'События заметок',
       name: 'note_events',
       desc: '',
       args: [],
     );
   }
 
-  /// `No events on the selected day`
+  /// `Нет событий на выбранный день`
   String get no_events {
     return Intl.message(
-      'No events on the selected day',
+      'Нет событий на выбранный день',
       name: 'no_events',
       desc: '',
       args: [],
     );
   }
 
-  /// `Error loading events`
+  /// `Ошибка загрузки событий`
   String get events_loading_error {
     return Intl.message(
-      'Error loading events',
+      'Ошибка загрузки событий',
       name: 'events_loading_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Event`
+  /// `Событие`
   String get event {
     return Intl.message(
-      'Event',
+      'Событие',
       name: 'event',
       desc: '',
       args: [],
     );
   }
 
-  /// `Events`
+  /// `События`
   String get events {
     return Intl.message(
-      'Events',
+      'События',
       name: 'events',
       desc: '',
       args: [],
     );
   }
 
-  /// `Today`
+  /// `Сегодня`
   String get today {
     return Intl.message(
-      'Today',
+      'Сегодня',
       name: 'today',
       desc: '',
       args: [],
     );
   }
 
-  /// `Month`
+  /// `Месяц`
   String get month {
     return Intl.message(
-      'Month',
+      'Месяц',
       name: 'month',
       desc: '',
       args: [],
     );
   }
 
-  /// `Week`
+  /// `Неделя`
   String get week {
     return Intl.message(
-      'Week',
+      'Неделя',
       name: 'week',
       desc: '',
       args: [],
     );
   }
 
-  /// `Day`
+  /// `День`
   String get day {
     return Intl.message(
-      'Day',
+      'День',
       name: 'day',
       desc: '',
       args: [],
     );
   }
 
-  /// `Calendar View`
+  /// `Вид календаря`
   String get calendar_view {
     return Intl.message(
-      'Calendar View',
+      'Вид календаря',
       name: 'calendar_view',
       desc: '',
       args: [],
     );
   }
 
-  /// `Event Type`
+  /// `Тип события`
   String get event_type {
     return Intl.message(
-      'Event Type',
+      'Тип события',
       name: 'event_type',
       desc: '',
       args: [],
     );
   }
 
-  /// `Created`
+  /// `Создано`
   String get created {
     return Intl.message(
-      'Created',
+      'Создано',
       name: 'created',
       desc: '',
       args: [],
     );
   }
 
-  /// `Updated`
+  /// `Обновлено`
   String get updated {
     return Intl.message(
-      'Updated',
+      'Обновлено',
       name: 'updated',
       desc: '',
       args: [],
     );
   }
 
-  /// `Go to Event`
+  /// `Перейти к событию`
   String get go_to_event {
     return Intl.message(
-      'Go to Event',
+      'Перейти к событию',
       name: 'go_to_event',
       desc: '',
       args: [],
     );
   }
 
-  /// `Filter Events`
+  /// `Фильтровать события`
   String get filter_events {
     return Intl.message(
-      'Filter Events',
+      'Фильтровать события',
       name: 'filter_events',
       desc: '',
       args: [],
     );
   }
 
-  /// `Calendar Statistics`
+  /// `Статистика календаря`
   String get calendar_statistics {
     return Intl.message(
-      'Calendar Statistics',
+      'Статистика календаря',
       name: 'calendar_statistics',
       desc: '',
       args: [],
     );
   }
 
-  /// `Total Events`
+  /// `Всего событий`
   String get total_events {
     return Intl.message(
-      'Total Events',
+      'Всего событий',
       name: 'total_events',
       desc: '',
       args: [],
     );
   }
 
-  /// `Events This Month`
+  /// `Событий в этом месяце`
   String get events_this_month {
     return Intl.message(
-      'Events This Month',
+      'Событий в этом месяце',
       name: 'events_this_month',
       desc: '',
       args: [],
     );
   }
 
-  /// `Events Today`
+  /// `Событий сегодня`
   String get events_today {
     return Intl.message(
-      'Events Today',
+      'Событий сегодня',
       name: 'events_today',
       desc: '',
       args: [],
     );
   }
 
-  /// `Activity Timeline`
+  /// `Хронология активности`
   String get activity_timeline {
     return Intl.message(
-      'Activity Timeline',
+      'Хронология активности',
       name: 'activity_timeline',
       desc: '',
       args: [],
     );
   }
 
-  /// `Template Management`
+  /// `Управление шаблонами персонажей`
   String get template_management {
     return Intl.message(
-      'Template Management',
+      'Управление шаблонами персонажей',
       name: 'template_management',
       desc: '',
       args: [],
     );
   }
 
-  /// `Tool Management`
+  /// `Управление инструментами`
   String get tool_management {
     return Intl.message(
-      'Tool Management',
+      'Управление инструментами',
       name: 'tool_management',
       desc: '',
       args: [],
     );
   }
 
-  /// `Create Race`
+  /// `Создать персонажа`
+  String get create_character {
+    return Intl.message(
+      'Создать персонажа',
+      name: 'create_character',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Создать расу`
   String get create_race {
     return Intl.message(
-      'Create Race',
+      'Создать расу',
       name: 'create_race',
       desc: '',
       args: [],
     );
   }
 
-  /// `Import Character`
+  /// `Импортировать персонажа`
   String get import_character {
     return Intl.message(
-      'Import Character',
+      'Импортировать персонажа',
       name: 'import_character',
       desc: '',
       args: [],
     );
   }
 
-  /// `Recent Activity`
+  /// `Недавняя активность`
   String get recent_activity {
     return Intl.message(
-      'Recent Activity',
+      'Недавняя активность',
       name: 'recent_activity',
       desc: '',
       args: [],
     );
   }
 
-  /// `Quick Actions`
+  /// `Быстрые действия`
   String get quick_actions {
     return Intl.message(
-      'Quick Actions',
+      'Быстрые действия',
       name: 'quick_actions',
       desc: '',
       args: [],
     );
   }
 
-  /// `View All`
+  /// `Показать все`
   String get view_all {
     return Intl.message(
-      'View All',
+      'Показать все',
       name: 'view_all',
       desc: '',
       args: [],
     );
   }
 
-  /// `Statistics`
+  /// `Статистика`
   String get statistics {
     return Intl.message(
-      'Statistics',
+      'Статистика',
       name: 'statistics',
       desc: '',
       args: [],
     );
   }
 
-  /// `Total: {count}`
+  /// `Всего: {count}`
   String total_count(Object count) {
     return Intl.message(
-      'Total: $count',
+      'Всего: $count',
       name: 'total_count',
       desc: '',
       args: [count],
     );
   }
 
-  /// `Recently Edited`
+  /// `Недавно редактировались`
   String get recently_edited {
     return Intl.message(
-      'Recently Edited',
+      'Недавно редактировались',
       name: 'recently_edited',
       desc: '',
       args: [],
     );
   }
 
-  /// `Most Popular`
+  /// `Самые популярные`
   String get most_popular {
     return Intl.message(
-      'Most Popular',
+      'Самые популярные',
       name: 'most_popular',
       desc: '',
       args: [],
     );
   }
 
-  /// `By Race`
+  /// `По расам`
   String get by_race {
     return Intl.message(
-      'By Race',
+      'По расам',
       name: 'by_race',
       desc: '',
       args: [],
     );
   }
 
-  /// `By Tags`
+  /// `По тегам`
   String get by_tags {
     return Intl.message(
-      'By Tags',
+      'По тегам',
       name: 'by_tags',
       desc: '',
       args: [],
     );
   }
 
-  /// `No Recent Activity`
+  /// `Нет недавней активности`
   String get no_recent_activity {
     return Intl.message(
-      'No Recent Activity',
+      'Нет недавней активности',
       name: 'no_recent_activity',
       desc: '',
       args: [],
     );
   }
 
-  /// `Welcome Back!`
+  /// `С возвращением!`
   String get welcome_back {
     return Intl.message(
-      'Welcome Back!',
+      'С возвращением!',
       name: 'welcome_back',
       desc: '',
       args: [],
     );
   }
 
-  /// `Your Collection`
+  /// `Ваша коллекция`
   String get your_collection {
     return Intl.message(
-      'Your Collection',
+      'Ваша коллекция',
       name: 'your_collection',
       desc: '',
       args: [],
     );
   }
 
-  /// `Collection Overview`
+  /// `Обзор коллекции`
   String get collection_overview {
     return Intl.message(
-      'Collection Overview',
+      'Обзор коллекции',
       name: 'collection_overview',
       desc: '',
       args: [],
     );
   }
 
-  /// `Characters: {count}`
+  /// `Персонажей: {count}`
   String characters_count(Object count) {
     return Intl.message(
-      'Characters: $count',
+      'Персонажей: $count',
       name: 'characters_count',
       desc: '',
       args: [count],
     );
   }
 
-  /// `Races: {count}`
+  /// `Рас: {count}`
   String races_count(Object count) {
     return Intl.message(
-      'Races: $count',
+      'Рас: $count',
       name: 'races_count',
       desc: '',
       args: [count],
     );
   }
 
-  /// `Notes: {count}`
+  /// `Заметок: {count}`
   String notes_count(Object count) {
     return Intl.message(
-      'Notes: $count',
+      'Заметок: $count',
       name: 'notes_count',
       desc: '',
       args: [count],
     );
   }
 
-  /// `Templates: {count}`
+  /// `Шаблонов: {count}`
   String templates_count(Object count) {
     return Intl.message(
-      'Templates: $count',
+      'Шаблонов: $count',
       name: 'templates_count',
       desc: '',
       args: [count],
     );
   }
 
-  /// `Folders: {count}`
+  /// `Папок: {count}`
   String folders_count(Object count) {
     return Intl.message(
-      'Folders: $count',
+      'Папок: $count',
       name: 'folders_count',
       desc: '',
       args: [count],
     );
   }
 
-  /// `Last Created`
+  /// `Последний созданный`
   String get last_created {
     return Intl.message(
-      'Last Created',
+      'Последний созданный',
       name: 'last_created',
       desc: '',
       args: [],
     );
   }
 
-  /// `Last Edited`
+  /// `Последний отредактированный`
   String get last_edited {
     return Intl.message(
-      'Last Edited',
+      'Последний отредактированный',
       name: 'last_edited',
       desc: '',
       args: [],
     );
   }
 
-  /// `Most Edited`
+  /// `Чаще всего редактируемый`
   String get most_edited {
     return Intl.message(
-      'Most Edited',
+      'Чаще всего редактируемый',
       name: 'most_edited',
       desc: '',
       args: [],
     );
   }
 
-  /// `Recent Characters`
+  /// `Недавние персонажи`
   String get recent_characters {
     return Intl.message(
-      'Recent Characters',
+      'Недавние персонажи',
       name: 'recent_characters',
       desc: '',
       args: [],
     );
   }
 
-  /// `Recent Races`
+  /// `Недавние расы`
   String get recent_races {
     return Intl.message(
-      'Recent Races',
+      'Недавние расы',
       name: 'recent_races',
       desc: '',
       args: [],
     );
   }
 
-  /// `Recent Notes`
+  /// `Недавние заметки`
   String get recent_notes {
     return Intl.message(
-      'Recent Notes',
+      'Недавние заметки',
       name: 'recent_notes',
       desc: '',
       args: [],
     );
   }
 
-  /// `Popular Tags`
+  /// `Популярные теги`
   String get popular_tags {
     return Intl.message(
-      'Popular Tags',
+      'Популярные теги',
       name: 'popular_tags',
       desc: '',
       args: [],
     );
   }
 
-  /// `Tag Cloud`
+  /// `Облако тегов`
   String get tag_cloud {
     return Intl.message(
-      'Tag Cloud',
+      'Облако тегов',
       name: 'tag_cloud',
       desc: '',
       args: [],
     );
   }
 
-  /// `Search Collection...`
+  /// `Поиск по коллекции...`
   String get search_collection {
     return Intl.message(
-      'Search Collection...',
+      'Поиск по коллекции...',
       name: 'search_collection',
       desc: '',
       args: [],
     );
   }
 
-  /// `Filter By`
+  /// `Фильтровать по`
   String get filter_by {
     return Intl.message(
-      'Filter By',
+      'Фильтровать по',
       name: 'filter_by',
       desc: '',
       args: [],
     );
   }
 
-  /// `Sort By`
+  /// `Сортировать по`
   String get sort_by {
     return Intl.message(
-      'Sort By',
+      'Сортировать по',
       name: 'sort_by',
       desc: '',
       args: [],
     );
   }
 
-  /// `All Categories`
+  /// `Все категории`
   String get all_categories {
     return Intl.message(
-      'All Categories',
+      'Все категории',
       name: 'all_categories',
       desc: '',
       args: [],
     );
   }
 
-  /// `Favorites`
+  /// `Избранное`
   String get favorites {
     return Intl.message(
-      'Favorites',
+      'Избранное',
       name: 'favorites',
       desc: '',
       args: [],
     );
   }
 
-  /// `Archived`
+  /// `В архиве`
   String get archived {
     return Intl.message(
-      'Archived',
+      'В архиве',
       name: 'archived',
       desc: '',
       args: [],
     );
   }
 
-  /// `Recently Viewed`
+  /// `Недавно просмотренные`
   String get recently_viewed {
     return Intl.message(
-      'Recently Viewed',
+      'Недавно просмотренные',
       name: 'recently_viewed',
       desc: '',
       args: [],
     );
   }
 
-  /// `Suggested Actions`
+  /// `Рекомендуемые действия`
   String get suggested_actions {
     return Intl.message(
-      'Suggested Actions',
+      'Рекомендуемые действия',
       name: 'suggested_actions',
       desc: '',
       args: [],
     );
   }
 
-  /// `Quick Create`
+  /// `Быстрое создание`
   String get quick_create {
     return Intl.message(
-      'Quick Create',
+      'Быстрое создание',
       name: 'quick_create',
       desc: '',
       args: [],
     );
   }
 
-  /// `Browse Templates`
+  /// `Просмотреть шаблоны`
   String get browse_templates {
     return Intl.message(
-      'Browse Templates',
+      'Просмотреть шаблоны',
       name: 'browse_templates',
       desc: '',
       args: [],
     );
   }
 
-  /// `Import Data`
+  /// `Импортировать данные`
   String get import_data {
     return Intl.message(
-      'Import Data',
+      'Импортировать данные',
       name: 'import_data',
       desc: '',
       args: [],
     );
   }
 
-  /// `Export Data`
+  /// `Экспортировать данные`
   String get export_data {
     return Intl.message(
-      'Export Data',
+      'Экспортировать данные',
       name: 'export_data',
       desc: '',
       args: [],
     );
   }
 
-  /// `Create Backup`
+  /// `Создать резервную копию`
   String get backup_data {
     return Intl.message(
-      'Create Backup',
+      'Создать резервную копию',
       name: 'backup_data',
       desc: '',
       args: [],
     );
   }
 
-  /// `Restore Data`
+  /// `Восстановить данные`
   String get restore_data {
     return Intl.message(
-      'Restore Data',
+      'Восстановить данные',
       name: 'restore_data',
       desc: '',
       args: [],
     );
   }
 
-  /// `App Tour`
+  /// `Обзор приложения`
   String get app_tour {
     return Intl.message(
-      'App Tour',
+      'Обзор приложения',
       name: 'app_tour',
       desc: '',
       args: [],
     );
   }
 
-  /// `Help and Support`
+  /// `Помощь и поддержка`
   String get help_and_support {
     return Intl.message(
-      'Help and Support',
+      'Помощь и поддержка',
       name: 'help_and_support',
       desc: '',
       args: [],
     );
   }
 
-  /// `Community`
+  /// `Сообщество`
   String get community {
     return Intl.message(
-      'Community',
+      'Сообщество',
       name: 'community',
       desc: '',
       args: [],
     );
   }
 
-  /// `Feedback`
+  /// `Обратная связь`
   String get feedback {
     return Intl.message(
-      'Feedback',
+      'Обратная связь',
       name: 'feedback',
       desc: '',
       args: [],
     );
   }
 
-  /// `Rate App`
+  /// `Оценить приложение`
   String get rate_app {
     return Intl.message(
-      'Rate App',
+      'Оценить приложение',
       name: 'rate_app',
       desc: '',
       args: [],
     );
   }
 
-  /// `Share App`
+  /// `Поделиться приложением`
   String get share_app {
     return Intl.message(
-      'Share App',
+      'Поделиться приложением',
       name: 'share_app',
       desc: '',
       args: [],
     );
   }
 
-  /// `About`
+  /// `О приложении`
   String get about {
     return Intl.message(
-      'About',
+      'О приложении',
       name: 'about',
       desc: '',
       args: [],
     );
   }
 
-  /// `Privacy Policy`
+  /// `Политика конфиденциальности`
   String get privacy_policy {
     return Intl.message(
-      'Privacy Policy',
+      'Политика конфиденциальности',
       name: 'privacy_policy',
       desc: '',
       args: [],
     );
   }
 
-  /// `Terms of Service`
+  /// `Условия использования`
   String get terms_of_service {
     return Intl.message(
-      'Terms of Service',
+      'Условия использования',
       name: 'terms_of_service',
       desc: '',
       args: [],
     );
   }
 
-  /// `Version Info`
+  /// `Информация о версии`
   String get version_info {
     return Intl.message(
-      'Version Info',
+      'Информация о версии',
       name: 'version_info',
       desc: '',
       args: [],
     );
   }
 
-  /// `Check for Updates`
+  /// `Проверить обновления`
   String get check_for_updates {
     return Intl.message(
-      'Check for Updates',
+      'Проверить обновления',
       name: 'check_for_updates',
       desc: '',
       args: [],
     );
   }
 
-  /// `What's New`
+  /// `Что нового`
   String get whats_new {
     return Intl.message(
-      'What\'s New',
+      'Что нового',
       name: 'whats_new',
       desc: '',
       args: [],
     );
   }
 
-  /// `Reset Settings`
+  /// `Сбросить настройки`
   String get reset_settings {
     return Intl.message(
-      'Reset Settings',
+      'Сбросить настройки',
       name: 'reset_settings',
       desc: '',
       args: [],
     );
   }
 
-  /// `Save Settings`
+  /// `Сохранить настройки`
   String get save_settings {
     return Intl.message(
-      'Save Settings',
+      'Сохранить настройки',
       name: 'save_settings',
       desc: '',
       args: [],
     );
   }
 
-  /// `Sections to Include`
+  /// `Включаемые разделы`
   String get sections_to_include {
     return Intl.message(
-      'Sections to Include',
+      'Включаемые разделы',
       name: 'sections_to_include',
       desc: '',
       args: [],
     );
   }
 
-  /// `Font Settings`
+  /// `Настройки шрифтов`
   String get font_settings {
     return Intl.message(
-      'Font Settings',
+      'Настройки шрифтов',
       name: 'font_settings',
       desc: '',
       args: [],
     );
   }
 
-  /// `Color Settings`
+  /// `Настройки цветов`
   String get color_settings {
     return Intl.message(
-      'Color Settings',
+      'Настройки цветов',
       name: 'color_settings',
       desc: '',
       args: [],
     );
   }
 
-  /// `Title Font Size`
+  /// `Размер шрифта заголовков`
   String get title_font_size {
     return Intl.message(
-      'Title Font Size',
+      'Размер шрифта заголовков',
       name: 'title_font_size',
       desc: '',
       args: [],
     );
   }
 
-  /// `Body Font Size`
+  /// `Размер шрифта текста`
   String get body_font_size {
     return Intl.message(
-      'Body Font Size',
+      'Размер шрифта текста',
       name: 'body_font_size',
       desc: '',
       args: [],
     );
   }
 
-  /// `Title Color`
+  /// `Цвет заголовков`
   String get title_color {
     return Intl.message(
-      'Title Color',
+      'Цвет заголовков',
       name: 'title_color',
       desc: '',
       args: [],
     );
   }
 
-  /// `Body Color`
+  /// `Цвет текста`
   String get body_color {
     return Intl.message(
-      'Body Color',
+      'Цвет текста',
       name: 'body_color',
       desc: '',
       args: [],
     );
   }
 
-  /// `Settings Saved`
+  /// `Настройки сохранены`
   String get settings_saved {
     return Intl.message(
-      'Settings Saved',
+      'Настройки сохранены',
       name: 'settings_saved',
       desc: '',
       args: [],
     );
   }
 
-  /// `PDF settings load error`
+  /// `Ошибка загрузки настроек PDF`
   String get settings_load_error {
     return Intl.message(
-      'PDF settings load error',
+      'Ошибка загрузки настроек PDF',
       name: 'settings_load_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Font Size`
+  /// `Размер шрифта`
   String get font_size {
     return Intl.message(
-      'Font Size',
+      'Размер шрифта',
       name: 'font_size',
       desc: '',
       args: [],
     );
   }
 
-  /// `Color Picker`
+  /// `Выбор цвета`
   String get color_picker {
     return Intl.message(
-      'Color Picker',
+      'Выбор цвета',
       name: 'color_picker',
       desc: '',
       args: [],
     );
   }
 
-  /// `Export Options`
+  /// `Опции экспорта`
   String get export_options {
     return Intl.message(
-      'Export Options',
+      'Опции экспорта',
       name: 'export_options',
       desc: '',
       args: [],
     );
   }
 
-  /// `Page Layout`
+  /// `Макет страницы`
   String get page_layout {
     return Intl.message(
-      'Page Layout',
+      'Макет страницы',
       name: 'page_layout',
       desc: '',
       args: [],
     );
   }
 
-  /// `Page Size`
+  /// `Размер страницы`
   String get page_size {
     return Intl.message(
-      'Page Size',
+      'Размер страницы',
       name: 'page_size',
       desc: '',
       args: [],
     );
   }
 
-  /// `Page Margins`
+  /// `Поля страницы`
   String get page_margins {
     return Intl.message(
-      'Page Margins',
+      'Поля страницы',
       name: 'page_margins',
       desc: '',
       args: [],
     );
   }
 
-  /// `Include Images`
+  /// `Включать изображения`
   String get include_images {
     return Intl.message(
-      'Include Images',
+      'Включать изображения',
       name: 'include_images',
       desc: '',
       args: [],
     );
   }
 
-  /// `Image Quality`
+  /// `Качество изображений`
   String get image_quality {
     return Intl.message(
-      'Image Quality',
+      'Качество изображений',
       name: 'image_quality',
       desc: '',
       args: [],
     );
   }
 
-  /// `High Quality`
+  /// `Высокое качество`
   String get high_quality {
     return Intl.message(
-      'High Quality',
+      'Высокое качество',
       name: 'high_quality',
       desc: '',
       args: [],
     );
   }
 
-  /// `Medium Quality`
+  /// `Среднее качество`
   String get medium_quality {
     return Intl.message(
-      'Medium Quality',
+      'Среднее качество',
       name: 'medium_quality',
       desc: '',
       args: [],
     );
   }
 
-  /// `Low Quality`
+  /// `Низкое качество`
   String get low_quality {
     return Intl.message(
-      'Low Quality',
+      'Низкое качество',
       name: 'low_quality',
       desc: '',
       args: [],
     );
   }
 
-  /// `Compression`
+  /// `Сжатие`
   String get compression {
     return Intl.message(
-      'Compression',
+      'Сжатие',
       name: 'compression',
       desc: '',
       args: [],
     );
   }
 
-  /// `Page Orientation`
+  /// `Ориентация страницы`
   String get page_orientation {
     return Intl.message(
-      'Page Orientation',
+      'Ориентация страницы',
       name: 'page_orientation',
       desc: '',
       args: [],
     );
   }
 
-  /// `Portrait`
+  /// `Портретная`
   String get portrait {
     return Intl.message(
-      'Portrait',
+      'Портретная',
       name: 'portrait',
       desc: '',
       args: [],
     );
   }
 
-  /// `Landscape`
+  /// `Альбомная`
   String get landscape {
     return Intl.message(
-      'Landscape',
+      'Альбомная',
       name: 'landscape',
       desc: '',
       args: [],
     );
   }
 
-  /// `Auto Layout`
+  /// `Автоматический макет`
   String get auto_layout {
     return Intl.message(
-      'Auto Layout',
+      'Автоматический макет',
       name: 'auto_layout',
       desc: '',
       args: [],
     );
   }
 
-  /// `Custom Layout`
+  /// `Пользовательский макет`
   String get custom_layout {
     return Intl.message(
-      'Custom Layout',
+      'Пользовательский макет',
       name: 'custom_layout',
       desc: '',
       args: [],
     );
   }
 
-  /// `Page Numbering`
+  /// `Нумерация страниц`
   String get page_numbering {
     return Intl.message(
-      'Page Numbering',
+      'Нумерация страниц',
       name: 'page_numbering',
       desc: '',
       args: [],
     );
   }
 
-  /// `Headers and Footers`
+  /// `Колонтитулы`
   String get headers_footers {
     return Intl.message(
-      'Headers and Footers',
+      'Колонтитулы',
       name: 'headers_footers',
       desc: '',
       args: [],
     );
   }
 
-  /// `Table of Contents`
+  /// `Оглавление`
   String get table_of_contents {
     return Intl.message(
-      'Table of Contents',
+      'Оглавление',
       name: 'table_of_contents',
       desc: '',
       args: [],
     );
   }
 
-  /// `Watermark`
+  /// `Водяной знак`
   String get watermark {
     return Intl.message(
-      'Watermark',
+      'Водяной знак',
       name: 'watermark',
       desc: '',
       args: [],
     );
   }
 
-  /// `Security Options`
+  /// `Опции безопасности`
   String get security_options {
     return Intl.message(
-      'Security Options',
+      'Опции безопасности',
       name: 'security_options',
       desc: '',
       args: [],
     );
   }
 
-  /// `Password Protection`
+  /// `Защита паролем`
   String get password_protection {
     return Intl.message(
-      'Password Protection',
+      'Защита паролем',
       name: 'password_protection',
       desc: '',
       args: [],
     );
   }
 
-  /// `Permissions`
+  /// `Разрешения`
   String get permissions {
     return Intl.message(
-      'Permissions',
+      'Разрешения',
       name: 'permissions',
       desc: '',
       args: [],
     );
   }
 
-  /// `Allow Printing`
+  /// `Разрешить печать`
   String get allow_printing {
     return Intl.message(
-      'Allow Printing',
+      'Разрешить печать',
       name: 'allow_printing',
       desc: '',
       args: [],
     );
   }
 
-  /// `Allow Copying`
+  /// `Разрешить копирование`
   String get allow_copying {
     return Intl.message(
-      'Allow Copying',
+      'Разрешить копирование',
       name: 'allow_copying',
       desc: '',
       args: [],
     );
   }
 
-  /// `Allow Modifications`
+  /// `Разрешить изменения`
   String get allow_modifications {
     return Intl.message(
-      'Allow Modifications',
+      'Разрешить изменения',
       name: 'allow_modifications',
       desc: '',
       args: [],
     );
   }
 
-  /// `Metadata`
+  /// `Метаданные`
   String get metadata {
     return Intl.message(
-      'Metadata',
+      'Метаданные',
       name: 'metadata',
       desc: '',
       args: [],
     );
   }
 
-  /// `Author`
+  /// `Автор`
   String get author {
     return Intl.message(
-      'Author',
+      'Автор',
       name: 'author',
       desc: '',
       args: [],
     );
   }
 
-  /// `Subject`
+  /// `Тема`
   String get subject {
     return Intl.message(
-      'Subject',
+      'Тема',
       name: 'subject',
       desc: '',
       args: [],
     );
   }
 
-  /// `Keywords`
+  /// `Ключевые слова`
   String get keywords {
     return Intl.message(
-      'Keywords',
+      'Ключевые слова',
       name: 'keywords',
       desc: '',
       args: [],
     );
   }
 
-  /// `Advanced Settings`
+  /// `Расширенные настройки`
   String get advanced_settings {
     return Intl.message(
-      'Advanced Settings',
+      'Расширенные настройки',
       name: 'advanced_settings',
       desc: '',
       args: [],
     );
   }
 
-  /// `Preview`
+  /// `Предпросмотр`
   String get preview {
     return Intl.message(
-      'Preview',
+      'Предпросмотр',
       name: 'preview',
       desc: '',
       args: [],
     );
   }
 
-  /// `Generate Sample`
+  /// `Сгенерировать образец`
   String get generate_sample {
     return Intl.message(
-      'Generate Sample',
+      'Сгенерировать образец',
       name: 'generate_sample',
       desc: '',
       args: [],
     );
   }
 
-  /// `Default Settings`
+  /// `Настройки по умолчанию`
   String get default_settings {
     return Intl.message(
-      'Default Settings',
+      'Настройки по умолчанию',
       name: 'default_settings',
       desc: '',
       args: [],
     );
   }
 
-  /// `Export Preset`
+  /// `Пресет экспорта`
   String get export_preset {
     return Intl.message(
-      'Export Preset',
+      'Пресет экспорта',
       name: 'export_preset',
       desc: '',
       args: [],
     );
   }
 
-  /// `Custom Preset`
+  /// `Пользовательский пресет`
   String get custom_preset {
     return Intl.message(
-      'Custom Preset',
+      'Пользовательский пресет',
       name: 'custom_preset',
       desc: '',
       args: [],
     );
   }
 
-  /// `Save Preset`
+  /// `Сохранить пресет`
   String get save_preset {
     return Intl.message(
-      'Save Preset',
+      'Сохранить пресет',
       name: 'save_preset',
       desc: '',
       args: [],
     );
   }
 
-  /// `Load Preset`
+  /// `Загрузить пресет`
   String get load_preset {
     return Intl.message(
-      'Load Preset',
+      'Загрузить пресет',
       name: 'load_preset',
       desc: '',
       args: [],
     );
   }
 
-  /// `Delete Preset`
+  /// `Удалить пресет`
   String get delete_preset {
     return Intl.message(
-      'Delete Preset',
+      'Удалить пресет',
       name: 'delete_preset',
       desc: '',
       args: [],
     );
   }
 
-  /// `Preset Name`
+  /// `Имя пресета`
   String get preset_name {
     return Intl.message(
-      'Preset Name',
+      'Имя пресета',
       name: 'preset_name',
       desc: '',
       args: [],
     );
   }
 
-  /// `Preset Saved`
+  /// `Пресет сохранен`
   String get preset_saved {
     return Intl.message(
-      'Preset Saved',
+      'Пресет сохранен',
       name: 'preset_saved',
       desc: '',
       args: [],
     );
   }
 
-  /// `Preset Loaded`
+  /// `Пресет загружен`
   String get preset_loaded {
     return Intl.message(
-      'Preset Loaded',
+      'Пресет загружен',
       name: 'preset_loaded',
       desc: '',
       args: [],
     );
   }
 
-  /// `Preset Deleted`
+  /// `Пресет удален`
   String get preset_deleted {
     return Intl.message(
-      'Preset Deleted',
+      'Пресет удален',
       name: 'preset_deleted',
       desc: '',
       args: [],
     );
   }
 
-  /// `Service creation error`
+  /// `Ошибка создания сервиса для персонажа`
   String get service_creation_error {
     return Intl.message(
-      'Service creation error',
+      'Ошибка создания сервиса для персонажа',
       name: 'service_creation_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Race service creation error`
+  /// `Ошибка создания сервиса для расы`
   String get race_service_creation_error {
     return Intl.message(
-      'Race service creation error',
+      'Ошибка создания сервиса для расы',
       name: 'race_service_creation_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Unsupported model type for PDF export`
+  /// `Неподдерживаемый тип модели для экспорта PDF`
   String get unsupported_model_type {
     return Intl.message(
-      'Unsupported model type for PDF export',
+      'Неподдерживаемый тип модели для экспорта PDF',
       name: 'unsupported_model_type',
       desc: '',
       args: [],
     );
   }
 
-  /// `PDF generation error`
+  /// `Ошибка генерации PDF`
   String get pdf_generation_error {
     return Intl.message(
-      'PDF generation error',
+      'Ошибка генерации PDF',
       name: 'pdf_generation_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Font load timeout`
+  /// `Таймаут загрузки шрифта`
   String get font_load_timeout {
     return Intl.message(
-      'Font load timeout',
+      'Таймаут загрузки шрифта',
       name: 'font_load_timeout',
       desc: '',
       args: [],
     );
   }
 
-  /// `PDF settings save error`
+  /// `Ошибка сохранения настроек PDF`
   String get settings_save_error {
     return Intl.message(
-      'PDF settings save error',
+      'Ошибка сохранения настроек PDF',
       name: 'settings_save_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Character Profile`
+  /// `Характеристика персонажа`
   String get character_profile_title {
     return Intl.message(
-      'Character Profile',
+      'Характеристика персонажа',
       name: 'character_profile_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Race Profile`
+  /// `Описание расы`
   String get race_profile_title {
     return Intl.message(
-      'Race Profile',
+      'Описание расы',
       name: 'race_profile_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `PDF creation timeout`
+  /// `Создание PDF заняло слишком много времени`
   String get pdf_creation_timeout {
     return Intl.message(
-      'PDF creation timeout',
+      'Создание PDF заняло слишком много времени',
       name: 'pdf_creation_timeout',
       desc: '',
       args: [],
     );
   }
 
-  /// `PDF generation timeout`
+  /// `Генерация PDF заняла слишком много времени`
   String get pdf_generation_timeout {
     return Intl.message(
-      'PDF generation timeout',
+      'Генерация PDF заняла слишком много времени',
       name: 'pdf_generation_timeout',
       desc: '',
       args: [],
     );
   }
 
-  /// `File sharing timeout`
+  /// `Шаринг файла занял слишком много времени`
   String get file_sharing_timeout {
     return Intl.message(
-      'File sharing timeout',
+      'Шаринг файла занял слишком много времени',
       name: 'file_sharing_timeout',
       desc: '',
       args: [],
     );
   }
 
-  /// `Operation timeout`
+  /// `Операция заняла слишком много времени`
   String get operation_timeout {
     return Intl.message(
-      'Operation timeout',
+      'Операция заняла слишком много времени',
       name: 'operation_timeout',
       desc: '',
       args: [],
     );
   }
 
-  /// `PDF creation failed`
+  /// `Не удалось создать PDF`
   String get pdf_creation_failed {
     return Intl.message(
-      'PDF creation failed',
+      'Не удалось создать PDF',
       name: 'pdf_creation_failed',
       desc: '',
       args: [],
     );
   }
 
-  /// `Timeout`
+  /// `Таймаут`
   String get timeout_error {
     return Intl.message(
-      'Timeout',
+      'Таймаут',
       name: 'timeout_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `PDF successfully created and ready to share`
+  /// `PDF успешно создан и готов к分享`
   String get export_success {
     return Intl.message(
-      'PDF successfully created and ready to share',
+      'PDF успешно создан и готов к分享',
       name: 'export_success',
       desc: '',
       args: [],
     );
   }
 
-  /// `Race "{name}" successfully exported to PDF`
+  /// `Раса "{name}" успешно экспортирована в PDF`
   String race_exported(Object name) {
     return Intl.message(
-      'Race "$name" successfully exported to PDF',
+      'Раса "$name" успешно экспортирована в PDF',
       name: 'race_exported',
       desc: '',
       args: [name],
     );
   }
 
-  /// `Initialization`
+  /// `Инициализация`
   String get initialization {
     return Intl.message(
-      'Initialization',
+      'Инициализация',
       name: 'initialization',
       desc: '',
       args: [],
     );
   }
 
-  /// `Initialization Error`
+  /// `Ошибка инициализации`
   String get initialization_error {
     return Intl.message(
-      'Initialization Error',
+      'Ошибка инициализации',
       name: 'initialization_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Critical Error`
+  /// `Критическая ошибка`
   String get critical_error {
     return Intl.message(
-      'Critical Error',
+      'Критическая ошибка',
       name: 'critical_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `The app reset some data and settings to restore functionality`
+  /// `Приложение сбросило некоторые данные и настройки для восстановления работоспособности`
   String get initialization_reset_warning {
     return Intl.message(
-      'The app reset some data and settings to restore functionality',
+      'Приложение сбросило некоторые данные и настройки для восстановления работоспособности',
       name: 'initialization_reset_warning',
       desc: '',
       args: [],
     );
   }
 
-  /// `The app attempted to restore functionality, but some data may have been lost`
+  /// `Приложение попыталось восстановить работоспособность, но некоторые данные могли быть утеряны`
   String get critical_error_warning {
     return Intl.message(
-      'The app attempted to restore functionality, but some data may have been lost',
+      'Приложение попыталось восстановить работоспособность, но некоторые данные могли быть утеряны',
       name: 'critical_error_warning',
       desc: '',
       args: [],
     );
   }
 
-  /// `Understood`
+  /// `Понятно`
   String get understood {
     return Intl.message(
-      'Understood',
+      'Понятно',
       name: 'understood',
       desc: '',
       args: [],
     );
   }
 
-  /// `Details`
+  /// `Подробнее`
   String get details {
     return Intl.message(
-      'Details',
+      'Подробнее',
       name: 'details',
       desc: '',
       args: [],
     );
   }
 
-  /// `Close App`
+  /// `Закрыть приложение`
   String get close_app {
     return Intl.message(
-      'Close App',
+      'Закрыть приложение',
       name: 'close_app',
       desc: '',
       args: [],
     );
   }
 
-  /// `Continue`
+  /// `Продолжить`
   String get continue_text {
     return Intl.message(
-      'Continue',
+      'Продолжить',
       name: 'continue_text',
       desc: '',
       args: [],
     );
   }
 
-  /// `Error Details`
+  /// `Детали ошибки`
   String get error_details {
     return Intl.message(
-      'Error Details',
+      'Детали ошибки',
       name: 'error_details',
       desc: '',
       args: [],
     );
   }
 
-  /// `An error occurred during app initialization. Detailed technical information:`
+  /// `Произошла ошибка во время инициализации приложения. Подробная техническая информация:`
   String get error_details_description {
     return Intl.message(
-      'An error occurred during app initialization. Detailed technical information:',
+      'Произошла ошибка во время инициализации приложения. Подробная техническая информация:',
       name: 'error_details_description',
       desc: '',
       args: [],
     );
   }
 
-  /// `Technical Details`
+  /// `Технические детали`
   String get technical_details {
     return Intl.message(
-      'Technical Details',
+      'Технические детали',
       name: 'technical_details',
       desc: '',
       args: [],
     );
   }
 
-  /// `The app automatically attempted to restore functionality. If the error persists, try reinstalling the app.`
+  /// `Приложение автоматически попыталось восстановить работоспособность. Если ошибка повторяется, попробуйте переустановить приложение.`
   String get recovery_advice {
     return Intl.message(
-      'The app automatically attempted to restore functionality. If the error persists, try reinstalling the app.',
+      'Приложение автоматически попыталось восстановить работоспособность. Если ошибка повторяется, попробуйте переустановить приложение.',
       name: 'recovery_advice',
       desc: '',
       args: [],
     );
   }
 
-  /// `Database initialization error`
+  /// `Ошибка инициализации базы данных`
   String get hive_initialization_error {
     return Intl.message(
-      'Database initialization error',
+      'Ошибка инициализации базы данных',
       name: 'hive_initialization_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Window manager initialization error`
+  /// `Ошибка инициализации менеджера окон`
   String get window_manager_initialization_error {
     return Intl.message(
-      'Window manager initialization error',
+      'Ошибка инициализации менеджера окон',
       name: 'window_manager_initialization_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Data initialization error`
+  /// `Ошибка инициализации данных`
   String get data_initialization_error {
     return Intl.message(
-      'Data initialization error',
+      'Ошибка инициализации данных',
       name: 'data_initialization_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Service initialization error`
+  /// `Ошибка инициализации сервиса`
   String get service_initialization_error {
     return Intl.message(
-      'Service initialization error',
+      'Ошибка инициализации сервиса',
       name: 'service_initialization_error',
       desc: '',
       args: [],
     );
   }
 
-  /// `Initialization completed successfully`
+  /// `Инициализация завершена успешно`
   String get initialization_success {
     return Intl.message(
-      'Initialization completed successfully',
+      'Инициализация завершена успешно',
       name: 'initialization_success',
       desc: '',
       args: [],
     );
   }
 
-  /// `Initialization failed`
+  /// `Инициализация не удалась`
   String get initialization_failed {
     return Intl.message(
-      'Initialization failed',
+      'Инициализация не удалась',
       name: 'initialization_failed',
       desc: '',
       args: [],
     );
   }
 
-  /// `Retry Initialization`
+  /// `Повторить инициализацию`
   String get retry_initialization {
     return Intl.message(
-      'Retry Initialization',
+      'Повторить инициализацию',
       name: 'retry_initialization',
       desc: '',
       args: [],
     );
   }
 
-  /// `Initializing app...`
+  /// `Инициализация приложения...`
   String get initialization_progress {
     return Intl.message(
-      'Initializing app...',
+      'Инициализация приложения...',
       name: 'initialization_progress',
       desc: '',
       args: [],
     );
   }
 
-  /// `Loading data...`
+  /// `Загрузка данных...`
   String get loading_data {
     return Intl.message(
-      'Loading data...',
+      'Загрузка данных...',
       name: 'loading_data',
       desc: '',
       args: [],
     );
   }
 
-  /// `Preparing services...`
+  /// `Подготовка сервисов...`
   String get preparing_services {
     return Intl.message(
-      'Preparing services...',
+      'Подготовка сервисов...',
       name: 'preparing_services',
       desc: '',
       args: [],
     );
   }
 
-  /// `Checking dependencies...`
+  /// `Проверка зависимостей...`
   String get checking_dependencies {
     return Intl.message(
-      'Checking dependencies...',
+      'Проверка зависимостей...',
       name: 'checking_dependencies',
       desc: '',
       args: [],
     );
   }
 
-  /// `Initialization timeout`
+  /// `Таймаут инициализации`
   String get initialization_timeout {
     return Intl.message(
-      'Initialization timeout',
+      'Таймаут инициализации',
       name: 'initialization_timeout',
       desc: '',
       args: [],
     );
   }
 
-  /// `Initialization took too long. Check your internet connection and try again.`
+  /// `Инициализация заняла слишком много времени. Проверьте подключение к интернету и попробуйте снова.`
   String get initialization_timeout_message {
     return Intl.message(
-      'Initialization took too long. Check your internet connection and try again.',
+      'Инициализация заняла слишком много времени. Проверьте подключение к интернету и попробуйте снова.',
       name: 'initialization_timeout_message',
       desc: '',
       args: [],
     );
   }
 
-  /// `Warning: Low device storage`
+  /// `Предупреждение: мало места на устройстве`
   String get low_storage_warning {
     return Intl.message(
-      'Warning: Low device storage',
+      'Предупреждение: мало места на устройстве',
       name: 'low_storage_warning',
       desc: '',
       args: [],
     );
   }
 
-  /// `Your device is running low on storage. This may affect the app's performance.`
+  /// `На вашем устройстве осталось мало места. Это может повлиять на работу приложения.`
   String get low_storage_message {
     return Intl.message(
-      'Your device is running low on storage. This may affect the app\'s performance.',
+      'На вашем устройстве осталось мало места. Это может повлиять на работу приложения.',
       name: 'low_storage_message',
       desc: '',
       args: [],
     );
   }
 
-  /// `Permission Required`
+  /// `Требуется разрешение`
   String get permission_required {
     return Intl.message(
-      'Permission Required',
+      'Требуется разрешение',
       name: 'permission_required',
       desc: '',
       args: [],
     );
   }
 
-  /// `The app requires storage permission to function.`
+  /// `Для работы приложения требуется разрешение на доступ к хранилищу.`
   String get storage_permission_message {
     return Intl.message(
-      'The app requires storage permission to function.',
+      'Для работы приложения требуется разрешение на доступ к хранилищу.',
       name: 'storage_permission_message',
       desc: '',
       args: [],
     );
   }
 
-  /// `Grant Permission`
+  /// `Предоставить разрешение`
   String get grant_permission {
     return Intl.message(
-      'Grant Permission',
+      'Предоставить разрешение',
       name: 'grant_permission',
       desc: '',
       args: [],
     );
   }
 
-  /// `Skip`
+  /// `Пропустить`
   String get skip_for_now {
     return Intl.message(
-      'Skip',
+      'Пропустить',
       name: 'skip_for_now',
       desc: '',
       args: [],
     );
   }
 
-  /// `Initialization Complete`
+  /// `Инициализация завершена`
   String get initialization_complete {
     return Intl.message(
-      'Initialization Complete',
+      'Инициализация завершена',
       name: 'initialization_complete',
       desc: '',
       args: [],
     );
   }
 
-  /// `App is ready to use`
+  /// `Приложение готово к использованию`
   String get ready_to_use {
     return Intl.message(
-      'App is ready to use',
+      'Приложение готово к использованию',
       name: 'ready_to_use',
       desc: '',
       args: [],
     );
   }
 
-  /// `Welcome to CharacterBook!`
+  /// `Добро пожаловать в CharacterBook!`
   String get welcome_message {
     return Intl.message(
-      'Welcome to CharacterBook!',
+      'Добро пожаловать в CharacterBook!',
       name: 'welcome_message',
       desc: '',
       args: [],
     );
   }
 
-  /// `Configuring environment...`
+  /// `Настройка окружения...`
   String get configuring_environment {
     return Intl.message(
-      'Configuring environment...',
+      'Настройка окружения...',
       name: 'configuring_environment',
       desc: '',
       args: [],
     );
   }
 
-  /// `Loading resources...`
+  /// `Загрузка ресурсов...`
   String get loading_resources {
     return Intl.message(
-      'Loading resources...',
+      'Загрузка ресурсов...',
       name: 'loading_resources',
       desc: '',
       args: [],
     );
   }
 
-  /// `Verifying integrity...`
+  /// `Проверка целостности...`
   String get verifying_integrity {
     return Intl.message(
-      'Verifying integrity...',
+      'Проверка целостности...',
       name: 'verifying_integrity',
       desc: '',
       args: [],
     );
   }
 
-  /// `Migrating data...`
+  /// `Миграция данных...`
   String get migration_in_progress {
     return Intl.message(
-      'Migrating data...',
+      'Миграция данных...',
       name: 'migration_in_progress',
       desc: '',
       args: [],
     );
   }
 
-  /// `Creating backup...`
+  /// `Создание резервной копии...`
   String get backup_creation {
     return Intl.message(
-      'Creating backup...',
+      'Создание резервной копии...',
       name: 'backup_creation',
       desc: '',
       args: [],
     );
   }
 
-  /// `Clearing cache...`
+  /// `Очистка кеша...`
   String get cache_clearing {
     return Intl.message(
-      'Clearing cache...',
+      'Очистка кеша...',
       name: 'cache_clearing',
       desc: '',
       args: [],
     );
   }
 
-  /// `Optimizing performance...`
+  /// `Оптимизация производительности...`
   String get optimizing_performance {
     return Intl.message(
-      'Optimizing performance...',
+      'Оптимизация производительности...',
       name: 'optimizing_performance',
       desc: '',
       args: [],
     );
   }
 
-  /// `Finalizing setup...`
+  /// `Завершение настройки...`
   String get finalizing_setup {
     return Intl.message(
-      'Finalizing setup...',
+      'Завершение настройки...',
       name: 'finalizing_setup',
       desc: '',
       args: [],
     );
   }
 
-  /// `Close`
+  /// `Закрыть`
   String get close {
     return Intl.message(
-      'Close',
+      'Закрыть',
       name: 'close',
       desc: '',
       args: [],
