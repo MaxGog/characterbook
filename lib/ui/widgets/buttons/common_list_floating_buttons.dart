@@ -26,7 +26,8 @@ class CommonListFloatingButtons extends StatefulWidget {
   });
 
   @override
-  State<CommonListFloatingButtons> createState() => _CustomFloatingButtonsState();
+  State<CommonListFloatingButtons> createState() =>
+      _CustomFloatingButtonsState();
 }
 
 class _CustomFloatingButtonsState extends State<CommonListFloatingButtons>
@@ -163,56 +164,48 @@ class _CustomFloatingButtonsState extends State<CommonListFloatingButtons>
       ),
     );
 
-    return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(0, 0.5),
-        end: Offset.zero,
-      ).animate(animation),
-      child: FadeTransition(
-        opacity: animation,
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 12.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                constraints: const BoxConstraints(maxWidth: 200),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainer,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: theme.shadowColor.withOpacity(0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Text(
-                  label,
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    color: colorScheme.onSurface,
+    return FadeTransition(
+      opacity: animation,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 12.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              constraints: const BoxConstraints(maxWidth: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainer,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: theme.shadowColor.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
-                  overflow: TextOverflow.ellipsis,
-                ),
+                ],
               ),
-              const SizedBox(width: 12),
-              FloatingActionButton.small(
-                heroTag: '${widget.heroTag}_action_$index',
-                onPressed: onTap,
-                tooltip: tooltip,
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(12),
+              child: Text(
+                label,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: colorScheme.onSurface,
                 ),
-                backgroundColor: colorScheme.secondaryContainer,
-                foregroundColor: colorScheme.onSecondaryContainer,
-                child: Icon(icon),
+                overflow: TextOverflow.ellipsis,
               ),
-            ],
-          ),
+            ),
+            const SizedBox(width: 12),
+            FloatingActionButton.small(
+              heroTag: '${widget.heroTag}_action_$index',
+              onPressed: onTap,
+              tooltip: tooltip,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              backgroundColor: colorScheme.secondaryContainer,
+              foregroundColor: colorScheme.onSecondaryContainer,
+              child: Icon(icon),
+            ),
+          ],
         ),
       ),
     );
