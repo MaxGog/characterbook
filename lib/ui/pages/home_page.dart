@@ -325,7 +325,7 @@ class _HomePageState extends State<HomePage> {
     final s = S.of(context);
 
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: CommonMainAppBar(
         title: s.app_name,
         isSearching: _isSearching,
         searchController: _searchController,

@@ -477,7 +477,7 @@ class _FoldersScreenState extends State<FoldersScreen> {
     final s = S.of(context);
 
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: CommonMainAppBar(
         title: _getTitle(s),
         isSearching: isSearching,
         searchController: searchController,

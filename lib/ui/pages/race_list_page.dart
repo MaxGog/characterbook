@@ -280,20 +280,14 @@ class _RaceListPageState extends State<RaceListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: CommonMainAppBar(
         title: S.of(context).races,
         isSearching: isSearching,
         searchController: searchController,
         searchHint: S.of(context).search_race_hint,
         onSearchToggle: _handleSearchToggle,
         onSearchChanged: _handleSearchChanged,
-        additionalActions: [
-          IconButton(
-            icon: const Icon(Icons.folder_outlined),
-            onPressed: _openFoldersScreen,
-            tooltip: S.of(context).folders,
-          ),
-        ],
+        onFoldersPressed: _openFoldersScreen,
       ),
       body: Column(
         children: [

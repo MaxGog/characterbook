@@ -229,7 +229,7 @@ class _CharacterListPageState extends BaseListPageState<Character, CharacterList
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: CommonMainAppBar(
         title: S.of(context).my_characters,
         isSearching: isSearching,
         searchController: searchController,
@@ -247,18 +247,12 @@ class _CharacterListPageState extends BaseListPageState<Character, CharacterList
           filterCharacters(query, allCharacters.toList());
         },
         onTemplatesPressed: createFromTemplate,
-        additionalActions: [
-          IconButton(
-            icon: const Icon(Icons.folder_outlined),
-            onPressed: () => Navigator.push(
+        onFoldersPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => FoldersScreen(folderType: FolderType.character),
               ),
-            ),
-            tooltip: S.of(context).folders,
-          ),
-        ],
+        ),
       ),
       body: Column(
         children: [

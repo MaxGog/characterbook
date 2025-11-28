@@ -440,7 +440,7 @@ class _TemplatesPageState extends BaseListPageState<QuestionnaireTemplate, Templ
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: CommonMainAppBar(
         title: S.of(context).templates,
         isSearching: isSearching,
         searchController: searchController,

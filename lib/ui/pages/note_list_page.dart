@@ -251,20 +251,14 @@ class _NotesListPageState extends State<NotesListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: CommonMainAppBar(
         title: '${S.of(context).my} ${S.of(context).posts.toLowerCase()}',
         isSearching: isSearching,
         searchController: searchController,
         searchHint: S.of(context).search_hint,
         onSearchToggle: _handleSearchToggle,
         onSearchChanged: _handleSearchChanged,
-        additionalActions: [
-          IconButton(
-            icon: const Icon(Icons.folder_outlined),
-            onPressed: _openFoldersScreen,
-            tooltip: S.of(context).folders,
-          ),
-        ],
+        onFoldersPressed: _openFoldersScreen,
       ),
       body: Column(
         children: [
