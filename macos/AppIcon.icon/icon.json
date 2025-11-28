@@ -1,0 +1,67 @@
+{
+  "color-space-for-untagged-svg-colors" : "display-p3",
+  "fill" : {
+    "linear-gradient" : [
+      "display-p3:0.57206,0.25593,1.00000,1.00000",
+      "display-p3:0.40144,0.23311,0.70936,1.00000"
+    ],
+    "orientation" : {
+      "start" : {
+        "x" : 0.5,
+        "y" : 0
+      },
+      "stop" : {
+        "x" : 0.5,
+        "y" : 0.7
+      }
+    }
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "blend-mode" : "normal",
+          "fill" : {
+            "linear-gradient" : [
+              "display-p3:0.96264,1.00000,0.95823,1.00000",
+              "display-p3:0.95453,0.76897,0.96783,1.00000"
+            ],
+            "orientation" : {
+              "start" : {
+                "x" : 0.5,
+                "y" : 0.2491093839793823
+              },
+              "stop" : {
+                "x" : 0.5,
+                "y" : 0.804870472123506
+              }
+            }
+          },
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "Логотип CharacterBook 2025.svg",
+          "name" : "Logo",
+          "position" : {
+            "scale" : 5.76,
+            "translation-in-points" : [
+              0,
+              0.0008276986691271304
+            ]
+          }
+        }
+      ],
+      "name" : "Symbol",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : "shared"
+  }
+}
