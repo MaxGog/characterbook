@@ -1,21 +1,22 @@
-import 'package:characterbook/ui/pages/settings_page.dart';
-import 'package:characterbook/ui/pages/export_pdf_settings_page.dart';
-import 'package:characterbook/ui/pages/random_number_page.dart';
-import 'package:characterbook/ui/pages/templates_page.dart';
-import 'package:characterbook/ui/pages/calendar_page.dart';
-import 'package:characterbook/ui/widgets/buttons/custom_floating_buttons.dart';
-import 'package:characterbook/ui/widgets/cards/character_keep_card.dart';
-import 'package:characterbook/ui/widgets/cards/race_keep_card.dart';
-import 'package:characterbook/ui/widgets/tools_context_menu.dart';
 import 'package:flutter/material.dart';
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/services/character_service.dart';
-import 'package:characterbook/services/race_service.dart';
-import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/ui/pages/character_management_page.dart';
-import 'package:characterbook/ui/pages/race_management_page.dart';
-import 'package:characterbook/ui/cards/character_modal_card.dart';
+
+import '../../generated/l10n.dart';
+import '../../models/character_model.dart';
+import '../../models/race_model.dart';
+import '../../services/character_service.dart';
+import '../../services/race_service.dart';
+import '../cards/character_modal_card.dart';
+import '../widgets/appbar/custom_app_bar.dart';
+import '../widgets/buttons/custom_floating_buttons.dart';
+import '../widgets/cards/character_keep_card.dart';
+import '../widgets/cards/race_keep_card.dart';
+import '../widgets/tools_context_menu.dart';
+import 'calendar_page.dart';
+import 'character_management_page.dart';
+import 'export_pdf_settings_page.dart';
+import 'race_management_page.dart';
+import 'random_number_page.dart';
+import 'templates_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -35,10 +36,26 @@ class _HomePageState extends State<HomePage> {
   String _searchQuery = '';
   HomeContentType _selectedContentType = HomeContentType.characters;
 
+  bool _isSearching = false;
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     _loadData();
+
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text;
+        _filterData();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadData() async {
@@ -56,6 +73,44 @@ class _HomePageState extends State<HomePage> {
   void _changeContentType(HomeContentType type) {
     setState(() {
       _selectedContentType = type;
+    });
+  }
+
+  void _filterData() {
+    if (_searchQuery.isEmpty) {
+      setState(() {
+        _filteredCharacters = _characters;
+        _filteredRaces = _races;
+      });
+    } else {
+      final query = _searchQuery.toLowerCase();
+      setState(() {
+        _filteredCharacters = _characters.where((character) {
+          return character.name.toLowerCase().contains(query);
+        }).toList();
+
+        _filteredRaces = _races.where((race) {
+          return race.name.toLowerCase().contains(query);
+        }).toList();
+      });
+    }
+  }
+
+  void _onSearchToggle() {
+    setState(() {
+      _isSearching = !_isSearching;
+      if (!_isSearching) {
+        _searchController.clear();
+        _searchQuery = '';
+        _filterData();
+      }
+    });
+  }
+
+  void _onSearchChanged(String value) {
+    setState(() {
+      _searchQuery = value;
+      _filterData();
     });
   }
 
@@ -242,11 +297,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _openSettings() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const SettingsPage()));
-  }
-
   void _navigateToTool(Widget page) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
@@ -263,33 +313,29 @@ class _HomePageState extends State<HomePage> {
       return S.of(context).days_ago(difference.inDays);
     } else if (difference.inDays < 30) {
       final weeks = (difference.inDays / 7).floor();
-      return '${weeks} ${S.of(context).week}';
+      return '$weeks ${S.of(context).week}';
     } else {
       final months = (difference.inDays / 30).floor();
-      return '${months} ${S.of(context).month}';
+      return '$months ${S.of(context).month}';
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final s = S.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          s.app_name,
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: _openSettings,
-            tooltip: s.settings,
-          ),
-        ],
+      appBar: CustomAppBar(
+        title: s.app_name,
+        isSearching: _isSearching,
+        searchController: _searchController,
+        onSearchToggle: _onSearchToggle,
+        searchHint: _selectedContentType == HomeContentType.characters
+            ? s.search_characters
+            : s.search,
+        onSearchChanged: _onSearchChanged,
+        showViewModeToggle: false,
+        showTemplatesToggle: false,
       ),
       floatingActionButton: _selectedContentType != HomeContentType.tools
           ? CustomFloatingButtons(
@@ -317,11 +363,11 @@ class _HomePageState extends State<HomePage> {
               segments: [
                 ButtonSegment<HomeContentType>(
                   value: HomeContentType.characters,
-                  label: Text('${s.characters} (${_characters.length})'),
+                  label: Text(s.characters),
                 ),
                 ButtonSegment<HomeContentType>(
                   value: HomeContentType.races,
-                  label: Text('${s.races} (${_races.length})'),
+                  label: Text(s.races),
                 ),
                 ButtonSegment<HomeContentType>(
                   value: HomeContentType.tools,
@@ -353,21 +399,21 @@ class _HomePageState extends State<HomePage> {
     final tools = [
       _ToolItem(
         title: s.randomNumberGenerator,
-        subtitle: s.selectRange,
+        subtitle: '',
         icon: Icons.casino_rounded,
         iconColor: colorScheme.primary,
         onTap: () => _navigateToTool(const RandomNumberPage()),
       ),
       _ToolItem(
         title: s.export_pdf_settings,
-        subtitle: s.export,
+        subtitle: '',
         icon: Icons.picture_as_pdf_rounded,
         iconColor: colorScheme.primary,
         onTap: () => _navigateToTool(const ExportPdfSettingsPage()),
       ),
       _ToolItem(
         title: s.templates,
-        subtitle: s.template_management,
+        subtitle: '',
         icon: Icons.library_books_rounded,
         iconColor: colorScheme.primary,
         onTap: () => _navigateToTool(const TemplatesPage()),
