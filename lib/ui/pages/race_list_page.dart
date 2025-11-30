@@ -7,6 +7,7 @@ import 'package:characterbook/ui/widgets/tools_context_menu.dart';
 import 'package:characterbook/ui/widgets/appbar/common_main_app_bar.dart';
 import 'package:characterbook/ui/widgets/buttons/common_list_floating_buttons.dart';
 import 'package:characterbook/ui/widgets/cards/race_card.dart';
+import 'package:characterbook/ui/cards/race_modal_card.dart';
 import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
 import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
 import 'package:characterbook/ui/widgets/performance/optimized_value_listenable.dart';
@@ -181,11 +182,13 @@ class _RaceListPageState extends State<RaceListPage> {
   }
 
   Future<void> _editRace(Race race) async {
-    final result = await Navigator.push<bool>(
-      context,
-      MaterialPageRoute(builder: (context) => RaceManagementPage(race: race)),
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => RaceModalCard(race: race),
     );
-    if (result == true && mounted) {
+    if (mounted) {
       _filterRaces(searchController.text, _racesBox.values.toList());
     }
   }

@@ -1,6 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:characterbook/services/pdf_export_manager.dart';
+import 'package:characterbook/services/file_share_service.dart';
 import 'package:characterbook/ui/dialogs/error_dialog.dart';
+import 'package:characterbook/ui/dialogs/loading_dialog.dart';
+import 'package:characterbook/generated/l10n.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -401,6 +406,63 @@ class RaceService {
       fileName: '${race!.name}.pdf',
       shareText: 'Описание расы ${race!.name}',
     );
+  }
+
+  Future<void> exportToJson(BuildContext context) async {
+    if (race == null) {
+      _showErrorDialog(
+        context,
+        'Ошибка экспорта',
+        'Раса не установлена для экспорта',
+      );
+      return;
+    }
+
+    try {
+      showLoadingDialog(
+        context: context,
+        message: S.of(context).creating_file,
+      );
+
+      final jsonStr = jsonEncode(race!.toJson());
+      final fileName =
+          '${race!.name}_${DateTime.now().millisecondsSinceEpoch}.race';
+
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      if (context.mounted) {
+        hideLoadingDialog(context);
+      }
+
+      await FileShareService.shareFile(
+        Uint8List.fromList(jsonStr.codeUnits),
+        fileName,
+        text: 'Раса: ${race!.name}',
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () => throw TimeoutException(
+          'Экспорт в JSON занял слишком много времени',
+        ),
+      );
+    } on TimeoutException {
+      if (context.mounted) {
+        hideLoadingDialog(context);
+        _showErrorDialog(
+          context,
+          'Таймаут',
+          'Экспорт в JSON занял слишком много времени',
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        hideLoadingDialog(context);
+        _showErrorDialog(
+          context,
+          'Ошибка экспорта',
+          'Не удалось экспортировать в JSON: ${e.toString()}',
+        );
+      }
+    }
   }
 
   void _showErrorDialog(BuildContext context, String title, String message) {
