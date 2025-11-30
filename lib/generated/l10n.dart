@@ -920,6 +920,46 @@ class S {
     );
   }
 
+  /// `Не удалось получить размер виджета`
+  String get avatar_crop_widget_size_error {
+    return Intl.message(
+      'Не удалось получить размер виджета',
+      name: 'avatar_crop_widget_size_error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Некорректные координаты обрезки`
+  String get avatar_crop_coordinates_error {
+    return Intl.message(
+      'Некорректные координаты обрезки',
+      name: 'avatar_crop_coordinates_error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ошибка при обрезке: {error}`
+  String avatar_crop_error(String error) {
+    return Intl.message(
+      'Ошибка при обрезке: $error',
+      name: 'avatar_crop_error',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Ошибка: {error}`
+  String avatar_picker_error(String error) {
+    return Intl.message(
+      'Ошибка: $error',
+      name: 'avatar_picker_error',
+      desc: '',
+      args: [error],
+    );
+  }
+
   /// `Название шаблона`
   String get template_name_label {
     return Intl.message(
@@ -4267,10 +4307,10 @@ class S {
     );
   }
 
-  /// `PDF успешно создан и готов к分享`
+  /// `PDF успешно создан и готов к использованию`
   String get export_success {
     return Intl.message(
-      'PDF успешно создан и готов к分享',
+      'PDF успешно создан и готов к использованию',
       name: 'export_success',
       desc: '',
       args: [],

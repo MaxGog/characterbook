@@ -20,43 +20,47 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(name) => "Character created from template \"${name}\"";
+  static String m0(error) => "Crop error: ${error}";
 
-  static String m1(name) => "Character \"${name}\" exported successfully";
+  static String m1(error) => "Error: ${error}";
 
-  static String m2(name) => "Character \"${name}\" imported successfully";
+  static String m2(name) => "Character created from template \"${name}\"";
 
-  static String m3(name) => "Character file ${name}";
+  static String m3(name) => "Character \"${name}\" exported successfully";
 
-  static String m4(charactersCount, notesCount, racesCount, templatesCount,
+  static String m4(name) => "Character \"${name}\" imported successfully";
+
+  static String m5(name) => "Character file ${name}";
+
+  static String m6(charactersCount, notesCount, racesCount, templatesCount,
           foldersCount) =>
       "Successfully restored:\n${charactersCount} characters\n${notesCount} notes\n${racesCount} races\n${templatesCount} templates\n${foldersCount} folders";
 
-  static String m5(days) => "${days} days ago";
+  static String m7(days) => "${days} days ago";
 
-  static String m6(count) => "${count} fields";
+  static String m8(count) => "${count} fields";
 
-  static String m7(hours) => "${hours} hours ago";
+  static String m9(hours) => "${hours} hours ago";
 
-  static String m8(error) => "Image selection error: ${error}";
+  static String m10(error) => "Image selection error: ${error}";
 
-  static String m9(error) => "Import error: ${error}";
+  static String m11(error) => "Import error: ${error}";
 
-  static String m10(months) => "${months} months ago";
+  static String m12(months) => "${months} months ago";
 
-  static String m11(count) => "${count} more";
+  static String m13(count) => "${count} more";
 
-  static String m12(name) => "Race \"${name}\" imported successfully";
+  static String m14(name) => "Race \"${name}\" imported successfully";
 
-  static String m13(name) => "Race file ${name}";
+  static String m15(name) => "Race file ${name}";
 
-  static String m14(name) => "Template \"${name}\" exported successfully";
+  static String m16(name) => "Template \"${name}\" exported successfully";
 
-  static String m15(name) => "Template \"${name}\" imported successfully";
+  static String m17(name) => "Template \"${name}\" imported successfully";
 
-  static String m16(name) => "Template \"${name}\" already exists. Replace it?";
+  static String m18(name) => "Template \"${name}\" already exists. Replace it?";
 
-  static String m17(years) => "${years} years ago";
+  static String m19(years) => "${years} years ago";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -85,9 +89,15 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Authorization cancelled"),
         "auth_client_error":
             MessageLookupByLibrary.simpleMessage("Failed to get API client"),
+        "avatar_crop_coordinates_error":
+            MessageLookupByLibrary.simpleMessage("Invalid crop coordinates"),
+        "avatar_crop_error": m0,
         "avatar_crop_save": MessageLookupByLibrary.simpleMessage("Save Crop"),
         "avatar_crop_title":
             MessageLookupByLibrary.simpleMessage("Avatar Cropping"),
+        "avatar_crop_widget_size_error":
+            MessageLookupByLibrary.simpleMessage("Failed to get widget size"),
+        "avatar_picker_error": m1,
         "back": MessageLookupByLibrary.simpleMessage("Back"),
         "backstory": MessageLookupByLibrary.simpleMessage("Backstory"),
         "backup": MessageLookupByLibrary.simpleMessage("Backup"),
@@ -104,22 +114,22 @@ class MessageLookup extends MessageLookupByLibrary {
         "character": MessageLookupByLibrary.simpleMessage("Character"),
         "character_avatar":
             MessageLookupByLibrary.simpleMessage("Character Avatar"),
-        "character_created_from_template": m0,
+        "character_created_from_template": m2,
         "character_delete_confirm": MessageLookupByLibrary.simpleMessage(
             "Are you sure you want to delete this character? This action cannot be undone."),
         "character_delete_title":
             MessageLookupByLibrary.simpleMessage("Delete Character?"),
         "character_deleted":
             MessageLookupByLibrary.simpleMessage("Character deleted"),
-        "character_exported": m1,
+        "character_exported": m3,
         "character_gallery":
             MessageLookupByLibrary.simpleMessage("Character Gallery"),
-        "character_imported": m2,
+        "character_imported": m4,
         "character_management":
             MessageLookupByLibrary.simpleMessage("Character Management"),
         "character_reference":
             MessageLookupByLibrary.simpleMessage("Character Reference"),
-        "character_share_text": m3,
+        "character_share_text": m5,
         "characterbookLicense": MessageLookupByLibrary.simpleMessage(
             "CharacterBook License (GNU GPL v3.0)"),
         "characters": MessageLookupByLibrary.simpleMessage("Characters"),
@@ -144,7 +154,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Google Drive import error"),
         "cloud_restore_error":
             MessageLookupByLibrary.simpleMessage("Restore Error"),
-        "cloud_restore_success": m4,
+        "cloud_restore_success": m6,
         "colorScheme": MessageLookupByLibrary.simpleMessage("Color Scheme"),
         "color_blue": MessageLookupByLibrary.simpleMessage("Blue"),
         "color_brown": MessageLookupByLibrary.simpleMessage("Brown"),
@@ -183,7 +193,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "custom_fields_editor_title":
             MessageLookupByLibrary.simpleMessage("Custom Fields"),
         "dark": MessageLookupByLibrary.simpleMessage("Dark"),
-        "days_ago": m5,
+        "days_ago": m7,
         "delete": MessageLookupByLibrary.simpleMessage("Delete"),
         "delete_character":
             MessageLookupByLibrary.simpleMessage("Delete Character"),
@@ -222,7 +232,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Enter field value"),
         "fields_asc":
             MessageLookupByLibrary.simpleMessage("By field count (ascending)"),
-        "fields_count": m6,
+        "fields_count": m8,
         "fields_desc":
             MessageLookupByLibrary.simpleMessage("By field count (descending)"),
         "file_character":
@@ -249,13 +259,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "home": MessageLookupByLibrary.simpleMessage("Home"),
         "home_subtitle": MessageLookupByLibrary.simpleMessage(
             "Your collection of characters and races"),
-        "hours_ago": m7,
+        "hours_ago": m9,
         "image": MessageLookupByLibrary.simpleMessage("Image"),
-        "image_picker_error": m8,
+        "image_picker_error": m10,
         "import": MessageLookupByLibrary.simpleMessage("Import"),
         "import_cancelled":
             MessageLookupByLibrary.simpleMessage("Import cancelled"),
-        "import_error": m9,
+        "import_error": m11,
         "import_race": MessageLookupByLibrary.simpleMessage("Import Race"),
         "import_template":
             MessageLookupByLibrary.simpleMessage("Import Template"),
@@ -290,8 +300,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Numbered List"),
         "markdown_quote": MessageLookupByLibrary.simpleMessage("Quote"),
         "markdown_underline": MessageLookupByLibrary.simpleMessage("Underline"),
-        "months_ago": m10,
-        "more_fields": m11,
+        "months_ago": m12,
+        "more_fields": m13,
         "more_options": MessageLookupByLibrary.simpleMessage("More Options"),
         "my": MessageLookupByLibrary.simpleMessage("My"),
         "my_characters": MessageLookupByLibrary.simpleMessage("My Characters"),
@@ -346,10 +356,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "race_delete_title":
             MessageLookupByLibrary.simpleMessage("Delete Race"),
         "race_deleted": MessageLookupByLibrary.simpleMessage("Race deleted"),
-        "race_imported": m12,
+        "race_imported": m14,
         "race_management":
             MessageLookupByLibrary.simpleMessage("Race Management"),
-        "race_share_text": m13,
+        "race_share_text": m15,
         "races": MessageLookupByLibrary.simpleMessage("Races"),
         "randomNumberGenerator":
             MessageLookupByLibrary.simpleMessage("Random Number Generator"),
@@ -416,11 +426,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Template deleted"),
         "template_exists":
             MessageLookupByLibrary.simpleMessage("Template already exists"),
-        "template_exported": m14,
-        "template_imported": m15,
+        "template_exported": m16,
+        "template_imported": m17,
         "template_name_label":
             MessageLookupByLibrary.simpleMessage("Template Name"),
-        "template_replace_confirm": m16,
+        "template_replace_confirm": m18,
         "templates": MessageLookupByLibrary.simpleMessage("Templates"),
         "templates_not_found":
             MessageLookupByLibrary.simpleMessage("No templates found"),
@@ -435,7 +445,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "web_not_supported":
             MessageLookupByLibrary.simpleMessage("Not available for web"),
         "years": MessageLookupByLibrary.simpleMessage("years"),
-        "years_ago": m17,
+        "years_ago": m19,
         "young": MessageLookupByLibrary.simpleMessage("Young"),
         "z_to_a": MessageLookupByLibrary.simpleMessage("Z-A")
       };

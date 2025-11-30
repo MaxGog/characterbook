@@ -96,6 +96,24 @@
   "character_gallery": "Character Gallery",
   "avatar_crop_title": "Avatar Cropping",
   "avatar_crop_save": "Save Crop",
+  "avatar_crop_widget_size_error": "Failed to get widget size",
+  "avatar_crop_coordinates_error": "Invalid crop coordinates",
+  "avatar_crop_error": "Crop error: {error}",
+  "@avatar_crop_error": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "avatar_picker_error": "Error: {error}",
+  "@avatar_picker_error": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
 
   "template_name_label": "Template Name",
   "standard_fields": "Standard Fields",

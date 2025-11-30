@@ -87,6 +87,24 @@
   "character_gallery": "Галерея персонажа",
   "avatar_crop_title": "Обрезка аватара",
   "avatar_crop_save": "Сохранить обрезку",
+  "avatar_crop_widget_size_error": "Не удалось получить размер виджета",
+  "avatar_crop_coordinates_error": "Некорректные координаты обрезки",
+  "avatar_crop_error": "Ошибка при обрезке: {error}",
+  "@avatar_crop_error": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "avatar_picker_error": "Ошибка: {error}",
+  "@avatar_picker_error": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "template_name_label": "Название шаблона",
   "standard_fields": "Стандартные поля",
   "custom_fields": "Пользовательские поля",
@@ -438,7 +456,7 @@
   "operation_timeout": "Операция заняла слишком много времени",
   "pdf_creation_failed": "Не удалось создать PDF",
   "timeout_error": "Таймаут",
-  "export_success": "PDF успешно создан и готов к分享",
+  "export_success": "PDF успешно создан и готов к использованию",
   "character_exported": "Персонаж \"{name}\" успешно экспортирован в PDF",
   "race_exported": "Раса \"{name}\" успешно экспортирована в PDF",
   "initialization": "Инициализация",

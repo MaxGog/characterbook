@@ -4,6 +4,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:crop_image/crop_image.dart';
+import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
+import 'package:characterbook/generated/l10n.dart';
 
 class AvatarPicker extends StatefulWidget {
   final Uint8List? currentAvatar;
@@ -11,11 +13,11 @@ class AvatarPicker extends StatefulWidget {
   final double size;
 
   const AvatarPicker({
-    Key? key,
+    super.key,
     this.currentAvatar,
     required this.onAvatarChanged,
     this.size = 120,
-  }) : super(key: key);
+  });
 
   @override
   _AvatarPickerState createState() => _AvatarPickerState();
@@ -32,7 +34,7 @@ class _AvatarPickerState extends State<AvatarPicker> {
       final bytes = await image.readAsBytes();
 
       if (!mounted) return;
-      /*Navigator.of(context).push(
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => AvatarCropper(
             imageData: bytes,
@@ -41,12 +43,12 @@ class _AvatarPickerState extends State<AvatarPicker> {
             },
           ),
         ),
-      );*/
-      widget.onAvatarChanged(bytes);
+      );
     } catch (e) {
       if (!mounted) return;
+      final s = S.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка: ${e.toString()}')),
+        SnackBar(content: Text(s.avatar_picker_error(e.toString()))),
       );
     }
   }
@@ -75,8 +77,8 @@ class AvatarCropper extends StatefulWidget {
   const AvatarCropper({
     required this.imageData,
     required this.onCropped,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _AvatarCropperState createState() => _AvatarCropperState();
@@ -84,6 +86,7 @@ class AvatarCropper extends StatefulWidget {
 
 class _AvatarCropperState extends State<AvatarCropper> {
   final _cropController = CropController(aspectRatio: 1);
+  final _cropImageKey = GlobalKey();
   late ui.Image _decodedImage;
 
   @override
@@ -102,55 +105,62 @@ class _AvatarCropperState extends State<AvatarCropper> {
     return frame.image;
   }
 
-Future<Uint8List> _cropImage() async {
+  Future<Uint8List> _cropImage(BuildContext context) async {
     final cropRect = _cropController.crop;
-
-    final pictureRecorder = ui.PictureRecorder();
-    final canvas = Canvas(pictureRecorder);
-    final paint = Paint();
-
-    final imageWidth = _decodedImage.width.toDouble();
-    final imageHeight = _decodedImage.height.toDouble();
-    final displaySize = 300.0;
-
-    final imageAspect = imageWidth / imageHeight;
-    final displayAspect = 1.0;
-
-    double scale, offsetX, offsetY;
-
-    if (imageAspect > displayAspect) {
-      scale = displaySize / imageWidth;
-      offsetX = 0;
-      offsetY = (displaySize - imageHeight * scale) / 2;
-    } else {
-      scale = displaySize / imageHeight;
-      offsetX = (displaySize - imageWidth * scale) / 2;
-      offsetY = 0;
+    final renderBox = _cropImageKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) {
+      final s = S.of(context);
+      throw Exception(s.avatar_crop_widget_size_error);
     }
 
-    final sourceLeft = (cropRect.left - offsetX) / scale;
-    final sourceTop = (cropRect.top - offsetY) / scale;
-    final sourceWidth = cropRect.width / scale;
-    final sourceHeight = cropRect.height / scale;
+    const paddingSize = 20.0;
+    final imageWidth = _decodedImage.width.toDouble();
+    final imageHeight = _decodedImage.height.toDouble();
+    final cropAreaWidth = renderBox.size.width - paddingSize * 2;
+    final cropAreaHeight = renderBox.size.height - paddingSize * 2;
 
-    final clampedLeft = sourceLeft.clamp(0, imageWidth - sourceWidth);
-    final clampedTop = sourceTop.clamp(0, imageHeight - sourceHeight);
-    final clampedWidth = sourceWidth.clamp(0, imageWidth - clampedLeft);
-    final clampedHeight = sourceHeight.clamp(0, imageHeight - clampedTop);
+    final imageAspect = imageWidth / imageHeight;
+    final cropAreaAspect = cropAreaWidth / cropAreaHeight;
 
-    final sourceRect = Rect.fromLTWH(
-      clampedLeft.toDouble(),
-      clampedTop.toDouble(),
-      clampedWidth.toDouble(),
-      clampedHeight.toDouble(),
-    );
+    final scale = imageAspect > cropAreaAspect
+        ? cropAreaWidth / imageWidth
+        : cropAreaHeight / imageHeight;
 
+    final imageOffsetX = imageAspect > cropAreaAspect
+        ? paddingSize
+        : paddingSize + (cropAreaWidth - imageWidth * scale) / 2;
+
+    final imageOffsetY = imageAspect > cropAreaAspect
+        ? paddingSize + (cropAreaHeight - imageHeight * scale) / 2
+        : paddingSize;
+
+    final cropXInWidget = cropRect.left * cropAreaWidth + paddingSize;
+    final cropYInWidget = cropRect.top * cropAreaHeight + paddingSize;
+    final cropWInPixels = cropRect.width * cropAreaWidth;
+    final cropHInPixels = cropRect.height * cropAreaHeight;
+
+    final cropX = cropXInWidget - imageOffsetX;
+    final cropY = cropYInWidget - imageOffsetY;
+
+    final sourceLeft = (cropX / scale).clamp(0.0, imageWidth);
+    final sourceTop = (cropY / scale).clamp(0.0, imageHeight);
+    final sourceWidth = (cropWInPixels / scale).clamp(0.0, imageWidth - sourceLeft);
+    final sourceHeight = (cropHInPixels / scale).clamp(0.0, imageHeight - sourceTop);
+
+    if (sourceWidth <= 0 || sourceHeight <= 0) {
+      final s = S.of(context);
+      throw Exception(s.avatar_crop_coordinates_error);
+    }
+
+    final sourceRect = Rect.fromLTWH(sourceLeft, sourceTop, sourceWidth, sourceHeight);
+    final pictureRecorder = ui.PictureRecorder();
+    final canvas = Canvas(pictureRecorder);
 
     canvas.drawImageRect(
       _decodedImage,
       sourceRect,
-      Rect.fromLTWH(0, 0, 200, 200),
-      paint,
+      const Rect.fromLTWH(0, 0, 200, 200),
+      Paint(),
     );
 
     final picture = pictureRecorder.endRecording();
@@ -161,32 +171,31 @@ Future<Uint8List> _cropImage() async {
 
   Future<void> _confirmCrop() async {
     try {
-      final croppedBytes = await _cropImage();
+      final croppedBytes = await _cropImage(context);
       widget.onCropped(croppedBytes);
       if (!mounted) return;
       Navigator.of(context).pop();
     } catch (e) {
       if (!mounted) return;
+      final s = S.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка при обрезке: ${e.toString()}')),
+        SnackBar(content: Text(s.avatar_crop_error(e.toString()))),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Обрезать аватарку'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: _confirmCrop,
-          ),
-        ],
+      appBar: CommonEditAppBar(
+        title: s.avatar_crop_title,
+        onSave: _confirmCrop,
+        saveTooltip: s.save,
       ),
       body: Center(
         child: CropImage(
+          key: _cropImageKey,
           controller: _cropController,
           image: Image.memory(widget.imageData),
           paddingSize: 20.0,
