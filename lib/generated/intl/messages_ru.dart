@@ -360,6 +360,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "file_pdf": MessageLookupByLibrary.simpleMessage("Документ PDF (.pdf)"),
         "file_pick_error":
             MessageLookupByLibrary.simpleMessage("Ошибка выбора файла"),
+        "file_race": MessageLookupByLibrary.simpleMessage("Файл расы (.race)"),
         "file_ready":
             MessageLookupByLibrary.simpleMessage("Файл готов к отправке"),
         "file_sharing_timeout": MessageLookupByLibrary.simpleMessage(

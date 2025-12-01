@@ -240,6 +240,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "file_pdf": MessageLookupByLibrary.simpleMessage("PDF Document (.pdf)"),
         "file_pick_error":
             MessageLookupByLibrary.simpleMessage("File selection error"),
+        "file_race": MessageLookupByLibrary.simpleMessage("File race (.race)"),
         "file_ready":
             MessageLookupByLibrary.simpleMessage("File ready to send"),
         "flutterLicense":

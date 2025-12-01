@@ -502,5 +502,7 @@
   "cache_clearing": "Очистка кеша...",
   "optimizing_performance": "Оптимизация производительности...",
   "finalizing_setup": "Завершение настройки...",
-  "close": "Закрыть"
+  "close": "Закрыть",
+
+  "file_race": "Файл расы (.race)"
 }

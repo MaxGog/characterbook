@@ -320,5 +320,7 @@
   "from": "From",
   "to": "To",
   "generateNumber": "Generate Number",
-  "generating": "Generating..."
+  "generating": "Generating...",
+
+  "file_race": "File race (.race)"
 }

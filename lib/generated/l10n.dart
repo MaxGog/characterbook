@@ -4766,6 +4766,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Файл расы (.race)`
+  String get file_race {
+    return Intl.message(
+      'Файл расы (.race)',
+      name: 'file_race',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

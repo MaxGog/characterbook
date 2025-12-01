@@ -240,7 +240,7 @@ class _RaceModalCardState extends State<RaceModalCard> {
                 ),
               ),
               title: Text(
-                S.of(context).file_character,
+                S.of(context).file_race,
                 style: textTheme.bodyLarge,
               ),
               trailing: Icon(
@@ -344,7 +344,7 @@ class _RaceModalCardState extends State<RaceModalCard> {
               margin: const EdgeInsets.only(bottom: 16),
               child: FloatingActionButton(
                 onPressed: _navigateToEdit,
-                tooltip: S.of(context).edit_character,
+                tooltip: S.of(context).edit_race,
                 child: const Icon(Icons.edit_rounded),
               ),
             ),
@@ -393,7 +393,7 @@ class _RaceModalCardState extends State<RaceModalCard> {
                           leading: IconButton(
                             icon: const Icon(Icons.close_rounded),
                             onPressed: () => Navigator.pop(context),
-                            tooltip: "Close",
+                            tooltip: S.of(context).close,
                           ),
                           flexibleSpace: FlexibleSpaceBar(
                             centerTitle: true,
@@ -423,7 +423,7 @@ class _RaceModalCardState extends State<RaceModalCard> {
                             IconButton.filledTonal(
                               onPressed: _showShareMenu,
                               icon: const Icon(Icons.share_outlined),
-                              tooltip: S.of(context).share_character,
+                              tooltip: S.of(context).share,
                               style: IconButton.styleFrom(
                                 shape: const CircleBorder(),
                                 padding: const EdgeInsets.all(16),
@@ -439,7 +439,7 @@ class _RaceModalCardState extends State<RaceModalCard> {
                                   child: ListTile(
                                     contentPadding: EdgeInsets.zero,
                                     leading: Icon(Icons.copy_rounded, color: colorScheme.onSurfaceVariant),
-                                    title: Text(S.of(context).copy_character),
+                                    title: Text(S.of(context).copy),
                                   ),
                                 ),
                                 PopupMenuItem(
@@ -447,7 +447,7 @@ class _RaceModalCardState extends State<RaceModalCard> {
                                   child: ListTile(
                                     contentPadding: EdgeInsets.zero,
                                     leading: Icon(Icons.edit_rounded, color: colorScheme.onSurfaceVariant),
-                                    title: Text(S.of(context).edit_character),
+                                    title: Text(S.of(context).edit_race),
                                   ),
                                 ),
                                 const PopupMenuDivider(),
