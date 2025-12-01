@@ -265,13 +265,37 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     required bool showTemplatesToggle,
     required bool showViewModeToggle,
   }) {
+    final s = S.of(context);
+
+    final hasFoldersItem = showFoldersToggle && onFoldersPressed != null;
+    final hasTemplatesItem = showTemplatesToggle && onTemplatesPressed != null;
+    final hasViewModeItem = showViewModeToggle && onViewModePressed != null;
+    final hasAnyItem = hasFoldersItem || hasTemplatesItem || hasViewModeItem;
+
     return PopupMenuButton<String>(
-      tooltip: 'Menu',
+      tooltip: s.more_options,
+      position: PopupMenuPosition.under,
+      surfaceTintColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+      icon: Container(
+        width: 58,
+        height: 58,
+        decoration: BoxDecoration(
+          color: hasAnyItem
+              ? Theme.of(context).colorScheme.secondaryContainer
+              : Theme.of(context).colorScheme.surfaceContainerHighest,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          Icons.more_vert_outlined,
+          color: hasAnyItem
+              ? Theme.of(context).colorScheme.onSecondaryContainer
+              : Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+      ),
       itemBuilder: (context) {
         final items = <PopupMenuEntry<String>>[];
-        final s = S.of(context);
 
-        if (showFoldersToggle && onFoldersPressed != null) {
+        if (hasFoldersItem) {
           items.add(
             PopupMenuItem<String>(
               value: 'folders',
@@ -286,7 +310,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           );
         }
 
-        if (showTemplatesToggle && onTemplatesPressed != null) {
+        if (hasTemplatesItem) {
           if (items.isNotEmpty) items.add(const PopupMenuDivider());
           items.add(
             PopupMenuItem<String>(
@@ -302,7 +326,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           );
         }
 
-        if (showViewModeToggle && onViewModePressed != null) {
+        if (hasViewModeItem) {
           if (items.isNotEmpty) items.add(const PopupMenuDivider());
           items.add(
             PopupMenuItem<String>(
@@ -333,15 +357,6 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
             break;
         }
       },
-      child: IconButton.filledTonal(
-        onPressed: null,
-        icon: const Icon(Icons.more_vert_outlined),
-        tooltip: S.of(context).more_options,
-        style: IconButton.styleFrom(
-          shape: const CircleBorder(),
-          padding: const EdgeInsets.all(16),
-        ),
-      ),
     );
   }
 
