@@ -80,6 +80,7 @@ class _AppNavigationBarState extends State<AppNavigationBar>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
