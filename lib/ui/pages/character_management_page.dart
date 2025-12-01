@@ -1,30 +1,29 @@
 import 'dart:typed_data';
 
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/custom_field_model.dart';
+import 'package:characterbook/models/folder_model.dart';
+import 'package:characterbook/models/race_model.dart';
+import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/services/character_service.dart';
+import 'package:characterbook/services/folder_service.dart';
+import 'package:characterbook/ui/handlers/unsaved_changes_handler.dart';
+import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
+import 'package:characterbook/ui/widgets/avatar_picker_widget.dart';
+import 'package:characterbook/ui/widgets/base_edit_page_scaffold.dart';
+import 'package:characterbook/ui/widgets/buttons/save_button_widget.dart';
+import 'package:characterbook/ui/widgets/fields/custom_fields_editor.dart';
+import 'package:characterbook/ui/widgets/fields/custom_text_field.dart';
+import 'package:characterbook/ui/widgets/fields/fullscreen_text_editor.dart';
+import 'package:characterbook/ui/widgets/fields/gender_selector_field.dart';
+import 'package:characterbook/ui/widgets/fields/race_selector_field.dart';
+import 'package:characterbook/ui/widgets/reference_image_picker.dart';
+import 'package:characterbook/ui/widgets/sections/image_gallery_section.dart';
+import 'package:characterbook/ui/widgets/sections/tags_and_folder_section.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../generated/l10n.dart';
-import '../../models/character_model.dart';
-import '../../models/template_model.dart';
-import '../../models/custom_field_model.dart';
-import '../../models/folder_model.dart';
-import '../../models/race_model.dart';
-import '../../services/character_service.dart';
-import '../../services/folder_service.dart';
-import '../handlers/unsaved_changes_handler.dart';
-import '../widgets/appbar/common_edit_app_bar.dart';
-import '../widgets/avatar_picker_widget.dart';
-import '../widgets/base_edit_page_scaffold.dart';
-import '../widgets/fields/custom_fields_editor.dart';
-import '../widgets/fields/custom_text_field.dart';
-import '../widgets/fields/fullscreen_text_editor.dart';
-import '../widgets/fields/gender_selector_field.dart';
-import '../widgets/fields/race_selector_field.dart';
-import '../widgets/reference_image_picker.dart';
-import '../widgets/buttons/save_button_widget.dart';
-import '../widgets/sections/image_gallery_section.dart';
-import '../widgets/sections/tags_and_folder_section.dart';
 
 class CharacterEditPage extends StatefulWidget {
   final Character? character;

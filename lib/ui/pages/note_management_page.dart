@@ -1,21 +1,20 @@
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/folder_model.dart';
+import 'package:characterbook/models/note_model.dart';
+import 'package:characterbook/services/clipboard_service.dart';
+import 'package:characterbook/services/folder_service.dart';
+import 'package:characterbook/services/note_service.dart';
 import 'package:characterbook/ui/handlers/unsaved_changes_handler.dart';
 import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
+import 'package:characterbook/ui/widgets/avatar_widget.dart';
+import 'package:characterbook/ui/widgets/buttons/save_button_widget.dart';
+import 'package:characterbook/ui/widgets/fields/custom_text_field.dart';
+import 'package:characterbook/ui/widgets/markdown_context_menu.dart';
 import 'package:characterbook/ui/widgets/sections/tags_and_folder_section.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-
-import '../../generated/l10n.dart';
-import '../../models/character_model.dart';
-import '../../models/folder_model.dart';
-import '../../models/note_model.dart';
-import '../../services/note_service.dart';
-import '../../services/clipboard_service.dart';
-import '../../services/folder_service.dart';
-import '../widgets/avatar_widget.dart';
-import '../widgets/fields/custom_text_field.dart';
-import '../widgets/markdown_context_menu.dart';
-import '../widgets/buttons/save_button_widget.dart';
 
 class NoteEditPage extends StatefulWidget {
   final Note? note;

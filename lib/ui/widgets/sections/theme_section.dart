@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/ui/widgets/color_choice_chip.dart';
 import 'package:characterbook/ui/widgets/sections/settings_section.dart';
 import 'package:characterbook/ui/widgets/theme_list_tile.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:characterbook/providers/theme_provider.dart';
 
 class ThemeSection extends StatelessWidget {

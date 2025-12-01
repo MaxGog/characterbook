@@ -1,3 +1,6 @@
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/services/template_service.dart';
 import 'package:characterbook/ui/widgets/list/base_list_page.dart';
 import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
 import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
@@ -10,9 +13,6 @@ import 'package:characterbook/ui/pages/character_management_page.dart';
 import 'package:characterbook/ui/widgets/tags/tag_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../../generated/l10n.dart';
-import '../../models/template_model.dart';
-import '../../services/template_service.dart';
 
 class TemplatesPage extends BaseListPage<QuestionnaireTemplate> {
   const TemplatesPage({super.key})

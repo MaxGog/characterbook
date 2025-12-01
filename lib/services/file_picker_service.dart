@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/race_model.dart';
+import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/ui/dialogs/error_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:universal_html/html.dart' as html;
-import '../models/character_model.dart';
-import '../models/race_model.dart';
-import '../models/template_model.dart';
-import '../ui/dialogs/error_dialog.dart';
 
 class FilePickerService {
   static const _channel = MethodChannel('file_picker');

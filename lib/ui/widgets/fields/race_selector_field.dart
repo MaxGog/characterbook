@@ -1,9 +1,8 @@
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/models/race_model.dart';
+import 'package:characterbook/ui/pages/race_management_page.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-
-import '../../../generated/l10n.dart';
-import '../../../models/race_model.dart';
-import '../../pages/race_management_page.dart';
 
 class RaceSelectorField extends StatefulWidget {
   final Race? initialRace;

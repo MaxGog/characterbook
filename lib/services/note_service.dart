@@ -2,12 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/models/note_model.dart';
+import 'package:characterbook/services/file_share_service.dart';
 import 'package:characterbook/ui/dialogs/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import '../models/note_model.dart';
-import 'file_share_service.dart';
-
 class NoteService {
   static const String _boxName = 'notes';
 

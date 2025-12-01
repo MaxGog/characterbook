@@ -1,11 +1,10 @@
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/ui/pages/character_list_page.dart';
+import 'package:characterbook/ui/pages/home_page.dart';
+import 'package:characterbook/ui/pages/note_list_page.dart';
+import 'package:characterbook/ui/pages/race_list_page.dart';
+import 'package:characterbook/ui/pages/search_page.dart';
 import 'package:flutter/material.dart';
-import '../../generated/l10n.dart';
-import 'character_list_page.dart';
-import 'note_list_page.dart';
-import 'race_list_page.dart';
-import 'search_page.dart';
-import 'home_page.dart';
-
 class AppNavigationBar extends StatefulWidget {
   const AppNavigationBar({super.key});
 

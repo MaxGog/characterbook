@@ -1,7 +1,6 @@
+import 'package:characterbook/generated/l10n.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-
-import '../generated/l10n.dart';
 
 class ClipboardService {
   static Future<void> copyCharacterToClipboard({

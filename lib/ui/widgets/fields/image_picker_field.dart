@@ -1,9 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:characterbook/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../../generated/l10n.dart';
 
 class ImagePickerField extends StatelessWidget {
   final Uint8List? initialImage;

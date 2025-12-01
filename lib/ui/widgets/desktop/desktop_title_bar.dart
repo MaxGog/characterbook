@@ -1,6 +1,6 @@
+import 'package:characterbook/ui/widgets/desktop/app_title.dart';
+import 'package:characterbook/ui/widgets/desktop/window_controls.dart';
 import 'package:flutter/material.dart';
-import 'app_title.dart';
-import 'window_controls.dart';
 
 class DesktopTitleBar extends StatelessWidget {
   const DesktopTitleBar({super.key});

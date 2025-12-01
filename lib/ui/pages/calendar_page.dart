@@ -1,21 +1,20 @@
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/note_model.dart';
+import 'package:characterbook/models/race_model.dart';
+import 'package:characterbook/services/character_service.dart';
+import 'package:characterbook/services/note_service.dart';
+import 'package:characterbook/services/race_service.dart';
+import 'package:characterbook/ui/cards/character_modal_card.dart';
+import 'package:characterbook/ui/cards/race_modal_card.dart';
+import 'package:characterbook/ui/pages/note_management_page.dart';
+import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
+import 'package:characterbook/ui/widgets/cards/character_card.dart';
+import 'package:characterbook/ui/widgets/cards/note_card.dart';
+import 'package:characterbook/ui/widgets/cards/race_card.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
-
-import '../../generated/l10n.dart';
-import '../../models/character_model.dart';
-import '../../models/note_model.dart';
-import '../../models/race_model.dart';
-import '../../services/character_service.dart';
-import '../../services/note_service.dart';
-import '../../services/race_service.dart';
-import '../cards/character_modal_card.dart';
-import '../cards/race_modal_card.dart';
-import '../widgets/appbar/common_edit_app_bar.dart';
-import '../widgets/cards/character_card.dart';
-import '../widgets/cards/race_card.dart';
-import '../widgets/cards/note_card.dart';
-import 'note_management_page.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -266,7 +265,6 @@ class _CalendarPageState extends State<CalendarPage> {
             ),
           ),
           onDelete: () async {
-            // Реализовать удаление заметки
             await _loadEvents();
           },
         );

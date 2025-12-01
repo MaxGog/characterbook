@@ -1,3 +1,4 @@
+import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/ui/dialogs/folder_dialog.dart';
 import 'package:characterbook/ui/pages/character_management_page.dart';
 import 'package:characterbook/ui/pages/note_management_page.dart';
@@ -19,7 +20,6 @@ import 'package:characterbook/ui/widgets/buttons/common_list_floating_buttons.da
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../../generated/l10n.dart';
 
 class FoldersScreen extends StatefulWidget {
   final FolderType folderType;

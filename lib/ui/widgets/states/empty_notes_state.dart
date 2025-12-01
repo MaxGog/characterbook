@@ -1,7 +1,6 @@
+import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/ui/pages/note_management_page.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../generated/l10n.dart';
 
 class NotesEmptyState extends StatelessWidget {
   final bool isSearching;

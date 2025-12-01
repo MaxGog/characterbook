@@ -1,19 +1,18 @@
 import 'dart:typed_data';
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/folder_model.dart';
+import 'package:characterbook/models/note_model.dart';
+import 'package:characterbook/services/character_service.dart';
+import 'package:characterbook/services/clipboard_service.dart';
+import 'package:characterbook/services/folder_service.dart';
+import 'package:characterbook/ui/pages/character_management_page.dart';
+import 'package:characterbook/ui/pages/note_management_page.dart';
+import 'package:characterbook/ui/widgets/avatar_widget.dart';
+import 'package:characterbook/ui/widgets/cards/note_card.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-
-import '../../models/character_model.dart';
-import '../../../models/note_model.dart';
-import '../../models/folder_model.dart';
-import '../../services/folder_service.dart';
-import '../../services/character_service.dart';
-import '../../services/clipboard_service.dart';
-import '../pages/character_management_page.dart';
-import '../pages/note_management_page.dart';
-import '../widgets/avatar_widget.dart';
-import '../../generated/l10n.dart';
-import '../widgets/cards/note_card.dart';
 
 class CharacterModalCard extends StatefulWidget {
   final Character character;

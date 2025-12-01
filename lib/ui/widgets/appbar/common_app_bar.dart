@@ -1,7 +1,6 @@
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/ui/pages/settings_page.dart';
 import 'package:flutter/material.dart';
-import '../../../../generated/l10n.dart';
-import '../../pages/settings_page.dart';
-
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? actions;

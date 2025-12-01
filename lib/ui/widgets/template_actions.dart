@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/models/template_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:universal_html/html.dart' as html;
-
-import '../../../generated/l10n.dart';
-import '../../models/template_model.dart';
 
 class TemplateActions {
   static Future<void> exportTemplate(

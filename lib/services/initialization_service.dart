@@ -1,15 +1,15 @@
 import 'dart:io';
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/export_pdf_settings_model.dart';
+import 'package:characterbook/models/folder_model.dart';
+import 'package:characterbook/models/note_model.dart';
+import 'package:characterbook/models/race_model.dart';
+import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/services/hive_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
-import '../models/character_model.dart';
-import '../models/template_model.dart';
-import '../models/folder_model.dart';
-import '../models/note_model.dart';
-import '../models/race_model.dart';
-import '../models/export_pdf_settings_model.dart';
-import 'hive_service.dart';
-import '../generated/l10n.dart';
 
 class InitializationService {
   static bool get isDesktopPlatform =>

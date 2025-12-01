@@ -1,8 +1,7 @@
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/ui/pages/calendar_page.dart';
+import 'package:characterbook/ui/widgets/sections/settings_section.dart';
 import 'package:flutter/material.dart';
-
-import '../../../generated/l10n.dart';
-import '../../pages/calendar_page.dart';
-import 'settings_section.dart';
 
 
 class CalendarSection extends StatelessWidget {

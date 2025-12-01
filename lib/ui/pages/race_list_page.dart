@@ -1,8 +1,12 @@
 import 'dart:async';
 
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/models/character_model.dart';
 import 'package:characterbook/models/folder_model.dart';
+import 'package:characterbook/models/race_model.dart';
 import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/ui/pages/folder_list_page.dart';
+import 'package:characterbook/ui/pages/race_management_page.dart';
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
 import 'package:characterbook/ui/widgets/appbar/common_main_app_bar.dart';
 import 'package:characterbook/ui/widgets/buttons/common_list_floating_buttons.dart';
@@ -15,11 +19,6 @@ import 'package:characterbook/ui/widgets/tags/tag_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
-import '../../generated/l10n.dart';
-import '../../models/character_model.dart';
-import '../../models/race_model.dart';
-import 'race_management_page.dart';
 
 class RaceListPage extends StatefulWidget {
   const RaceListPage({super.key});

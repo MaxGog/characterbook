@@ -1,16 +1,15 @@
 import 'dart:typed_data';
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/models/folder_model.dart';
+import 'package:characterbook/models/race_model.dart';
+import 'package:characterbook/services/clipboard_service.dart';
+import 'package:characterbook/services/folder_service.dart';
+import 'package:characterbook/services/race_service.dart';
+import 'package:characterbook/ui/pages/race_management_page.dart';
+import 'package:characterbook/ui/widgets/avatar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-
-import '../../models/race_model.dart';
-import '../../models/folder_model.dart';
-import '../../services/folder_service.dart';
-import '../../services/race_service.dart';
-import '../../services/clipboard_service.dart';
-import '../pages/race_management_page.dart';
-import '../widgets/avatar_widget.dart';
-import '../../generated/l10n.dart';
 
 class RaceModalCard extends StatefulWidget {
   final Race race;

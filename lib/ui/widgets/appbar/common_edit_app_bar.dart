@@ -1,5 +1,5 @@
+import 'package:characterbook/ui/widgets/appbar/common_app_bar.dart';
 import 'package:flutter/material.dart';
-import 'common_app_bar.dart';
 
 class CommonEditAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;

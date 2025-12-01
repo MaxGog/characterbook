@@ -1,22 +1,20 @@
 import 'dart:async';
-import 'package:characterbook/ui/pages/folder_list_page.dart';
-import 'package:characterbook/ui/widgets/debouncer.dart';
-import 'package:characterbook/ui/widgets/cards/search_result_card.dart';
-import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-
+import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/models/character_model.dart';
 import 'package:characterbook/models/note_model.dart';
 import 'package:characterbook/models/race_model.dart';
 import 'package:characterbook/models/template_model.dart';
 import 'package:characterbook/models/folder_model.dart';
-
-import '../../generated/l10n.dart';
-import 'character_management_page.dart';
-import 'note_management_page.dart';
-import 'race_management_page.dart';
-import 'template_edit_page.dart';
-import 'settings_page.dart';
+import 'package:characterbook/ui/pages/character_management_page.dart';
+import 'package:characterbook/ui/pages/folder_list_page.dart';
+import 'package:characterbook/ui/pages/note_management_page.dart';
+import 'package:characterbook/ui/pages/race_management_page.dart';
+import 'package:characterbook/ui/pages/settings_page.dart';
+import 'package:characterbook/ui/pages/template_edit_page.dart';
+import 'package:characterbook/ui/widgets/debouncer.dart';
+import 'package:characterbook/ui/widgets/cards/search_result_card.dart';
+import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});

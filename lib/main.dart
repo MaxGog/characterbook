@@ -1,20 +1,19 @@
+import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/handlers/file_handler.dart';
 import 'package:characterbook/handlers/file_handler_wrapper.dart';
+import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/providers/locale_provider.dart';
+import 'package:characterbook/providers/theme_provider.dart';
 import 'package:characterbook/services/initialization_service.dart';
 import 'package:characterbook/services/notification_service.dart';
+import 'package:characterbook/ui/pages/app_navigation_bar.dart';
+import 'package:characterbook/ui/pages/settings_page.dart';
+import 'package:characterbook/ui/widgets/desktop/desktop_app_frame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
-
-import 'generated/l10n.dart';
-import 'models/character_model.dart';
-import 'providers/locale_provider.dart';
-import 'providers/theme_provider.dart';
-import 'ui/pages/app_navigation_bar.dart';
-import 'ui/pages/settings_page.dart';
-import 'ui/widgets/desktop/desktop_app_frame.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

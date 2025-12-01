@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:characterbook/services/pdf_export_manager.dart';
 import 'package:characterbook/services/file_share_service.dart';
 import 'package:characterbook/ui/dialogs/error_dialog.dart';

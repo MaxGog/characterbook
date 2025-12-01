@@ -1,10 +1,9 @@
 import 'dart:math';
 
 import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/ui/widgets/appbar/common_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import '../widgets/appbar/common_app_bar.dart';
 
 class RandomNumberPage extends StatefulWidget {
   const RandomNumberPage({super.key});

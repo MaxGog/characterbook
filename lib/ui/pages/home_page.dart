@@ -1,23 +1,22 @@
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/race_model.dart';
+import 'package:characterbook/services/character_service.dart';
+import 'package:characterbook/services/race_service.dart';
+import 'package:characterbook/ui/cards/character_modal_card.dart';
+import 'package:characterbook/ui/cards/race_modal_card.dart';
+import 'package:characterbook/ui/pages/calendar_page.dart';
+import 'package:characterbook/ui/pages/character_management_page.dart';
+import 'package:characterbook/ui/pages/export_pdf_settings_page.dart';
+import 'package:characterbook/ui/pages/race_management_page.dart';
+import 'package:characterbook/ui/pages/random_number_page.dart';
+import 'package:characterbook/ui/pages/templates_page.dart';
+import 'package:characterbook/ui/widgets/appbar/common_main_app_bar.dart';
+import 'package:characterbook/ui/widgets/buttons/common_list_floating_buttons.dart';
+import 'package:characterbook/ui/widgets/cards/character_keep_card.dart';
+import 'package:characterbook/ui/widgets/cards/race_keep_card.dart';
+import 'package:characterbook/ui/widgets/tools_context_menu.dart';
 import 'package:flutter/material.dart';
-
-import '../../generated/l10n.dart';
-import '../../models/character_model.dart';
-import '../../models/race_model.dart';
-import '../../services/character_service.dart';
-import '../../services/race_service.dart';
-import '../cards/character_modal_card.dart';
-import '../cards/race_modal_card.dart';
-import '../widgets/appbar/common_main_app_bar.dart';
-import '../widgets/buttons/common_list_floating_buttons.dart';
-import '../widgets/cards/character_keep_card.dart';
-import '../widgets/cards/race_keep_card.dart';
-import '../widgets/tools_context_menu.dart';
-import 'calendar_page.dart';
-import 'character_management_page.dart';
-import 'export_pdf_settings_page.dart';
-import 'race_management_page.dart';
-import 'random_number_page.dart';
-import 'templates_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

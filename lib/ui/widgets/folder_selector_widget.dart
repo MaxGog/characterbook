@@ -1,7 +1,7 @@
 import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/models/folder_model.dart';
+import 'package:characterbook/services/folder_service.dart';
 import 'package:flutter/material.dart';
-import '../../../models/folder_model.dart';
-import '../../../services/folder_service.dart';
 
 class FolderSelectorWidget extends StatelessWidget {
   final Folder? selectedFolder;

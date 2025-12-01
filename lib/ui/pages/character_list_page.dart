@@ -1,7 +1,12 @@
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/models/character_model.dart';
 import 'package:characterbook/models/folder_model.dart';
+import 'package:characterbook/models/template_model.dart';
 import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/ui/cards/character_modal_card.dart';
+import 'package:characterbook/ui/pages/character_management_page.dart';
 import 'package:characterbook/ui/pages/folder_list_page.dart';
+import 'package:characterbook/ui/pages/templates_page.dart';
 import 'package:characterbook/ui/widgets/list/base_list_page.dart';
 import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
 import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
@@ -12,11 +17,6 @@ import 'package:characterbook/ui/widgets/buttons/common_list_floating_buttons.da
 import 'package:characterbook/ui/widgets/tags/tag_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../../generated/l10n.dart';
-import '../../models/character_model.dart';
-import '../../models/template_model.dart';
-import 'templates_page.dart';
-import 'character_management_page.dart';
 
 class CharacterListPage extends BaseListPage<Character> {
   const CharacterListPage({super.key})

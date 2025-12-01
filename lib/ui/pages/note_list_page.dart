@@ -1,7 +1,12 @@
 import 'dart:async';
+import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/models/folder_model.dart';
+import 'package:characterbook/models/note_model.dart';
 import 'package:characterbook/services/note_service.dart';
 import 'package:characterbook/ui/pages/folder_list_page.dart';
+import 'package:characterbook/ui/pages/note_management_page.dart';
+import 'package:characterbook/ui/widgets/appbar/common_main_app_bar.dart';
+import 'package:characterbook/ui/widgets/buttons/common_list_floating_buttons.dart';
 import 'package:characterbook/ui/widgets/cards/note_card.dart';
 import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
 import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
@@ -11,12 +16,6 @@ import 'package:characterbook/ui/widgets/tags/tag_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
-import '../../generated/l10n.dart';
-import '../../models/note_model.dart';
-import '../widgets/appbar/common_main_app_bar.dart';
-import '../widgets/buttons/common_list_floating_buttons.dart';
-import 'note_management_page.dart';
 
 class NotesListPage extends StatefulWidget {
   const NotesListPage({super.key});

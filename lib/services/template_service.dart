@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/template_model.dart';
 import 'package:characterbook/services/default_templates.dart';
+import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/services/file_share_service.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
-import '../models/character_model.dart';
-import '../models/template_model.dart';
-import 'file_picker_service.dart';
-
 class TemplateService {
   static const String _templatesBoxName = 'templates';
   static const String _fileExtension = '.chax';
