@@ -1,16 +1,21 @@
-import 'package:characterbook/ui/pages/character_management_page.dart';
-import 'package:characterbook/ui/pages/note_management_page.dart';
-import 'package:characterbook/ui/pages/race_management_page.dart';
 import 'package:flutter/material.dart';
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/models/note_model.dart';
-import 'package:characterbook/services/character_service.dart';
-import 'package:characterbook/services/race_service.dart';
-import 'package:characterbook/services/note_service.dart';
-import 'package:characterbook/generated/l10n.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+
+import '../../generated/l10n.dart';
+import '../../models/character_model.dart';
+import '../../models/note_model.dart';
+import '../../models/race_model.dart';
+import '../../services/character_service.dart';
+import '../../services/note_service.dart';
+import '../../services/race_service.dart';
+import '../cards/character_modal_card.dart';
+import '../cards/race_modal_card.dart';
+import '../widgets/appbar/common_edit_app_bar.dart';
+import '../widgets/cards/character_card.dart';
+import '../widgets/cards/race_card.dart';
+import '../widgets/cards/note_card.dart';
+import 'note_management_page.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -35,7 +40,9 @@ class _CalendarPageState extends State<CalendarPage> {
   void initState() {
     super.initState();
     _selectedDay = _focusedDay;
-    _loadEvents();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadEvents();
+    });
   }
 
   Future<void> _loadEvents() async {
@@ -87,7 +94,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   Map<DateTime, List<CalendarEvent>> _applyFilter(
       Map<DateTime, List<CalendarEvent>> events, CalendarEventType filter) {
-    if (filter == CalendarEventType.all) return events;
+    if (filter == CalendarEventType.all) return Map.from(events);
 
     final filtered = <DateTime, List<CalendarEvent>>{};
     for (final entry in events.entries) {
@@ -126,24 +133,31 @@ class _CalendarPageState extends State<CalendarPage> {
     });
   }
 
+  void _showCharacterModal(Character character) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => CharacterModalCard(character: character),
+    );
+  }
+
+  void _showRaceModal(Race race) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => RaceModalCard(race: race),
+    );
+  }
+
   void _navigateToEvent(CalendarEvent event) {
     switch (event.type) {
       case CalendarEventType.character:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                CharacterEditPage(character: event.character!),
-          ),
-        );
+        _showCharacterModal(event.character!);
         break;
       case CalendarEventType.race:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RaceManagementPage(race: event.race!),
-          ),
-        );
+        _showRaceModal(event.race!);
         break;
       case CalendarEventType.note:
         Navigator.push(
@@ -159,6 +173,7 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   void _showErrorSnackbar(String message) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -168,7 +183,99 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   List<CalendarEvent> _getEventsForDay(DateTime day) {
-    return _filteredEvents[day] ?? [];
+    final normalizedDay = DateTime(day.year, day.month, day.day);
+    return _filteredEvents[normalizedDay] ?? [];
+  }
+
+  Widget _buildFilterButton(BuildContext context) {
+    return PopupMenuButton<CalendarEventType>(
+      onSelected: _onFilterChanged,
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: CalendarEventType.all,
+          child: Row(
+            children: [
+              const Icon(Icons.all_inclusive, size: 20),
+              const SizedBox(width: 8),
+              Text(S.of(context).all_events),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: CalendarEventType.character,
+          child: Row(
+            children: [
+              const Icon(Icons.person, size: 20),
+              const SizedBox(width: 8),
+              Text(S.of(context).character_events),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: CalendarEventType.race,
+          child: Row(
+            children: [
+              const Icon(Icons.flag, size: 20),
+              const SizedBox(width: 8),
+              Text(S.of(context).race_events),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: CalendarEventType.note,
+          child: Row(
+            children: [
+              const Icon(Icons.note, size: 20),
+              const SizedBox(width: 8),
+              Text(S.of(context).note_events),
+            ],
+          ),
+        ),
+      ],
+      icon: const Icon(Icons.filter_list),
+    );
+  }
+
+  Widget _buildEventCard(CalendarEvent event) {
+    switch (event.type) {
+      case CalendarEventType.character:
+        return CharacterCard(
+          character: event.character!,
+          isSelected: false,
+          onTap: () => _navigateToEvent(event),
+          onLongPress: () => _showCharacterModal(event.character!),
+          onMenuPressed: () => _showCharacterModal(event.character!),
+        );
+      case CalendarEventType.race:
+        return RaceCard(
+          race: event.race!,
+          isSelected: false,
+          onTap: () => _navigateToEvent(event),
+          onLongPress: () => _showRaceModal(event.race!),
+        );
+      case CalendarEventType.note:
+        return NoteCard(
+          note: event.note!,
+          isSelected: false,
+          onTap: () => _navigateToEvent(event),
+          enableDrag: false,
+          onEdit: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NoteEditPage(note: event.note!),
+            ),
+          ),
+          onDelete: () async {
+            // Реализовать удаление заметки
+            await _loadEvents();
+          },
+        );
+      default:
+        return _CalendarEventItem(
+          event: event,
+          onTap: () => _navigateToEvent(event),
+        );
+    }
   }
 
   @override
@@ -177,56 +284,10 @@ class _CalendarPageState extends State<CalendarPage> {
         _selectedDay != null ? _getEventsForDay(_selectedDay!) : [];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).event_calendar),
-        actions: [
-          PopupMenuButton<CalendarEventType>(
-            onSelected: _onFilterChanged,
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: CalendarEventType.all,
-                child: Row(
-                  children: [
-                    const Icon(Icons.all_inclusive, size: 20),
-                    const SizedBox(width: 8),
-                    Text(S.of(context).all_events),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: CalendarEventType.character,
-                child: Row(
-                  children: [
-                    const Icon(Icons.person, size: 20),
-                    const SizedBox(width: 8),
-                    Text(S.of(context).character_events),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: CalendarEventType.race,
-                child: Row(
-                  children: [
-                    const Icon(Icons.flag, size: 20),
-                    const SizedBox(width: 8),
-                    Text(S.of(context).race_events),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: CalendarEventType.note,
-                child: Row(
-                  children: [
-                    const Icon(Icons.note, size: 20),
-                    const SizedBox(width: 8),
-                    Text(S.of(context).note_events),
-                  ],
-                ),
-              ),
-            ],
-            icon: const Icon(Icons.filter_list),
-          ),
-        ],
+      appBar: CommonEditAppBar(
+        title: S.of(context).event_calendar,
+        additionalActions: [_buildFilterButton(context)],
+        onSave: null,
       ),
       body: Column(
         children: [
@@ -352,10 +413,7 @@ class _CalendarPageState extends State<CalendarPage> {
                           itemCount: dayEvents.length,
                           itemBuilder: (context, index) {
                             final event = dayEvents[index];
-                            return _CalendarEventItem(
-                              event: event,
-                              onTap: () => _navigateToEvent(event),
-                            );
+                            return _buildEventCard(event);
                           },
                         ),
                       ),
