@@ -13,6 +13,7 @@ import '../pages/character_management_page.dart';
 import '../pages/note_management_page.dart';
 import '../widgets/avatar_widget.dart';
 import '../../generated/l10n.dart';
+import '../widgets/cards/note_card.dart';
 
 class CharacterModalCard extends StatefulWidget {
   final Character character;
@@ -25,10 +26,16 @@ class CharacterModalCard extends StatefulWidget {
 
 class _CharacterModalCardState extends State<CharacterModalCard> {
   final _expandedSections = <String, bool>{
-    'basic': true, 'reference': true, 'appearance': true,
-    'personality': true, 'biography': true, 'abilities': true,
-    'other': true, 'customFields': true, 'additionalImages': true,
-    'notes': true, 'race': true,
+    'basic': true,
+    'gallery': true,
+    'appearance': true,
+    'personality': true,
+    'biography': true,
+    'abilities': true,
+    'other': true,
+    'customFields': true,
+    'notes': true,
+    'race': true,
   };
 
   List<Note> _relatedNotes = [];
@@ -84,11 +91,12 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
     try {
       final notesBox = await Hive.openBox<Note>('notes');
       final notes = notesBox.values
-          .where((note) => note.characterIds.contains(widget.character.key.toString()))
+          .where((note) =>
+              note.characterIds.contains(widget.character.key.toString()))
           .toList();
-      
+
       notes.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-      
+
       if (mounted) {
         setState(() => _relatedNotes = notes);
       }
@@ -200,9 +208,8 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
       SnackBar(
         content: Text(message),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: isError 
-          ? Theme.of(context).colorScheme.errorContainer 
-          : null,
+        backgroundColor:
+            isError ? Theme.of(context).colorScheme.errorContainer : null,
       ),
     );
   }
@@ -279,7 +286,7 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
         builder: (context) => NoteEditPage(note: note),
       ),
     );
-    
+
     if (result == true) {
       await _loadRelatedNotes();
     }
@@ -417,7 +424,7 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
-            color: colorScheme.surface,
+            color: colorScheme.surfaceContainerLowest,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(32),
               topRight: Radius.circular(32),
@@ -485,7 +492,7 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                           leading: IconButton(
                             icon: const Icon(Icons.close_rounded),
                             onPressed: () => Navigator.pop(context),
-                            tooltip: "Close",
+                            tooltip: S.of(context).close,
                           ),
                           flexibleSpace: FlexibleSpaceBar(
                             centerTitle: true,
@@ -505,7 +512,8 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                                   end: Alignment.bottomCenter,
                                   colors: [
                                     colorScheme.surfaceContainerLowest,
-                                    colorScheme.surfaceContainerLowest.withOpacity(0.3),
+                                    colorScheme.surfaceContainerLowest
+                                        .withOpacity(0.3),
                                   ],
                                 ),
                               ),
@@ -522,15 +530,18 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                               ),
                             ),
                             PopupMenuButton<String>(
-                              icon: Icon(Icons.more_vert_rounded, color: colorScheme.onSurface),
+                              icon: Icon(Icons.more_vert_rounded,
+                                  color: colorScheme.onSurface),
                               position: PopupMenuPosition.under,
-                              surfaceTintColor: colorScheme.surfaceContainerHighest,
+                              surfaceTintColor:
+                                  colorScheme.surfaceContainerHighest,
                               itemBuilder: (context) => [
                                 PopupMenuItem(
                                   value: 'copy',
                                   child: ListTile(
                                     contentPadding: EdgeInsets.zero,
-                                    leading: Icon(Icons.copy_rounded, color: colorScheme.onSurfaceVariant),
+                                    leading: Icon(Icons.copy_rounded,
+                                        color: colorScheme.onSurfaceVariant),
                                     title: Text(S.of(context).copy_character),
                                   ),
                                 ),
@@ -538,7 +549,8 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                                   value: 'edit',
                                   child: ListTile(
                                     contentPadding: EdgeInsets.zero,
-                                    leading: Icon(Icons.edit_rounded, color: colorScheme.onSurfaceVariant),
+                                    leading: Icon(Icons.edit_rounded,
+                                        color: colorScheme.onSurfaceVariant),
                                     title: Text(S.of(context).edit_character),
                                   ),
                                 ),
@@ -547,10 +559,12 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                                   value: 'delete',
                                   child: ListTile(
                                     contentPadding: EdgeInsets.zero,
-                                    leading: Icon(Icons.delete_rounded, color: colorScheme.error),
+                                    leading: Icon(Icons.delete_rounded,
+                                        color: colorScheme.error),
                                     title: Text(
                                       S.of(context).delete_character,
-                                      style: TextStyle(color: colorScheme.error),
+                                      style:
+                                          TextStyle(color: colorScheme.error),
                                     ),
                                   ),
                                 ),
@@ -565,7 +579,8 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                           ],
                         ),
                         SliverPadding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 8),
                           sliver: SliverList(
                             delegate: SliverChildListDelegate([
                               _buildHeroSection(context),
@@ -615,7 +630,8 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
               ),
               child: InkWell(
                 onTap: widget.character.imageBytes != null
-                    ? () => _showFullImage(widget.character.imageBytes!, S.of(context).character_avatar)
+                    ? () => _showFullImage(widget.character.imageBytes!,
+                        S.of(context).character_avatar)
                     : null,
                 borderRadius: BorderRadius.circular(60),
                 child: Hero(
@@ -661,7 +677,8 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                 ),
               _buildExpressiveChip(
                 icon: Icons.update_rounded,
-                label: DateFormat('dd.MM.yyyy').format(widget.character.lastEdited),
+                label: DateFormat('dd.MM.yyyy')
+                    .format(widget.character.lastEdited),
                 color: colorScheme.surfaceContainerHigh,
               ),
               if (_currentFolder != null)
@@ -681,16 +698,17 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                   labelStyle: textTheme.labelLarge?.copyWith(
                     color: _currentFolder!.color,
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ...widget.character.tags.map((tag) => _buildExpressiveChip(
-                icon: Icons.label_outline_rounded,
-                label: tag,
-                color: colorScheme.surfaceContainerHighest,
-              )),
+                    icon: Icons.label_outline_rounded,
+                    label: tag,
+                    color: colorScheme.surfaceContainerHighest,
+                  )),
             ],
           ),
         ],
@@ -718,34 +736,98 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
     );
   }
 
-
   Widget _buildContentSections(BuildContext context) {
     final s = S.of(context);
+
+    final List<Uint8List> allImages = [];
+
+    if (widget.character.referenceImageBytes != null) {
+      allImages.add(widget.character.referenceImageBytes!);
+    }
+
+    allImages.addAll(widget.character.additionalImages);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (widget.character.referenceImageBytes != null) ...[
+        if (allImages.isNotEmpty) ...[
           _buildExpressiveSectionHeader(
-            title: s.character_reference,
-            icon: Icons.image_search_rounded,
-            isExpanded: _expandedSections['reference']!,
-            onTap: () => setState(() => _expandedSections['reference'] = !_expandedSections['reference']!),
+            title: s.character_gallery,
+            icon: Icons.photo_library_rounded,
+            isExpanded: _expandedSections['gallery']!,
+            onTap: () => setState(() =>
+                _expandedSections['gallery'] = !_expandedSections['gallery']!),
           ),
-          if (_expandedSections['reference']!) ...[
+          if (_expandedSections['gallery']!) ...[
             const SizedBox(height: 12),
-            Center(
-              child: InkWell(
-                borderRadius: BorderRadius.circular(16),
-                onTap: () => _showFullImage(widget.character.referenceImageBytes!, s.character_reference),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.memory(
-                    widget.character.referenceImageBytes!,
-                    width: 160,
-                    height: 160,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+            SizedBox(
+              height: 120,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: allImages.length,
+                itemBuilder: (context, index) {
+                  String imageTitle;
+                  if (widget.character.referenceImageBytes != null &&
+                      index == 0) {
+                    imageTitle = s.character_reference;
+                  } else {
+                    imageTitle =
+                        '${s.character_gallery} ${allImages.length > 1 ? index + 1 : ''}';
+                  }
+
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () => _showFullImage(
+                        allImages[index],
+                        imageTitle.trim(),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Stack(
+                          children: [
+                            Image.memory(
+                              allImages[index],
+                              width: 120,
+                              height: 120,
+                              fit: BoxFit.cover,
+                            ),
+                            if (widget.character.referenceImageBytes != null &&
+                                index == 0)
+                              Positioned(
+                                bottom: 4,
+                                left: 4,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.8),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    s.reference_image,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelSmall
+                                        ?.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 24),
@@ -757,37 +839,44 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
             title: s.custom_fields,
             icon: Icons.list_alt_rounded,
             isExpanded: _expandedSections['customFields']!,
-            onTap: () => setState(() => _expandedSections['customFields'] = !_expandedSections['customFields']!),
+            onTap: () => setState(() => _expandedSections['customFields'] =
+                !_expandedSections['customFields']!),
           ),
           if (_expandedSections['customFields']!) ...[
             const SizedBox(height: 12),
             Wrap(
               spacing: 12,
               runSpacing: 12,
-              children: widget.character.customFields.map((field) => Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SelectableText(
-                      field.key,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    SelectableText(
-                      field.value,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                  ],
-                ),
-              )).toList(),
+              children: widget.character.customFields
+                  .map((field) => Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color:
+                              Theme.of(context).colorScheme.surfaceContainerLow,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SelectableText(
+                              field.key,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                            const SizedBox(height: 8),
+                            SelectableText(
+                              field.value,
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                          ],
+                        ),
+                      ))
+                  .toList(),
             ),
             const SizedBox(height: 24),
           ],
@@ -799,7 +888,8 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
             content: widget.character.appearance,
             icon: Icons.face_retouching_natural_rounded,
             isExpanded: _expandedSections['appearance']!,
-            onToggle: () => setState(() => _expandedSections['appearance'] = !_expandedSections['appearance']!),
+            onToggle: () => setState(() => _expandedSections['appearance'] =
+                !_expandedSections['appearance']!),
           ),
 
         if (widget.character.personality.isNotEmpty)
@@ -808,88 +898,54 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
             content: widget.character.personality,
             icon: Icons.psychology_rounded,
             isExpanded: _expandedSections['personality']!,
-            onToggle: () => setState(() => _expandedSections['personality'] = !_expandedSections['personality']!),
+            onToggle: () => setState(() => _expandedSections['personality'] =
+                !_expandedSections['personality']!),
           ),
-        
+
         if (widget.character.biography.isNotEmpty)
           _buildExpressiveContentSection(
             title: s.biography,
             content: widget.character.biography,
             icon: Icons.history_edu_rounded,
             isExpanded: _expandedSections['biography']!,
-            onToggle: () => setState(() => _expandedSections['biography'] = !_expandedSections['biography']!),
+            onToggle: () => setState(() => _expandedSections['biography'] =
+                !_expandedSections['biography']!),
           ),
-        
+
         if (widget.character.abilities.isNotEmpty)
           _buildExpressiveContentSection(
             title: s.abilities,
             content: widget.character.abilities,
             icon: Icons.auto_awesome_rounded,
             isExpanded: _expandedSections['abilities']!,
-            onToggle: () => setState(() => _expandedSections['abilities'] = !_expandedSections['abilities']!),
+            onToggle: () => setState(() => _expandedSections['abilities'] =
+                !_expandedSections['abilities']!),
           ),
-        
+
         if (widget.character.other.isNotEmpty)
           _buildExpressiveContentSection(
             title: s.other,
             content: widget.character.other,
             icon: Icons.more_horiz_rounded,
             isExpanded: _expandedSections['other']!,
-            onToggle: () => setState(() => _expandedSections['other'] = !_expandedSections['other']!),
+            onToggle: () => setState(() =>
+                _expandedSections['other'] = !_expandedSections['other']!),
           ),
-
-        if (widget.character.additionalImages.isNotEmpty) ...[
-          _buildExpressiveSectionHeader(
-            title: s.character_gallery,
-            icon: Icons.photo_library_rounded,
-            isExpanded: _expandedSections['additionalImages']!,
-            onTap: () => setState(() => _expandedSections['additionalImages'] = !_expandedSections['additionalImages']!),
-          ),
-          if (_expandedSections['additionalImages']!) ...[
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 120,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: widget.character.additionalImages.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.only(right: 12),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    onTap: () => _showFullImage(
-                      widget.character.additionalImages[index],
-                      '${s.character_gallery} ${index + 1}',
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.memory(
-                        widget.character.additionalImages[index],
-                        width: 120,
-                        height: 120,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-          ],
-        ],
 
         if (_relatedNotes.isNotEmpty) ...[
           _buildExpressiveSectionHeader(
             title: s.related_notes,
             icon: Icons.note_rounded,
             isExpanded: _expandedSections['notes']!,
-            onTap: () => setState(() => _expandedSections['notes'] = !_expandedSections['notes']!),
+            onTap: () => setState(() =>
+                _expandedSections['notes'] = !_expandedSections['notes']!),
           ),
           if (_expandedSections['notes']!) ...[
             const SizedBox(height: 12),
             ..._relatedNotes.map((note) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _buildExpressiveNoteCard(note),
-            )),
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: _buildExpressiveNoteCard(note),
+                )),
           ],
         ],
       ],
@@ -913,7 +969,9 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
         child: Row(
           children: [
             Icon(
-              isExpanded ? Icons.expand_less_rounded : Icons.expand_more_rounded,
+              isExpanded
+                  ? Icons.expand_less_rounded
+                  : Icons.expand_more_rounded,
               color: colorScheme.onSurface,
             ),
             const SizedBox(width: 8),
@@ -941,7 +999,7 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -953,9 +1011,8 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
         ),
         AnimatedCrossFade(
           duration: const Duration(milliseconds: 300),
-          crossFadeState: isExpanded 
-              ? CrossFadeState.showSecond 
-              : CrossFadeState.showFirst,
+          crossFadeState:
+              isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
           firstChild: const SizedBox.shrink(),
           secondChild: Column(
             children: [
@@ -996,138 +1053,13 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
   }
 
   Widget _buildExpressiveNoteCard(Note note) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final folder = note.folderId != null 
-        ? _folderService.getFolderById(note.folderId!)
-        : null;
-
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: colorScheme.outlineVariant,
-          width: 1,
-        ),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () => _openNoteForEditing(note),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: SelectableText(
-                      note.title,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.more_vert_rounded,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                    onPressed: () => _showNoteContextMenu(note),
-                  ),
-                ],
-              ),
-              
-              if (folder != null) ...[
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: folder.color.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.folder_rounded,
-                        size: 16,
-                        color: folder.color,
-                      ),
-                      const SizedBox(width: 6),
-                      SelectableText(
-                        folder.name,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: folder.color,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              
-              const SizedBox(height: 12),
-              SelectableText(
-                note.content,
-                style: theme.textTheme.bodyLarge,
-                maxLines: 3,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showNoteContextMenu(Note note) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        margin: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHigh,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: Icon(
-                Icons.edit_rounded,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-              title: Text(S.of(context).edit),
-              onTap: () {
-                Navigator.pop(context);
-                _openNoteForEditing(note);
-              },
-            ),
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.outlineVariant,
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.delete_rounded,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              title: Text(
-                S.of(context).delete,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                _deleteNote(note);
-              },
-            ),
-            const SizedBox(height: 8),
-          ],
-        ),
-      ),
+    return NoteCard(
+      key: ValueKey(note.id),
+      note: note,
+      onTap: () => _openNoteForEditing(note),
+      onEdit: () => _openNoteForEditing(note),
+      onDelete: () => _deleteNote(note),
+      enableDrag: false,
     );
   }
 

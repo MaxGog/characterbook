@@ -1,12 +1,13 @@
-import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/ui/widgets/buttons/import_button_widget.dart';
-import 'package:characterbook/ui/widgets/sections/settings_section.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/models/template_model.dart';
-import 'package:characterbook/services/file_picker_service.dart';
+
+import '../../../generated/l10n.dart';
+import '../../../models/character_model.dart';
+import '../../../models/race_model.dart';
+import '../../../models/template_model.dart';
+import '../../../services/file_picker_service.dart';
+import '../buttons/import_button_widget.dart';
+import 'settings_section.dart';
 
 class ImportSection extends StatelessWidget {
   const ImportSection({super.key});
@@ -20,7 +21,7 @@ class ImportSection extends StatelessWidget {
       children: [
         ImportButton(
           icon: Icons.person,
-          label: s.import,
+          label: s.import_character,
           onPressed: () => _importCharacter(context),
         ),
         ImportButton(

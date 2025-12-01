@@ -325,7 +325,7 @@ class _RaceModalCardState extends State<RaceModalCard> {
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
-            color: colorScheme.surface,
+            color: colorScheme.surfaceContainerLowest,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(32),
               topRight: Radius.circular(32),

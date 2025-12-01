@@ -67,7 +67,7 @@ class AboutSection extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         FilledButton(
-          onPressed: () => _launchUrl('https://boosty.to/maxupshur/donate'),
+          onPressed: () => _launchUrl('https://hipolink.net/maxupshur/'),
           style: FilledButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(

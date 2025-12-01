@@ -1,7 +1,8 @@
-import 'package:characterbook/ui/pages/export_pdf_settings_page.dart';
-import 'package:characterbook/ui/widgets/sections/settings_section.dart';
 import 'package:flutter/material.dart';
-import 'package:characterbook/generated/l10n.dart';
+
+import '../../../generated/l10n.dart';
+import '../../pages/export_pdf_settings_page.dart';
+import 'settings_section.dart';
 
 class ExportPdfSettingsSection extends StatelessWidget {
   const ExportPdfSettingsSection({super.key});

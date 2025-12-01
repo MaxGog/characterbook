@@ -285,7 +285,7 @@ class ContextMenu extends StatelessWidget {
           if (showShare)
             buildMenuItem(
               icon: Icons.share_rounded,
-              label: s.share_character,
+              label: s.share,
               color: colorScheme.onSurface,
               onTap: () => _shareAsFile(context),
             ),
@@ -293,7 +293,7 @@ class ContextMenu extends StatelessWidget {
           if (showExportPdf)
             buildMenuItem(
               icon: Icons.picture_as_pdf_rounded,
-              label: s.export,
+              label: s.file_pdf,
               color: colorScheme.onSurface,
               onTap: () => _exportToPdf(context),
             ),

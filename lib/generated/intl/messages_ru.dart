@@ -32,7 +32,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m5(name) => "Файл персонажа ${name}";
 
-  static String m20(count) => "Персонажей: ${count}";
+  static String m21(count) => "Персонажей: ${count}";
 
   static String m6(charactersCount, notesCount, racesCount, templatesCount,
           foldersCount) =>
@@ -42,7 +42,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m8(count) => "${count} полей";
 
-  static String m21(count) => "Папок: ${count}";
+  static String m22(count) => "Папок: ${count}";
 
   static String m9(hours) => "${hours} часов назад";
 
@@ -54,27 +54,27 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m13(count) => "еще ${count}";
 
-  static String m22(count) => "Заметок: ${count}";
+  static String m23(count) => "Заметок: ${count}";
 
-  static String m23(name) => "Раса \"${name}\" успешно экспортирована в PDF";
+  static String m14(name) => "Раса \"${name}\" успешно экспортирована в PDF";
 
-  static String m14(name) => "Раса \"${name}\" успешно импортирована";
+  static String m15(name) => "Раса \"${name}\" успешно импортирована";
 
-  static String m15(name) => "Файл расы ${name}";
+  static String m16(name) => "Файл расы ${name}";
 
   static String m24(count) => "Рас: ${count}";
 
-  static String m16(name) => "Шаблон \"${name}\" успешно экспортирован";
+  static String m17(name) => "Шаблон \"${name}\" успешно экспортирован";
 
-  static String m17(name) => "Шаблон \"${name}\" успешно импортирован";
+  static String m18(name) => "Шаблон \"${name}\" успешно импортирован";
 
-  static String m18(name) => "Шаблон \"${name}\" уже существует. Заменить его?";
+  static String m19(name) => "Шаблон \"${name}\" уже существует. Заменить его?";
 
   static String m25(count) => "Шаблонов: ${count}";
 
   static String m26(count) => "Всего: ${count}";
 
-  static String m19(years) => "${years} лет назад";
+  static String m20(years) => "${years} лет назад";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -189,7 +189,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "characterbookLicense": MessageLookupByLibrary.simpleMessage(
             "Лицензия CharacterBook (GNU GPL v3.0)"),
         "characters": MessageLookupByLibrary.simpleMessage("Персонажи"),
-        "characters_count": m20,
+        "characters_count": m21,
         "check_for_updates":
             MessageLookupByLibrary.simpleMessage("Проверить обновления"),
         "checking_dependencies":
@@ -376,7 +376,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "folder_color": MessageLookupByLibrary.simpleMessage("Цвет папки"),
         "folder_name": MessageLookupByLibrary.simpleMessage("Имя папки"),
         "folders": MessageLookupByLibrary.simpleMessage("Папки"),
-        "folders_count": m21,
+        "folders_count": m22,
         "font_load_timeout":
             MessageLookupByLibrary.simpleMessage("Таймаут загрузки шрифта"),
         "font_settings":
@@ -542,7 +542,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "none": MessageLookupByLibrary.simpleMessage("Пусто"),
         "not_selected": MessageLookupByLibrary.simpleMessage("Не выбрано"),
         "note_events": MessageLookupByLibrary.simpleMessage("События заметок"),
-        "notes_count": m22,
+        "notes_count": m23,
         "nothing_found": MessageLookupByLibrary.simpleMessage(
             "Ничего не найдено по запросу"),
         "ok": MessageLookupByLibrary.simpleMessage("Хорошо"),
@@ -607,15 +607,15 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Удаление расы"),
         "race_deleted": MessageLookupByLibrary.simpleMessage("Раса удалена"),
         "race_events": MessageLookupByLibrary.simpleMessage("События рас"),
-        "race_exported": m23,
-        "race_imported": m14,
+        "race_exported": m14,
+        "race_imported": m15,
         "race_management":
             MessageLookupByLibrary.simpleMessage("Управление расами"),
         "race_profile_title":
             MessageLookupByLibrary.simpleMessage("Описание расы"),
         "race_service_creation_error": MessageLookupByLibrary.simpleMessage(
             "Ошибка создания сервиса для расы"),
-        "race_share_text": m15,
+        "race_share_text": m16,
         "races": MessageLookupByLibrary.simpleMessage("Расы"),
         "races_count": m24,
         "randomNumberGenerator":
@@ -742,13 +742,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Шаблон удален"),
         "template_exists":
             MessageLookupByLibrary.simpleMessage("Шаблон уже существует"),
-        "template_exported": m16,
-        "template_imported": m17,
+        "template_exported": m17,
+        "template_imported": m18,
         "template_management": MessageLookupByLibrary.simpleMessage(
             "Управление шаблонами персонажей"),
         "template_name_label":
             MessageLookupByLibrary.simpleMessage("Название шаблона"),
-        "template_replace_confirm": m18,
+        "template_replace_confirm": m19,
         "templates": MessageLookupByLibrary.simpleMessage("Шаблоны"),
         "templates_count": m25,
         "templates_not_found":
@@ -794,7 +794,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage(
                 "Ошибка инициализации менеджера окон"),
         "years": MessageLookupByLibrary.simpleMessage("лет"),
-        "years_ago": m19,
+        "years_ago": m20,
         "young": MessageLookupByLibrary.simpleMessage("Молодые"),
         "your_collection":
             MessageLookupByLibrary.simpleMessage("Ваша коллекция"),

@@ -1,7 +1,7 @@
-import 'package:characterbook/ui/widgets/appbar/common_app_bar.dart';
 import 'package:flutter/material.dart';
 
 import '../../../generated/l10n.dart';
+import '../appbar/common_app_bar.dart';
 
 class FullscreenTextEditor extends StatefulWidget {
   final String title;

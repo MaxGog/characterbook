@@ -442,7 +442,7 @@ class _HomePageState extends State<HomePage> {
       itemCount: tools.length,
       itemBuilder: (context, index) {
         final tool = tools[index];
-        return Card(
+        return Card.filled(
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
             leading: Container(
