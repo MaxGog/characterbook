@@ -3,66 +3,45 @@ name: Build Windows MSIX
 on:
   push:
     branches: [main, master]
-    tags:
-      - 'v*'
-  pull_request:
-    branches: [main, master]
-  workflow_dispatch:  # Ручной запуск
+  workflow_dispatch:
 
 jobs:
-  build-windows-msix:
+  build-windows:
     runs-on: windows-latest
-    permissions:
-      contents: write  # Для автоматического релиза
-
+    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
+    - uses: actions/checkout@v4
+    
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
         channel: stable
         cache: true
-        cache-key: flutter-${{ runner.os }}-${{ hashFiles('pubspec.yaml') }}
-        cache-path: ${{ runner.temp }}/flutter_cache
-
-    - name: Flutter doctor
-      run: flutter doctor -v
-
+        cache-key: flutter-windows-${{ hashFiles('pubspec.yaml') }}
+    
     - name: Install dependencies
       run: flutter pub get
-
-    - name: Generate localization
-      run: flutter pub run intl_utils:generate
-
-    - name: Build Windows app
-      run: flutter build windows --release --verbose
-
+    
+    - name: Build Windows
+      run: flutter build windows --release
+    
     - name: Create MSIX package
       run: |
-        # Устанавливаем необходимые инструменты
-        choco install -y windows-sdk-10.0
-        # Создаем MSIX пакет
-        flutter pub run msix:create
+        # Убираем windows-sdk установку, используем то что есть
+        flutter pub run msix:create --config msix_config.yaml
         
-        # Переименовываем пакет с версией
-        $msixFile = (Get-ChildItem "build\windows\msix\*.msix" | Select-Object -First 1).Name
-        $newName = "characterbook-v${{ github.ref_name }}.msix"
-        Rename-Item "build\windows\msix\$msixFile" -NewName $newName
-
-    - name: Upload MSIX artifact
+        # Проверяем результат
+        if (Test-Path "build/windows/msix/*.msix") {
+          echo "✅ MSIX создан успешно!"
+          Get-ChildItem build/windows/msix/*.msix
+        } else {
+          echo "❌ MSIX не создан"
+          exit 1
+        }
+    
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: windows-msix-package
+        name: characterbook-windows-msix
         path: build/windows/msix/*.msix
-        retention-days: 7
-
-    - name: Create GitHub Release (on tag)
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v1
-      with:
-        files: build/windows/msix/*.msix
-        generate_release_notes: true
+        retention-days: 30

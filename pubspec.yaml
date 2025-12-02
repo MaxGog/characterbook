@@ -106,7 +106,6 @@ msix_config:
   logo_path: "assets/iconapp.png"
   start_menu_icon_path: "assets/iconapp.png"
   tile_icon_path: "assets/iconapp.png"
-  capabilities:
-    - internetClient
+  capabilities: internetClient
   architecture: x64
   install_mode: allow_elevation
