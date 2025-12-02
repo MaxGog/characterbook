@@ -1,0 +1,71 @@
+name: Build Windows MSIX
+
+on:
+  push:
+    branches: [main, master]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:  # Ручной запуск
+
+jobs:
+  build-windows-msix:
+    runs-on: windows-latest
+    permissions:
+      contents: write  # Для автоматического релиза
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+        cache: true
+        cache-key: flutter-${{ runner.os }}-${{ hashFiles('pubspec.yaml') }}
+        cache-path: ${{ runner.temp }}/flutter_cache
+
+    - name: Flutter doctor
+      run: flutter doctor -v
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Generate localization
+      run: flutter gen-l10n
+
+    - name: Generate launcher icons
+      run: flutter pub run flutter_launcher_icons:main
+
+    - name: Build Windows app
+      run: flutter build windows --release --verbose
+
+    - name: Create MSIX package
+      run: |
+        # Устанавливаем необходимые инструменты
+        choco install -y windows-sdk-10.0
+        # Создаем MSIX пакет
+        flutter pub run msix:create
+        
+        # Переименовываем пакет с версией
+        $msixFile = (Get-ChildItem "build\windows\msix\*.msix" | Select-Object -First 1).Name
+        $newName = "characterbook-v${{ github.ref_name }}.msix"
+        Rename-Item "build\windows\msix\$msixFile" -NewName $newName
+
+    - name: Upload MSIX artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-msix-package
+        path: build/windows/msix/*.msix
+        retention-days: 7
+
+    - name: Create GitHub Release (on tag)
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: build/windows/msix/*.msix
+        generate_release_notes: true
