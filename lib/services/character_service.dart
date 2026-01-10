@@ -12,6 +12,7 @@ import 'package:hive/hive.dart';
 
 class CharacterService {
   static const String _boxName = 'characters';
+  final Box<Character> _box = Hive.box<Character>(_boxName);
 
   final Character? character;
 
@@ -19,45 +20,72 @@ class CharacterService {
 
   CharacterService.forExport(this.character);
 
-  Future<Box<Character>> get _box => Hive.openBox<Character>(_boxName);
-
   Future<int?> saveCharacter(Character character, {int? key}) async {
     try {
-      final box = Hive.box<Character>('characters');
       if (key != null) {
-        await box.put(key, character);
+        await _box.put(key, character);
         return key;
-      } else {
-        return await box.add(character);
       }
+
+      if (character.key != null) {
+        await character.save();
+        return character.key;
+      }
+
+      return await _box.add(character);
     } catch (e) {
-      throw Exception('Ошибка сохранения персонажа: ${e.toString()}');
+      throw Exception('${S.current.save_error}: ${e.toString()}');
     }
   }
 
   Future<void> deleteCharacter(Character character) async {
     try {
-      final box = await _box;
-
-      final key = box.keys.firstWhere(
-        (k) => box.get(k)?.id == character.id,
-        orElse: () => null,
-      );
-
-      if (key != null) {
-        await box.delete(key);
+      if (character.key != null) {
+        await _box.delete(character.key);
+      } else {
+        final key = _findKeyByCharacter(character);
+        if (key != null) {
+          await _box.delete(key);
+        }
       }
     } catch (e) {
-      throw Exception('Ошибка удаления персонажа: ${e.toString()}');
+      throw Exception('${S.current.delete_error}: ${e.toString()}');
     }
+  }
+
+  int? _findKeyByCharacter(Character character) {
+    for (final key in _box.keys) {
+      final storedCharacter = _box.get(key);
+      if (storedCharacter != null && storedCharacter.id == character.id) {
+        return key as int;
+      }
+    }
+    return null;
   }
 
   Future<List<Character>> getAllCharacters() async {
     try {
-      final box = await _box;
-      return box.values.toList();
+      return _box.values.toList();
     } catch (e) {
-      throw Exception('Ошибка загрузки персонажей: ${e.toString()}');
+      throw Exception('${S.current.error}: ${e.toString()}');
+    }
+  }
+
+  Future<Character?> getCharacterByKey(int key) async {
+    try {
+      return _box.get(key);
+    } catch (e) {
+      throw Exception('${S.current.error}: ${e.toString()}');
+    }
+  }
+
+  Future<List<Character>> getCharactersByRaceId(String raceId) async {
+    try {
+      return _box.values
+          .where((character) => character.race?.id == raceId)
+          .toList();
+    } catch (e) {
+      throw Exception('${S.current.error}: ${e.toString()}');
     }
   }
 
@@ -65,8 +93,8 @@ class CharacterService {
     if (character == null) {
       _showErrorDialog(
         context,
-        'Ошибка экспорта',
-        'Персонаж не установлен для экспорта',
+        S.current.export_error,
+        S.current.export_error,
       );
       return;
     }
@@ -75,7 +103,7 @@ class CharacterService {
       context,
       character!,
       fileName: '${character!.name}.pdf',
-      shareText: 'Характеристика персонажа ${character!.name}',
+      shareText: S.current.character_exported(character!.name),
     );
   }
 
@@ -83,8 +111,8 @@ class CharacterService {
     if (character == null) {
       _showErrorDialog(
         context,
-        'Ошибка экспорта',
-        'Персонаж не установлен для экспорта',
+        S.current.export_error,
+        S.current.export_error,
       );
       return;
     }
@@ -92,7 +120,7 @@ class CharacterService {
     try {
       showLoadingDialog(
         context: context,
-        message: S.of(context).creating_file,
+        message: S.current.creating_file,
       );
 
       final jsonStr = jsonEncode(character!.toJson());
@@ -108,11 +136,11 @@ class CharacterService {
       await FileShareService.shareFile(
         Uint8List.fromList(jsonStr.codeUnits),
         fileName,
-        text: 'Персонаж: ${character!.name}',
+        text: '${S.current.character}: ${character!.name}',
       ).timeout(
         const Duration(seconds: 30),
         onTimeout: () => throw TimeoutException(
-          'Экспорт в JSON занял слишком много времени',
+          S.current.export_error,
         ),
       );
     } on TimeoutException {
@@ -120,8 +148,8 @@ class CharacterService {
         hideLoadingDialog(context);
         _showErrorDialog(
           context,
-          'Таймаут',
-          'Экспорт в JSON занял слишком много времени',
+          S.current.export_error,
+          S.current.export_error,
         );
       }
     } catch (e) {
@@ -129,8 +157,8 @@ class CharacterService {
         hideLoadingDialog(context);
         _showErrorDialog(
           context,
-          'Ошибка экспорта',
-          'Не удалось экспортировать в JSON: ${e.toString()}',
+          S.current.export_error,
+          '${S.current.export_error}: ${e.toString()}',
         );
       }
     }

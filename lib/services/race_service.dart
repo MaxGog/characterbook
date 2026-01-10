@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:characterbook/models/race_model.dart';
 import 'package:characterbook/services/pdf_export_manager.dart';
 import 'package:characterbook/services/file_share_service.dart';
 import 'package:characterbook/ui/dialogs/error_dialog.dart';
@@ -8,10 +9,10 @@ import 'package:characterbook/generated/l10n.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:characterbook/models/race_model.dart';
 
 class RaceService {
   static const String _boxName = 'races';
+  final Box<Race> _box = Hive.box<Race>(_boxName);
 
   final Race? race;
 
@@ -19,46 +20,83 @@ class RaceService {
 
   RaceService.forExport(this.race);
 
-  Future<Box<Race>> get _box => Hive.openBox<Race>(_boxName);
-
   Future<int?> saveRace(Race race, {int? key}) async {
     try {
-      final box = Hive.box<Race>('races');
       if (key != null) {
-        await box.put(key, race);
+        await _box.put(key, race);
         return key;
-      } else {
-        return await box.add(race);
       }
+
+      if (race.key != null) {
+        await race.save();
+        return race.key;
+      }
+
+      return await _box.add(race);
     } catch (e) {
-      throw Exception('Ошибка сохранения расы: ${e.toString()}');
+      throw Exception('${S.current.save_error}: ${e.toString()}');
     }
   }
 
   Future<List<Race>> getAllRaces() async {
     try {
-      final box = await _box;
-      return box.values.toList();
+      return _box.values.toList();
     } catch (e) {
-      throw Exception('Ошибка загрузки рас: ${e.toString()}');
+      throw Exception('${S.current.error}: ${e.toString()}');
     }
   }
 
   Future<Race?> getRaceById(String id) async {
     try {
-      final box = await _box;
-      return box.values.firstWhere(
+      return _box.values.firstWhere(
         (race) => race.id == id,
         orElse: () => Race.empty(),
       );
     } catch (e) {
-      throw Exception('Ошибка поиска расы по ID: ${e.toString()}');
+      throw Exception('${S.current.error}: ${e.toString()}');
     }
+  }
+
+  Future<Race?> getRaceByKey(int key) async {
+    try {
+      return _box.get(key);
+    } catch (e) {
+      throw Exception('${S.current.error}: ${e.toString()}');
+    }
+  }
+
+  Future<void> deleteRace(int key) async {
+    try {
+      await _box.delete(key);
+    } catch (e) {
+      throw Exception('${S.current.delete_error}: ${e.toString()}');
+    }
+  }
+
+  Future<void> deleteRaceById(String id) async {
+    try {
+      final raceKey = _findKeyByRaceId(id);
+      if (raceKey != null) {
+        await _box.delete(raceKey);
+      }
+    } catch (e) {
+      throw Exception('${S.current.delete_error}: ${e.toString()}');
+    }
+  }
+
+  int? _findKeyByRaceId(String id) {
+    for (final key in _box.keys) {
+      final race = _box.get(key);
+      if (race != null && race.id == id) {
+        return key as int;
+      }
+    }
+    return null;
   }
 
   Future<List<Race>> getRacesByName(String name) async {
     try {
-      final box = await _box;
+      final box = _box;
       return box.values
           .where((race) => race.name.toLowerCase().contains(name.toLowerCase()))
           .toList();
@@ -69,7 +107,7 @@ class RaceService {
 
   Future<List<Race>> getRacesByTags(List<String> tags) async {
     try {
-      final box = await _box;
+      final box = _box;
       return box.values
           .where((race) => race.tags.any((tag) => tags.contains(tag)))
           .toList();
@@ -80,7 +118,7 @@ class RaceService {
 
   Future<List<Race>> getRacesByFolderId(String folderId) async {
     try {
-      final box = await _box;
+      final box = _box;
       return box.values.where((race) => race.folderId == folderId).toList();
     } catch (e) {
       throw Exception('Ошибка поиска рас по папке: ${e.toString()}');
@@ -89,7 +127,7 @@ class RaceService {
 
   Future<List<Race>> getRacesWithoutFolder() async {
     try {
-      final box = await _box;
+      final box = _box;
       return box.values
           .where((race) => race.folderId == null || race.folderId!.isEmpty)
           .toList();
@@ -98,30 +136,9 @@ class RaceService {
     }
   }
 
-  Future<void> deleteRace(int key) async {
-    try {
-      final box = await _box;
-      await box.delete(key);
-    } catch (e) {
-      throw Exception('Ошибка удаления расы: ${e.toString()}');
-    }
-  }
-
-  Future<void> deleteRaceById(String id) async {
-    try {
-      final box = await _box;
-      final raceKey = _getKeyForRaceId(box, id);
-      if (raceKey != null) {
-        await box.delete(raceKey);
-      }
-    } catch (e) {
-      throw Exception('Ошибка удаления расы по ID: ${e.toString()}');
-    }
-  }
-
   Future<void> updateRaceLogo(int key, Uint8List? logoBytes) async {
     try {
-      final box = await _box;
+      final box = _box;
       final race = box.get(key);
       if (race != null) {
         race.logo = logoBytes;
@@ -134,7 +151,7 @@ class RaceService {
 
   Future<void> updateRaceTags(int key, List<String> tags) async {
     try {
-      final box = await _box;
+      final box = _box;
       final race = box.get(key);
       if (race != null) {
         race.tags = tags;
@@ -147,7 +164,7 @@ class RaceService {
 
   Future<void> updateRaceFolder(int key, String? folderId) async {
     try {
-      final box = await _box;
+      final box = _box;
       final race = box.get(key);
       if (race != null) {
         race.folderId = folderId;
@@ -160,7 +177,7 @@ class RaceService {
 
   Future<int> getRacesCount() async {
     try {
-      final box = await _box;
+      final box = _box;
       return box.length;
     } catch (e) {
       throw Exception('Ошибка получения количества рас: ${e.toString()}');
@@ -169,7 +186,7 @@ class RaceService {
 
   Future<int> getRacesCountInFolder(String folderId) async {
     try {
-      final box = await _box;
+      final box = _box;
       return box.values.where((race) => race.folderId == folderId).length;
     } catch (e) {
       throw Exception(
@@ -179,7 +196,7 @@ class RaceService {
 
   Future<List<Race>> searchRaces(String query) async {
     try {
-      final box = await _box;
+      final box = _box;
       final lowerQuery = query.toLowerCase();
 
       return box.values
@@ -197,7 +214,7 @@ class RaceService {
 
   Future<Set<String>> getAllUniqueTags() async {
     try {
-      final box = await _box;
+      final box = _box;
       final allTags = <String>{};
 
       for (final race in box.values) {
@@ -212,7 +229,7 @@ class RaceService {
 
   Future<Map<String, int>> getPopularTags({int limit = 10}) async {
     try {
-      final box = await _box;
+      final box = _box;
       final tagCounts = <String, int>{};
 
       for (final race in box.values) {
@@ -234,7 +251,7 @@ class RaceService {
 
   Future<Map<String, dynamic>> exportRaceToJson(int key) async {
     try {
-      final box = await _box;
+      final box = _box;
       final race = box.get(key);
 
       if (race == null) {
@@ -283,22 +300,11 @@ class RaceService {
 
   Future<void> clearAllRaces() async {
     try {
-      final box = await _box;
+      final box = _box;
       await box.clear();
     } catch (e) {
       throw Exception('Ошибка очистки всех рас: ${e.toString()}');
     }
-  }
-
-  int? _getKeyForRaceId(Box<Race> box, String id) {
-    for (var i = 0; i < box.length; i++) {
-      final key = box.keyAt(i);
-      final race = box.get(key);
-      if (race != null && race.id == id) {
-        return key;
-      }
-    }
-    return null;
   }
 
   Future<List<Race>> getRacesPaginated({
@@ -308,7 +314,7 @@ class RaceService {
     List<String>? tags,
   }) async {
     try {
-      final box = await _box;
+      final box = _box;
       List<Race> filteredRaces;
 
       if (folderId != null) {
@@ -341,7 +347,7 @@ class RaceService {
 
   Future<bool> doesRaceExist(String name, {String? excludeId}) async {
     try {
-      final box = await _box;
+      final box = _box;
       return box.values.any((race) =>
           race.name == name && (excludeId == null || race.id != excludeId));
     } catch (e) {
@@ -351,7 +357,7 @@ class RaceService {
 
   Future<Map<String, dynamic>> getRacesStatistics() async {
     try {
-      final box = await _box;
+      final box = _box;
       final races = box.values.toList();
 
       return {

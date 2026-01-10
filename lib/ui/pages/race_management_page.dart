@@ -3,6 +3,7 @@ import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/models/race_model.dart';
 import 'package:characterbook/services/folder_service.dart';
+import 'package:characterbook/services/race_service.dart';
 import 'package:characterbook/ui/handlers/unsaved_changes_handler.dart';
 import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
 import 'package:characterbook/ui/widgets/avatar_picker_widget.dart';
@@ -93,11 +94,11 @@ class _RaceManagementPageState extends State<RaceManagementPage> with UnsavedCha
     }
 
     try {
-      final raceBox = Hive.box<Race>('races');
-      final race = widget.race ?? Race(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: _nameController.text,
-      )
+      final race = widget.race?.copyWith() ??
+          Race(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            name: _nameController.text,
+          )
         ..name = _nameController.text
         ..description = _descriptionController.text
         ..biology = _biologyController.text
@@ -106,30 +107,31 @@ class _RaceManagementPageState extends State<RaceManagementPage> with UnsavedCha
         ..folderId = _selectedFolder?.id
         ..tags = _tags;
 
-      int? raceKey;
-      if (widget.race == null) {
-        raceKey = await raceBox.add(race);
-      } else {
-        await race.save();
-        raceKey = widget.race!.key;
-      }
+      final raceService = RaceService.forDatabase();
+      final raceKey = await raceService.saveRace(
+        race,
+        key: widget.race?.key,
+      );
 
       if (_selectedFolder == null) {
         for (final folder in _raceFolders) {
           if (folder.contentIds.contains(raceKey.toString())) {
-            await _folderService.removeFromFolder(folder.id, raceKey.toString());
+            await _folderService.removeFromFolder(
+                folder.id, raceKey.toString());
           }
         }
       } else {
         for (final folder in _raceFolders) {
-          if (folder.id != _selectedFolder!.id && 
+          if (folder.id != _selectedFolder!.id &&
               folder.contentIds.contains(raceKey.toString())) {
-            await _folderService.removeFromFolder(folder.id, raceKey.toString());
+            await _folderService.removeFromFolder(
+                folder.id, raceKey.toString());
           }
         }
-        await _folderService.addToFolder(_selectedFolder!.id, raceKey.toString());
+        await _folderService.addToFolder(
+            _selectedFolder!.id, raceKey.toString());
       }
-    
+
       setState(() => hasUnsavedChanges = false);
 
       if (!mounted) return;
