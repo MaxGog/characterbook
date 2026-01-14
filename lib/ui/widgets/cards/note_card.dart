@@ -80,17 +80,20 @@ class NoteCard extends StatelessWidget {
       },
       onDismissed: (direction) => onDelete(),
       child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+        margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
         elevation: isSelected ? 2.0 : 0.5,
         color: isSelected
             ? colorScheme.secondaryContainer
             : colorScheme.surfaceContainerHigh,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
           onTap: onTap,
           onLongPress: () => _showNoteContextMenu(context),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -98,10 +101,10 @@ class NoteCard extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.note_rounded,
-                      size: 24,
+                      size: 20,
                       color: colorScheme.primary,
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,42 +132,53 @@ class NoteCard extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.more_vert_rounded),
+                      icon: const Icon(Icons.more_vert_rounded, size: 20),
                       onPressed: () => _showNoteContextMenu(context),
+                      style: IconButton.styleFrom(
+                        padding: const EdgeInsets.all(4),
+                      ),
                     ),
                   ],
                 ),
                 if (folder != null ||
                     note.tags.isNotEmpty ||
                     characters.isNotEmpty) ...[
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
+                    spacing: 6,
+                    runSpacing: 6,
                     children: [
                       if (folder != null)
                         Chip(
-                          label: Text(folder.name),
+                          label: Text(folder.name,
+                              style: theme.textTheme.bodySmall),
                           avatar: Icon(
                             Icons.folder_rounded,
-                            size: 18,
+                            size: 16,
                             color: folder.color,
                           ),
                           backgroundColor: folder.color.withOpacity(0.1),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                         ),
                       ...characters.map((character) => Chip(
-                            label: Text(character.name),
+                            label: Text(character.name,
+                                style: theme.textTheme.bodySmall),
                             avatar: Icon(
                               Icons.person_rounded,
-                              size: 18,
+                              size: 16,
                               color: colorScheme.onPrimaryContainer,
                             ),
                             backgroundColor: colorScheme.primaryContainer,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                           )),
                       ...note.tags.map((tag) => Chip(
-                            label: Text(tag),
+                            label: Text(tag, style: theme.textTheme.bodySmall),
                             backgroundColor:
                                 colorScheme.surfaceContainerHighest,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                           )),
                     ],
                   ),
@@ -185,23 +199,25 @@ class NoteCard extends StatelessWidget {
     required String label,
   }) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+      margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
       ),
       alignment: alignment,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         mainAxisAlignment: alignment == Alignment.centerLeft
             ? MainAxisAlignment.start
             : MainAxisAlignment.end,
         children: [
-          Icon(icon, color: Theme.of(context).colorScheme.onTertiaryContainer),
-          const SizedBox(width: 8),
+          Icon(icon,
+              size: 20,
+              color: Theme.of(context).colorScheme.onTertiaryContainer),
+          const SizedBox(width: 6),
           Text(
             label,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onTertiaryContainer,
                 ),
           ),
