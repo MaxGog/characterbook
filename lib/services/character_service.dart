@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/models/character_model.dart';
@@ -51,6 +52,32 @@ class CharacterService {
     } catch (e) {
       throw Exception('${S.current.delete_error}: ${e.toString()}');
     }
+  }
+
+  Future<Character?> duplicateCharacter(Character character) async {
+    try {
+      final duplicatedCharacter = Character.fromJson(character.toJson());
+
+      duplicatedCharacter.id = _generateUniqueId();
+
+      duplicatedCharacter.name = '${character.name} (Копия)';
+
+      final now = DateTime.now();
+      duplicatedCharacter.lastEdited = now;
+
+      final newKey = await saveCharacter(duplicatedCharacter);
+
+      return await getCharacterByKey(newKey!);
+    } catch (e) {
+      throw Exception('${"S.current.duplicate_error"}: ${e.toString()}');
+    }
+  }
+
+  String _generateUniqueId() {
+    final random = Random();
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final randomNum = random.nextInt(1000000);
+    return '${timestamp}_$randomNum';
   }
 
   int? _findKeyByCharacter(Character character) {

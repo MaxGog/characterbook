@@ -201,6 +201,36 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
     }
   }
 
+  Future<void> _duplicateCharacter() async {
+    final s = S.of(context);
+    try {
+      final characterService = CharacterService.forDatabase();
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+      final duplicatedCharacter = await characterService.duplicateCharacter(widget.character);
+
+      if (context.mounted) {
+        Navigator.pop(context);
+
+        _showSnackBar("s.character_duplicated", isError: false);
+
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context);
+        _showSnackBar('${"s.duplicate_error"}: ${e.toString()}');
+      }
+    }
+  }
+
   void _showSnackBar(String message, {bool isError = true}) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -553,6 +583,16 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                                     title: Text(S.of(context).edit_character),
                                   ),
                                 ),
+                                PopupMenuItem(
+                                  value: 'duplicate', 
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    leading: Icon(Icons.copy_all_rounded,
+                                        color: colorScheme.onSurfaceVariant),
+                                    title:
+                                        Text("S.of(context).duplicate_character"),
+                                  ),
+                                ),
                                 const PopupMenuDivider(),
                                 PopupMenuItem(
                                   value: 'delete',
@@ -569,6 +609,7 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                                 ),
                               ],
                               onSelected: (value) => switch (value) {
+                                'duplicate' => _duplicateCharacter(),
                                 'copy' => _copyToClipboard(),
                                 'edit' => _navigateToEdit(),
                                 'delete' => _handleDelete(),

@@ -21,6 +21,7 @@ class ContextMenu extends StatelessWidget {
   final bool showExportPdf;
   final bool showCopy;
   final bool showShare;
+  final VoidCallback? onDuplicate;
 
   const ContextMenu({
     super.key,
@@ -30,12 +31,14 @@ class ContextMenu extends StatelessWidget {
     this.showExportPdf = false,
     this.showCopy = true,
     this.showShare = true,
+    this.onDuplicate,
   });
 
   factory ContextMenu.character({
     required Character character,
     required VoidCallback onEdit,
     required VoidCallback onDelete,
+    VoidCallback? onDuplicate,
     Key? key,
   }) {
     return ContextMenu(
@@ -43,6 +46,7 @@ class ContextMenu extends StatelessWidget {
       item: character,
       onEdit: onEdit,
       onDelete: onDelete,
+      onDuplicate: onDuplicate,
       showExportPdf: true,
     );
   }
@@ -121,6 +125,48 @@ class ContextMenu extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${s.copy_error}: ${e.toString()}'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _duplicateCharacter(BuildContext context) async {
+    final s = S.of(context);
+    try {
+      if (item is Character) {
+        final character = item as Character;
+        final characterService = CharacterService.forDatabase();
+
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+
+        await characterService.duplicateCharacter(character);
+
+        if (context.mounted) {
+          Navigator.pop(context);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("s.character_duplicated"),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+        onDuplicate?.call();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${"s.duplicate_error"}: ${e.toString()}'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -287,6 +333,14 @@ class ContextMenu extends StatelessWidget {
               label: s.share,
               color: colorScheme.onSurface,
               onTap: () => _shareAsFile(context),
+            ),
+          
+          if (item is Character)
+            buildMenuItem(
+              icon: Icons.copy_all_rounded,
+              label: "s.duplicate",
+              color: colorScheme.onSurface,
+              onTap: () => _duplicateCharacter(context),
             ),
           
           if (showExportPdf)
