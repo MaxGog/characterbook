@@ -150,32 +150,24 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
         ..._fields.asMap().entries.map((entry) {
           final index = entry.key;
           return _buildVerticalFieldItem(index, s, theme);
-        }).toList(),
+        }),
         if (_fields.isEmpty)
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Column(
-              children: [
-                Icon(
-                  Icons.notes_rounded,
-                  size: 48,
+          Column(
+            children: [
+              Icon(
+                Icons.notes_rounded,
+                size: 48,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                s.no_custom_fields,
+                style: theme.textTheme.bodyLarge?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  s.no_custom_fields,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
       ],
     );

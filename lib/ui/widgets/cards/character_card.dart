@@ -66,8 +66,7 @@ class CharacterCard extends StatelessWidget {
           return await _showDeleteConfirmation(context);
         }
       },
-      onDismissed: (direction) async =>
-          {await Hive.box<Character>('characters').delete(character.key)},
+      onDismissed: (direction) async => {await Hive.box<Character>('characters').delete(character.key)},
       child: Card(
         key: key,
         margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
@@ -89,7 +88,7 @@ class CharacterCard extends StatelessWidget {
           onTap: onTap,
           onLongPress: enableDrag ? null : onLongPress,
           child: Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -116,73 +115,122 @@ class CharacterCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 6),
-                          Wrap(
-                            spacing: 6,
-                            runSpacing: 6,
-                            children: [
-                              Chip(
-                                avatar: Icon(
-                                  Icons.cake_rounded,
-                                  size: 16,
-                                  color: colorScheme.onSecondaryContainer,
-                                ),
-                                label: Text('${character.age} ${s.years}',
-                                    style: theme.textTheme.bodySmall),
-                                backgroundColor: colorScheme.secondaryContainer,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                              ),
-                              Chip(
-                                avatar: Icon(
-                                  _getGenderIcon(character.gender),
-                                  size: 16,
-                                  color: _getGenderIconColor(
-                                      context, character.gender),
-                                ),
-                                label: Text(
-                                    _getLocalizedGender(
-                                        context, character.gender),
-                                    style: theme.textTheme.bodySmall),
-                                backgroundColor:
-                                    _getGenderColor(context, character.gender),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                              ),
-                              if (folder != null)
-                                Chip(
-                                  label: Text(folder.name,
-                                      style: theme.textTheme.bodySmall),
-                                  avatar: Icon(
-                                    Icons.folder_rounded,
-                                    size: 16,
-                                    color: folder.color,
-                                  ),
-                                  backgroundColor:
-                                      folder.color.withOpacity(0.1),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                ),
-                              ...character.tags.map((tag) => Chip(
-                                    label: Text(tag,
-                                        style: theme.textTheme.bodySmall),
-                                    backgroundColor:
-                                        colorScheme.surfaceContainerHighest,
+                          SizedBox(
+                            height: 28,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  Container(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
-                                  )),
-                            ],
+                                        horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: colorScheme.secondaryContainer,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.cake_rounded,
+                                          size: 12,
+                                          color:
+                                              colorScheme.onSecondaryContainer,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          '${character.age} ${s.years}',
+                                          style: theme.textTheme.labelSmall
+                                              ?.copyWith(fontSize: 10),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: _getGenderColor(
+                                          context, character.gender),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          _getGenderIcon(character.gender),
+                                          size: 12,
+                                          color: _getGenderIconColor(
+                                              context, character.gender),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          _getLocalizedGender(
+                                              context, character.gender),
+                                          style: theme.textTheme.labelSmall
+                                              ?.copyWith(fontSize: 10),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  if (folder != null) ...[
+                                    const SizedBox(width: 6),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: folder.color.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.folder_rounded,
+                                            size: 12,
+                                            color: folder.color,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            folder.name,
+                                            style: theme.textTheme.labelSmall
+                                                ?.copyWith(fontSize: 10),
+                                            maxLines: 1,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+
+                                  ...character.tags.map((tag) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(left: 6),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: colorScheme
+                                              .surfaceContainerHighest,
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: Text(
+                                          tag,
+                                          style: theme.textTheme.labelSmall
+                                              ?.copyWith(fontSize: 10),
+                                          maxLines: 1,
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ],
+                              ),
+                            ),
                           ),
                         ],
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.more_vert_rounded, size: 20),
-                      onPressed: onMenuPressed,
-                      style: IconButton.styleFrom(
-                        padding: const EdgeInsets.all(4),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
                       ),
                     ),
                   ],

@@ -114,7 +114,7 @@ class _AppContentState extends State<_AppContent> {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: S.delegate.supportedLocales,
-          home: AppNavigationBar(),
+          home: const FileHandlerWrapper(child: AppNavigationBar()),
         );
       },
     );

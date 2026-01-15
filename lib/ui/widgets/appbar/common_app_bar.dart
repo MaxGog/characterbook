@@ -1,6 +1,7 @@
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/ui/pages/settings_page.dart';
 import 'package:flutter/material.dart';
+
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? actions;
@@ -107,14 +108,14 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     final actions = <Widget>[
       if (additionalActions != null) ...additionalActions,
       Padding(
-        padding: const EdgeInsets.only(right: 8), // Уменьшено с 12
+        padding: const EdgeInsets.only(right: 8),
         child: IconButton.filledTonal(
           onPressed: onSave,
           icon: const Icon(Icons.save_rounded),
           tooltip: saveTooltip,
           style: IconButton.styleFrom(
             shape: const CircleBorder(),
-            padding: const EdgeInsets.all(14), // Уменьшено с 16
+            padding: const EdgeInsets.all(14),
           ),
         ),
       ),
@@ -126,7 +127,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: actions,
       centerTitle: centerTitle,
       onBack: onBack,
-      showBackButton: showBackButton, 
+      showBackButton: showBackButton,
       context: context,
     );
   }
@@ -201,26 +202,21 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
 
-    final hasMenuItems = (showFoldersToggle && onFoldersPressed != null) ||
-        (showTemplatesToggle && onTemplatesPressed != null) ||
-        (showViewModeToggle && onViewModePressed != null);
-
-    if (hasMenuItems) {
-      actions.add(
-        Padding(
-          padding: const EdgeInsets.only(left: actionSpacing),
-          child: _buildCombinedMenu(
-            context: context,
-            onFoldersPressed: onFoldersPressed,
-            onTemplatesPressed: onTemplatesPressed,
-            onViewModePressed: onViewModePressed,
-            showFoldersToggle: showFoldersToggle,
-            showTemplatesToggle: showTemplatesToggle,
-            showViewModeToggle: showViewModeToggle,
-          ),
+    // Всегда показываем выпадающее меню с настройками
+    actions.add(
+      Padding(
+        padding: const EdgeInsets.only(left: actionSpacing),
+        child: _buildMoreMenu(
+          context: context,
+          onFoldersPressed: onFoldersPressed,
+          onTemplatesPressed: onTemplatesPressed,
+          onViewModePressed: onViewModePressed,
+          showFoldersToggle: showFoldersToggle,
+          showTemplatesToggle: showTemplatesToggle,
+          showViewModeToggle: showViewModeToggle,
         ),
-      );
-    }
+      ),
+    );
 
     if (additionalActions != null) {
       for (var action in additionalActions) {
@@ -233,29 +229,10 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       }
     }
 
-    actions.add(
-      Padding(
-        padding: const EdgeInsets.only(left: actionSpacing, right: 8),
-        child: IconButton.filledTonal(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const SettingsPage()),
-            );
-          },
-          icon: const Icon(Icons.settings_outlined),
-          tooltip: S.of(context).settings,
-          style: IconButton.styleFrom(
-            shape: const CircleBorder(),
-            padding: const EdgeInsets.all(14),
-          ),
-        ),
-      ),
-    );
-
     return actions;
   }
 
-  static Widget _buildCombinedMenu({
+  static Widget _buildMoreMenu({
     required BuildContext context,
     required VoidCallback? onFoldersPressed,
     required VoidCallback? onTemplatesPressed,
@@ -265,30 +242,27 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     required bool showViewModeToggle,
   }) {
     final s = S.of(context);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     final hasFoldersItem = showFoldersToggle && onFoldersPressed != null;
     final hasTemplatesItem = showTemplatesToggle && onTemplatesPressed != null;
     final hasViewModeItem = showViewModeToggle && onViewModePressed != null;
-    final hasAnyItem = hasFoldersItem || hasTemplatesItem || hasViewModeItem;
 
     return PopupMenuButton<String>(
       tooltip: s.more_options,
       position: PopupMenuPosition.under,
-      surfaceTintColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+      surfaceTintColor: colorScheme.surfaceContainerHighest,
       icon: Container(
         width: 52,
         height: 52,
         decoration: BoxDecoration(
-          color: hasAnyItem
-              ? Theme.of(context).colorScheme.secondaryContainer
-              : Theme.of(context).colorScheme.surfaceContainerHighest,
+          color: colorScheme.surfaceContainerHighest,
           shape: BoxShape.circle,
         ),
         child: Icon(
           Icons.more_vert_outlined,
-          color: hasAnyItem
-              ? Theme.of(context).colorScheme.onSecondaryContainer
-              : Theme.of(context).colorScheme.onSurfaceVariant,
+          color: colorScheme.onSurfaceVariant,
         ),
       ),
       itemBuilder: (context) {
@@ -310,7 +284,6 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
         }
 
         if (hasTemplatesItem) {
-          if (items.isNotEmpty) items.add(const PopupMenuDivider());
           items.add(
             PopupMenuItem<String>(
               value: 'templates',
@@ -326,7 +299,6 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
         }
 
         if (hasViewModeItem) {
-          if (items.isNotEmpty) items.add(const PopupMenuDivider());
           items.add(
             PopupMenuItem<String>(
               value: 'view_mode',
@@ -340,6 +312,19 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           );
         }
+        if (items.isNotEmpty) items.add(const PopupMenuDivider());
+        items.add(
+          PopupMenuItem<String>(
+            value: 'settings',
+            child: Row(
+              children: [
+                const Icon(Icons.settings_outlined, size: 20),
+                const SizedBox(width: 12),
+                Text(s.settings),
+              ],
+            ),
+          ),
+        );
 
         return items;
       },
@@ -353,6 +338,11 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
             break;
           case 'view_mode':
             onViewModePressed?.call();
+            break;
+          case 'settings':
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const SettingsPage()),
+            );
             break;
         }
       },

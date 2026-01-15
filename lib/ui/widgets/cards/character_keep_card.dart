@@ -43,7 +43,6 @@ class _CharacterKeepCardState extends State<CharacterKeepCard>
       vsync: this,
     );
 
-
     _elevationAnimation = Tween<double>(begin: 0.0, end: 8.0).animate(
       CurvedAnimation(parent: _tapController, curve: Curves.easeOut),
     );
@@ -209,10 +208,14 @@ class _CharacterKeepCardState extends State<CharacterKeepCard>
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4.0),
-                    if (widget.character.race != null ||
-                        widget.character.age > 0)
-                      Row(
+                    const SizedBox(height: 6.0),
+
+                    Container(
+                      constraints: const BoxConstraints(
+                        maxWidth: double.infinity,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (widget.character.race != null)
                             Row(
@@ -224,20 +227,25 @@ class _CharacterKeepCardState extends State<CharacterKeepCard>
                                   color: Colors.white.withOpacity(0.9),
                                 ),
                                 const SizedBox(width: 4.0),
-                                Text(
-                                  widget.character.race!.name,
-                                  style: theme.textTheme.labelSmall?.copyWith(
-                                    color: Colors.white.withOpacity(0.9),
-                                    fontWeight: FontWeight.w500,
+                                Flexible(
+                                  child: Text(
+                                    widget.character.race!.name,
+                                    style: theme.textTheme.labelSmall?.copyWith(
+                                      color: Colors.white.withOpacity(0.9),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
+
                           if (widget.character.age > 0)
                             Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
+                              padding: EdgeInsets.only(
+                                top: widget.character.race != null ? 4.0 : 0.0,
+                              ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -247,11 +255,14 @@ class _CharacterKeepCardState extends State<CharacterKeepCard>
                                     color: Colors.white.withOpacity(0.9),
                                   ),
                                   const SizedBox(width: 4.0),
-                                  Text(
-                                    '${widget.character.age}',
-                                    style: theme.textTheme.labelSmall?.copyWith(
-                                      color: Colors.white.withOpacity(0.9),
-                                      fontWeight: FontWeight.w500,
+                                  Flexible(
+                                    child: Text(
+                                      '${widget.character.age}',
+                                      style:
+                                          theme.textTheme.labelSmall?.copyWith(
+                                        color: Colors.white.withOpacity(0.9),
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -259,7 +270,9 @@ class _CharacterKeepCardState extends State<CharacterKeepCard>
                             ),
                         ],
                       ),
-                    const SizedBox(height: 4.0),
+                    ),
+
+                    const SizedBox(height: 6.0),
                     Text(
                       widget.formattedDate,
                       style: theme.textTheme.labelSmall?.copyWith(
@@ -476,31 +489,6 @@ class _CharacterKeepCardState extends State<CharacterKeepCard>
                     children: [
                       _buildFrontSide(context, theme, colorScheme, hasImage),
                       _buildBackSide(context, theme, colorScheme),
-                      Positioned(
-                        top: 8.0,
-                        right: 8.0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.more_vert_rounded,
-                              size: 24.0,
-                              color: Colors.white,
-                            ),
-                            onPressed: widget.onContextMenuTap,
-                            splashRadius: 20.0,
-                            visualDensity: VisualDensity.compact,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(
-                              minWidth: 48.0,
-                              minHeight: 48.0,
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),

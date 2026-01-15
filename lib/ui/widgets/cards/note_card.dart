@@ -131,13 +131,6 @@ class NoteCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.more_vert_rounded, size: 20),
-                      onPressed: () => _showNoteContextMenu(context),
-                      style: IconButton.styleFrom(
-                        padding: const EdgeInsets.all(4),
-                      ),
-                    ),
                   ],
                 ),
                 if (folder != null ||

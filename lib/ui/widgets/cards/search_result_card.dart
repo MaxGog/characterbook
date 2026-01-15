@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:characterbook/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:characterbook/models/character_model.dart';
@@ -22,29 +20,25 @@ class SearchResultItem extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final s = S.of(context);
-    final random = Random(item.hashCode);
 
     final isCharacter = item is Character;
     final isRace = item is Race;
     final isNote = item is Note;
     final isFolder = item is Folder;
 
-    final borderRadius = 16.0 + random.nextInt(8);
-    final padding = 12 + random.nextInt(4);
-
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
       child: Card(
         elevation: 1,
         color: colorScheme.surfaceContainerHigh,
         shape: ContinuousRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(borderRadius),
+          borderRadius: BorderRadius.circular(10),
           onTap: onTap,
           child: Padding(
-            padding: EdgeInsets.all(padding.toDouble()),
+            padding: EdgeInsets.all(8.0),
             child: Row(
               children: [
                 _buildLeadingIcon(context),

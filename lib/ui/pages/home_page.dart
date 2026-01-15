@@ -463,7 +463,7 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 4),
             Expanded(
               child: _selectedContentType == HomeContentType.tools
                   ? _buildToolsContent()

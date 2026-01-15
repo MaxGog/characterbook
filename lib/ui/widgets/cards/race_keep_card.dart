@@ -164,8 +164,8 @@ class _RaceKeepCardState extends State<RaceKeepCard>
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: 64.0,
-                    height: 64.0,
+                    width: 48.0,
+                    height: 48.0,
                     margin: const EdgeInsets.only(bottom: 16.0),
                     decoration: BoxDecoration(
                       color: colorScheme.primary.withOpacity(0.2),
@@ -193,7 +193,7 @@ class _RaceKeepCardState extends State<RaceKeepCard>
                   ),
                   Text(
                     widget.race.name,
-                    style: theme.textTheme.titleMedium?.copyWith(
+                    style: theme.textTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: colorScheme.onPrimaryContainer,
                     ),
@@ -201,7 +201,7 @@ class _RaceKeepCardState extends State<RaceKeepCard>
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 12.0),
+                  const SizedBox(height: 8.0),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12.0,
@@ -220,13 +220,13 @@ class _RaceKeepCardState extends State<RaceKeepCard>
                       children: [
                         Icon(
                           Icons.person_outline_rounded,
-                          size: 16.0,
+                          size: 12.0,
                           color: colorScheme.onPrimaryContainer,
                         ),
                         const SizedBox(width: 6.0),
                         Text(
                           '${widget.characterCount}',
-                          style: theme.textTheme.labelMedium?.copyWith(
+                          style: theme.textTheme.labelSmall?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: colorScheme.onPrimaryContainer,
                           ),
@@ -436,33 +436,6 @@ class _RaceKeepCardState extends State<RaceKeepCard>
                     children: [
                       _buildFrontSide(context, theme, colorScheme),
                       _buildBackSide(context, theme, colorScheme),
-                      Positioned(
-                        top: 8.0,
-                        right: 8.0,
-                        child: Material(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(4.0),
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.more_vert_rounded,
-                              size: 20.0,
-                              color: _isFront
-                                  ? colorScheme.onPrimaryContainer
-                                      .withOpacity(0.7)
-                                  : colorScheme.onSecondaryContainer
-                                      .withOpacity(0.7),
-                            ),
-                            onPressed: widget.onContextMenuTap,
-                            splashRadius: 20.0,
-                            visualDensity: VisualDensity.compact,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(
-                              minWidth: 32.0,
-                              minHeight: 32.0,
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),

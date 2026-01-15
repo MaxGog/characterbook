@@ -480,7 +480,7 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
               children: [
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   child: Column(
                     children: [
                       Container(
@@ -504,8 +504,8 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                       controller: scrollController,
                       slivers: [
                         SliverAppBar(
-                          expandedHeight: 120,
-                          collapsedHeight: 80,
+                          expandedHeight: 100,
+                          collapsedHeight: 70,
                           pinned: true,
                           floating: false,
                           snap: false,
@@ -525,7 +525,7 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                           ),
                           flexibleSpace: FlexibleSpaceBar(
                             centerTitle: true,
-                            titlePadding: const EdgeInsets.only(bottom: 16),
+                            titlePadding: const EdgeInsets.only(bottom: 12),
                             title: Text(
                               widget.character.name,
                               style: theme.textTheme.headlineMedium?.copyWith(
@@ -555,7 +555,7 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                               tooltip: S.of(context).share_character,
                               style: IconButton.styleFrom(
                                 shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(14),
                               ),
                             ),
                             PopupMenuButton<String>(
@@ -584,7 +584,7 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                                   ),
                                 ),
                                 PopupMenuItem(
-                                  value: 'duplicate', 
+                                  value: 'duplicate',
                                   child: ListTile(
                                     contentPadding: EdgeInsets.zero,
                                     leading: Icon(Icons.copy_all_rounded,
@@ -620,13 +620,13 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                         ),
                         SliverPadding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 8),
+                              horizontal: 20, vertical: 8),
                           sliver: SliverList(
                             delegate: SliverChildListDelegate([
                               _buildHeroSection(context),
-                              const SizedBox(height: 24),
+                              const SizedBox(height: 16),
                               _buildContentSections(context),
-                              const SizedBox(height: 32),
+                              const SizedBox(height: 24),
                             ]),
                           ),
                         ),
@@ -648,10 +648,10 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
     final textTheme = theme.textTheme;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: colorScheme.outlineVariant,
           width: 1,
@@ -673,18 +673,18 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                     ? () => _showFullImage(widget.character.imageBytes!,
                         S.of(context).character_avatar)
                     : null,
-                borderRadius: BorderRadius.circular(60),
+                borderRadius: BorderRadius.circular(50),
                 child: Hero(
                   tag: 'character-avatar-${widget.character.key}',
                   child: AvatarWidget.character(
                     imageBytes: widget.character.imageBytes,
-                    size: 120,
+                    size: 100,
                   ),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           SelectableText(
             widget.character.name,
             style: textTheme.headlineSmall?.copyWith(
@@ -693,29 +693,29 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           Wrap(
-            spacing: 12,
-            runSpacing: 8,
+            spacing: 8,
+            runSpacing: 6,
             children: [
               if (widget.character.age > 0)
-                _buildExpressiveChip(
+                _buildCompactChip(
                   icon: Icons.cake_rounded,
                   label: '${widget.character.age} ${S.of(context).years}',
                   color: colorScheme.tertiaryContainer,
                 ),
-              _buildExpressiveChip(
+              _buildCompactChip(
                 icon: _getGenderIcon(widget.character.gender),
                 label: _getLocalizedGender(widget.character.gender),
                 color: _getGenderColor(widget.character.gender),
               ),
               if (widget.character.race != null)
-                _buildExpressiveChip(
+                _buildCompactChip(
                   icon: Icons.people_rounded,
                   label: widget.character.race!.name,
                   color: colorScheme.surfaceContainerHigh,
                 ),
-              _buildExpressiveChip(
+              _buildCompactChip(
                 icon: Icons.update_rounded,
                 label: DateFormat('dd.MM.yyyy')
                     .format(widget.character.lastEdited),
@@ -725,26 +725,29 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                 Chip(
                   avatar: Icon(
                     Icons.folder_rounded,
-                    size: 18,
+                    size: 14,
                     color: _currentFolder!.color,
                   ),
-                  label: SelectableText(_currentFolder!.name),
+                  label: SelectableText(
+                    _currentFolder!.name,
+                    style: textTheme.labelSmall,
+                  ),
                   backgroundColor: _currentFolder!.color.withOpacity(0.2),
                   side: BorderSide(
                     color: _currentFolder!.color.withOpacity(0.4),
                     width: 1,
                   ),
                   visualDensity: VisualDensity.compact,
-                  labelStyle: textTheme.labelLarge?.copyWith(
+                  labelStyle: textTheme.labelSmall?.copyWith(
                     color: _currentFolder!.color,
                   ),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-              ...widget.character.tags.map((tag) => _buildExpressiveChip(
+              ...widget.character.tags.map((tag) => _buildCompactChip(
                     icon: Icons.label_outline_rounded,
                     label: tag,
                     color: colorScheme.surfaceContainerHighest,
@@ -756,22 +759,24 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
     );
   }
 
-  Widget _buildExpressiveChip({
+  Widget _buildCompactChip({
     required IconData icon,
     required String label,
     required Color color,
   }) {
     final theme = Theme.of(context);
     return Chip(
-      avatar: Icon(icon, size: 18),
-      label: Text(label),
+      avatar: Icon(icon, size: 14),
+      label: Text(
+        label,
+        style: theme.textTheme.labelSmall,
+      ),
       backgroundColor: color,
       side: BorderSide.none,
       visualDensity: VisualDensity.compact,
-      labelStyle: theme.textTheme.labelLarge,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
       ),
     );
   }
@@ -791,7 +796,7 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (allImages.isNotEmpty) ...[
-          _buildExpressiveSectionHeader(
+          _buildCompactSectionHeader(
             title: s.character_gallery,
             icon: Icons.photo_library_rounded,
             isExpanded: _expandedSections['gallery']!,
@@ -799,9 +804,9 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                 _expandedSections['gallery'] = !_expandedSections['gallery']!),
           ),
           if (_expandedSections['gallery']!) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             SizedBox(
-              height: 120,
+              height: 100,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: allImages.length,
@@ -816,21 +821,22 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                   }
 
                   return Padding(
-                    padding: const EdgeInsets.only(right: 12),
+                    padding: EdgeInsets.only(
+                        right: index == allImages.length - 1 ? 0 : 10),
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(12),
                       onTap: () => _showFullImage(
                         allImages[index],
                         imageTitle.trim(),
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(12),
                         child: Stack(
                           children: [
                             Image.memory(
                               allImages[index],
-                              width: 120,
-                              height: 120,
+                              width: 100,
+                              height: 100,
                               fit: BoxFit.cover,
                             ),
                             if (widget.character.referenceImageBytes != null &&
@@ -846,7 +852,7 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                                         .colorScheme
                                         .primary
                                         .withOpacity(0.8),
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
                                     s.reference_image,
@@ -854,6 +860,7 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                                         .textTheme
                                         .labelSmall
                                         ?.copyWith(
+                                          fontSize: 9,
                                           color: Theme.of(context)
                                               .colorScheme
                                               .onPrimary,
@@ -870,12 +877,11 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                 },
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
           ],
         ],
-
         if (widget.character.customFields.isNotEmpty) ...[
-          _buildExpressiveSectionHeader(
+          _buildCompactSectionHeader(
             title: s.custom_fields,
             icon: Icons.list_alt_rounded,
             isExpanded: _expandedSections['customFields']!,
@@ -883,18 +889,18 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                 !_expandedSections['customFields']!),
           ),
           if (_expandedSections['customFields']!) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             Wrap(
-              spacing: 12,
-              runSpacing: 12,
+              spacing: 10,
+              runSpacing: 10,
               children: widget.character.customFields
                   .map((field) => Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color:
                               Theme.of(context).colorScheme.surfaceContainerLow,
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -906,24 +912,27 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                                   .titleSmall
                                   ?.copyWith(
                                     fontWeight: FontWeight.w600,
+                                    fontSize: 14,
                                   ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 6),
                             SelectableText(
                               field.value,
-                              style: Theme.of(context).textTheme.bodyLarge,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(fontSize: 15),
                             ),
                           ],
                         ),
                       ))
                   .toList(),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
           ],
         ],
-
         if (widget.character.appearance.isNotEmpty)
-          _buildExpressiveContentSection(
+          _buildCompactContentSection(
             title: s.appearance,
             content: widget.character.appearance,
             icon: Icons.face_retouching_natural_rounded,
@@ -931,9 +940,8 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
             onToggle: () => setState(() => _expandedSections['appearance'] =
                 !_expandedSections['appearance']!),
           ),
-
         if (widget.character.personality.isNotEmpty)
-          _buildExpressiveContentSection(
+          _buildCompactContentSection(
             title: s.personality,
             content: widget.character.personality,
             icon: Icons.psychology_rounded,
@@ -941,9 +949,8 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
             onToggle: () => setState(() => _expandedSections['personality'] =
                 !_expandedSections['personality']!),
           ),
-
         if (widget.character.biography.isNotEmpty)
-          _buildExpressiveContentSection(
+          _buildCompactContentSection(
             title: s.biography,
             content: widget.character.biography,
             icon: Icons.history_edu_rounded,
@@ -951,9 +958,8 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
             onToggle: () => setState(() => _expandedSections['biography'] =
                 !_expandedSections['biography']!),
           ),
-
         if (widget.character.abilities.isNotEmpty)
-          _buildExpressiveContentSection(
+          _buildCompactContentSection(
             title: s.abilities,
             content: widget.character.abilities,
             icon: Icons.auto_awesome_rounded,
@@ -961,9 +967,8 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
             onToggle: () => setState(() => _expandedSections['abilities'] =
                 !_expandedSections['abilities']!),
           ),
-
         if (widget.character.other.isNotEmpty)
-          _buildExpressiveContentSection(
+          _buildCompactContentSection(
             title: s.other,
             content: widget.character.other,
             icon: Icons.more_horiz_rounded,
@@ -971,9 +976,8 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
             onToggle: () => setState(() =>
                 _expandedSections['other'] = !_expandedSections['other']!),
           ),
-
         if (_relatedNotes.isNotEmpty) ...[
-          _buildExpressiveSectionHeader(
+          _buildCompactSectionHeader(
             title: s.related_notes,
             icon: Icons.note_rounded,
             isExpanded: _expandedSections['notes']!,
@@ -981,10 +985,10 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                 _expandedSections['notes'] = !_expandedSections['notes']!),
           ),
           if (_expandedSections['notes']!) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             ..._relatedNotes.map((note) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: _buildExpressiveNoteCard(note),
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: _buildCompactNoteCard(note),
                 )),
           ],
         ],
@@ -992,7 +996,7 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
     );
   }
 
-  Widget _buildExpressiveSectionHeader({
+  Widget _buildCompactSectionHeader({
     required String title,
     required IconData icon,
     required bool isExpanded,
@@ -1003,9 +1007,9 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(10),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         child: Row(
           children: [
             Icon(
@@ -1013,15 +1017,17 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                   ? Icons.expand_less_rounded
                   : Icons.expand_more_rounded,
               color: colorScheme.onSurface,
+              size: 20,
             ),
+            const SizedBox(width: 6),
+            Icon(icon, color: colorScheme.primary, size: 20),
             const SizedBox(width: 8),
-            Icon(icon, color: colorScheme.primary, size: 24),
-            const SizedBox(width: 12),
             SelectableText(
               title,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: colorScheme.onSurface,
+                fontSize: 16,
               ),
             ),
           ],
@@ -1030,7 +1036,7 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
     );
   }
 
-  Widget _buildExpressiveContentSection({
+  Widget _buildCompactContentSection({
     required String title,
     required String content,
     required IconData icon,
@@ -1043,26 +1049,26 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildExpressiveSectionHeader(
+        _buildCompactSectionHeader(
           title: title,
           icon: icon,
           isExpanded: isExpanded,
           onTap: onToggle,
         ),
         AnimatedCrossFade(
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 250),
           crossFadeState:
               isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
           firstChild: const SizedBox.shrink(),
           secondChild: Column(
             children: [
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: colorScheme.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 200),
@@ -1080,11 +1086,11 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
                   child: SelectableText(
                     key: ValueKey(content.hashCode),
                     content,
-                    style: theme.textTheme.bodyLarge,
+                    style: theme.textTheme.bodyLarge?.copyWith(fontSize: 15),
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -1092,7 +1098,7 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
     );
   }
 
-  Widget _buildExpressiveNoteCard(Note note) {
+  Widget _buildCompactNoteCard(Note note) {
     return NoteCard(
       key: ValueKey(note.id),
       note: note,
