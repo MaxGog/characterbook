@@ -29,82 +29,84 @@ class TagFilter extends StatelessWidget with TagMixin {
     final colorScheme = theme.colorScheme;
     final s = S.of(context);
     final folderService = FolderService(Hive.box<Folder>('folders'));
-    
-    final standardTags = isForCharacters 
-      ? [
-          s.male, s.female, s.another,
-          s.children, s.young, s.adults, s.elderly,
-          s.a_to_z, s.z_to_a, s.age_asc, s.age_desc
-        ]
-      : [];
+
+    final standardTags = isForCharacters
+        ? [
+            s.male,
+            s.female,
+            s.another,
+            s.children,
+            s.young,
+            s.adults,
+            s.elderly,
+            s.a_to_z,
+            s.z_to_a,
+            s.age_asc,
+            s.age_desc,
+          ]
+        : [];
 
     final folderTags = generateFolderTags(context);
-    final regularTags = tags.where((tag) => 
-      !isFolderTag(tag) && 
-      (!isForCharacters || !standardTags.contains(tag)))
-    .toList();
+    final regularTags = tags
+        .where((tag) =>
+            !isFolderTag(tag) &&
+            (!isForCharacters || !standardTags.contains(tag)))
+        .toList();
 
     return SizedBox(
-      height: 48,
+      height: 40,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
           if (showAllOption)
             _buildExpressiveChip(
-              context: context,
               label: s.all,
               isSelected: selectedTag == null,
               onSelected: (_) => onTagSelected(null),
               icon: null,
               color: colorScheme.secondaryContainer,
-              
             ),
           ...folderTags.map((folderTag) {
             final folderName = getFolderNameFromTag(folderTag);
             final folderId = getFolderIdFromTag(folderTag);
             final folder = folderService.getFolderById(folderId);
-            final folderColor = folder != null 
-                ? Color(folder.colorValue) 
-                : colorScheme.primary;
-            
+            final folderColor =
+                folder != null ? Color(folder.colorValue) : colorScheme.primary;
+
             return _buildExpressiveChip(
-              context: context,
               label: folderName,
               isSelected: selectedTag == folderTag,
-              onSelected: (selected) => onTagSelected(selected ? folderTag : null),
-              icon: Icon(Icons.folder_rounded, size: 20, color: folderColor),
+              onSelected: (selected) =>
+                  onTagSelected(selected ? folderTag : null),
+              icon: Icon(Icons.folder_rounded,
+                  size: 18, color: folderColor),
               color: folderColor.withOpacity(0.2),
               selectedTextColor: folderColor,
-              
             );
           }),
           ...regularTags.map((tag) => _buildExpressiveChip(
-            context: context,
-            label: tag,
-            isSelected: selectedTag == tag,
-            onSelected: (selected) => onTagSelected(selected ? tag : null),
-            icon: null,
-            color: colorScheme.secondaryContainer,
-            
-          )),
+                label: tag,
+                isSelected: selectedTag == tag,
+                onSelected: (selected) => onTagSelected(selected ? tag : null),
+                icon: null,
+                color: colorScheme.secondaryContainer,
+              )),
           if (isForCharacters)
             ...standardTags.map((tag) => _buildExpressiveChip(
-              context: context,
-              label: tag,
-              isSelected: selectedTag == tag,
-              onSelected: (selected) => onTagSelected(selected ? tag : null),
-              icon: null,
-              color: colorScheme.tertiaryContainer,
-              
-            )),
+                  label: tag,
+                  isSelected: selectedTag == tag,
+                  onSelected: (selected) =>
+                      onTagSelected(selected ? tag : null),
+                  icon: null,
+                  color: colorScheme.tertiaryContainer,
+                )),
         ],
       ),
     );
   }
 
   Widget _buildExpressiveChip({
-    required BuildContext context,
     required String label,
     required bool isSelected,
     required ValueChanged<bool> onSelected,
@@ -114,55 +116,44 @@ class TagFilter extends StatelessWidget with TagMixin {
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final textColor = isSelected 
-        ? (selectedTextColor ?? colorScheme.onSecondaryContainer)
-        : colorScheme.onSurface;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        child: ChoiceChip(
-          label: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon != null) 
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: icon,
-                ),
-              Text(
-                label,
-                style: theme.textTheme.labelLarge?.copyWith(
-                  color: textColor,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  letterSpacing: -0.2,
-                ),
-              ),
+      child: ChoiceChip(
+        label: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              icon,
+              const SizedBox(width: 6),
             ],
-          ),
-          selected: isSelected,
-          onSelected: onSelected,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(isSelected ? 8 : 20),
-            side: isSelected 
-                ? BorderSide.none 
-                : BorderSide(
-                    color: colorScheme.outline.withOpacity(0.3),
-                    width: 1,
-                  ),
-          ),
-          showCheckmark: false,
-          selectedColor: color,
-          backgroundColor: colorScheme.surfaceContainerLow,
-          elevation: isSelected ? 1 : 0,
-          pressElevation: 1,
-          visualDensity: VisualDensity.compact,
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          labelPadding: EdgeInsets.zero,
+            Text(
+              label,
+              style: theme.textTheme.labelLarge?.copyWith(
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+              ),
+            ),
+          ],
         ),
+        selected: isSelected,
+        onSelected: onSelected,
+        padding: const EdgeInsets.symmetric(
+            horizontal: 12, vertical: 4),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: isSelected
+              ? BorderSide.none
+              : BorderSide(
+                  color: colorScheme.outline.withOpacity(0.38),
+                  width: 1,
+                ),
+        ),
+        showCheckmark: false,
+        selectedColor: color,
+        backgroundColor: colorScheme.surfaceContainerLow,
+        elevation: isSelected ? 1 : 0,
+        pressElevation: 1,
+        labelPadding: EdgeInsets.zero,
       ),
     );
   }
