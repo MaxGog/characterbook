@@ -1,14 +1,15 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/models/race_model.dart';
+import 'package:characterbook/repositories/folder_repository.dart';
+import 'package:characterbook/repositories/race_repository.dart';
 import 'package:characterbook/services/clipboard_service.dart';
-import 'package:characterbook/services/folder_service.dart';
 import 'package:characterbook/services/race_service.dart';
+import 'package:characterbook/ui/controllers/race_modal_card_controller.dart';
 import 'package:characterbook/ui/pages/race_management_page.dart';
 import 'package:characterbook/ui/widgets/common_modal.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class RaceModalCard extends StatefulWidget {
   final Race race;
@@ -27,125 +28,98 @@ class _RaceModalCardState extends State<RaceModalCard> {
     'additionalImages': true,
   };
 
-  late final RaceService _exportService;
-  late final FolderService _folderService;
-  Folder? _currentFolder;
-
-  @override
-  void initState() {
-    super.initState();
-    _exportService = RaceService.forExport(widget.race);
-    _folderService = FolderService(Hive.box<Folder>('folders'));
-    _loadFolder();
-  }
-
-  Future<void> _loadFolder() async {
-    if (widget.race.folderId != null) {
-      final folder = _folderService.getFolderById(widget.race.folderId!);
-      if (mounted) setState(() => _currentFolder = folder);
-    }
-  }
-
-  Future<void> _handleDelete() async {
-    final confirmed = await showConfirmationDialog(
-      context: context,
-      title: S.of(context).race_delete_title,
-      message: S.of(context).race_delete_confirm,
-      confirmText: S.of(context).delete,
-      isDestructive: true,
-    );
-    if (confirmed == true) await _deleteRace();
-  }
-
-  Future<void> _deleteRace() async {
-    try {
-      if (widget.race.key != null) {
-        await Hive.box<Race>('races').delete(widget.race.key);
-        if (mounted) {
-          showSnackBar(context, S.of(context).race_deleted, isError: false);
-          Navigator.pop(context);
-        }
-      }
-    } catch (e) {
-      showSnackBar(context, '${S.of(context).delete_error}: ${e.toString()}');
-    }
-  }
-
-  Future<void> _exportToPdf() async {
-    try {
-      await _exportService.exportToPdf(context);
-      showSnackBar(context, S.of(context).pdf_export_success, isError: false);
-    } catch (e) {
-      showSnackBar(context, '${S.of(context).export_error}: ${e.toString()}');
-    }
-  }
-
-  Future<void> _exportToJson() async {
-    try {
-      await _exportService.exportToJson(context);
-      showSnackBar(context, S.of(context).file_ready, isError: false);
-    } catch (e) {
-      showSnackBar(context, '${S.of(context).export_error}: ${e.toString()}');
-    }
-  }
-
-  Future<void> _copyToClipboard() async {
-    try {
-      await ClipboardService.copyRaceToClipboard(
-        context: context,
-        name: widget.race.name,
-        description: widget.race.description,
-        biology: widget.race.biology,
-        backstory: widget.race.backstory,
-      );
-      showSnackBar(context, S.of(context).copied_to_clipboard, isError: false);
-    } catch (e) {
-      showSnackBar(context, '${S.of(context).copy_error}: ${e.toString()}');
-    }
-  }
-
-  Future<void> _navigateToEdit() async {
-    Navigator.pop(context);
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => RaceManagementPage(race: widget.race)),
-    );
-  }
-
-  Widget _buildChip(
-      {required IconData icon, required String label, required Color color}) {
-    return Chip(
-      avatar: Icon(icon, size: 14),
-      label: Text(label, style: Theme.of(context).textTheme.labelSmall),
-      backgroundColor: color,
-      side: BorderSide.none,
-      visualDensity: VisualDensity.compact,
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final s = S.of(context);
+    return ChangeNotifierProvider(
+      create: (_) => RaceModalController(
+        race: widget.race,
+        raceRepo: context.read<RaceRepository>(),
+        folderRepo: context.read<FolderRepository>(),
+        raceService: context.read<RaceService>(),
+        clipboardService: context.read<ClipboardService>(),
+      ),
+      child: Consumer<RaceModalController>(
+        builder: (context, controller, child) {
+          final s = S.of(context);
+          final colorScheme = Theme.of(context).colorScheme;
+
+          final chips = _buildChips(context, controller);
+
+          final List<PopupMenuEntry<String>> menuItems = [
+            PopupMenuItem(
+              value: 'share',
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(Icons.share_outlined,
+                    color: colorScheme.onSurfaceVariant),
+                title: Text(s.share),
+              ),
+            ),
+            PopupMenuItem(
+              value: 'copy',
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(Icons.copy_rounded,
+                    color: colorScheme.onSurfaceVariant),
+                title: Text(s.copy),
+              ),
+            ),
+            const PopupMenuDivider(),
+            PopupMenuItem(
+              value: 'delete',
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(Icons.delete_rounded, color: colorScheme.error),
+                title:
+                    Text(s.delete, style: TextStyle(color: colorScheme.error)),
+              ),
+            ),
+          ];
+
+          return ModalScaffold(
+            title: widget.race.name,
+            menuItems: menuItems,
+            onMenuItemSelected: (value) =>
+                _handleMenuItemSelected(context, controller, value),
+            onClose: () => Navigator.pop(context),
+            onEdit: () => _navigateToEdit(context),
+            heroSection: HeroSection(
+              avatarBytes: widget.race.logo,
+              name: widget.race.name,
+              chips: chips,
+              onAvatarTap: widget.race.logo != null
+                  ? () => showFullImage(
+                      context, widget.race.logo!, widget.race.name)
+                  : null,
+              heroTag: 'race-logo-${widget.race.key}',
+            ),
+            contentSections: _buildContentSections(context),
+          );
+        },
+      ),
+    );
+  }
+
+  List<Widget> _buildChips(
+      BuildContext context, RaceModalController controller) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    final chips = <Widget>[
+    return [
       _buildChip(
         icon: Icons.update_rounded,
         label: DateFormat('dd.MM.yyyy').format(widget.race.lastEdited),
         color: colorScheme.surfaceContainerHigh,
       ),
-      if (_currentFolder != null)
+      if (controller.currentFolder != null)
         Chip(
           avatar: Icon(Icons.folder_rounded,
-              size: 14, color: _currentFolder!.color),
-          label: SelectableText(_currentFolder!.name,
+              size: 14, color: controller.currentFolder!.color),
+          label: SelectableText(controller.currentFolder!.name,
               style: Theme.of(context).textTheme.labelSmall),
-          backgroundColor: _currentFolder!.color.withOpacity(0.2),
+          backgroundColor: controller.currentFolder!.color.withOpacity(0.2),
           side: BorderSide(
-              color: _currentFolder!.color.withOpacity(0.4), width: 1),
+              color: controller.currentFolder!.color.withOpacity(0.4),
+              width: 1),
           visualDensity: VisualDensity.compact,
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           shape:
@@ -157,68 +131,123 @@ class _RaceModalCardState extends State<RaceModalCard> {
             color: colorScheme.surfaceContainerHighest,
           )),
     ];
+  }
 
-    final List<PopupMenuEntry<String>> menuItems = [
-      PopupMenuItem(
-        value: 'share',
-        child: ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading:
-              Icon(Icons.share_outlined, color: colorScheme.onSurfaceVariant),
-          title: Text(s.share),
-        ),
-      ),
-      PopupMenuItem(
-        value: 'copy',
-        child: ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading:
-              Icon(Icons.copy_rounded, color: colorScheme.onSurfaceVariant),
-          title: Text(s.copy),
-        ),
-      ),
-      const PopupMenuDivider(),
-      PopupMenuItem(
-        value: 'delete',
-        child: ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: Icon(Icons.delete_rounded, color: colorScheme.error),
-          title:
-              Text(s.delete, style: TextStyle(color: colorScheme.error)),
-        ),
-      ),
-    ];
-
-    return ModalScaffold(
-      title: widget.race.name,
-      menuItems: menuItems,
-      onMenuItemSelected: (value) => switch (value) {
-        'share' => showShareMenu(
-            context: context,
-            title: s.share,
-            onJsonExport: _exportToJson,
-            onPdfExport: _exportToPdf,
-          ),
-        'copy' => _copyToClipboard(),
-        'delete' => _handleDelete(),
-        _ => null,
-      },
-      onClose: () => Navigator.pop(context),
-      onEdit: _navigateToEdit,
-      heroSection: HeroSection(
-        avatarBytes: widget.race.logo,
-        name: widget.race.name,
-        chips: chips,
-        onAvatarTap: widget.race.logo != null
-            ? () => showFullImage(context, widget.race.logo!, widget.race.name)
-            : null,
-        heroTag: 'race-logo-${widget.race.key}',
-      ),
-      contentSections: _buildContentSections(),
+  Widget _buildChip({
+    required IconData icon,
+    required String label,
+    required Color color,
+  }) {
+    return Chip(
+      avatar: Icon(icon, size: 14),
+      label: Text(label, style: Theme.of(context).textTheme.labelSmall),
+      backgroundColor: color,
+      side: BorderSide.none,
+      visualDensity: VisualDensity.compact,
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     );
   }
 
-  Widget _buildContentSections() {
+  Future<void> _handleMenuItemSelected(BuildContext context,
+      RaceModalController controller, String value) async {
+    final s = S.of(context);
+    switch (value) {
+      case 'share':
+        showShareMenu(
+          context: context,
+          title: s.share,
+          onJsonExport: () => _handleExportJson(context, controller),
+          onPdfExport: () => _handleExportPdf(context, controller),
+        );
+        break;
+      case 'copy':
+        await _handleCopy(context, controller);
+        break;
+      case 'delete':
+        await _handleDelete(context, controller);
+        break;
+    }
+  }
+
+  Future<void> _handleExportPdf(
+      BuildContext context, RaceModalController controller) async {
+    try {
+      await controller.exportToPdf(context);
+      if (mounted) {
+        showSnackBar(context, S.of(context).pdf_export_success, isError: false);
+      }
+    } catch (e) {
+      if (mounted) {
+        showSnackBar(context, '${S.of(context).export_error}: ${e.toString()}');
+      }
+    }
+  }
+
+  Future<void> _handleExportJson(
+      BuildContext context, RaceModalController controller) async {
+    try {
+      await controller.exportToJson(context);
+      if (mounted) {
+        showSnackBar(context, S.of(context).file_ready, isError: false);
+      }
+    } catch (e) {
+      if (mounted) {
+        showSnackBar(context, '${S.of(context).export_error}: ${e.toString()}');
+      }
+    }
+  }
+
+  Future<void> _handleCopy(
+      BuildContext context, RaceModalController controller) async {
+    try {
+      await controller.copyToClipboard(context);
+      if (mounted) {
+        showSnackBar(context, S.of(context).copied_to_clipboard,
+            isError: false);
+      }
+    } catch (e) {
+      if (mounted) {
+        showSnackBar(context, '${S.of(context).copy_error}: ${e.toString()}');
+      }
+    }
+  }
+
+  Future<void> _handleDelete(
+      BuildContext context, RaceModalController controller) async {
+    final s = S.of(context);
+    final confirmed = await showConfirmationDialog(
+      context: context,
+      title: s.race_delete_title,
+      message: s.race_delete_confirm,
+      confirmText: s.delete,
+      isDestructive: true,
+    );
+    if (confirmed == true) {
+      try {
+        await controller.deleteRace();
+        if (mounted) {
+          showSnackBar(context, s.race_deleted, isError: false);
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          showSnackBar(context, '${s.delete_error}: ${e.toString()}');
+        }
+      }
+    }
+  }
+
+  Future<void> _navigateToEdit(BuildContext context) async {
+    Navigator.pop(context);
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => RaceManagementPage(race: widget.race)),
+    );
+  }
+
+  Widget _buildContentSections(BuildContext context) {
     final s = S.of(context);
     final theme = Theme.of(context);
 

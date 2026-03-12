@@ -1,209 +1,128 @@
 import 'dart:typed_data';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/models/note_model.dart';
+import 'package:characterbook/repositories/character_repository.dart';
+import 'package:characterbook/repositories/folder_repository.dart';
+import 'package:characterbook/repositories/note_repository.dart';
 import 'package:characterbook/services/character_service.dart';
 import 'package:characterbook/services/clipboard_service.dart';
-import 'package:characterbook/services/folder_service.dart';
+import 'package:characterbook/services/note_service.dart';
+import 'package:characterbook/ui/controllers/character_modal_controller.dart';
 import 'package:characterbook/ui/pages/character_management_page.dart';
 import 'package:characterbook/ui/pages/note_management_page.dart';
 import 'package:characterbook/ui/widgets/cards/note_card.dart';
 import 'package:characterbook/ui/widgets/common_modal.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
-class CharacterModalCard extends StatefulWidget {
+class CharacterModalCard extends StatelessWidget {
   final Character character;
 
   const CharacterModalCard({super.key, required this.character});
 
   @override
-  State<CharacterModalCard> createState() => _CharacterModalCardState();
-}
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => CharacterModalController(
+        character: character,
+        characterRepo: context.read<CharacterRepository>(),
+        noteRepo: context.read<NoteRepository>(),
+        folderRepo: context.read<FolderRepository>(),
+        characterService: context.read<CharacterService>(),
+        noteService: context.read<NoteService>(),
+        clipboardService: context.read<ClipboardService>(),
+      ),
+      child: Consumer<CharacterModalController>(
+        builder: (context, controller, child) {
+          final s = S.of(context);
 
-class _CharacterModalCardState extends State<CharacterModalCard> {
-  final Map<String, bool> _expandedSections = {
-    'gallery': true,
-    'appearance': true,
-    'personality': true,
-    'biography': true,
-    'abilities': true,
-    'other': true,
-    'customFields': true,
-    'notes': true,
-  };
+          final chips = _buildChips(context, controller);
 
-  List<Note> _relatedNotes = [];
-  late final CharacterService _exportService;
-  late final FolderService _folderService;
-  Folder? _currentFolder;
+          final menuItems = _buildMenuItems(context, controller);
 
-  static const String _genderMale = 'male';
-  static const String _genderFemale = 'female';
-  static const String _genderAnother = 'another';
-
-  @override
-  void initState() {
-    super.initState();
-    _exportService = CharacterService.forExport(widget.character);
-    _folderService = FolderService(Hive.box<Folder>('folders'));
-    _loadRelatedNotes();
-    _loadFolder();
-  }
-
-  Future<void> _loadFolder() async {
-    if (widget.character.folderId == null) return;
-    final folder = _folderService.getFolderById(widget.character.folderId!);
-    if (mounted) setState(() => _currentFolder = folder);
-  }
-
-  Future<void> _loadRelatedNotes() async {
-    try {
-      final notesBox = await Hive.openBox<Note>('notes');
-      final notes = notesBox.values
-          .where((note) =>
-              note.characterIds.contains(widget.character.key.toString()))
-          .toList()
-        ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-      if (mounted) setState(() => _relatedNotes = notes);
-    } catch (e) {
-      debugPrint('${S.of(context).error_loading_notes}: $e');
-    }
-  }
-
-  Future<void> _handleDelete() async {
-    final confirmed = await showConfirmationDialog(
-      context: context,
-      title: S.of(context).character_delete_title,
-      message: S.of(context).character_delete_confirm,
-      confirmText: S.of(context).delete,
-      isDestructive: true,
-    );
-    if (confirmed == true) await _deleteCharacter();
-  }
-
-  Future<void> _deleteCharacter() async {
-    try {
-      if (widget.character.key != null) {
-        await Hive.box<Character>('characters').delete(widget.character.key);
-        if (mounted) {
-          showSnackBar(context, S.of(context).character_deleted,
-              isError: false);
-          Navigator.pop(context);
-        }
-      }
-    } catch (e) {
-      showSnackBar(context, '${S.of(context).delete_error}: ${e.toString()}');
-    }
-  }
-
-  Future<void> _exportToPdf() async {
-    try {
-      await _exportService.exportToPdf(context);
-      showSnackBar(context, S.of(context).pdf_export_success, isError: false);
-    } catch (e) {
-      showSnackBar(context, '${S.of(context).export_error}: ${e.toString()}');
-    }
-  }
-
-  Future<void> _exportToJson() async {
-    try {
-      await _exportService.exportToJson(context);
-      showSnackBar(context, S.of(context).file_ready, isError: false);
-    } catch (e) {
-      showSnackBar(context, '${S.of(context).export_error}: ${e.toString()}');
-    }
-  }
-
-  Future<void> _copyToClipboard() async {
-    try {
-      await ClipboardService.copyCharacterToClipboard(
-        context: context,
-        name: widget.character.name,
-        age: widget.character.age,
-        gender: widget.character.gender,
-        raceName: widget.character.race?.name,
-        biography: widget.character.biography,
-        appearance: widget.character.appearance,
-        personality: widget.character.personality,
-        abilities: widget.character.abilities,
-        other: widget.character.other,
-        customFields: widget.character.customFields
-            .map((f) => {'key': f.key, 'value': f.value})
-            .toList(),
-      );
-      showSnackBar(context, S.of(context).copied_to_clipboard, isError: false);
-    } catch (e) {
-      showSnackBar(context, '${S.of(context).copy_error}: ${e.toString()}');
-    }
-  }
-
-  Future<void> _duplicateCharacter() async {
-    final s = S.of(context);
-    try {
-      final characterService = CharacterService.forDatabase();
-      if (!mounted) return;
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const Center(child: CircularProgressIndicator()),
-      );
-      await characterService.duplicateCharacter(widget.character);
-      if (mounted) {
-        Navigator.pop(context);
-        showSnackBar(context, s.character_duplicated, isError: false);
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      if (mounted) Navigator.pop(context);
-      showSnackBar(context, '${s.duplicate_error}: ${e.toString()}');
-    }
-  }
-
-  Future<void> _navigateToEdit() async {
-    Navigator.pop(context);
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => CharacterEditPage(character: widget.character)),
+          return ModalScaffold(
+            title: character.name,
+            menuItems: menuItems,
+            onMenuItemSelected: (value) =>
+                _onMenuItemSelected(context, controller, value),
+            onClose: () => Navigator.pop(context),
+            onEdit: () => _navigateToEdit(context),
+            heroSection: HeroSection(
+              avatarBytes: character.imageBytes,
+              name: character.name,
+              chips: chips,
+              onAvatarTap: character.imageBytes != null
+                  ? () => showFullImage(
+                      context, character.imageBytes!, s.character_avatar)
+                  : null,
+              heroTag: 'character-avatar-${character.key}',
+            ),
+            contentSections: _buildContentSections(context, controller),
+          );
+        },
+      ),
     );
   }
 
-  String _getLocalizedGender(String gender) {
+  List<Widget> _buildChips(
+      BuildContext context, CharacterModalController controller) {
     final s = S.of(context);
-    return switch (gender) {
-      _genderMale => s.male,
-      _genderFemale => s.female,
-      _genderAnother => s.another,
-      _ => gender,
-    };
-  }
+    final colorScheme = Theme.of(context).colorScheme;
 
-  Color _getGenderColor(String gender) {
-    final theme = Theme.of(context);
-    return switch (gender) {
-      _genderMale => theme.colorScheme.primaryContainer,
-      _genderFemale => theme.colorScheme.tertiaryContainer,
-      _genderAnother => theme.colorScheme.secondaryContainer,
-      _ => theme.colorScheme.surfaceContainerHighest,
-    };
-  }
-
-  IconData _getGenderIcon(String gender) {
-    return switch (gender) {
-      _genderMale => Icons.male_rounded,
-      _genderFemale => Icons.female_rounded,
-      _ => Icons.transgender_rounded,
-    };
+    final chips = <Widget>[
+      if (character.age > 0)
+        _buildChip(
+          icon: Icons.cake_rounded,
+          label: '${character.age} ${s.years}',
+          color: colorScheme.tertiaryContainer,
+        ),
+      _buildChip(
+        icon: _getGenderIcon(character.gender),
+        label: _getLocalizedGender(character.gender, s),
+        color: _getGenderColor(character.gender, colorScheme),
+      ),
+      if (character.race != null)
+        _buildChip(
+          icon: Icons.people_rounded,
+          label: character.race!.name,
+          color: colorScheme.surfaceContainerHigh,
+        ),
+      _buildChip(
+        icon: Icons.update_rounded,
+        label: DateFormat('dd.MM.yyyy').format(character.lastEdited),
+        color: colorScheme.surfaceContainerHigh,
+      ),
+      if (controller.currentFolder != null)
+        Chip(
+          avatar: Icon(Icons.folder_rounded,
+              size: 14, color: controller.currentFolder!.color),
+          label: SelectableText(controller.currentFolder!.name,
+              style: Theme.of(context).textTheme.labelSmall),
+          backgroundColor: controller.currentFolder!.color.withOpacity(0.2),
+          side: BorderSide(
+              color: controller.currentFolder!.color.withOpacity(0.4),
+              width: 1),
+          visualDensity: VisualDensity.compact,
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      ...character.tags.map((tag) => _buildChip(
+            icon: Icons.label_outline_rounded,
+            label: tag,
+            color: colorScheme.surfaceContainerHighest,
+          )),
+    ];
+    return chips;
   }
 
   Widget _buildChip(
       {required IconData icon, required String label, required Color color}) {
     return Chip(
       avatar: Icon(icon, size: 14),
-      label: Text(label, style: Theme.of(context).textTheme.labelSmall),
+      label: Text(label),
       backgroundColor: color,
       side: BorderSide.none,
       visualDensity: VisualDensity.compact,
@@ -212,62 +131,37 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  String _getLocalizedGender(String gender, S s) {
+    return switch (gender) {
+      'male' => s.male,
+      'female' => s.female,
+      'another' => s.another,
+      _ => gender,
+    };
+  }
+
+  Color _getGenderColor(String gender, ColorScheme colorScheme) {
+    return switch (gender) {
+      'male' => colorScheme.primaryContainer,
+      'female' => colorScheme.tertiaryContainer,
+      'another' => colorScheme.secondaryContainer,
+      _ => colorScheme.surfaceContainerHighest,
+    };
+  }
+
+  IconData _getGenderIcon(String gender) {
+    return switch (gender) {
+      'male' => Icons.male_rounded,
+      'female' => Icons.female_rounded,
+      _ => Icons.transgender_rounded,
+    };
+  }
+
+  List<PopupMenuEntry<String>> _buildMenuItems(
+      BuildContext context, CharacterModalController controller) {
     final s = S.of(context);
     final colorScheme = Theme.of(context).colorScheme;
-
-    final List<Uint8List> allImages = [];
-    if (widget.character.referenceImageBytes != null) {
-      allImages.add(widget.character.referenceImageBytes!);
-    }
-    allImages.addAll(widget.character.additionalImages);
-
-    final chips = <Widget>[
-      if (widget.character.age > 0)
-        _buildChip(
-          icon: Icons.cake_rounded,
-          label: '${widget.character.age} ${s.years}',
-          color: colorScheme.tertiaryContainer,
-        ),
-      _buildChip(
-        icon: _getGenderIcon(widget.character.gender),
-        label: _getLocalizedGender(widget.character.gender),
-        color: _getGenderColor(widget.character.gender),
-      ),
-      if (widget.character.race != null)
-        _buildChip(
-          icon: Icons.people_rounded,
-          label: widget.character.race!.name,
-          color: colorScheme.surfaceContainerHigh,
-        ),
-      _buildChip(
-        icon: Icons.update_rounded,
-        label: DateFormat('dd.MM.yyyy').format(widget.character.lastEdited),
-        color: colorScheme.surfaceContainerHigh,
-      ),
-      if (_currentFolder != null)
-        Chip(
-          avatar: Icon(Icons.folder_rounded,
-              size: 14, color: _currentFolder!.color),
-          label: SelectableText(_currentFolder!.name,
-              style: Theme.of(context).textTheme.labelSmall),
-          backgroundColor: _currentFolder!.color.withOpacity(0.2),
-          side: BorderSide(
-              color: _currentFolder!.color.withOpacity(0.4), width: 1),
-          visualDensity: VisualDensity.compact,
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-      ...widget.character.tags.map((tag) => _buildChip(
-            icon: Icons.label_outline_rounded,
-            label: tag,
-            color: colorScheme.surfaceContainerHighest,
-          )),
-    ];
-
-    final List<PopupMenuEntry<String>> menuItems = [
+    return [
       PopupMenuItem(
         value: 'share',
         child: ListTile(
@@ -306,48 +200,161 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
         ),
       ),
     ];
+  }
 
-    return ModalScaffold(
-      title: widget.character.name,
-      menuItems: menuItems,
-      onMenuItemSelected: (value) => switch (value) {
-        'share' => showShareMenu(
-            context: context,
-            title: s.share_character,
-            onJsonExport: _exportToJson,
-            onPdfExport: _exportToPdf,
-          ),
-        'duplicate' => _duplicateCharacter(),
-        'copy' => _copyToClipboard(),
-        'delete' => _handleDelete(),
-        _ => null,
-      },
-      onClose: () => Navigator.pop(context),
-      onEdit: _navigateToEdit,
-      heroSection: HeroSection(
-        avatarBytes: widget.character.imageBytes,
-        name: widget.character.name,
-        chips: chips,
-        onAvatarTap: widget.character.imageBytes != null
-            ? () => showFullImage(
-                context, widget.character.imageBytes!, s.character_avatar)
-            : null,
-        heroTag: 'character-avatar-${widget.character.key}',
+  Future<void> _onMenuItemSelected(BuildContext context,
+      CharacterModalController controller, String value) async {
+    switch (value) {
+      case 'share':
+        _showShareMenu(context, controller);
+        break;
+      case 'duplicate':
+        await _handleDuplicate(context, controller);
+        break;
+      case 'copy':
+        await _handleCopy(context, controller);
+        break;
+      case 'delete':
+        await _handleDelete(context, controller);
+        break;
+    }
+  }
+
+  void _showShareMenu(
+      BuildContext context, CharacterModalController controller) {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.picture_as_pdf),
+              title: Text(S.of(context).creating_pdf),
+              onTap: () async {
+                Navigator.pop(ctx);
+                await _handleExportPdf(context, controller);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.code),
+              title: Text(S.of(context).export),
+              onTap: () async {
+                Navigator.pop(ctx);
+                await _handleExportJson(context, controller);
+              },
+            ),
+          ],
+        ),
       ),
-      contentSections: _buildContentSections(),
     );
   }
 
-  Widget _buildContentSections() {
+  Future<void> _handleExportPdf(
+      BuildContext context, CharacterModalController controller) async {
+    try {
+      await controller.exportToPdf(context);
+      _showSnackBar(context, S.of(context).pdf_export_success, isError: false);
+    } catch (e) {
+      _showSnackBar(context, '${S.of(context).export_error}: ${e.toString()}');
+    }
+  }
+
+  Future<void> _handleExportJson(
+      BuildContext context, CharacterModalController controller) async {
+    try {
+      await controller.exportToJson(context);
+      _showSnackBar(context, S.of(context).file_ready, isError: false);
+    } catch (e) {
+      _showSnackBar(context, '${S.of(context).export_error}: ${e.toString()}');
+    }
+  }
+
+  Future<void> _handleCopy(
+      BuildContext context, CharacterModalController controller) async {
+    try {
+      await controller.copyToClipboard(context);
+      _showSnackBar(context, S.of(context).copied_to_clipboard, isError: false);
+    } catch (e) {
+      _showSnackBar(context, '${S.of(context).copy_error}: ${e.toString()}');
+    }
+  }
+
+  Future<void> _handleDuplicate(
+      BuildContext context, CharacterModalController controller) async {
+    try {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: CircularProgressIndicator()),
+      );
+      await controller.duplicateCharacter();
+      if (context.mounted) {
+        Navigator.pop(context); // закрыть индикатор
+        _showSnackBar(context, S.of(context).character_duplicated,
+            isError: false);
+        Navigator.pop(context); // закрыть модалку
+      }
+    } catch (e) {
+      if (context.mounted) Navigator.pop(context);
+      _showSnackBar(
+          context, '${S.of(context).duplicate_error}: ${e.toString()}');
+    }
+  }
+
+  Future<void> _handleDelete(
+      BuildContext context, CharacterModalController controller) async {
+    final confirmed = await showConfirmationDialog(
+      context: context,
+      title: S.of(context).character_delete_title,
+      message: S.of(context).character_delete_confirm,
+      confirmText: S.of(context).delete,
+      isDestructive: true,
+    );
+    if (confirmed == true) {
+      try {
+        await controller.deleteCharacter();
+        if (context.mounted) {
+          _showSnackBar(context, S.of(context).character_deleted,
+              isError: false);
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        _showSnackBar(
+            context, '${S.of(context).delete_error}: ${e.toString()}');
+      }
+    }
+  }
+
+  void _showSnackBar(BuildContext context, String message,
+      {bool isError = true}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Theme.of(context).colorScheme.error : null,
+      ),
+    );
+  }
+
+  Future<void> _navigateToEdit(BuildContext context) async {
+    Navigator.pop(context);
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => CharacterManagementPage(character: character)),
+    );
+  }
+
+  Widget _buildContentSections(
+      BuildContext context, CharacterModalController controller) {
     final s = S.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     final List<Uint8List> allImages = [];
-    if (widget.character.referenceImageBytes != null) {
-      allImages.add(widget.character.referenceImageBytes!);
+    if (character.referenceImageBytes != null) {
+      allImages.add(character.referenceImageBytes!);
     }
-    allImages.addAll(widget.character.additionalImages);
+    allImages.addAll(character.additionalImages);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,30 +363,28 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
           ExpandableSection(
             title: s.character_gallery,
             icon: Icons.photo_library_rounded,
-            isExpanded: _expandedSections['gallery']!,
-            onToggle: (value) =>
-                setState(() => _expandedSections['gallery'] = value),
+            isExpanded: controller.expandedSections['gallery']!,
+            onToggle: (_) => controller.toggleSection('gallery'),
             child: GallerySection(
               images: allImages,
               onImageTap: (bytes, title) =>
                   showFullImage(context, bytes, title),
-              referenceImageLabel: widget.character.referenceImageBytes != null
+              referenceImageLabel: character.referenceImageBytes != null
                   ? s.reference_image
                   : null,
             ),
           ),
         ],
-        if (widget.character.customFields.isNotEmpty) ...[
+        if (character.customFields.isNotEmpty) ...[
           ExpandableSection(
             title: s.custom_fields,
             icon: Icons.list_alt_rounded,
-            isExpanded: _expandedSections['customFields']!,
-            onToggle: (value) =>
-                setState(() => _expandedSections['customFields'] = value),
+            isExpanded: controller.expandedSections['customFields']!,
+            onToggle: (_) => controller.toggleSection('customFields'),
             child: Wrap(
               spacing: 10,
               runSpacing: 10,
-              children: widget.character.customFields
+              children: character.customFields
                   .map((field) => Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(12),
@@ -403,33 +408,38 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
             ),
           ),
         ],
-        _buildExpandableTextSection('appearance', s.appearance,
-            Icons.face_retouching_natural_rounded, widget.character.appearance),
-        _buildExpandableTextSection('personality', s.personality,
-            Icons.psychology_rounded, widget.character.personality),
-        _buildExpandableTextSection('biography', s.biography,
-            Icons.history_edu_rounded, widget.character.biography),
-        _buildExpandableTextSection('abilities', s.abilities,
-            Icons.auto_awesome_rounded, widget.character.abilities),
         _buildExpandableTextSection(
-            'other', s.other, Icons.more_horiz_rounded, widget.character.other),
-        if (_relatedNotes.isNotEmpty) ...[
+            context,
+            controller,
+            'appearance',
+            s.appearance,
+            Icons.face_retouching_natural_rounded,
+            character.appearance),
+        _buildExpandableTextSection(context, controller, 'personality',
+            s.personality, Icons.psychology_rounded, character.personality),
+        _buildExpandableTextSection(context, controller, 'biography',
+            s.biography, Icons.history_edu_rounded, character.biography),
+        _buildExpandableTextSection(context, controller, 'abilities',
+            s.abilities, Icons.auto_awesome_rounded, character.abilities),
+        _buildExpandableTextSection(context, controller, 'other', s.other,
+            Icons.more_horiz_rounded, character.other),
+        if (controller.relatedNotes.isNotEmpty) ...[
           ExpandableSection(
             title: s.related_notes,
             icon: Icons.note_rounded,
-            isExpanded: _expandedSections['notes']!,
-            onToggle: (value) =>
-                setState(() => _expandedSections['notes'] = value),
+            isExpanded: controller.expandedSections['notes']!,
+            onToggle: (_) => controller.toggleSection('notes'),
             child: Column(
-              children: _relatedNotes
+              children: controller.relatedNotes
                   .map((note) => Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: NoteCard(
                           key: ValueKey(note.id),
                           note: note,
-                          onTap: () => _openNoteForEditing(note),
-                          onEdit: () => _openNoteForEditing(note),
-                          onDelete: () => _deleteNote(note),
+                          onTap: () => _openNoteForEditing(context, note),
+                          onEdit: () => _openNoteForEditing(context, note),
+                          onDelete: () =>
+                              _deleteNote(context, controller, note),
                           enableDrag: false,
                         ),
                       ))
@@ -437,24 +447,37 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
             ),
           ),
         ],
+        if (controller.isLoading)
+          const Center(
+              child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: CircularProgressIndicator(),
+          )),
       ],
     );
   }
 
   Widget _buildExpandableTextSection(
-      String key, String title, IconData icon, String content) {
+    BuildContext context,
+    CharacterModalController controller,
+    String key,
+    String title,
+    IconData icon,
+    String content,
+  ) {
     if (content.isEmpty) return const SizedBox.shrink();
     return ExpandableSection(
       title: title,
       icon: icon,
-      isExpanded: _expandedSections[key]!,
-      onToggle: (value) => setState(() => _expandedSections[key] = value),
+      isExpanded: controller.expandedSections[key]!,
+      onToggle: (_) => controller.toggleSection(key),
       child:
           SelectableText(content, style: Theme.of(context).textTheme.bodyLarge),
     );
   }
 
-  Future<void> _deleteNote(Note note) async {
+  Future<void> _deleteNote(BuildContext context,
+      CharacterModalController controller, Note note) async {
     final confirmed = await showConfirmationDialog(
       context: context,
       title: S.of(context).delete,
@@ -464,22 +487,22 @@ class _CharacterModalCardState extends State<CharacterModalCard> {
     );
     if (confirmed == true) {
       try {
-        await Hive.box<Note>('notes').delete(note.key);
-        if (mounted) {
-          showSnackBar(context, S.of(context).delete, isError: false);
-          await _loadRelatedNotes();
-        }
+        await controller.deleteNote(note);
+        _showSnackBar(context, S.of(context).delete, isError: false);
       } catch (e) {
-        showSnackBar(context, '${S.of(context).delete_error}: ${e.toString()}');
+        _showSnackBar(
+            context, '${S.of(context).delete_error}: ${e.toString()}');
       }
     }
   }
 
-  Future<void> _openNoteForEditing(Note note) async {
+  Future<void> _openNoteForEditing(BuildContext context, Note note) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => NoteEditPage(note: note)),
+      MaterialPageRoute(builder: (context) => NoteManagementPage(note: note)),
     );
-    if (result == true) await _loadRelatedNotes();
+    if (result == true) {
+      context.read<CharacterModalController>().refreshNotes();
+    }
   }
 }
