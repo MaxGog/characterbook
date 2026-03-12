@@ -13,22 +13,22 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  bool hiveInitialized = false;
   try {
-    await Future.wait([
-      InitializationService.initializeHive().then((success) {
-      }),
-    ]);
+    hiveInitialized = await InitializationService.initializeHive();
   } catch (error) {
     debugPrint('Critical initialization error: $error');
   }
 
-  FileHandler.initialize();
+  await FileHandler.initialize();
 
-  runApp(CharacterBookApp());
+  runApp(CharacterBookApp(hiveInitialized: hiveInitialized));
 }
 
 class CharacterBookApp extends StatelessWidget {
-  const CharacterBookApp({super.key});
+  final bool hiveInitialized;
+
+  const CharacterBookApp({super.key, required this.hiveInitialized});
 
   @override
   Widget build(BuildContext context) {
@@ -41,57 +41,57 @@ class CharacterBookApp extends StatelessWidget {
               NotificationService(GlobalKey<ScaffoldMessengerState>()),
         ),
       ],
-      child: const _AppContent(),
+      child: _AppContent(hiveInitialized: hiveInitialized),
     );
   }
 }
 
 class _AppContent extends StatefulWidget {
-  const _AppContent();
+  final bool hiveInitialized;
+
+  const _AppContent({required this.hiveInitialized});
 
   @override
   State<_AppContent> createState() => _AppContentState();
 }
 
 class _AppContentState extends State<_AppContent> {
-  final bool _hiveInitializedSuccessfully = true;
   bool _showErrorDialog = false;
 
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkInitializationStatus();
     });
   }
 
   void _checkInitializationStatus() {
-    if (!_hiveInitializedSuccessfully && !_showErrorDialog) {
+    if (!widget.hiveInitialized && !_showErrorDialog) {
       setState(() {
         _showErrorDialog = true;
       });
 
-      ErrorDialogService.showInitializationErrorDialog(
-        context,
-        error: InitializationError(
-          title: 'Проблемы с инициализацией данных',
-          message:
-              'При запуске приложения возникли проблемы с загрузкой данных. '
-              'Для восстановления работоспособности приложение сбросило поврежденные данные.',
-          requiresReset: true,
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: Text(S.of(context).initialization_error),
+          content: Text(S.of(context).initialization_error),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  _showErrorDialog = false;
+                });
+              },
+              child: Text(S.of(context).ok),
+            ),
+          ],
         ),
-      ).then((_) {
-        setState(() {
-          _showErrorDialog = false;
-        });
-      });
+      );
     }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
