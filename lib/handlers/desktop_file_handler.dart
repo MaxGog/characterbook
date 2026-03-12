@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:characterbook/interfaces/file_handler_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -33,5 +34,16 @@ class DesktopFileHandler implements FileHandlerInterface {
       debugPrint("Error getting opened file: ${e.message}");
       return null;
     }
+  }
+
+  @override
+  Future<String> readFileAsString(String path) async {
+    final file = File(path);
+    return await file.readAsString();
+  }
+
+  @override
+  void dispose() {
+    _fileOpenedController.close();
   }
 }

@@ -1,16 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-
-import '../models/character_model.dart';
-import '../models/race_model.dart';
-import '../models/template_model.dart';
-import '../ui/pages/character_management_page.dart';
-import '../ui/pages/race_management_page.dart';
-import '../ui/pages/template_edit_page.dart';
-import 'file_handler.dart';
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/handlers/file_handler.dart';
+import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/models/race_model.dart';
+import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/ui/pages/character_management_page.dart';
+import 'package:characterbook/ui/pages/race_management_page.dart';
+import 'package:characterbook/ui/pages/template_edit_page.dart';
 
 class FileHandlerWrapper extends StatefulWidget {
   final Widget child;
@@ -30,13 +29,18 @@ class _FileHandlerWrapperState extends State<FileHandlerWrapper> {
     _initFileHandling();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future<void> _initFileHandling() async {
     FileHandler.onFileOpened.listen((data) {
       if (mounted) {
         _handleFile(
-            data['path'],
-            data['type'],
-            data['originalName'] ?? data['path'].split('/').last()
+          path: data['path'],
+          type: data['type'],
+          originalName: data['originalName'] ?? data['path'].split('/').last,
         );
       }
     });
@@ -44,37 +48,30 @@ class _FileHandlerWrapperState extends State<FileHandlerWrapper> {
     final fileData = await FileHandler.getOpenedFile();
     if (mounted && fileData != null) {
       _handleFile(
-          fileData['path'],
-          fileData['type'],
-          fileData['originalName'] ?? fileData['path'].split('/').last
+        path: fileData['path'],
+        type: fileData['type'],
+        originalName:
+            fileData['originalName'] ?? fileData['path'].split('/').last,
       );
     }
   }
 
-  Future<void> _handleFile(String path, String type, String originalName) async {
+  Future<void> _handleFile({
+    required String path,
+    required String type,
+    required String originalName,
+  }) async {
     if (!mounted) return;
 
     setState(() => _isHandlingFile = true);
 
     try {
-      debugPrint('Processing file: $path with type: $type and original name: $originalName');
+      debugPrint('Processing file: $path with type: $type');
 
-      final fileExtension = originalName.split('.').last.toLowerCase();
-      debugPrint('Actual file extension: $fileExtension');
-
-      if (!['character', 'race', 'chax'].contains(fileExtension)) {
-        throw Exception("Unsupported file type: $fileExtension");
-      }
-
-      final file = File(path);
-      if (!await file.exists()) {
-        throw Exception("File not found at path: $path");
-      }
-
-      final content = await file.readAsString();
+      final content = await FileHandler.readFileAsString(path);
       final json = jsonDecode(content);
 
-      switch (fileExtension) {
+      switch (type) {
         case 'character':
           final character = Character.fromJson(json);
           _navigateToCharacterEdit(character);
@@ -87,6 +84,8 @@ class _FileHandlerWrapperState extends State<FileHandlerWrapper> {
           final template = QuestionnaireTemplate.fromJson(json);
           _navigateToTemplateManagement(template);
           break;
+        default:
+          throw Exception('Unsupported file type: $type');
       }
     } catch (e, stackTrace) {
       debugPrint('Error handling file: $e');
@@ -102,7 +101,7 @@ class _FileHandlerWrapperState extends State<FileHandlerWrapper> {
   void _navigateToCharacterEdit(Character character) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => CharacterEditPage(character: character),
+        builder: (_) => CharacterManagementPage(character: character),
       ),
     );
   }
@@ -124,15 +123,26 @@ class _FileHandlerWrapperState extends State<FileHandlerWrapper> {
   }
 
   void _showError(dynamic error) {
+    final s = S.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка: ${error.toString()}'))
+      SnackBar(
+        content: Text('${s.file_pick_error}: ${error.toString()}'),
+        backgroundColor: Theme.of(context).colorScheme.error,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return _isHandlingFile
-        ? const Scaffold(body: Center(child: CircularProgressIndicator()))
-        : widget.child;
+    return Stack(
+      children: [
+        widget.child,
+        if (_isHandlingFile)
+          Container(
+            color: Colors.black54,
+            child: const Center(child: CircularProgressIndicator()),
+          ),
+      ],
+    );
   }
 }

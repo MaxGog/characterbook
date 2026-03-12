@@ -18,4 +18,14 @@ class WebFileHandler implements FileHandlerInterface {
   Future<Map<String, dynamic>?> getOpenedFile() async {
     return null;
   }
+  
+  @override
+  Future<String> readFileAsString(String path) {
+    throw UnimplementedError();
+  }
+  
+  @override
+  void dispose() {
+    _fileOpenedController.close();
+  }
 }
