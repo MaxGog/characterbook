@@ -5,6 +5,7 @@ import 'package:characterbook/ui/pages/note_list_page.dart';
 import 'package:characterbook/ui/pages/race_list_page.dart';
 import 'package:characterbook/ui/pages/search_page.dart';
 import 'package:flutter/material.dart';
+
 class AppNavigationBar extends StatefulWidget {
   const AppNavigationBar({super.key});
 
@@ -39,7 +40,7 @@ class _AppNavigationBarState extends State<AppNavigationBar>
   ];
 
   int _currentIndex = 0;
-  late AnimationController _animationController;
+  late final AnimationController _animationController;
   bool _isRailExtended = false;
 
   List<String> _getTitles(BuildContext context) => <String>[
@@ -82,7 +83,7 @@ class _AppNavigationBarState extends State<AppNavigationBar>
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       body: SafeArea(
         child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
+          builder: (context, constraints) {
             if (constraints.maxWidth >= 600) {
               return _WideScreenLayout(
                 currentIndex: _currentIndex,
@@ -92,7 +93,6 @@ class _AppNavigationBarState extends State<AppNavigationBar>
                 selectedIcons: _selectedIcons,
                 onIndexChanged: _updateIndex,
                 isRailExtended: _isRailExtended,
-                animationController: _animationController,
                 onToggleExtension: _toggleRailExtension,
               );
             }
@@ -117,6 +117,7 @@ class _AppNavigationBarState extends State<AppNavigationBar>
   }
 }
 
+/// Адаптация для широких экранов (планшеты, десктоп).
 class _WideScreenLayout extends StatelessWidget {
   const _WideScreenLayout({
     required this.currentIndex,
@@ -126,7 +127,6 @@ class _WideScreenLayout extends StatelessWidget {
     required this.selectedIcons,
     required this.onIndexChanged,
     required this.isRailExtended,
-    required this.animationController,
     required this.onToggleExtension,
   });
 
@@ -137,41 +137,35 @@ class _WideScreenLayout extends StatelessWidget {
   final List<IconData> selectedIcons;
   final ValueChanged<int> onIndexChanged;
   final bool isRailExtended;
-  final AnimationController animationController;
   final VoidCallback onToggleExtension;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: <Widget>[
-        AnimatedBuilder(
-          animation: animationController,
-          builder: (BuildContext context, Widget? child) {
-            return SizedBox(
-              width: isRailExtended ? 200 : 72,
-              child: NavigationRail(
-                selectedIndex: currentIndex,
-                onDestinationSelected: onIndexChanged,
-                extended: isRailExtended,
-                leading: IconButton(
-                  onPressed: onToggleExtension,
-                  icon: AnimatedRotation(
-                    turns: isRailExtended ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 300),
-                    child: const Icon(Icons.menu),
-                  ),
-                ),
-                destinations: List<NavigationRailDestination>.generate(
-                  titles.length,
-                  (int index) => NavigationRailDestination(
-                    icon: Icon(icons[index]),
-                    selectedIcon: Icon(selectedIcons[index]),
-                    label: Text(titles[index]),
-                  ),
-                ),
+      children: [
+        SizedBox(
+          width: isRailExtended ? 200 : 72,
+          child: NavigationRail(
+            selectedIndex: currentIndex,
+            onDestinationSelected: onIndexChanged,
+            extended: isRailExtended,
+            leading: IconButton(
+              onPressed: onToggleExtension,
+              icon: AnimatedRotation(
+                turns: isRailExtended ? 0.5 : 0,
+                duration: const Duration(milliseconds: 300),
+                child: const Icon(Icons.menu),
               ),
-            );
-          },
+            ),
+            destinations: List.generate(
+              titles.length,
+              (index) => NavigationRailDestination(
+                icon: Icon(icons[index]),
+                selectedIcon: Icon(selectedIcons[index]),
+                label: Text(titles[index]),
+              ),
+            ),
+          ),
         ),
         Expanded(child: pages[currentIndex]),
       ],
@@ -179,6 +173,7 @@ class _WideScreenLayout extends StatelessWidget {
   }
 }
 
+/// Адаптация для узких экранов (телефоны).
 class _NarrowScreenLayout extends StatelessWidget {
   const _NarrowScreenLayout({
     required this.currentIndex,
@@ -203,9 +198,9 @@ class _NarrowScreenLayout extends StatelessWidget {
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
         onDestinationSelected: onIndexChanged,
-        destinations: List<NavigationDestination>.generate(
+        destinations: List.generate(
           titles.length,
-          (int index) => NavigationDestination(
+          (index) => NavigationDestination(
             icon: Icon(icons[index]),
             selectedIcon: Icon(selectedIcons[index]),
             label: titles[index],
