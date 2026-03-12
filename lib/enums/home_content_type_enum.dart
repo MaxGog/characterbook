@@ -1,0 +1,1 @@
+enum HomeContentType { charactersAndRaces, tools }
