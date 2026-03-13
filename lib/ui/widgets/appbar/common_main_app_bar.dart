@@ -12,6 +12,7 @@ class CommonMainAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onFoldersPressed;
   final VoidCallback? onTemplatesPressed;
   final VoidCallback? onViewModePressed;
+  final VoidCallback? onSettingsPressed;
   final bool showViewModeToggle;
   final bool showTemplatesToggle;
   final bool showFoldersToggle;
@@ -28,6 +29,7 @@ class CommonMainAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onFoldersPressed,
     this.onTemplatesPressed,
     this.onViewModePressed,
+    this.onSettingsPressed,
     this.showViewModeToggle = true,
     this.showTemplatesToggle = true,
     this.showFoldersToggle = true,
@@ -47,6 +49,7 @@ class CommonMainAppBar extends StatelessWidget implements PreferredSizeWidget {
       onFoldersPressed: onFoldersPressed,
       onTemplatesPressed: onTemplatesPressed,
       onViewModePressed: onViewModePressed,
+      onSettingsPressed: onSettingsPressed,
       showViewModeToggle: showViewModeToggle,
       showTemplatesToggle: showTemplatesToggle,
       showFoldersToggle: showFoldersToggle,
@@ -54,5 +57,5 @@ class CommonMainAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(80);
+  Size get preferredSize => const Size.fromHeight(64);
 }

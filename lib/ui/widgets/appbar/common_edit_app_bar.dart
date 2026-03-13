@@ -1,6 +1,5 @@
 import 'package:characterbook/ui/widgets/appbar/common_app_bar.dart';
 import 'package:flutter/material.dart';
-
 class CommonEditAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? additionalActions;
@@ -16,16 +15,18 @@ class CommonEditAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Size get preferredSize => const Size.fromHeight(80);
+  Size get preferredSize => const Size.fromHeight(64);
 
   @override
   Widget build(BuildContext context) {
     return CommonAppBar.edit(
+      context: context,
       title: title,
       additionalActions: additionalActions,
       onSave: onSave,
       saveTooltip: saveTooltip,
-      context: context,
+      centerTitle: true,
+      showBackButton: true,
     );
   }
 }
