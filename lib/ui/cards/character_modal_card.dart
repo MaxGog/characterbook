@@ -229,7 +229,7 @@ class CharacterModalCard extends StatelessWidget {
           children: [
             ListTile(
               leading: const Icon(Icons.picture_as_pdf),
-              title: Text(S.of(context).creating_pdf),
+              title: Text(S.of(context).file_pdf),
               onTap: () async {
                 Navigator.pop(ctx);
                 await _handleExportPdf(context, controller);
@@ -237,7 +237,7 @@ class CharacterModalCard extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.code),
-              title: Text(S.of(context).export),
+              title: Text(S.of(context).file_character),
               onTap: () async {
                 Navigator.pop(ctx);
                 await _handleExportJson(context, controller);
