@@ -9,7 +9,6 @@ import 'package:characterbook/services/note_service.dart';
 import 'package:characterbook/ui/controllers/note_management_controller.dart';
 import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
 import 'package:characterbook/ui/widgets/avatar_widget.dart';
-import 'package:characterbook/ui/widgets/base_edit_page_scaffold.dart';
 import 'package:characterbook/ui/widgets/buttons/save_button_widget.dart';
 import 'package:characterbook/ui/widgets/fields/custom_text_field.dart';
 import 'package:characterbook/ui/widgets/markdown_context_menu.dart';
@@ -19,17 +18,43 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
-class NoteManagementPage extends StatefulWidget {
+class NoteManagementPage extends StatelessWidget {
   final Note? note;
   final bool isCopyMode;
 
   const NoteManagementPage({super.key, this.note, this.isCopyMode = false});
 
   @override
-  State<NoteManagementPage> createState() => _NoteManagementPageState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => NoteManagementController(
+        noteRepo: context.read<NoteRepository>(),
+        folderRepo: context.read<FolderRepository>(),
+        noteService: context.read<NoteService>(),
+        note: note,
+        isCopyMode: isCopyMode,
+      ),
+      child: _NoteManagementPageContent(
+        note: note,
+        isCopyMode: isCopyMode,
+      ),
+    );
+  }
 }
 
-class _NoteManagementPageState extends State<NoteManagementPage> {
+class _NoteManagementPageContent extends StatefulWidget {
+  final Note? note;
+  final bool isCopyMode;
+
+  const _NoteManagementPageContent(
+      {this.note, this.isCopyMode = false});
+
+  @override
+  State<_NoteManagementPageContent> createState() =>
+      _NoteManagementPageContentState();
+}
+
+class _NoteManagementPageContentState extends State<_NoteManagementPageContent> {
   static const _fieldSpacing = 16.0;
 
   final GlobalKey<FormState> _formKey = GlobalKey();
@@ -38,19 +63,35 @@ class _NoteManagementPageState extends State<NoteManagementPage> {
 
   bool _isPreviewMode = false;
   bool _isMetaCardExpanded = true;
+  bool _listenersAdded = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final controller = context.read<NoteManagementController>();
-      _titleController = TextEditingController(text: controller.title);
-      _contentController = TextEditingController(text: controller.content);
+    _titleController = TextEditingController();
+    _contentController = TextEditingController();
+  }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final controller =
+        Provider.of<NoteManagementController>(context, listen: false);
+
+    if (_titleController.text != controller.title) {
+      _titleController.text = controller.title;
+    }
+    if (_contentController.text != controller.content) {
+      _contentController.text = controller.content;
+    }
+
+    if (!_listenersAdded) {
       _titleController.addListener(_onTitleChanged);
       _contentController.addListener(_onContentChanged);
-    });
+      _listenersAdded = true;
+    }
   }
+
 
   void _onTitleChanged() {
     final controller = context.read<NoteManagementController>();
@@ -73,81 +114,74 @@ class _NoteManagementPageState extends State<NoteManagementPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => NoteManagementController(
-        noteRepo: context.read<NoteRepository>(),
-        folderRepo: context.read<FolderRepository>(),
-        noteService: context.read<NoteService>(),
-        note: widget.note,
-        isCopyMode: widget.isCopyMode,
-      ),
-      child: Consumer<NoteManagementController>(
-        builder: (context, controller, child) {
-          final s = S.of(context);
-          final title = widget.note == null
-              ? s.create
-              : widget.isCopyMode
-                  ? '${s.copy} ${s.posts.toLowerCase()}'
-                  : s.edit;
+    return Consumer<NoteManagementController>(
+      builder: (context, controller, child) {
+        final s = S.of(context);
+        final title = widget.note == null
+            ? s.create
+            : widget.isCopyMode
+                ? '${s.copy} ${s.posts.toLowerCase()}'
+                : s.edit;
 
-          final additionalActions = [
-            IconButton.filledTonal(
-              onPressed: () => _shareNote(context, controller),
-              icon: const Icon(Icons.share_rounded),
-              tooltip: s.share,
-              style: IconButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(16),
-              ),
+        final additionalActions = [
+          IconButton.filledTonal(
+            onPressed: () => _shareNote(context, controller),
+            icon: const Icon(Icons.share_rounded),
+            tooltip: s.share,
+            style: IconButton.styleFrom(
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(16),
             ),
-            const SizedBox(width: 8),
-            IconButton.filledTonal(
-              onPressed: () => _copyToClipboard(context, controller),
-              icon: const Icon(Icons.copy_rounded),
-              tooltip: s.copy,
-              style: IconButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(16),
-              ),
+          ),
+          const SizedBox(width: 8),
+          IconButton.filledTonal(
+            onPressed: () => _copyToClipboard(context, controller),
+            icon: const Icon(Icons.copy_rounded),
+            tooltip: s.copy,
+            style: IconButton.styleFrom(
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(16),
             ),
-            const SizedBox(width: 8),
-            IconButton.filledTonal(
-              onPressed: _togglePreviewMode,
-              icon: Icon(
-                  _isPreviewMode ? Icons.edit_rounded : Icons.preview_rounded),
-              tooltip: _isPreviewMode ? s.edit : s.grid_view,
-              style: IconButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(16),
-              ),
+          ),
+          const SizedBox(width: 8),
+          IconButton.filledTonal(
+            onPressed: _togglePreviewMode,
+            icon: Icon(
+                _isPreviewMode ? Icons.edit_rounded : Icons.preview_rounded),
+            tooltip: _isPreviewMode ? s.edit : s.grid_view,
+            style: IconButton.styleFrom(
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(16),
             ),
-            const SizedBox(width: 8),
-          ];
+          ),
+          const SizedBox(width: 8),
+        ];
 
-          return BaseEditPageScaffold(
-            onWillPop: () async {
-              if (controller.hasUnsavedChanges) {
-                final shouldLeave = await showDialog<bool>(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    title: Text(s.unsaved_changes_title),
-                    content: Text(s.unsaved_changes_content),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(ctx, false),
-                        child: Text(s.cancel),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(ctx, true),
-                        child: Text(s.close),
-                      ),
-                    ],
-                  ),
-                );
-                return shouldLeave ?? false;
-              }
-              return true;
-            },
+        return WillPopScope(
+          onWillPop: () async {
+            if (controller.hasUnsavedChanges) {
+              final shouldLeave = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text(s.unsaved_changes_title),
+                  content: Text(s.unsaved_changes_content),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: Text(s.cancel),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: Text(s.close),
+                    ),
+                  ],
+                ),
+              );
+              return shouldLeave ?? false;
+            }
+            return true;
+          },
+          child: Scaffold(
             appBar: CommonEditAppBar(
               title: title,
               onSave: () async {
@@ -181,9 +215,9 @@ class _NoteManagementPageState extends State<NoteManagementPage> {
                 ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
