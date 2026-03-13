@@ -2,6 +2,7 @@ import 'package:characterbook/models/folder_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 abstract class FolderRepository {
+  Stream<List<Folder>> watchAll();
   Future<List<Folder>> getAll();
   Future<Folder?> getById(String id);
   Future<List<Folder>> getByType(FolderType type, {String? parentId});
@@ -16,6 +17,12 @@ class FolderRepositoryHive implements FolderRepository {
   final Box<Folder> _box;
 
   FolderRepositoryHive(this._box);
+
+  @override
+  Stream<List<Folder>> watchAll() async* {
+    yield _box.values.toList();
+    yield* _box.watch().map((_) => _box.values.toList());
+  }
 
   @override
   Future<List<Folder>> getAll() async => _box.values.toList();
