@@ -3,7 +3,6 @@ import 'package:characterbook/ui/pages/character_list_page.dart';
 import 'package:characterbook/ui/pages/home_page.dart';
 import 'package:characterbook/ui/pages/note_list_page.dart';
 import 'package:characterbook/ui/pages/race_list_page.dart';
-import 'package:characterbook/ui/pages/search_page.dart';
 import 'package:flutter/material.dart';
 
 class AppNavigationBar extends StatefulWidget {
@@ -20,7 +19,6 @@ class _AppNavigationBarState extends State<AppNavigationBar>
     CharacterListPage(),
     RaceListPage(),
     NotesListPage(),
-    SearchPage(),
   ];
 
   static const List<IconData> _icons = <IconData>[
@@ -28,7 +26,6 @@ class _AppNavigationBarState extends State<AppNavigationBar>
     Icons.people_alt_outlined,
     Icons.emoji_people_outlined,
     Icons.note_alt_outlined,
-    Icons.search_outlined,
   ];
 
   static const List<IconData> _selectedIcons = <IconData>[
@@ -36,7 +33,6 @@ class _AppNavigationBarState extends State<AppNavigationBar>
     Icons.people_alt_rounded,
     Icons.emoji_people_rounded,
     Icons.note_alt_rounded,
-    Icons.search_rounded,
   ];
 
   int _currentIndex = 0;
@@ -48,7 +44,6 @@ class _AppNavigationBarState extends State<AppNavigationBar>
         S.of(context).characters,
         S.of(context).races,
         S.of(context).posts,
-        S.of(context).search,
       ];
 
   @override
