@@ -38,5 +38,26 @@
 	<true/>
 	<key>com.apple.security.network.server</key>
 	<true/>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>CharacterBook files</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.json</string>
+			</array>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>character</string>
+				<string>race</string>
+				<string>chax</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
