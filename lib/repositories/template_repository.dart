@@ -18,8 +18,10 @@ class TemplateRepositoryHive implements TemplateRepository {
   TemplateRepositoryHive(this._box);
 
   @override
-  Stream<List<QuestionnaireTemplate>> watchAll() =>
-      _box.watch().map((_) => _box.values.toList());
+  Stream<List<QuestionnaireTemplate>> watchAll() async* {
+    yield _box.values.toList();
+    yield* _box.watch().map((_) => _box.values.toList());
+  }
 
   @override
   Future<List<QuestionnaireTemplate>> getAll() async => _box.values.toList();

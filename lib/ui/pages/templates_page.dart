@@ -9,7 +9,7 @@ import 'package:characterbook/ui/widgets/cards/template_card.dart';
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
 import 'package:characterbook/ui/widgets/appbar/common_main_app_bar.dart';
 import 'package:characterbook/ui/widgets/buttons/common_list_floating_buttons.dart';
-import 'package:characterbook/ui/pages/template_edit_page.dart';
+import 'package:characterbook/ui/pages/template_management_page.dart';
 import 'package:characterbook/ui/pages/character_management_page.dart';
 import 'package:characterbook/ui/widgets/tags/tag_filter.dart';
 import 'package:characterbook/enums/template_sort_enum.dart';
@@ -60,8 +60,12 @@ class _TemplatesPageState extends State<TemplatesPage> {
     return [s.a_to_z, s.z_to_a, s.fields_asc, s.fields_desc];
   }
 
-  void _onTagSelected(
-      String tag, BuildContext context, TemplateListController controller) {
+  void _onTagSelected(String? tag, BuildContext context, TemplateListController controller) {
+    if (tag == null) {
+      controller.setSelectedTag(null);
+      return;
+    }
+
     final s = S.of(context);
     if (tag == s.a_to_z) {
       controller.setSort(TemplateSort.nameAsc);
@@ -274,7 +278,7 @@ class _TemplatesPageState extends State<TemplatesPage> {
                     selectedTag: controller
                         .selectedTag,
                     onTagSelected: (tag) =>
-                        _onTagSelected(tag!, context, controller),
+                        _onTagSelected(tag, context, controller),
                     context: context,
                   ),
                 Expanded(
