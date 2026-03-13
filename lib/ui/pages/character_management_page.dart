@@ -95,8 +95,8 @@ class _CharacterManagementPageState extends State<CharacterManagementPage> {
             ),
             body: Form(
               key: _formKey,
-              child: ListView(
-                padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildFolderAndTagsSection(context, controller),
                   if (widget.template != null) _buildTemplateChip(context),

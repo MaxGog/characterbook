@@ -83,8 +83,8 @@ class _RaceManagementPageState extends State<RaceManagementPage> {
             ),
             body: Form(
               key: _formKey,
-              child: ListView(
-                padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildFolderAndTagsSection(context, controller),
                   const SizedBox(height: 24),
