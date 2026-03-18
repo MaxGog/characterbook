@@ -1,5 +1,5 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/ui/pages/settings_page.dart';
+import 'package:characterbook/ui/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -76,7 +76,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       onViewModePressed: onViewModePressed,
       onSettingsPressed: onSettingsPressed ??
           () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
               ),
       showViewModeToggle: showViewModeToggle,
       showTemplatesToggle: showTemplatesToggle,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:characterbook/ui/widgets/sections/about_section_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -9,18 +10,18 @@ import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/services/backup_service.dart';
 import 'package:characterbook/providers/locale_provider.dart';
 import 'package:characterbook/providers/theme_provider.dart';
-import 'package:characterbook/ui/pages/calendar_page.dart';
-import 'package:characterbook/ui/pages/export_pdf_settings_page.dart';
+import 'package:characterbook/ui/screens/calendar_page.dart';
+import 'package:characterbook/ui/screens/export_pdf_settings_page.dart';
 import 'package:flutter/services.dart';
 
-class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
 
   @override
-  State<SettingsPage> createState() => _SettingsPageState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class _SettingsScreenState extends State<SettingsScreen> {
   late final SettingsController _controller;
 
   @override
@@ -103,7 +104,7 @@ class _SettingsBody extends StatelessWidget {
         SizedBox(height: 8),
         _ExportPdfSettingsSection(),
         SizedBox(height: 8),
-        _AboutSection(),
+        AboutSection(),
         SizedBox(height: 8),
         _AcknowledgementsSection(),
         SizedBox(height: 8),
@@ -766,95 +767,6 @@ class _ExportPdfSettingsSection extends StatelessWidget {
         ),
       ],
     );
-  }
-}
-
-class _AboutSection extends StatelessWidget {
-  const _AboutSection();
-
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return SettingsSection(
-      title: s.aboutApp,
-      children: [
-        ListTile(
-          leading: Icon(Icons.title, color: colorScheme.onSurfaceVariant),
-          title: Text(s.name),
-          trailing:
-              Text(s.app_name, style: Theme.of(context).textTheme.bodyLarge),
-        ),
-        const SizedBox(height: 8),
-        ListTile(
-          leading: CircleAvatar(
-            radius: 20,
-            backgroundImage: const AssetImage('assets/avatardeveloper.jpg'),
-          ),
-          title: Text(s.developer),
-          trailing: Text('Максим Гоглов',
-              style: Theme.of(context).textTheme.bodyLarge),
-        ),
-        const SizedBox(height: 8),
-        ListTile(
-          leading:
-              Icon(Icons.info_outline, color: colorScheme.onSurfaceVariant),
-          title: Text(s.version),
-          trailing: Text('1.8.0', style: Theme.of(context).textTheme.bodyLarge),
-        ),
-        const SizedBox(height: 16),
-        FilledButton.tonal(
-          onPressed: () =>
-              _launchUrl('https://github.com/MaxGog/CharacterBook'),
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/github-mark.png', width: 24, height: 24),
-              const SizedBox(width: 12),
-              Text(s.githubRepo, style: Theme.of(context).textTheme.bodyLarge),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
-        FilledButton(
-          onPressed: () => _launchUrl('https://hipolink.net/maxupshur/'),
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            backgroundColor: colorScheme.tertiaryContainer,
-            foregroundColor: colorScheme.onTertiaryContainer,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.favorite, size: 24),
-              const SizedBox(width: 12),
-              Text(
-                'Поддержать разработчика',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _launchUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      throw Exception('Could not launch $url');
-    }
   }
 }
 

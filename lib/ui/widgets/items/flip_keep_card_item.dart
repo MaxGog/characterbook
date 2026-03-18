@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'keep_card.dart';
+import 'keep_card_item.dart';
 
 typedef FlipSideBuilder = Widget Function(
   BuildContext context,

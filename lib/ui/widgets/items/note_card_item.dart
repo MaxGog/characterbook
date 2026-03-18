@@ -1,12 +1,7 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/models/note_model.dart';
-import 'package:characterbook/services/folder_service.dart';
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:characterbook/models/character_model.dart';
-
 class NoteCard extends StatelessWidget {
   final Note note;
   final bool isSelected;
@@ -42,16 +37,6 @@ class NoteCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final s = S.of(context);
-
-    final characterBox = Hive.box<Character>('characters');
-    final characters = note.characterIds
-        .map((id) => characterBox.get(id))
-        .whereType<Character>()
-        .toList();
-    final folder = note.folderId != null
-        ? FolderService(Hive.box<Folder>('folders'))
-            .getFolderById(note.folderId!)
-        : null;
 
     return Dismissible(
       key: Key(note.id),
@@ -133,49 +118,6 @@ class NoteCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (folder != null ||
-                    note.tags.isNotEmpty ||
-                    characters.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: [
-                      if (folder != null)
-                        Chip(
-                          label: Text(folder.name,
-                              style: theme.textTheme.bodySmall),
-                          avatar: Icon(
-                            Icons.folder_rounded,
-                            size: 16,
-                            color: folder.color,
-                          ),
-                          backgroundColor: folder.color.withOpacity(0.1),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                        ),
-                      ...characters.map((character) => Chip(
-                            label: Text(character.name,
-                                style: theme.textTheme.bodySmall),
-                            avatar: Icon(
-                              Icons.person_rounded,
-                              size: 16,
-                              color: colorScheme.onPrimaryContainer,
-                            ),
-                            backgroundColor: colorScheme.primaryContainer,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                          )),
-                      ...note.tags.map((tag) => Chip(
-                            label: Text(tag, style: theme.textTheme.bodySmall),
-                            backgroundColor:
-                                colorScheme.surfaceContainerHighest,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                          )),
-                    ],
-                  ),
-                ],
               ],
             ),
           ),

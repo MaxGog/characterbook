@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:characterbook/models/character_model.dart';
 import 'package:characterbook/generated/l10n.dart';
-import 'flip_keep_card.dart';
+import 'flip_keep_card_item.dart';
 
 class CharacterKeepCard extends StatelessWidget {
   final Character character;

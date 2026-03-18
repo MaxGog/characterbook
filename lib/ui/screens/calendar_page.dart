@@ -7,14 +7,14 @@ import 'package:characterbook/models/race_model.dart';
 import 'package:characterbook/services/character_service.dart';
 import 'package:characterbook/services/note_service.dart';
 import 'package:characterbook/services/race_service.dart';
-import 'package:characterbook/ui/cards/character_modal_card.dart';
-import 'package:characterbook/ui/cards/race_modal_card.dart';
+import 'package:characterbook/ui/modals/character_modal_card.dart';
+import 'package:characterbook/ui/modals/race_modal_card.dart';
 import 'package:characterbook/ui/controllers/calendar_controller.dart';
-import 'package:characterbook/ui/pages/note_management_page.dart';
+import 'package:characterbook/ui/screens/note_management_page.dart';
 import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
-import 'package:characterbook/ui/widgets/cards/character_card.dart';
-import 'package:characterbook/ui/widgets/cards/note_card.dart';
-import 'package:characterbook/ui/widgets/cards/race_card.dart';
+import 'package:characterbook/ui/widgets/items/character_card_item.dart';
+import 'package:characterbook/ui/widgets/items/note_card_item.dart';
+import 'package:characterbook/ui/widgets/items/race_card_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -24,11 +24,16 @@ class CalendarPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final characterService = context.read<CharacterService>();
+    final raceService = context.read<RaceService>();
+    final noteService = context.read<NoteService>();
+
     return ChangeNotifierProvider(
       create: (_) => CalendarController(
-        characterService: CharacterService.forDatabase(),
-        raceService: RaceService.forDatabase(),
-        noteService: NoteService.forDatabase(),
+        characterService: characterService,
+        raceService: raceService,
+        noteService: noteService,
       )..loadEvents(),
       child: const _CalendarView(),
     );
@@ -219,7 +224,8 @@ class _EventCard extends StatelessWidget {
           isSelected: false,
           onTap: () => _navigateToEvent(context, event),
           onLongPress: () => _showCharacterModal(context, event.character!),
-          onMenuPressed: () => _showCharacterModal(context, event.character!),
+          onEdit: () => _showCharacterModal(context, event.character!), 
+          onDelete: () => {},
         );
       case CalendarEventType.race:
         return RaceCard(

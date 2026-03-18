@@ -20,7 +20,7 @@ class FolderSelectorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: () => _selectFolder(context),
@@ -66,7 +66,7 @@ class FolderSelectorWidget extends StatelessWidget {
 
   Future<void> _selectFolder(BuildContext context) async {
     final theme = Theme.of(context);
-    final folders = folderService.getFoldersByType(folderType);
+    final folders = await folderService.getFoldersByType(folderType);
 
     final selected = await showModalBottomSheet<Folder>(
       context: context,

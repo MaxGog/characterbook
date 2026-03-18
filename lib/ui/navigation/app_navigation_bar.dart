@@ -1,6 +1,6 @@
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/ui/screens/character_list_page.dart';
-import 'package:characterbook/ui/screens/home_page.dart';
+import 'package:characterbook/ui/screens/home_screen.dart';
 import 'package:characterbook/ui/screens/note_list_page.dart';
 import 'package:characterbook/ui/screens/race_list_page.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +15,7 @@ class AppNavigationBar extends StatefulWidget {
 class _AppNavigationBarState extends State<AppNavigationBar>
     with SingleTickerProviderStateMixin {
   static const List<Widget> _pages = <Widget>[
-    HomePage(),
+    HomeScreen(),
     CharacterListPage(),
     RaceListPage(),
     NotesListPage(),

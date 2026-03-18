@@ -1,13 +1,13 @@
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/ui/dialogs/folder_dialog.dart';
-import 'package:characterbook/ui/pages/character_management_page.dart';
-import 'package:characterbook/ui/pages/note_management_page.dart';
-import 'package:characterbook/ui/pages/race_management_page.dart';
+import 'package:characterbook/ui/screens/character_management_page.dart';
+import 'package:characterbook/ui/screens/note_management_page.dart';
+import 'package:characterbook/ui/screens/race_management_page.dart';
 import 'package:characterbook/ui/widgets/states/empty_folders_state.dart';
-import 'package:characterbook/ui/widgets/cards/character_card.dart';
-import 'package:characterbook/ui/widgets/cards/folder_card.dart';
-import 'package:characterbook/ui/widgets/cards/note_card.dart';
-import 'package:characterbook/ui/widgets/cards/race_card.dart';
+import 'package:characterbook/ui/widgets/items/character_card_item.dart';
+import 'package:characterbook/ui/widgets/items/folder_card_item.dart';
+import 'package:characterbook/ui/widgets/items/note_card_item.dart';
+import 'package:characterbook/ui/widgets/items/race_card_item.dart';
 import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
 import 'package:characterbook/ui/widgets/performance/optimized_value_listenable.dart';
 import 'package:flutter/material.dart';
@@ -118,7 +118,8 @@ class _FoldersScreenState extends State<FoldersScreen> {
       isSelected: false,
       onTap: () => _openCharacter(character),
       onLongPress: () => _showCharacterContextMenu(character),
-      onMenuPressed: () => _showCharacterContextMenu(character),
+      onDelete: () => _deleteCharacter(character),
+      onEdit: () => { },
     )).toList();
   }
 
@@ -280,7 +281,7 @@ class _FoldersScreenState extends State<FoldersScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CharacterEditPage(character: character),
+        builder: (context) => CharacterManagementPage(character: character),
       ),
     ).then((_) {
       if (mounted) setState(() {});
@@ -391,7 +392,7 @@ class _FoldersScreenState extends State<FoldersScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => NoteEditPage(note: note),
+        builder: (context) => NoteManagementPage(note: note),
       ),
     );
   }
@@ -400,7 +401,7 @@ class _FoldersScreenState extends State<FoldersScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => NoteEditPage(note: note),
+        builder: (context) => NoteManagementPage(note: note),
       ),
     ).then((_) {
       if (mounted) setState(() {});

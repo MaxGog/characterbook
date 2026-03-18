@@ -3,7 +3,7 @@ import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/services/folder_service.dart';
 import 'package:characterbook/ui/widgets/mixins/tag_mixin.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 
 class TagFilter extends StatelessWidget with TagMixin {
   final List<String> tags;
@@ -28,7 +28,7 @@ class TagFilter extends StatelessWidget with TagMixin {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final s = S.of(context);
-    final folderService = FolderService(Hive.box<Folder>('folders'));
+    final folderService = context.read<FolderService>();
 
     final standardTags = isForCharacters
         ? [
@@ -71,16 +71,14 @@ class TagFilter extends StatelessWidget with TagMixin {
             final folderName = getFolderNameFromTag(folderTag);
             final folderId = getFolderIdFromTag(folderTag);
             final folder = folderService.getFolderById(folderId);
-            final folderColor =
-                folder != null ? Color(folder.colorValue) : colorScheme.primary;
+            final folderColor = Color.fromARGB(255,255,2555,255);
 
             return _buildExpressiveChip(
               label: folderName,
               isSelected: selectedTag == folderTag,
               onSelected: (selected) =>
                   onTagSelected(selected ? folderTag : null),
-              icon: Icon(Icons.folder_rounded,
-                  size: 18, color: folderColor),
+              icon: Icon(Icons.folder_rounded, size: 18, color: folderColor),
               color: folderColor.withOpacity(0.2),
               selectedTextColor: folderColor,
             );
@@ -137,8 +135,7 @@ class TagFilter extends StatelessWidget with TagMixin {
         ),
         selected: isSelected,
         onSelected: onSelected,
-        padding: const EdgeInsets.symmetric(
-            horizontal: 12, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
           side: isSelected

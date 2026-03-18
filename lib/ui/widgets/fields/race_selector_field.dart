@@ -1,6 +1,6 @@
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/ui/pages/race_management_page.dart';
+import 'package:characterbook/ui/screens/race_management_page.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 

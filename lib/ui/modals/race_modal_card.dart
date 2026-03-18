@@ -5,7 +5,7 @@ import 'package:characterbook/repositories/race_repository.dart';
 import 'package:characterbook/services/clipboard_service.dart';
 import 'package:characterbook/services/race_service.dart';
 import 'package:characterbook/ui/controllers/race_modal_card_controller.dart';
-import 'package:characterbook/ui/pages/race_management_page.dart';
+import 'package:characterbook/ui/screens/race_management_page.dart';
 import 'package:characterbook/ui/modals/common_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

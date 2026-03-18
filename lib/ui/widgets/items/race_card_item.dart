@@ -1,8 +1,6 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/services/folder_service.dart';
-import 'package:characterbook/ui/pages/race_management_page.dart';
+import 'package:characterbook/ui/screens/race_management_page.dart';
 import 'package:characterbook/ui/widgets/avatar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -28,11 +26,6 @@ class RaceCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final s = S.of(context);
-
-    final folder = race.folderId != null
-        ? FolderService(Hive.box<Folder>('folders'))
-            .getFolderById(race.folderId!)
-        : null;
 
     return Dismissible(
       key: Key(race.id),
@@ -118,35 +111,6 @@ class RaceCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (folder != null || race.tags.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: [
-                      if (folder != null)
-                        Chip(
-                          label: Text(folder.name,
-                              style: theme.textTheme.bodySmall),
-                          avatar: Icon(
-                            Icons.folder_rounded,
-                            size: 16,
-                            color: folder.color,
-                          ),
-                          backgroundColor: folder.color.withOpacity(0.1),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                        ),
-                      ...race.tags.map((tag) => Chip(
-                            label: Text(tag, style: theme.textTheme.bodySmall),
-                            backgroundColor:
-                                colorScheme.surfaceContainerHighest,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                          )),
-                    ],
-                  ),
-                ],
               ],
             ),
           ),

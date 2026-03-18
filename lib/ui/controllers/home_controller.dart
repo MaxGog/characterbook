@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:characterbook/models/race_model.dart';
 import 'package:characterbook/services/character_service.dart';
 import 'package:characterbook/services/race_service.dart';
-import 'package:characterbook/ui/pages/calendar_page.dart';
-import 'package:characterbook/ui/pages/export_pdf_settings_page.dart';
-import 'package:characterbook/ui/pages/random_number_page.dart';
-import 'package:characterbook/ui/pages/templates_page.dart';
+import 'package:characterbook/ui/screens/calendar_page.dart';
+import 'package:characterbook/ui/screens/export_pdf_settings_page.dart';
+import 'package:characterbook/ui/screens/random_number_page.dart';
+import 'package:characterbook/ui/screens/templates_page.dart';
 import 'package:characterbook/ui/widgets/items/home_item.dart';
 import 'package:flutter/material.dart';
 
