@@ -4866,6 +4866,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Время экспорта заняло слишком много времени. Попробуйте ещё раз.`
+  String get export_timeout {
+    return Intl.message(
+      'Время экспорта заняло слишком много времени. Попробуйте ещё раз.',
+      name: 'export_timeout',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

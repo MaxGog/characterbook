@@ -354,6 +354,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Пресет экспорта"),
         "export_success": MessageLookupByLibrary.simpleMessage(
             "PDF успешно создан и готов к использованию"),
+        "export_timeout": MessageLookupByLibrary.simpleMessage(
+            "Время экспорта заняло слишком много времени. Попробуйте ещё раз."),
         "favorites": MessageLookupByLibrary.simpleMessage("Избранное"),
         "feedback": MessageLookupByLibrary.simpleMessage("Обратная связь"),
         "female": MessageLookupByLibrary.simpleMessage("Женский"),

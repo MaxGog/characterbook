@@ -391,6 +391,8 @@
   "deleteConfirmation": "Do you really want to delete the selected object?",
 
   "color_light_blue": "Light blue",
-  "choose_color": "Choose color"
+  "choose_color": "Choose color",
+
+  "export_timeout": "The export time took too long. Try again."
 
 }

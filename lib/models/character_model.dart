@@ -29,7 +29,7 @@ class Character extends HiveObject {
   String appearance;
 
   @HiveField(7)
-  Uint8List? imageBytes;
+  Uint8List? imageBytes; // Основное изображение (портрет)
 
   @HiveField(8)
   String abilities;
@@ -38,7 +38,7 @@ class Character extends HiveObject {
   String other;
 
   @HiveField(10)
-  Uint8List? referenceImageBytes;
+  Uint8List? referenceImageBytes; // Дополнительное изображение референс
 
   @HiveField(11)
   List<CustomField> customFields;
@@ -76,46 +76,28 @@ class Character extends HiveObject {
     List<Uint8List>? additionalImages,
     DateTime? lastEdited,
     this.folderId,
-  })  : id = id ?? '',
+  })  : id = id ?? _generateUniqueId(),
         customFields = customFields ?? [],
         additionalImages = additionalImages ?? [],
         lastEdited = lastEdited ?? DateTime.now(),
         tags = List.from(tags);
 
+  /// Генерирует уникальный идентификатор на основе времени и случайного числа.
+  static String _generateUniqueId() {
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final random = DateTime.now().microsecond;
+    return '${timestamp}_$random';
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Character &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          name == other.name &&
-          age == other.age &&
-          gender == other.gender &&
-          biography == other.biography &&
-          personality == other.personality &&
-          appearance == other.appearance &&
-          abilities == other.abilities &&
-          this.other == other.other &&
-          race == other.race &&
-          folderId == other.folderId &&
-          listEquals(tags, other.tags);
+      other is Character && runtimeType == other.runtimeType && id == other.id;
 
   @override
-  int get hashCode => Object.hash(
-        id,
-        name,
-        age,
-        gender,
-        biography,
-        personality,
-        appearance,
-        abilities,
-        other,
-        race,
-        folderId,
-        Object.hashAll(tags),
-      );
+  int get hashCode => id.hashCode;
 
+  /// Сериализация в JSON для экспорта.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -140,6 +122,7 @@ class Character extends HiveObject {
     };
   }
 
+  /// Десериализация из JSON.
   factory Character.fromJson(Map<String, dynamic> json) {
     return Character(
       id: json['id'] ?? '',
@@ -239,14 +222,13 @@ class Character extends HiveObject {
     );
   }
 
-
   Map<String, dynamic> toExportMap() {
     return {
       'type': 'character',
       'id': id,
       'name': name,
       'description': biography,
-      'mainImage': imageBytes,
+      'mainImage': mainImage, // используем согласованный геттер
       'additionalImages': additionalImages,
       'tags': tags,
       'lastEdited': lastEdited,
@@ -270,5 +252,5 @@ class Character extends HiveObject {
 
   String get description => biography;
 
-  Uint8List? get mainImage => referenceImageBytes;
+  Uint8List? get mainImage => imageBytes ?? referenceImageBytes;
 }

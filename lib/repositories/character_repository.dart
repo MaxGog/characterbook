@@ -4,7 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 abstract class CharacterRepository {
   Stream<List<Character>> watchAll();
   Future<List<Character>> getAll();
-  Future<void> save(Character character, {dynamic key});
+  Future<dynamic> save(Character character, {dynamic key});
   Future<void> delete(dynamic key);
   Future<void> reorder(int oldIndex, int newIndex);
   Future<void> clear();
@@ -25,11 +25,13 @@ class CharacterRepositoryHive implements CharacterRepository {
   Future<List<Character>> getAll() async => _box.values.toList();
 
   @override
-  Future<void> save(Character character, {dynamic key}) async {
+  Future<dynamic> save(Character character, {dynamic key}) async {
     if (key != null) {
       await _box.put(key, character);
+      return key;
     } else {
-      await _box.add(character);
+      final newKey = await _box.add(character);
+      return newKey;
     }
   }
 

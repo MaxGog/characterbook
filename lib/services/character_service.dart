@@ -10,25 +10,25 @@ import 'package:characterbook/services/pdf_export_manager.dart';
 import 'package:characterbook/ui/dialogs/error_dialog.dart';
 import 'package:characterbook/ui/dialogs/loading_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 
 class CharacterService {
   final CharacterRepository _repository;
 
   CharacterService(this._repository);
 
-  Future<void> saveCharacter(Character character, {int? key}) => _repository.save(character, key: key);
+  Future<dynamic> saveCharacter(Character character, {int? key}) {
+    return _repository.save(character, key: key);
+  }
 
-  Future<void> deleteCharacter(Character character) =>  _repository.delete(character.key);
+  Future<void> deleteCharacter(Character character) =>
+      _repository.delete(character.key);
 
   Future<List<Character>> getAllCharacters() => _repository.getAll();
 
   Future<Character?> getCharacterByKey(int key) async {
     final all = await _repository.getAll();
-    try {
-      return all.firstWhere((c) => c.key == key);
-    } catch (_) {
-      return null;
-    }
+    return all.firstWhereOrNull((c) => c.key == key);
   }
 
   Future<List<Character>> getCharactersByRaceId(String raceId) async {
@@ -36,17 +36,16 @@ class CharacterService {
     return all.where((c) => c.race?.id == raceId).toList();
   }
 
-  Future<Character?> duplicateCharacter(Character character) async {
+  Future<Character> duplicateCharacter(Character character) async {
     try {
       final duplicated = character.copyWith(
         id: _generateUniqueId(),
         name: '${character.name} (${S.current.copy})',
       );
-      await _repository.save(duplicated);
-      final all = await _repository.getAll();
-      return all.firstWhere((c) => c.id == duplicated.id);
-    } catch (e) {
-      throw Exception('${S.current.duplicate_error}: ${e.toString()}');
+      final key = await _repository.save(duplicated);
+      return duplicated;
+    } catch (e, stackTrace) {
+      throw Exception('${S.current.duplicate_error}: $e');
     }
   }
 
@@ -58,12 +57,16 @@ class CharacterService {
   }
 
   Future<void> exportToPdf(BuildContext context, Character character) async {
-    await PdfExportManager.exportCharacterWithDialog(
-      context,
-      character,
-      fileName: '${character.name}.pdf',
-      shareText: S.current.character_exported(character.name),
-    );
+    try {
+      await PdfExportManager.exportCharacterWithDialog(
+        context,
+        character,
+        fileName: '${character.name}.pdf',
+        shareText: S.current.character_exported(character.name),
+      );
+    } catch (e) {
+      _handleError(context, S.current.export_error, e);
+    }
   }
 
   Future<void> exportToJson(BuildContext context, Character character) async {
@@ -85,14 +88,20 @@ class CharacterService {
       if (context.mounted) {
         hideLoadingDialog(context);
         _showErrorDialog(
-            context, S.current.export_error, S.current.export_error);
+            context, S.current.export_error, S.current.export_timeout);
       }
     } catch (e) {
       if (context.mounted) {
         hideLoadingDialog(context);
-        _showErrorDialog(context, S.current.export_error,
-            '${S.current.export_error}: ${e.toString()}');
+        _showErrorDialog(
+            context, S.current.export_error, '${S.current.export_error}: $e');
       }
+    }
+  }
+
+  void _handleError(BuildContext context, String title, Object error) {
+    if (context.mounted) {
+      _showErrorDialog(context, title, error.toString());
     }
   }
 
