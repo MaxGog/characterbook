@@ -168,7 +168,7 @@ class _CharacterListScreenState extends State<CharacterListScreen> {
   Future<void> _createFromTemplate(BuildContext context) async {
     final template = await Navigator.push<QuestionnaireTemplate>(
       context,
-      MaterialPageRoute(builder: (_) => const TemplatesPage()),
+      MaterialPageRoute(builder: (_) => const TemplatesListScreen()),
     );
     if (template != null && mounted) {
       _navigateToEdit(context, template.applyToCharacter(Character.empty()));
@@ -242,7 +242,7 @@ class _CharacterListScreenState extends State<CharacterListScreen> {
                         )
                       : OptimizedListView<Character>(
                         items: controller.filteredItems,
-                        itemBuilder: (ctx, character, index) => CharacterCard(
+                        itemBuilder: (ctx, character, index) => CharacterCardItem(
                           key: ValueKey(character.key),
                           character: character,
                           isSelected: false,
