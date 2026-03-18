@@ -72,12 +72,34 @@ class AppDelegate: FlutterAppDelegate {
     }
 
     func setupMenuHandlers() {
-        if let mainMenu = NSApp.mainMenu,
-            let appMenu = mainMenu.item(at: 0)?.submenu,
-            let preferencesItem = appMenu.item(withTitle: "Preferences…")
-        {
-            preferencesItem.target = self
-            preferencesItem.action = #selector(openPreferences(_:))
+        guard let mainMenu = NSApp.mainMenu,
+            let appMenu = mainMenu.item(at: 0)?.submenu
+        else { return }
+
+        var preferencesItem =
+            appMenu.item(withTitle: "Preferences…")
+            ?? appMenu.item(withTitle: "Settings…")
+            ?? appMenu.item(withTitle: "Настройки…")
+
+        if preferencesItem == nil {
+            preferencesItem = appMenu.items.first(where: { $0.keyEquivalent == "," })
+        }
+
+        if let item = preferencesItem {
+            item.target = self
+            item.action = #selector(openPreferences(_:))
+            item.isEnabled = true
+        } else {
+            let newItem = NSMenuItem(
+                title: "Preferences…",
+                action: #selector(openPreferences(_:)),
+                keyEquivalent: ","
+            )
+            newItem.target = self
+            newItem.isEnabled = true
+
+            appMenu.addItem(NSMenuItem.separator())
+            appMenu.addItem(newItem)
         }
     }
 

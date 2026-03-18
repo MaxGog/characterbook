@@ -29,7 +29,9 @@ import 'package:characterbook/services/race_service.dart';
 import 'package:characterbook/services/relationship_service.dart';
 import 'package:characterbook/services/template_service.dart';
 import 'package:characterbook/ui/navigation/app_navigation_bar.dart';
+import 'package:characterbook/ui/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
@@ -229,12 +231,25 @@ class _AppContent extends StatefulWidget {
 
 class _AppContentState extends State<_AppContent> {
   bool _showErrorDialog = false;
+  final _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _setupMethodChannel();
       _checkInitializationStatus();
+    });
+  }
+
+  void _setupMethodChannel() {
+    const channel = MethodChannel('characterbook/menu');
+    channel.setMethodCallHandler((call) async {
+      if (call.method == 'openSettings') {
+        _navigatorKey.currentState?.push(
+          MaterialPageRoute(builder: (context) => const SettingsScreen()),
+        );
+      }
     });
   }
 
@@ -272,6 +287,7 @@ class _AppContentState extends State<_AppContent> {
       builder:
           (context, themeProvider, localeProvider, notificationService, _) {
         return MaterialApp(
+          navigatorKey: _navigatorKey,
           debugShowCheckedModeBanner: false,
           scaffoldMessengerKey: widget.messengerKey,
           title: 'CharacterBook',
