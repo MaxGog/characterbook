@@ -28,7 +28,7 @@ import 'package:characterbook/services/notification_service.dart';
 import 'package:characterbook/services/race_service.dart';
 import 'package:characterbook/services/relationship_service.dart';
 import 'package:characterbook/services/template_service.dart';
-import 'package:characterbook/ui/screens/app_navigation_bar.dart';
+import 'package:characterbook/ui/navigation/app_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
