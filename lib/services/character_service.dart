@@ -7,6 +7,7 @@ import 'package:characterbook/models/character_model.dart';
 import 'package:characterbook/repositories/character_repository.dart';
 import 'package:characterbook/services/file_share_service.dart';
 import 'package:characterbook/services/pdf_export_manager.dart';
+import 'package:characterbook/services/relationship_service.dart';
 import 'package:characterbook/ui/dialogs/error_dialog.dart';
 import 'package:characterbook/ui/dialogs/loading_dialog.dart';
 import 'package:flutter/material.dart';
@@ -14,15 +15,18 @@ import 'package:collection/collection.dart';
 
 class CharacterService {
   final CharacterRepository _repository;
+  final RelationshipService _relationshipService;
 
-  CharacterService(this._repository);
+  CharacterService(this._repository, this._relationshipService);
 
   Future<dynamic> saveCharacter(Character character, {int? key}) {
     return _repository.save(character, key: key);
   }
 
-  Future<void> deleteCharacter(Character character) =>
-      _repository.delete(character.key);
+  Future<void> deleteCharacter(Character character) async {
+    await _relationshipService.deleteRelationshipsForCharacter(character.id);
+    await _repository.delete(character.key);
+  }
 
   Future<List<Character>> getAllCharacters() => _repository.getAll();
 
@@ -36,15 +40,20 @@ class CharacterService {
     return all.where((c) => c.race?.id == raceId).toList();
   }
 
+  Future<Character?> getCharacterById(String id) async {
+    final all = await _repository.getAll();
+    return all.firstWhereOrNull((c) => c.id == id);
+  }
+
   Future<Character> duplicateCharacter(Character character) async {
     try {
       final duplicated = character.copyWith(
         id: _generateUniqueId(),
         name: '${character.name} (${S.current.copy})',
       );
-      final key = await _repository.save(duplicated);
+      await _repository.save(duplicated);
       return duplicated;
-    } catch (e, stackTrace) {
+    } catch (e) {
       throw Exception('${S.current.duplicate_error}: $e');
     }
   }

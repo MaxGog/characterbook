@@ -6,6 +6,7 @@ import 'package:characterbook/models/export_pdf_settings_model.dart';
 import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/models/note_model.dart';
 import 'package:characterbook/models/race_model.dart';
+import 'package:characterbook/models/relationship_model.dart';
 import 'package:characterbook/models/template_model.dart';
 import 'package:characterbook/providers/locale_provider.dart';
 import 'package:characterbook/providers/theme_provider.dart';
@@ -13,15 +14,21 @@ import 'package:characterbook/repositories/character_repository.dart';
 import 'package:characterbook/repositories/folder_repository.dart';
 import 'package:characterbook/repositories/note_repository.dart';
 import 'package:characterbook/repositories/race_repository.dart';
+import 'package:characterbook/repositories/relationship_repository.dart';
 import 'package:characterbook/repositories/template_repository.dart';
+import 'package:characterbook/services/backup_service.dart';
 import 'package:characterbook/services/character_service.dart';
+import 'package:characterbook/services/clipboard_service.dart';
+import 'package:characterbook/services/file_picker_service.dart';
+import 'package:characterbook/services/file_share_service.dart';
 import 'package:characterbook/services/folder_service.dart';
 import 'package:characterbook/services/hive_service.dart';
 import 'package:characterbook/services/note_service.dart';
 import 'package:characterbook/services/notification_service.dart';
 import 'package:characterbook/services/race_service.dart';
+import 'package:characterbook/services/relationship_service.dart';
 import 'package:characterbook/services/template_service.dart';
-import 'package:characterbook/ui/pages/app_navigation_bar.dart';
+import 'package:characterbook/ui/screens/app_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
@@ -37,9 +44,14 @@ void main() async {
   Box<Note>? noteBox;
   Box<QuestionnaireTemplate>? templateBox;
   Box<ExportPdfSettings>? settingsBox;
+  Box<Relationship>? relationshipBox;
 
   try {
     await HiveService.initHive();
+
+    if (!Hive.isAdapterRegistered(2)) {
+      Hive.registerAdapter(RelationshipAdapter());
+    }
 
     characterBox = await _openBoxWithRetry<Character>('characters');
     raceBox = await _openBoxWithRetry<Race>('races');
@@ -47,6 +59,8 @@ void main() async {
     noteBox = await _openBoxWithRetry<Note>('notes');
     templateBox = await _openBoxWithRetry<QuestionnaireTemplate>('templates');
     settingsBox = await _openBoxWithRetry<ExportPdfSettings>('pdf_settings');
+    relationshipBox =
+        await _openBoxWithRetry<Relationship>('relationships');
 
     hiveInitialized = true;
   } catch (error) {
@@ -64,6 +78,7 @@ void main() async {
     noteBox: noteBox,
     templateBox: templateBox,
     settingsBox: settingsBox,
+    relationshipBox: relationshipBox,
   ));
 }
 
@@ -85,6 +100,7 @@ class CharacterBookApp extends StatelessWidget {
   final Box<Note>? noteBox;
   final Box<QuestionnaireTemplate>? templateBox;
   final Box<ExportPdfSettings>? settingsBox;
+  final Box<Relationship>? relationshipBox;
 
   const CharacterBookApp({
     super.key,
@@ -95,12 +111,19 @@ class CharacterBookApp extends StatelessWidget {
     this.noteBox,
     this.templateBox,
     this.settingsBox,
+    this.relationshipBox,
   });
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<ScaffoldMessengerState> messengerKey =
+        GlobalKey<ScaffoldMessengerState>();
+
     return MultiProvider(
       providers: [
+        Provider<FilePickerService>(create: (_) => FilePickerService()),
+        Provider<ClipboardService>(create: (_) => ClipboardService()),
+        Provider<FileShareService>(create: (_) => FileShareService()),
         if (characterBox != null)
           Provider<CharacterRepository>(
             create: (_) => CharacterRepositoryHive(characterBox!),
@@ -121,9 +144,17 @@ class CharacterBookApp extends StatelessWidget {
           Provider<TemplateRepository>(
             create: (_) => TemplateRepositoryHive(templateBox!),
           ),
+        if (relationshipBox != null)
+          Provider<RelationshipRepository>(
+            create: (_) => RelationshipRepositoryHive(relationshipBox!),
+          ),
+        ProxyProvider<RelationshipRepository, RelationshipService>(
+          update: (_, repo, __) => RelationshipService(repo),
+        ),
 
-        ProxyProvider<CharacterRepository, CharacterService>(
-          update: (_, repo, __) => CharacterService(repo),
+        ProxyProvider2<CharacterRepository, RelationshipService, CharacterService>(
+          update: (_, repo, relService, __) =>
+              CharacterService(repo, relService),
         ),
         ProxyProvider<RaceRepository, RaceService>(
           update: (_, repo, __) => RaceService(repo),
@@ -137,23 +168,60 @@ class CharacterBookApp extends StatelessWidget {
         ProxyProvider<TemplateRepository, TemplateService>(
           update: (_, repo, __) => TemplateService(repo),
         ),
-
+        
+        ProxyProvider5<CharacterRepository, RaceRepository, FolderRepository,
+            NoteRepository, TemplateRepository, BackupManager>(
+          update:
+              (_, charRepo, raceRepo, folderRepo, noteRepo, templateRepo, __) {
+            return BackupManager(
+              characterRepo: charRepo,
+              noteRepo: noteRepo,
+              raceRepo: raceRepo,
+              templateRepo: templateRepo,
+              folderRepo: folderRepo,
+            );
+          },
+        ),
+        Provider<NotificationService>(
+          create: (_) => NotificationService(messengerKey),
+        ),
+        ProxyProvider3<BackupManager, FilePickerService, NotificationService,
+            LocalBackupService>(
+          update: (_, backupManager, filePicker, notification, __) {
+            return LocalBackupService(
+              backupManager: backupManager,
+              filePickerService: filePicker,
+              notificationService: notification,
+            );
+          },
+        ),
+        ProxyProvider2<BackupManager, NotificationService, CloudBackupService>(
+          update: (_, backupManager, notification, __) {
+            return CloudBackupService(
+              backupManager: backupManager,
+              notificationService: notification,
+            );
+          },
+        ),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
-        Provider<NotificationService>(
-          create: (_) =>
-              NotificationService(GlobalKey<ScaffoldMessengerState>()),
-        ),
       ],
-      child: _AppContent(hiveInitialized: hiveInitialized),
+      child: _AppContent(
+        hiveInitialized: hiveInitialized,
+        messengerKey: messengerKey,
+      ),
     );
   }
 }
 
 class _AppContent extends StatefulWidget {
   final bool hiveInitialized;
+  final GlobalKey<ScaffoldMessengerState> messengerKey;
 
-  const _AppContent({required this.hiveInitialized});
+  const _AppContent({
+    required this.hiveInitialized,
+    required this.messengerKey,
+  });
 
   @override
   State<_AppContent> createState() => _AppContentState();
@@ -205,7 +273,7 @@ class _AppContentState extends State<_AppContent> {
           (context, themeProvider, localeProvider, notificationService, _) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          scaffoldMessengerKey: notificationService.messengerKey,
+          scaffoldMessengerKey: widget.messengerKey,
           title: 'CharacterBook',
           locale: localeProvider.locale,
           theme: themeProvider.lightTheme,
