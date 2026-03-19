@@ -1,7 +1,7 @@
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/ui/screens/folder_screen.dart';
-import 'package:characterbook/ui/screens/settings_screen.dart';
+import 'package:characterbook/ui/screens/settings/settings_screen.dart';
 import 'package:characterbook/ui/screens/templates_list_screen.dart';
 import 'package:characterbook/ui/widgets/sections/about_section_widget.dart';
 import 'package:flutter/material.dart';

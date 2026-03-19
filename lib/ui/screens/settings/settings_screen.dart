@@ -1,4 +1,3 @@
-import 'package:characterbook/ui/screens/settings/swipe_action_settings_screen.dart';
 import 'package:characterbook/ui/widgets/sections/about_section_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,8 +8,10 @@ import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/services/backup_service.dart';
 import 'package:characterbook/providers/locale_provider.dart';
 import 'package:characterbook/providers/theme_provider.dart';
-import 'package:characterbook/ui/screens/export_pdf_settings_screen.dart';
 import 'package:flutter/services.dart';
+
+import 'export_pdf_settings_screen.dart';
+import 'swipe_action_settings_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -410,13 +411,30 @@ class _SwipeActionsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return SettingsSection(
       title: s.swipeActions,
       children: [
         ListTile(
-          leading: Icon(Icons.swipe, color: colorScheme.onSurfaceVariant),
-          title: Text(s.configureSwipeActions),
+          leading: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(
+              Icons.swipe,
+              color: colorScheme.onPrimaryContainer,
+            ),
+          ),
+          title: Text(
+            s.configureSwipeActions,
+            style: textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           trailing: Icon(
             Icons.arrow_forward_ios,
             size: 16,
