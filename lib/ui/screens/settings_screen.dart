@@ -1,3 +1,4 @@
+import 'package:characterbook/ui/screens/settings/swipe_action_settings_screen.dart';
 import 'package:characterbook/ui/widgets/sections/about_section_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -61,6 +62,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _LanguageSection(),
               SizedBox(height: 8),
               _ThemeSection(),
+              SizedBox(height: 8),
+              SizedBox(height: 8),
+              _SwipeActionsSection(),
               SizedBox(height: 8),
               _ImportSection(),
               SizedBox(height: 8),
@@ -393,6 +397,38 @@ class _ColorPickerDialogState extends State<_ColorPickerDialog> {
         TextButton(
           onPressed: () => Navigator.pop(context, _selectedColor),
           child: Text(S.of(context).choose_color),
+        ),
+      ],
+    );
+  }
+}
+
+class _SwipeActionsSection extends StatelessWidget {
+  const _SwipeActionsSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return SettingsSection(
+      title: s.swipeActions,
+      children: [
+        ListTile(
+          leading: Icon(Icons.swipe, color: colorScheme.onSurfaceVariant),
+          title: Text(s.configureSwipeActions),
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+            color: colorScheme.onSurfaceVariant,
+          ),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const SwipeActionSettingsScreen(),
+            ),
+          ),
+          contentPadding: EdgeInsets.zero,
         ),
       ],
     );

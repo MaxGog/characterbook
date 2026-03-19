@@ -10,6 +10,7 @@ import 'package:characterbook/ui/modals/character_modal_card.dart';
 import 'package:characterbook/ui/controllers/character_list_controller.dart';
 import 'package:characterbook/ui/screens/character_management_screen.dart';
 import 'package:characterbook/ui/screens/folder_screen.dart';
+import 'package:characterbook/ui/screens/settings/swipe_action_settings_screen.dart';
 import 'package:characterbook/ui/screens/templates_list_screen.dart';
 import 'package:characterbook/ui/widgets/appbar/common_main_app_bar.dart';
 import 'package:characterbook/ui/widgets/buttons/common_list_floating_buttons.dart';
@@ -247,11 +248,17 @@ class _CharacterListScreenState extends State<CharacterListScreen> {
                           character: character,
                           isSelected: false,
                           onTap: () => _navigateToDetail(character),
-                          onLongPress: () => _showCharacterContextMenu(
-                              character, context, controller, service),
-                            onEdit: () => _navigateToEdit(context, character),
-                            onDelete: () => _deleteCharacter(character, controller),
-                          
+                          onLongPress: () => _showCharacterContextMenu(character, context, controller, service),
+                          onEdit: () => _navigateToEdit(context, character),
+                          onDelete: () => _deleteCharacter(character, controller),
+                          onDuplicate: () => service.duplicateCharacter(character),
+                          onSettings: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const SwipeActionSettingsScreen(),
+                            ),
+                          ),
+                          onShare: () => service.exportToPdf(context, character),
                         ),
                         onReorder: (oldIndex, newIndex) =>
                             controller.reorder(oldIndex, newIndex),

@@ -12,6 +12,7 @@ class FolderItem extends StatelessWidget {
   final VoidCallback onDelete;
   final bool enableDrag;
   final List<Widget> children;
+  final VoidCallback? onSettings;
 
   const FolderItem({
     super.key,
@@ -21,6 +22,7 @@ class FolderItem extends StatelessWidget {
     required this.onDelete,
     this.enableDrag = false,
     required this.children,
+    this.onSettings,
   });
 
   @override

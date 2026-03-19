@@ -393,6 +393,11 @@
   "color_light_blue": "Light blue",
   "choose_color": "Choose color",
 
-  "export_timeout": "The export time took too long. Try again."
+  "export_timeout": "The export time took too long. Try again.",
+
+  "swipeActions": "Swipe actions",
+  "leftSwipeAction": "Left swipe action",
+  "rightSwipeAction": "Right swipe action",
+  "configureSwipeActions": "Configure swipe actions"
 
 }

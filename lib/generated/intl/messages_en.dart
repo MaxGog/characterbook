@@ -184,6 +184,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "color_purple": MessageLookupByLibrary.simpleMessage("Purple"),
         "color_red": MessageLookupByLibrary.simpleMessage("Red"),
         "color_teal": MessageLookupByLibrary.simpleMessage("Teal"),
+        "configureSwipeActions":
+            MessageLookupByLibrary.simpleMessage("Configure swipe actions"),
         "configuring_environment": MessageLookupByLibrary.simpleMessage(
             "Setting up the environment..."),
         "continue_text": MessageLookupByLibrary.simpleMessage("Continue"),
@@ -351,6 +353,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "just_now": MessageLookupByLibrary.simpleMessage("Just now"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
         "last_updated": MessageLookupByLibrary.simpleMessage("Last Updated"),
+        "leftSwipeAction":
+            MessageLookupByLibrary.simpleMessage("Left swipe action"),
         "licenses": MessageLookupByLibrary.simpleMessage("Licenses"),
         "light": MessageLookupByLibrary.simpleMessage("Light"),
         "list_view": MessageLookupByLibrary.simpleMessage("List view"),
@@ -481,6 +485,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Restore from Backup"),
         "retry_initialization":
             MessageLookupByLibrary.simpleMessage("Repeat initialization"),
+        "rightSwipeAction":
+            MessageLookupByLibrary.simpleMessage("Right swipe action"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),
         "save_error": MessageLookupByLibrary.simpleMessage("Save Error"),
         "save_race": MessageLookupByLibrary.simpleMessage("Save Race"),
@@ -524,6 +530,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Start writing..."),
         "storage_permission_message": MessageLookupByLibrary.simpleMessage(
             "Permission to access storage is required for the application to work."),
+        "swipeActions": MessageLookupByLibrary.simpleMessage("Swipe actions"),
         "system": MessageLookupByLibrary.simpleMessage("System"),
         "tags": MessageLookupByLibrary.simpleMessage("Tags"),
         "technical_details":

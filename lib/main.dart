@@ -9,6 +9,7 @@ import 'package:characterbook/models/race_model.dart';
 import 'package:characterbook/models/relationship_model.dart';
 import 'package:characterbook/models/template_model.dart';
 import 'package:characterbook/providers/locale_provider.dart';
+import 'package:characterbook/providers/swipe_action_settings_provider.dart';
 import 'package:characterbook/providers/theme_provider.dart';
 import 'package:characterbook/repositories/character_repository.dart';
 import 'package:characterbook/repositories/folder_repository.dart';
@@ -207,6 +208,7 @@ class CharacterBookApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        ChangeNotifierProvider(create: (_) => SwipeActionSettingsProvider()),
       ],
       child: _AppContent(
         hiveInitialized: hiveInitialized,

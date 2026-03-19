@@ -9,6 +9,7 @@ import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/ui/controllers/race_list_controller.dart';
 import 'package:characterbook/ui/screens/folder_screen.dart';
 import 'package:characterbook/ui/screens/race_management_screen.dart';
+import 'package:characterbook/ui/screens/settings/swipe_action_settings_screen.dart';
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
 import 'package:characterbook/ui/widgets/appbar/common_main_app_bar.dart';
 import 'package:characterbook/ui/widgets/buttons/common_list_floating_buttons.dart';
@@ -275,6 +276,14 @@ class _RaceListScreenState extends State<RaceListScreen> {
                       onTap: () => _editRace(context, race),
                       onLongPress: () => _showRaceContextMenu(
                           race, context, controller, service),
+                      onShare: () => service.exportToPdf(context, race),
+                      onSettings: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              const SwipeActionSettingsScreen(),
+                        ),
+                      ),
                     ),
                     onReorder: (oldIndex, newIndex) =>
                         controller.reorder(oldIndex, newIndex),

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/models/swipe_action.dart';
+import 'package:characterbook/providers/swipe_action_settings_provider.dart';
+import 'package:provider/provider.dart';
 
 class CommonCardItem extends StatelessWidget {
   final String id;
@@ -8,6 +11,9 @@ class CommonCardItem extends StatelessWidget {
   final VoidCallback? onLongPress;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final VoidCallback? onShare;
+  final VoidCallback? onDuplicate;
+  final VoidCallback? onSettings;
   final String? deleteConfirmationMessage;
   final EdgeInsetsGeometry margin;
   final double? elevation;
@@ -24,6 +30,9 @@ class CommonCardItem extends StatelessWidget {
     this.onLongPress,
     this.onEdit,
     this.onDelete,
+    this.onShare,
+    this.onDuplicate,
+    this.onSettings,
     this.deleteConfirmationMessage,
     this.margin = const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
     this.elevation,
@@ -37,18 +46,32 @@ class CommonCardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final s = S.of(context);
+    final swipeSettings = context.watch<SwipeActionSettingsProvider>();
 
-    final hasEdit = onEdit != null;
-    final hasDelete = onDelete != null;
-    final canDismiss = hasEdit || hasDelete;
+    final Map<SwipeAction, VoidCallback> availableActions = {};
+    if (onEdit != null) availableActions[SwipeAction.edit] = onEdit!;
+    if (onDelete != null) availableActions[SwipeAction.delete] = onDelete!;
+    if (onShare != null) availableActions[SwipeAction.share] = onShare!;
+    if (onDuplicate != null) {
+      availableActions[SwipeAction.duplicate] = onDuplicate!;
+    }
+    if (onSettings != null) {
+      availableActions[SwipeAction.settings] = onSettings!;
+    }
+
+    final leftAction = swipeSettings.leftAction;
+    final rightAction = swipeSettings.rightAction;
+
+    final hasLeft = availableActions.containsKey(leftAction);
+    final hasRight = availableActions.containsKey(rightAction);
+    final canDismiss = hasLeft || hasRight;
 
     DismissDirection dismissDirection = DismissDirection.none;
-    if (hasEdit && hasDelete) {
+    if (hasLeft && hasRight) {
       dismissDirection = DismissDirection.horizontal;
-    } else if (hasEdit) {
+    } else if (hasLeft) {
       dismissDirection = DismissDirection.startToEnd;
-    } else if (hasDelete) {
+    } else if (hasRight) {
       dismissDirection = DismissDirection.endToStart;
     }
 
@@ -72,40 +95,42 @@ class CommonCardItem extends StatelessWidget {
     );
 
     if (canDismiss) {
+      Widget leftBackground = hasLeft
+          ? _buildSwipeBackground(
+              context,
+              action: leftAction,
+              alignment: Alignment.centerLeft,
+            )
+          : const SizedBox.shrink();
+
+      Widget rightBackground = hasRight
+          ? _buildSwipeBackground(
+              context,
+              action: rightAction,
+              alignment: Alignment.centerRight,
+            )
+          : const SizedBox.shrink();
+
       card = Dismissible(
         key: Key('common_card_$id'),
         direction: dismissDirection,
-        background: hasEdit
-            ? _buildSwipeBackground(
-                context,
-                alignment: Alignment.centerLeft,
-                icon: Icons.edit_rounded,
-                color: colorScheme.tertiaryContainer,
-                label: s.edit,
-              )
-            : null,
-        secondaryBackground: hasDelete
-            ? _buildSwipeBackground(
-                context,
-                alignment: Alignment.centerRight,
-                icon: Icons.delete_rounded,
-                color: colorScheme.errorContainer,
-                label: s.delete,
-              )
-            : null,
+        background: leftBackground,
+        secondaryBackground: rightBackground,
         confirmDismiss: (direction) async {
-          if (direction == DismissDirection.startToEnd && hasEdit) {
-            onEdit!();
+          if (direction == DismissDirection.startToEnd && hasLeft) {
+            availableActions[leftAction]!();
             return false;
-          } else if (direction == DismissDirection.endToStart && hasDelete) {
-            return await _showDeleteConfirmation(context);
+          } else if (direction == DismissDirection.endToStart && hasRight) {
+            if (rightAction == SwipeAction.delete && onDelete != null) {
+              final confirm = await _showDeleteConfirmation(context);
+              if (confirm) onDelete!();
+              return false;
+            } else {
+              availableActions[rightAction]!();
+              return false;
+            }
           }
           return false;
-        },
-        onDismissed: (direction) {
-          if (direction == DismissDirection.endToStart && hasDelete) {
-            onDelete!();
-          }
         },
         child: card,
       );
@@ -123,15 +148,14 @@ class CommonCardItem extends StatelessWidget {
 
   Widget _buildSwipeBackground(
     BuildContext context, {
+    required SwipeAction action,
     required Alignment alignment,
-    required IconData icon,
-    required Color color,
-    required String label,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       margin: margin,
       decoration: BoxDecoration(
-        color: color,
+        color: action.backgroundColor(colorScheme),
         borderRadius: BorderRadius.circular(12),
       ),
       alignment: alignment,
@@ -141,14 +165,13 @@ class CommonCardItem extends StatelessWidget {
             ? MainAxisAlignment.start
             : MainAxisAlignment.end,
         children: [
-          Icon(icon,
-              size: 20,
-              color: Theme.of(context).colorScheme.onTertiaryContainer),
+          Icon(action.icon,
+              size: 20, color: action.foregroundColor(colorScheme)),
           const SizedBox(width: 8),
           Text(
-            label,
+            action.label(context),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onTertiaryContainer,
+                  color: action.foregroundColor(colorScheme),
                 ),
           ),
         ],

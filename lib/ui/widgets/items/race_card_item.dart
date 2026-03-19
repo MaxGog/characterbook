@@ -13,6 +13,9 @@ class RaceCardItem extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onLongPress;
   final bool enableDrag;
+  final VoidCallback? onShare;
+  final VoidCallback? onDuplicate;
+  final VoidCallback? onSettings;
 
   const RaceCardItem({
     super.key,
@@ -21,6 +24,9 @@ class RaceCardItem extends StatelessWidget {
     required this.onTap,
     required this.onLongPress,
     this.enableDrag = false,
+    this.onShare,
+    this.onDuplicate,
+    this.onSettings
   });
 
   @override

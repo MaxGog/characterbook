@@ -242,6 +242,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "color_teal": MessageLookupByLibrary.simpleMessage("Бирюзовый"),
         "community": MessageLookupByLibrary.simpleMessage("Сообщество"),
         "compression": MessageLookupByLibrary.simpleMessage("Сжатие"),
+        "configureSwipeActions": MessageLookupByLibrary.simpleMessage(
+            "Настроить действия смахивания"),
         "configuring_environment":
             MessageLookupByLibrary.simpleMessage("Настройка окружения..."),
         "continue_text": MessageLookupByLibrary.simpleMessage("Продолжить"),
@@ -472,6 +474,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "last_edited":
             MessageLookupByLibrary.simpleMessage("Последний отредактированный"),
         "last_updated": MessageLookupByLibrary.simpleMessage("Обновлено"),
+        "leftSwipeAction": MessageLookupByLibrary.simpleMessage(
+            "Действие при смахивании влево"),
         "licenses": MessageLookupByLibrary.simpleMessage("Лицензии"),
         "light": MessageLookupByLibrary.simpleMessage("Светлая"),
         "list_view": MessageLookupByLibrary.simpleMessage("Вид списком"),
@@ -675,6 +679,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Восстановление из резервной копии"),
         "retry_initialization":
             MessageLookupByLibrary.simpleMessage("Повторить инициализацию"),
+        "rightSwipeAction": MessageLookupByLibrary.simpleMessage(
+            "Действие при смахивании вправо"),
         "save": MessageLookupByLibrary.simpleMessage("Сохранить"),
         "save_error": MessageLookupByLibrary.simpleMessage("Ошибка сохранения"),
         "save_preset": MessageLookupByLibrary.simpleMessage("Сохранить пресет"),
@@ -743,6 +749,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "subject": MessageLookupByLibrary.simpleMessage("Тема"),
         "suggested_actions":
             MessageLookupByLibrary.simpleMessage("Рекомендуемые действия"),
+        "swipeActions":
+            MessageLookupByLibrary.simpleMessage("Действия смахивания"),
         "system": MessageLookupByLibrary.simpleMessage("Системная"),
         "table_of_contents": MessageLookupByLibrary.simpleMessage("Оглавление"),
         "tag_cloud": MessageLookupByLibrary.simpleMessage("Облако тегов"),

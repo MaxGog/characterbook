@@ -11,6 +11,9 @@ class TemplateCardItem extends StatelessWidget {
   final VoidCallback onLongPress;
   final VoidCallback onMenuPressed;
   final bool enableDrag;
+  final VoidCallback? onShare;
+  final VoidCallback? onDuplicate;
+  final VoidCallback? onSettings;
 
   const TemplateCardItem({
     super.key,
@@ -20,6 +23,9 @@ class TemplateCardItem extends StatelessWidget {
     required this.onLongPress,
     required this.onMenuPressed,
     this.enableDrag = false,
+    this.onShare,
+    this.onDuplicate,
+    this.onSettings
   });
 
   @override

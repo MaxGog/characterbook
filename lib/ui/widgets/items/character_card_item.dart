@@ -12,8 +12,10 @@ class CharacterCardItem extends StatelessWidget {
   final VoidCallback onLongPress;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback? onShare;
+  final VoidCallback? onDuplicate;
+  final VoidCallback? onSettings;
   final bool enableDrag;
-  final bool isHero;
 
   const CharacterCardItem({
     super.key,
@@ -23,8 +25,10 @@ class CharacterCardItem extends StatelessWidget {
     required this.onLongPress,
     required this.onEdit,
     required this.onDelete,
+    this.onShare,
+    this.onDuplicate,
+    this.onSettings,
     this.enableDrag = false,
-    this.isHero = false,
   });
 
   @override
@@ -40,6 +44,9 @@ class CharacterCardItem extends StatelessWidget {
       onLongPress: enableDrag ? null : onLongPress,
       onEdit: onEdit,
       onDelete: onDelete,
+      onDuplicate: onDuplicate,
+      onSettings: onSettings,
+      onShare: onShare,
       deleteConfirmationMessage: s.deleteConfirmation,
       margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
       child: Padding(
@@ -54,9 +61,7 @@ class CharacterCardItem extends StatelessWidget {
                   child: AvatarWidget.character(
                     imageBytes: character.imageBytes,
                     size: 36,
-                    shape: isHero
-                        ? const StadiumBorder()
-                        : RoundedRectangleBorder(
+                    shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
@@ -68,9 +73,8 @@ class CharacterCardItem extends StatelessWidget {
                       Text(
                         character.name,
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight:
-                              isHero ? FontWeight.bold : FontWeight.w600,
-                          fontSize: isHero ? 18 : 16,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
                       const SizedBox(height: 8),

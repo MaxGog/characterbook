@@ -3,6 +3,7 @@ import 'package:characterbook/models/template_model.dart';
 import 'package:characterbook/repositories/template_repository.dart';
 import 'package:characterbook/services/template_service.dart';
 import 'package:characterbook/ui/controllers/template_list_controller.dart';
+import 'package:characterbook/ui/screens/settings/swipe_action_settings_screen.dart';
 import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
 import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
 import 'package:characterbook/ui/widgets/items/template_card_item.dart';
@@ -293,6 +294,13 @@ class _TemplatesListScreenState extends State<TemplatesListScreen> {
                           template, context, controller),
                       onMenuPressed: () => _showTemplateContextMenu(
                           template, context, controller),
+                      onShare: () => service.shareTemplate(template),
+                      onSettings: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SwipeActionSettingsScreen(),
+                        ),
+                      ),
                     ),
                     onReorder: (oldIndex, newIndex) =>
                         controller.reorder(oldIndex, newIndex),

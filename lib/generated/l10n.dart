@@ -4876,6 +4876,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Действия смахивания`
+  String get swipeActions {
+    return Intl.message(
+      'Действия смахивания',
+      name: 'swipeActions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Действие при смахивании влево`
+  String get leftSwipeAction {
+    return Intl.message(
+      'Действие при смахивании влево',
+      name: 'leftSwipeAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Действие при смахивании вправо`
+  String get rightSwipeAction {
+    return Intl.message(
+      'Действие при смахивании вправо',
+      name: 'rightSwipeAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Настроить действия смахивания`
+  String get configureSwipeActions {
+    return Intl.message(
+      'Настроить действия смахивания',
+      name: 'configureSwipeActions',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

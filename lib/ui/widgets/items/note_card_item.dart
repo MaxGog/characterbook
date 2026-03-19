@@ -11,6 +11,9 @@ class NoteCardItem extends StatelessWidget {
   final bool enableDrag;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback? onShare;
+  final VoidCallback? onDuplicate;
+  final VoidCallback? onSettings;
 
   const NoteCardItem({
     super.key,
@@ -20,6 +23,9 @@ class NoteCardItem extends StatelessWidget {
     this.enableDrag = false,
     required this.onEdit,
     required this.onDelete,
+    this.onShare,
+    this.onSettings,
+    this.onDuplicate
   });
 
   void _showNoteContextMenu(BuildContext context) {

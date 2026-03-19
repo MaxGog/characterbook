@@ -7,6 +7,7 @@ import 'package:characterbook/services/note_service.dart';
 import 'package:characterbook/ui/controllers/note_list_controller.dart';
 import 'package:characterbook/ui/screens/folder_screen.dart';
 import 'package:characterbook/ui/screens/note_management_screen.dart';
+import 'package:characterbook/ui/screens/settings/swipe_action_settings_screen.dart';
 import 'package:characterbook/ui/widgets/appbar/common_main_app_bar.dart';
 import 'package:characterbook/ui/widgets/buttons/common_list_floating_buttons.dart';
 import 'package:characterbook/ui/widgets/items/note_card_item.dart';
@@ -226,6 +227,14 @@ class _NotesListScreenState extends State<NotesListScreen> {
                                 onTap: () => _handleNoteTap(note),
                                 onEdit: () => _editNote(note),
                                 onDelete: () => _deleteNote(note, controller),
+                                onShare: () => service.shareNote(context, note),
+                                onSettings: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              const SwipeActionSettingsScreen(),
+                                        ),
+                                      ),
                               ),
                               onReorder: (oldIndex, newIndex) =>
                                   controller.reorder(oldIndex, newIndex),
