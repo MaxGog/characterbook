@@ -24,15 +24,16 @@ import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/services/file_share_service.dart';
 import 'package:characterbook/services/folder_service.dart';
 import 'package:characterbook/services/hive_service.dart';
+import 'package:characterbook/services/menu_channel_service.dart';
 import 'package:characterbook/services/note_service.dart';
 import 'package:characterbook/services/notification_service.dart';
 import 'package:characterbook/services/race_service.dart';
 import 'package:characterbook/services/relationship_service.dart';
 import 'package:characterbook/services/template_service.dart';
 import 'package:characterbook/ui/navigation/app_navigation_bar.dart';
+import 'package:characterbook/ui/screens/character_management_screen.dart';
 import 'package:characterbook/ui/screens/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
@@ -245,14 +246,24 @@ class _AppContentState extends State<_AppContent> {
   }
 
   void _setupMethodChannel() {
-    const channel = MethodChannel('characterbook/menu');
-    channel.setMethodCallHandler((call) async {
-      if (call.method == 'openSettings') {
+    MenuChannel.initialize(
+      onOpenSettings: () {
         _navigatorKey.currentState?.push(
           MaterialPageRoute(builder: (context) => const SettingsScreen()),
         );
-      }
-    });
+      },
+      onNewCharacter: () {
+        _navigatorKey.currentState?.push(
+          MaterialPageRoute(builder: (context) => const CharacterManagementScreen()),
+        );
+      },
+      onOpenFile: () {
+        final context = _navigatorKey.currentContext;
+        if (context != null) {
+          final filePicker = Provider.of<FilePickerService>(context, listen: false);
+        }
+      },
+    );
   }
 
   void _checkInitializationStatus() {

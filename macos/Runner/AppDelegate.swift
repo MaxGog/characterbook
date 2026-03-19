@@ -78,7 +78,6 @@ class AppDelegate: FlutterAppDelegate {
 
         var preferencesItem =
             appMenu.item(withTitle: "Preferences…")
-            ?? appMenu.item(withTitle: "Settings…")
             ?? appMenu.item(withTitle: "Настройки…")
 
         if preferencesItem == nil {
@@ -109,6 +108,14 @@ class AppDelegate: FlutterAppDelegate {
             binaryMessenger: flutterViewController!.engine.binaryMessenger
         )
         channel.invokeMethod("openSettings", arguments: nil)
+    }
+
+    @objc func newCharacter(_ sender: Any?) {
+        let channel = FlutterMethodChannel(
+            name: "characterbook/menu",
+            binaryMessenger: flutterViewController!.engine.binaryMessenger
+        )
+        channel.invokeMethod("newCharacter", arguments: nil)
     }
 
     override func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
