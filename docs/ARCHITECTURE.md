@@ -5,239 +5,192 @@
 ├── .github/                 # Конфигурация GitHub Actions
 │   └── workflows/
 │       └── dart.yml        # CI/CD пайплайн
-├── docs/                   # Документация приложения
-│   ├── ARCHITECTURE.md     # Этот файл
-│   ├── FEATURES.md         # Описание функциональности
-│   ├── INSTALLATION.md     # Инструкции по установке
-│   └── MANUAL.md           # Руководство пользователя
-├── android/                # Платформо-специфичная конфигурация для Android
-│   ├── app/               # Конфигурация приложения
-│   │   ├── src/           # Исходный код Android
-│   │   └── build.gradle.kts
-│   ├── gradle/            # Система сборки Gradle
-│   └── keystore.jks       # Ключ для подписи приложения
-├── assets/                 # Статические ресурсы приложения
-│   ├── fonts/             # Шрифты
-│   ├── github-mark.png    # Иконка GitHub
-│   ├── icon.svg           # Иконка приложения (SVG)
-│   ├── iconapp.png        # Иконка приложения (PNG)
-│   └── underdeveloped.png # Заглушка для недоразвитых функций
-├── ios/                   # Платформо-специфичная конфигурация для iOS
-├── lib/                   # Основная кодовая база на Dart
-│   ├── adapters/          # Адаптеры для внешних сервисов
+├── assets/                  # Статические ресурсы приложения
+│   ├── fonts/              # Шрифты
+│   ├── github-mark.png     # Иконка GitHub
+│   ├── icon.svg            # Иконка приложения (SVG)
+│   ├── iconapp.png         # Иконка приложения (PNG)
+│   ├── avatardeveloper.png # Аватар разработчика
+│   └── underdeveloped.png  # Бейджик разработчика
+├── lib/                    # Основная кодовая база на Dart
+│   ├── adapters/           # Адаптеры для Hive
 │   │   └── custom_field_adapter.dart
-│   ├── extensions/        # Расширения для встроенных классов
+│   ├── enums/
+│   │   ├── calendar_event_type_enum.dart
+│   │   ├── character_sort_enum.dart
+│   │   ├── home_content_type_enum.dart
+│   │   ├── note_sort_enum.dart
+│   │   ├── template_sort_enum.dart
+│   │   └── race_sort_enum.dart
+│   ├── extensions/         # Расширения для встроенных классов
 │   │   └── color_extension.dart
-│   ├── gen/              # Сгенерированные файлы (assets)
+│   ├── gen/                # Сгенерированные файлы (assets)
 │   │   └── assets.gen.dart
-│   ├── generated/         # Автоматически сгенерированные файлы
-│   │   └── intl/         # Локализация
+│   ├── generated/          # Автоматически сгенерированные файлы локализации
+│   │   └── intl/          
 │   │       ├── messages_all.dart
 │   │       ├── messages_en.dart
 │   │       ├── messages_ru.dart
 │   │       └── l10n.dart
-│   ├── l10n/             # Файлы локализации
+│   ├── l10n/               # Исходные файлы локализации
 │   │   ├── intl_en.arb
 │   │   └── intl_ru.arb
-│   ├── models/           # Модели данных
+│   ├── models/             # Модели данных
+│   │   ├── calendar_event_model.dart
 │   │   ├── character_model.dart
-│   │   ├── template_model.dart
 │   │   ├── custom_field_model.dart
+│   │   ├── export_pdf_settings_model.dart
 │   │   ├── folder_model.dart
 │   │   ├── note_model.dart
-│   │   └── race_model.dart
-│   ├── providers/        # State Providers для управления состоянием
+│   │   ├── race_model.dart
+│   │   ├── swipe_action.dart
+│   │   ├── relationship_model.dart
+│   │   └── template_model.dart
+│   ├── providers/          # Провайдеры состояния
 │   │   ├── locale_provider.dart
+│   │   ├── swipe_action_settings_provider.dart
 │   │   └── theme_provider.dart
-│   ├── services/         # Сервисы бизнес-логики
-│   │   ├── backup_service.dart
+│   ├── repositories/       # Репозитории для доступа к данным
+│   │   ├── character_repository.dart
+│   │   ├── folder_repository.dart
+│   │   ├── note_repository.dart
+│   │   ├── race_repository.dart
+│   │   ├── relationship_repository.dart
+│   │   └── template_repository.dart
+│   ├── services/           # Сервисы бизнес-логики
+│   │   ├── backup_service.dart          # Резервное копирование (локальное и облачное)
 │   │   ├── character_service.dart
 │   │   ├── clipboard_service.dart
-│   │   ├── default_templates.dart
+│   │   ├── date_formatter.dart
 │   │   ├── file_handler.dart
 │   │   ├── file_handler_wrapper.dart
 │   │   ├── file_picker_service.dart
+│   │   ├── file_share_service.dart
 │   │   ├── folder_service.dart
 │   │   ├── hive_service.dart
-│   │   ├── initialization_service.dart  # НОВЫЙ: сервис инициализации приложения
-│   │   ├── race_service.dart
+│   │   ├── menu_channel_service.dart
+│   │   ├── migration_service.dart
+│   │   ├── note_service.dart
+│   │   ├── notification_service.dart
 │   │   ├── pdf_export_manager.dart
 │   │   ├── pdf_export_service.dart
-│   │   ├── migration_service.dart
-│   │   ├── notification_service.dart
 │   │   ├── race_service.dart
+│   │   ├── relationship_service.dart
 │   │   └── template_service.dart
-│   └── ui/              # Компоненты пользовательского интерфейса
-│       ├── cards/       # Карточки для отображения данных
-│       │   └── character_modal_card.dart
-│       ├── dialogs/     # Диалоговые окна
-│       ├── handlers/    # Обработчики UI событий
-│       │   └── unsaved_changes_handler.dart
-│       ├── pages/       # Страницы приложения
-│       │   ├── character_list_page.dart
-│       │   ├── character_management_page.dart
-│       │   ├── folder_list_page.dart     
-│       │   ├── note_list_page.dart
-│       │   ├── note_management_page.dart
-│       │   ├── race_list_page.dart
-│       │   ├── race_management_page.dart
-│       │   ├── template_edit_page.dart
-│       │   ├── templates_page.dart
-│       │   ├── home_page.dart
+│   └── ui/                 # Компоненты пользовательского интерфейса
+│       ├── controllers/    # Контроллеры для экранов
+│       │   │── home_controller.dart
+│       │   └── ... (другие контроллеры)
+│       ├── modals/         # Модальные окна
+│       │   ├── common_modal_card.dart #Основной виджет модальных окон
+│       │   ├── character_modal_card.dart
+│       │   └── race_modal_card.dart
+│       ├── navigation/     # Навигационные компоненты
+│       │   ├── app_navigation_bar.dart
+│       │   └── menu_content.dart
+│       ├── screens/        # Основные экраны
+│           ├── settings/   # Экраны с настройками
+│       │   ├── character_management_screen.dart
+│       │   ├── folder_list_screen.dart
 │       │   ├── home_screen.dart
-│       │   ├── random_number_page.dart
-│       │   ├── search_page.dart
-│       │   └── settings_page.dart
-│       └── widgets/     # Переиспользуемые виджеты
-│           ├── appbar/  # Виджеты AppBar
-│           │   ├── common_edit_app_bar.dart
-│           │   └── custom_app_bar.dart
-│           ├── desktop/ # НОВЫЙ: виджеты для десктопной версии
-│           │   ├── app_title.dart
-│           │   ├── desktop_app_frame.dart
-│           │   ├── desktop_title_bar.dart
-│           │   └── window_controls.dart
-│           ├── fields/  # Поля ввода
-│           │   ├── custom_fields_editor.dart
-│           │   ├── custom_text_field.dart
-│           │   ├── gender_selector_field.dart
-│           │   ├── image_picker_field.dart
-│           │   └── race_selector_field.dart
-│           ├── items/   # Элементы списков
-│           │   ├── character_card.dart
-│           │   ├── folder_card.dart
-│           │   ├── note_card.dart
-│           │   ├── race_card.dart
-│           │   ├── search_result_card.dart
-│           │   └── template_card.dart
-│           ├── list/    # Виджеты списков
-│           ├── mixins/  # Миксины для виджетов
-│           │   ├── list_page_mixin.dart
-│           │   └── tag_mixin.dart
-│           ├── performance/ # Виджеты производительности
-│           ├── sections/    # Секции настроек
-│           │   ├── about_section.dart
-│           │   ├── acknowledgements_section.dart
-│           │   ├── backup_section.dart
-│           │   ├── build_section.dart
-│           │   ├── expandable_section.dart
-│           │   ├── image_gallery_section.dart
-│           │   ├── import_section.dart
-│           │   ├── language_section.dart
-│           │   ├── licenses_section.dart
-│           │   ├── settings_section.dart
-│           │   ├── tags_and_folder_section.dart
-│           │   └── theme_section.dart
-│           ├── states/  # Виджеты состояний
-│           ├── tags/    # Виджеты тегов
-│           └── отдельные виджеты (avatar_picker_widget.dart и др.)
-├── linux/               # Конфигурация для Linux
-├── macos/               # Конфигурация для macOS
-├── test/                # Модульные и виджет-тесты
-├── web/                 # Конфигурация для Web
-└── windows/             # Конфигурация для Windows
+│       │   ├── note_list_screen.dart
+│       │   ├── note_management_screen.dart
+│       │   ├── race_list_screen.dart
+│       │   ├── race_management_screen.dart
+│       │   ├── search_screen.dart
+│       │   ├── settings_screen.dart
+│       │   ├── template_edit_screen.dart
+│       │   └── templates_screen.dart
+│       └── widgets/        # Переиспользуемые виджеты
+│           ├── buttons/    # Кастомные кнопки
+│           │   └── home_fab_menu.dart
+│           ├── items/      # Элементы списков
+│           │   ├── character_keep_card_item.dart
+│           │   ├── home_item.dart
+│           │   ├── race_keep_card_item.dart
+│           │   └── tool_keep_card_item.dart
+│           ├── tools_context_menu.dart
+│           ├── avatar_picker_widget.dart
+│           ├── custom_fields_editor.dart
+│           └── ... (другие виджеты)
+├── test/                  # Модульные и виджет-тесты
+├── web/                   # Конфигурация для Web
+├── android/               # Платформо-специфичная конфигурация для Android
+├── ios/                   # Платформо-специфичная конфигурация для iOS
+├── linux/                 # Конфигурация для Linux
+├── macos/                 # Конфигурация для macOS
+└── windows/               # Конфигурация для Windows
 
-main.dart                # Точка входа в приложение
+main.dart                  # Точка входа в приложение
 ```
 
 ## 📐 Технологический стек
 
 ### Основные технологии
 
-**Фреймворк:**
+- **Flutter** 3.13+ — кроссплатформенный UI фреймворк
+- **Dart** 3.7.2+ — язык программирования
 
-- **Flutter** 3.13+ - кроссплатформенный UI фреймворк
-- **Dart** 3.7.2+ - язык программирования
+### Управление состоянием
 
-**Управление состоянием:**
+- **Provider** — основной инструмент для управления состоянием (используется `ChangeNotifierProvider`, `ProxyProvider`, `MultiProvider`)
 
-- **Provider** - для простого state management
-- **Flutter Bloc** - для сложной бизнес-логики
+### Генерация кода
 
-**Локальное хранилище:**
+- **json_serializable**, **build_runner** — для сериализации JSON
+- **hive_generator** — генерация адаптеров Hive
+- **flutter_gen** — генерация типизированных ассетов
+- **intl_utils** — для локализации
 
-- **Hive** 2.2.3 - быстрая NoSQL база данных
-- **Shared Preferences** - для настроек приложения
+### Локальное хранилище
 
-**Управление окнами (десктоп):**
+- **Hive** 2.2.3 — быстрая NoSQL база данных для хранения моделей
+- **Shared Preferences** — для хранения пользовательских настроек
 
-- **Window Manager** - управление окнами для десктопных платформ
+### Работа с файловой системой
 
-**Вспомогательные пакеты:**
+- **File Picker** — выбор файлов
+- **File Share** — шаринг файлов
+- **Clipboard** — работа с буфером обмена
 
-- **PDF** - генерация документов
-- **File Selector** - работа с файловой системой
-- **URL Launcher** - интеграция с ОС
-- **Google Sign-In** - будущая аутентификация
+### Генерация PDF
 
-### Структура зависимостей
+- **PDF** — создание PDF-документов
+- **Printing** — печать
 
-```yaml
-dependencies:
-  # State Management
-  provider: ^6.0.5
-  flutter_bloc: ^8.1.3
-  
-  # Local Storage
-  hive: ^2.2.3
-  hive_flutter: ^1.1.0
-  shared_preferences: ^2.5.3
-  
-  # File Operations
-  pdf: ^3.10.0
-  printing: ^5.9.1
-  file_selector: ^1.0.3
-  
-  # Platform Integration
-  window_manager: ^0.5.1
-  msix: ^3.16.10
-```
+### Интеграция с платформой
+
+- **URL Launcher** — открытие внешних ссылок
+
+### Вспомогательные пакеты
+
+- **Hive Flutter** — интеграция Hive с Flutter
+- **Provider** — DI и управление состоянием
+- **Flutter Localizations** — локализация
+
+### Взаимодействие с платформой
+
+- **google_sign_in** — аутентификация Google
+- **googleapis** — работа с Google Drive API
+- **extension_google_sign_in_as_googleapis_auth** — адаптер для использования токенов
+- **share_plus** — системный шеринг
+- **open_filex** — открытие файлов
+- **image_picker** — выбор изображений
+- **crop_image** — обрезка изображений
+- **table_calendar** — виджет календаря
+- **flutter_markdown** — отображение Markdown в описаниях
 
 ## 🏗️ Модульная структура
 
-Приложение следует принципам **чистой архитектуры** с разделением на:
+Приложение следует принципам **чистой архитектуры** с разделением на слои:
 
-- **Модели** (`models/`) - структуры данных
-- **Сервисы** (`services/`) - бизнес-логика и инициализация
-- **Провайдеры** (`providers/`) - управление состоянием
-- **UI компоненты** (`ui/`) - представление данных
+- **Модели** (`models/`) — описание сущностей данных (Character, Race, Note, Folder, Template, Relationship, CustomField, ExportPdfSettings)
+- **Репозитории** (`repositories/`) — абстракция доступа к данным (CRUD операции над Hive боксами)
+- **Сервисы** (`services/`) — бизнес-логика, работа с репозиториями, внешние сервисы (резервное копирование, PDF-экспорт, уведомления)
+- **Провайдеры** (`providers/`) — управление состоянием приложения (тема, язык, настройки)
+- **UI** (`ui/`) — представление данных, экраны, виджеты, контроллеры
 
-### Новые модули после рефакторинга
-
-**InitializationService** (`services/initialization_service.dart`):
-
-- Централизованная инициализация Hive и Window Manager
-- Определение платформы (десктоп/мобильная)
-- Управление жизненным циклом приложения
-
-**Desktop UI Components** (`ui/widgets/desktop/`):
-
-- `desktop_app_frame.dart` - основной фрейм десктопного приложения
-- `desktop_title_bar.dart` - кастомная панель заголовка
-- `window_controls.dart` - кнопки управления окном
-- `app_title.dart` - заголовок приложения с иконкой
-
-Каждый модуль отвечает за свою зону ответственности, что обеспечивает поддерживаемость и тестируемость кода.
-
-## 🎯 Архитектурные улучшения
-
-### 1. Централизация инициализации
-
-- Вынесена логика инициализации в отдельный сервис
-- Упрощен main.dart
-- Улучшена читаемость кода запуска приложения
-
-### 2. Разделение UI по платформам
-
-- Четкое разделение мобильных и десктопных компонентов
-- Переиспользуемые десктопные виджеты
-- Упрощена навигация между платформами
-
-### 3. Улучшенная структура виджетов
-
-- Логическая группировка десктопных компонентов
-- Упрощенное поддержание кода
-- Легкое расширение функциональности
+Такое разделение обеспечивает тестируемость, переиспользование кода и упрощает поддержку.
 
 ## 🗃️ Модели данных
 
@@ -246,91 +199,191 @@ dependencies:
 - **Тип Hive**: `typeId: 0`
 - **Назначение**: Основная сущность приложения для хранения данных о персонажах
 - **Ключевые поля**:
-  - `id` - уникальный идентификатор
-  - `name`, `age`, `gender` - базовые атрибуты
-  - `biography`, `personality`, `appearance` - текстовые описания
-  - `imageBytes`, `referenceImageBytes`, `additionalImages` - система изображений
-  - `customFields` - расширяемая система полей
-  - `race` - связь с расой
-  - `folderId`, `tags` - система организации
-
-### CustomField (Пользовательское поле)
-
-- **Тип Hive**: `typeId: 1`
-- **Назначение**: Хранение пользовательских полей типа ключ-значение
-- **Ключевые поля**:
-  - `key` - название поля
-  - `value` - значение поля
-
-### Note (Заметка)
-
-- **Тип Hive**: `typeId: 2`
-- **Назаначение**: Система заметок, связанных с персонажами
-- **Ключевые поля**:
-  - `title`, `content` - содержимое заметки
-  - `characterIds` - привязка к персонажам
-  - `folderId`, `tags` - организация
+  - `id` — уникальный идентификатор
+  - `name`, `age`, `gender` — базовые атрибуты
+  - `biography`, `personality`, `appearance` — текстовые описания
+  - `imageBytes`, `referenceImageBytes`, `additionalImages` — система изображений
+  - `customFields` — расширяемая система полей
+  - `race` — связь с расой
+  - `folderId`, `tags` — система организации
 
 ### Race (Раса)
 
 - **Тип Hive**: `typeId: 3`
 - **Назначение**: Хранение данных о расах персонажей
 - **Ключевые поля**:
-  - `name`, `description`, `biology`, `backstory` - описания
-  - `logo` - изображение расы
-  - `folderId`, `tags` - организация
+  - `name`, `description`, `biology`, `backstory` — описания
+  - `logo` — изображение расы
+  - `folderId`, `tags` — организация
 
-### QuestionnaireTemplate (Шаблон анкеты)
+### Note (Заметка)
 
-- **Тип Hive**: `typeId: 4`
-- **Назначение**: Шаблоны для быстрого создания персонажей
+- **Тип Hive**: `typeId: 2`
+- **Назначение**: Система заметок, связанных с персонажами
 - **Ключевые поля**:
-  - `name` - название шаблона
-  - `standardFields` - список стандартных полей
-  - `customFields` - пользовательские поля шаблона
+  - `title`, `content` — содержимое заметки
+  - `characterIds` — привязка к персонажам
+  - `folderId`, `tags` — организация
 
 ### Folder (Папка)
 
 - **Тип Hive**: `typeId: 5`
 - **Назначение**: Организация контента в папки
 - **Ключевые поля**:
-  - `name`, `type` - название и тип содержимого
-  - `parentId` - поддержка вложенности
-  - `contentIds` - список ID содержимого
-  - `colorValue` - цветовое кодирование
+  - `name`, `type` — название и тип содержимого
+  - `parentId` — поддержка вложенности
+  - `contentIds` — список ID содержимого
+  - `colorValue` — цветовое кодирование
 
-### FolderType (Тип папки)
+### QuestionnaireTemplate (Шаблон анкеты)
+
+- **Тип Hive**: `typeId: 4`
+- **Назначение**: Шаблоны для быстрого создания персонажей
+- **Ключевые поля**:
+  - `name` — название шаблона
+  - `standardFields` — список стандартных полей
+  - `customFields` — пользовательские поля шаблона
+
+### Relationship (Связь)
 
 - **Тип Hive**: `typeId: 6`
-- **Назначение**: Перечисление типов контента для папок
-- **Значения**: `character`, `race`, `note`, `template`
+- **Назначение**: Хранение связей между персонажами
+- **Ключевые поля**:
+  - `fromCharacterId` — ID первого персонажа
+  - `toCharacterId` — ID второго персонажа
+  - `type` — тип связи (дружба, любовь, вражда и т.д.)
+  - `description` — описание связи
 
-### Особенности моделей
+### ExportPdfSettings (Настройки экспорта PDF)
 
-- Все модели поддерживают **Hive** для локального хранения
-- Реализованы методы `toJson()`/`fromJson()` для сериализации
-- Поддержка копирования через `copyWith()`
-- Система тегов и папок для организации контента
-- Расширяемая система через `CustomField`
+- **Тип Hive**: `typeId: 7`
+- **Назначение**: Настройки для генерации PDF
+- **Ключевые поля**:
+  - `paperSize` — размер бумаги
+  - `orientation` — ориентация страницы
+  - `includeImages` — включать ли изображения
+  - `template` — выбранный шаблон оформления
+
+### CustomField (Пользовательское поле)
+
+- **Тип Hive**: `typeId: 1`
+- **Назначение**: Хранение пользовательских полей типа ключ-значение
+- **Ключевые поля**:
+  - `key` — название поля
+  - `value` — значение поля
+
+### CalendarEvent (Событие календаря)
+
+- **Тип Hive**: `typeId: 11`
+- **Назначение**: Планирование событий, связанных с персонажами или кампанией
+- **Ключевые поля**:
+  - `title`, `description` — название и описание события
+  - `date` — дата и время
+  - `characterIds` — список ID персонажей, участвующих в событии
+  - `type` — тип события (встреча, бой, праздник и т.д.) из `CalendarEventType`
+  - `reminder` — напоминание (если реализовано)
+
+### SwipeAction (Жесты свайпа)
+
+- **Тип Hive**: `typeId: 12`
+- **Назначение**: Хранение настроек действий по свайпу для списков
+- **Ключевые поля**:
+  - `leftAction` — действие при свайпе влево
+  - `rightAction` — действие при свайпе вправо
+  - `enabled` — включены ли жесты
 
 ## 🔄 Жизненный цикл приложения
 
 ### Инициализация
 
-1. Инициализация WidgetsBinding
-2. Параллельная инициализация Window Manager и Hive
-3. Настройка FileHandler
-4. Запуск MultiProvider с провайдерами состояния
+1. `WidgetsFlutterBinding.ensureInitialized()`
+2. Инициализация Hive через `HiveService.initHive()`
+3. Регистрация адаптеров Hive (например, `RelationshipAdapter`)
+4. Открытие всех боксов с повторными попытками (`_openBoxWithRetry`)
+5. Инициализация `FileHandler.initialize()`
+6. Запуск `runApp` с `CharacterBookApp`
+7. В `CharacterBookApp` создаётся `MultiProvider` с репозиториями, сервисами и провайдерами состояния
+8. В `_AppContent` настраивается метод-канал (`MenuChannel`) и проверяется успешность инициализации Hive
 
 ### Управление состоянием
 
-- **ThemeProvider** - управление светлой/темной темой
-- **LocaleProvider** - управление локализацией
-- **NotificationService** - управление уведомлениями
+- **ThemeProvider** — управление светлой/тёмной темой
+- **LocaleProvider** — управление локализацией
+- **SwipeActionSettingsProvider** — настройки жестов свайпа
+- **NotificationService** — управление уведомлениями (через `ScaffoldMessenger`)
 
-### Десктоп-специфичные функции
+### Работа с данными
 
-- Кастомная панель заголовка
-- Кнопки управления окном (свернуть/развернуть/закрыть)
-- Автоматическое определение платформы
-- Адаптивный UI в зависимости от платформы
+- Репозитории (`*Repository`) инкапсулируют доступ к Hive боксам.
+- Сервисы (`*Service`) используют репозитории для бизнес-логики.
+- Провайдеры связывают UI с состоянием (например, `HomeController` использует сервисы для загрузки данных).
+
+### BackupService (Резервное копирование)
+
+- **Локальное резервирование**: экспорт/импорт через `FilePickerService`
+- **Облачное резервирование**: интеграция с Google Drive через `google_sign_in` и `googleapis`
+- **Автоматическое резервирование**: планировщик задач (если реализован)
+
+### NotificationService
+
+- Отображает SnackBar уведомления через глобальный `ScaffoldMessengerKey`
+- Используется для информирования об успешных/неудачных операциях
+
+### MenuChannelService
+
+- Обработка вызовов из нативного меню (например, открытие файла, создание персонажа)
+- Интеграция с `MethodChannel` для десктопных платформ
+
+## 🖥️ Десктоп-специфичные функции
+
+- Кастомная панель заголовка (управление окном) — реализована через `window_manager`.
+- Кнопки управления окном (свернуть/развернуть/закрыть).
+- Автоматическое определение платформы и адаптация UI.
+- Поддержка нативных диалогов выбора файлов через `file_selector`.
+- Интеграция с системным меню через `MenuChannelService`.
+
+## ☁️ Облачная синхронизация
+
+- **Google Drive** используется для хранения резервных копий.
+- Сервис `CloudBackupService` управляет аутентификацией через `google_sign_in` и загрузкой/скачиванием файлов.
+- Резервные копии хранятся в папке приложения на Google Drive пользователя.
+- Планируется поддержка iCloud (iOS) и OneDrive.
+
+## 🧩 Ключевые компоненты UI
+
+### Экран «Главный» (`HomeScreen`)
+
+- Отображает сетку последних персонажей, рас и инструментов.
+- Использует `HomeController` для загрузки данных и управления поиском.
+- Плавающая кнопка `HomeFloatingMenu` для быстрого создания нового контента.
+- Контекстное меню для элементов (через `tools_context_menu.dart`).
+
+### Навигация
+
+- `AppNavigationBar` — главная навигационная панель (нижняя на мобильных, боковая на десктопе).
+- `MenuContent` — содержимое бокового меню (используется в `AppDrawer` и в модальном окне на главном экране).
+
+### Модальные окна
+
+- `CharacterModalCard` — детальный просмотр персонажа.
+- `RaceModalCard` — детальный просмотр расы.
+
+### Виджеты списков
+
+- `CharacterKeepCardItem` — карточка персонажа на главном экране.
+- `RaceKeepCardItem` — карточка расы.
+- `ToolKeepCardItem` — карточка инструмента (генератор чисел, поиск и т.д.).
+
+## 📦 Зависимости и интеграции
+
+- **Hive** — для хранения всех данных локально.
+- **Provider** — для DI и управления состоянием.
+- **File Picker** — для импорта/экспорта файлов.
+- **PDF** — для генерации отчётов.
+- **URL Launcher** — для открытия ссылок (например, документации).
+
+## 🧪 Тестирование
+
+- Модульные тесты для сервисов и репозиториев.
+- Виджет-тесты для ключевых экранов.
+- Интеграционные тесты для проверки сценариев импорта/экспорта.
