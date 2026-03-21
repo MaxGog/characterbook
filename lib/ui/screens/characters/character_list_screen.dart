@@ -5,7 +5,6 @@ import 'package:characterbook/models/folder_model.dart';
 import 'package:characterbook/models/template_model.dart';
 import 'package:characterbook/repositories/character_repository.dart';
 import 'package:characterbook/services/character_service.dart';
-import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/ui/widgets/modals/character_modal_card.dart';
 import 'package:characterbook/ui/controllers/character_list_controller.dart';
 import 'package:characterbook/ui/screens/folder_screen.dart';
@@ -18,6 +17,7 @@ import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
 import 'package:characterbook/ui/widgets/items/character_card_item.dart';
 import 'package:characterbook/ui/widgets/tags/tag_filter.dart';
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
+import 'package:characterbook/ui/widgets/mixins/list_page_mixin.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,20 +31,8 @@ class CharacterListScreen extends StatefulWidget {
   State<CharacterListScreen> createState() => _CharacterListScreenState();
 }
 
-class _CharacterListScreenState extends State<CharacterListScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  bool _isSearching = false;
-  bool _isImporting = false;
-  String? _errorMessage;
-
-  final ScrollController _scrollController = ScrollController();
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    _scrollController.dispose();
-    super.dispose();
-  }
+class _CharacterListScreenState extends State<CharacterListScreen>
+    with ListPageMixin<CharacterListScreen> {
 
   List<String> _getTags(
       BuildContext context, CharacterListController controller) {
@@ -58,7 +46,8 @@ class _CharacterListScreenState extends State<CharacterListScreen> {
     ];
   }
 
-  void _onTagSelected(String? tag, BuildContext context, CharacterListController controller) {
+  void _onTagSelected(
+      String? tag, BuildContext context, CharacterListController controller) {
     if (tag == null) {
       controller.setSelectedTag(null);
       return;
@@ -85,25 +74,22 @@ class _CharacterListScreenState extends State<CharacterListScreen> {
   Future<void> _importCharacter(
       BuildContext context, CharacterService service) async {
     setState(() {
-      _isImporting = true;
-      _errorMessage = null;
+      isImporting = true;
+      errorMessage = null;
     });
     try {
-      final filePicker = FilePickerService();
-      final character = await filePicker.importCharacter();
+      final character =
+          await filePickerService.importCharacter();
       if (character == null) return;
 
       await service.saveCharacter(character);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(S.of(context).character_imported(character.name))),
-        );
+        showSnackBar(S.of(context).character_imported(character.name));
       }
     } catch (e) {
-      setState(() => _errorMessage = e.toString());
+      setState(() => errorMessage = e.toString());
     } finally {
-      if (mounted) setState(() => _isImporting = false);
+      if (mounted) setState(() => isImporting = false);
     }
   }
 
@@ -129,9 +115,7 @@ class _CharacterListScreenState extends State<CharacterListScreen> {
     if (confirmed == true) {
       await controller.deleteCharacter(character);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(S.of(context).character_deleted)),
-        );
+        showSnackBar(S.of(context).character_deleted);
       }
     }
   }
@@ -189,98 +173,125 @@ class _CharacterListScreenState extends State<CharacterListScreen> {
           final service = context.read<CharacterService>();
           final s = S.of(context);
           return Scaffold(
-          appBar: CommonMainAppBar(
-            title: s.my_characters,
-            isSearching: _isSearching,
-            searchController: _searchController,
-            searchHint: s.search_characters,
-            onSearchToggle: () {
-              setState(() {
-                _isSearching = !_isSearching;
-                if (!_isSearching) {
-                  _searchController.clear();
-                  controller.setSearchQuery('');
-                }
-              });
-            },
-            onSearchChanged: (query) => controller.setSearchQuery(query),
-            onTemplatesPressed: () => _createFromTemplate(context),
-            onFoldersPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => FoldersScreen(folderType: FolderType.character),
-              ),
-            ),
-          ),
-          body: Column(
-            children: [
-              ListStateIndicator(
-                isLoading: _isImporting || controller.isLoading,
-                errorMessage: _errorMessage ?? controller.error,
-                onErrorClose: () {
-                  setState(() {
-                    _errorMessage = null;
-                  });
-                },
-              ),
-              Expanded(
-                child: Column(
-                  children: [
-                    if (controller.allTags.isNotEmpty ||
-                        _getTags(context, controller).length > 4)
-                      TagFilter(
-                        tags: _getTags(context, controller),
-                        selectedTag:
-                            controller.selectedTag,
-                        onTagSelected: (tag) =>_onTagSelected(tag, context, controller),
-                        context: context,
-                      ),
-                    Expanded(
-                      child: controller.filteredItems.isEmpty
-                      ? Center(
-                          child: Text(
-                            S.of(context).no_characters,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        )
-                      : OptimizedListView<Character>(
-                        items: controller.filteredItems,
-                        itemBuilder: (ctx, character, index) => CharacterCardItem(
-                          key: ValueKey(character.key),
-                          character: character,
-                          isSelected: false,
-                          onTap: () => _navigateToDetail(character),
-                          onLongPress: () => _showCharacterContextMenu(character, context, controller, service),
-                          onEdit: () => _navigateToEdit(context, character),
-                          onDelete: () => _deleteCharacter(character, controller),
-                          onDuplicate: () => service.duplicateCharacter(character),
-                          onSettings: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const SwipeActionSettingsScreen(),
-                            ),
-                          ),
-                          onShare: () => service.exportToPdf(context, character),
-                        ),
-                        onReorder: (oldIndex, newIndex) =>
-                            controller.reorder(oldIndex, newIndex),
-                        scrollController: _scrollController,
-                      ),
-                    ),
-                  ],
+            appBar: CommonMainAppBar(
+              title: s.my_characters,
+              isSearching: isSearching,
+              searchController: searchController,
+              searchHint: s.search_characters,
+              onSearchToggle: () {
+                setState(() {
+                  isSearching = !isSearching;
+                  if (!isSearching) {
+                    searchController.clear();
+                    controller.setSearchQuery('');
+                  }
+                });
+              },
+              onSearchChanged: (query) => controller.setSearchQuery(query),
+              onTemplatesPressed: () => _createFromTemplate(context),
+              onFoldersPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      FoldersScreen(folderType: FolderType.character),
                 ),
               ),
-            ],
-          ),
-          floatingActionButton: CommonListFloatingButtons(
-            onImport: () => _importCharacter(context, service),
-            onAdd: () => _navigateToEdit(context),
-            onTemplate: () => _createFromTemplate(context),
-            heroTag: "character_list",
-          ),
-        );
-      }
-      )
+            ),
+            body: Column(
+              children: [
+                ListStateIndicator(
+                  isLoading: isImporting || controller.isLoading,
+                  errorMessage: errorMessage ?? controller.error,
+                  onErrorClose: () {
+                    setState(() {
+                      errorMessage = null;
+                    });
+                  },
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      AnimatedCrossFade(
+                        duration: Duration(milliseconds: 300),
+                        reverseDuration: Duration(milliseconds: 300),
+                        firstCurve: Curves.easeInOutCubic,
+                        secondCurve: Curves.easeInOutCubic,
+                        firstChild: SizedBox(
+                          height: 40,
+                          child: TagFilter(
+                            tags: _getTags(context, controller),
+                            selectedTag: controller.selectedTag,
+                            onTagSelected: (tag) =>
+                                _onTagSelected(tag, context, controller),
+                            context: context,
+                          ),
+                        ),
+                        secondChild: const SizedBox.shrink(),
+                        crossFadeState: (controller.allTags.isNotEmpty ||
+                                    _getTags(context, controller).length > 4) &&
+                                isTagsVisible
+                            ? CrossFadeState.showFirst
+                            : CrossFadeState.showSecond,
+                      ),
+                      Expanded(
+                        child: controller.filteredItems.isEmpty
+                            ? Center(
+                                child: Text(
+                                  S.of(context).no_characters,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                              )
+                            : OptimizedListView<Character>(
+                                items: controller.filteredItems,
+                                itemBuilder: (ctx, character, index) =>
+                                    CharacterCardItem(
+                                  key: ValueKey(character.key),
+                                  character: character,
+                                  isSelected: false,
+                                  onTap: () => _navigateToDetail(character),
+                                  onLongPress: () => _showCharacterContextMenu(
+                                      character, context, controller, service),
+                                  onEdit: () =>
+                                      _navigateToEdit(context, character),
+                                  onDelete: () =>
+                                      _deleteCharacter(character, controller),
+                                  onDuplicate: () =>
+                                      service.duplicateCharacter(character),
+                                  onSettings: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const SwipeActionSettingsScreen(),
+                                    ),
+                                  ),
+                                  onShare: () =>
+                                      service.exportToPdf(context, character),
+                                ),
+                                onReorder: (oldIndex, newIndex) =>
+                                    controller.reorder(oldIndex, newIndex),
+                                scrollController: scrollController,
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            floatingActionButton: Visibility(
+              visible: isFabVisible,
+              child: animatedFAB(
+                CommonListFloatingButtons(
+                  onImport: () => _importCharacter(context, service),
+                  onAdd: () => _navigateToEdit(context),
+                  onTemplate: () => _createFromTemplate(context),
+                  heroTag: "character_list",
+                ),
+                key: const ValueKey('character_fab')
+              )
+            ),
+          );
+        },
+      ),
     );
   }
 }
