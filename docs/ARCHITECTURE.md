@@ -81,27 +81,24 @@
 │       ├── controllers/    # Контроллеры для экранов
 │       │   │── home_controller.dart
 │       │   └── ... (другие контроллеры)
-│       ├── modals/         # Модальные окна
-│       │   ├── common_modal_card.dart #Основной виджет модальных окон
-│       │   ├── character_modal_card.dart
-│       │   └── race_modal_card.dart
 │       ├── navigation/     # Навигационные компоненты
 │       │   ├── app_navigation_bar.dart
 │       │   └── menu_content.dart
 │       ├── screens/        # Основные экраны
-│           ├── settings/   # Экраны с настройками
-│       │   ├── character_management_screen.dart
+│       │   ├── settings/   # Экраны с настройками
+│       │   ├── characters/ # Экраны с персонажами
+│       │   ├── races/      # Экраны с расами
+│       │   ├── notes/      # Экраны с заметками
+│       │   ├── templates/  # Экраны с шаблонами
+│       │   ├── calendar_screen.dart
 │       │   ├── folder_list_screen.dart
-│       │   ├── home_screen.dart
-│       │   ├── note_list_screen.dart
-│       │   ├── note_management_screen.dart
-│       │   ├── race_list_screen.dart
-│       │   ├── race_management_screen.dart
-│       │   ├── search_screen.dart
-│       │   ├── settings_screen.dart
-│       │   ├── template_edit_screen.dart
-│       │   └── templates_screen.dart
+│       │   ├── random_number_screen.dart
+│       │   └── home_screen.dart
 │       └── widgets/        # Переиспользуемые виджеты
+│           ├── modals/     # Модальные окна
+│           │   ├── common_modal_card.dart  # Основной виджет модальных окон
+│           │   ├── character_modal_card.dart
+│           │   └── race_modal_card.dart
 │           ├── buttons/    # Кастомные кнопки
 │           │   └── home_fab_menu.dart
 │           ├── items/      # Элементы списков

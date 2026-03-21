@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/models/character_model.dart';
 import 'package:characterbook/models/note_model.dart';
@@ -9,13 +10,15 @@ import 'package:characterbook/services/character_service.dart';
 import 'package:characterbook/services/clipboard_service.dart';
 import 'package:characterbook/services/note_service.dart';
 import 'package:characterbook/ui/controllers/character_modal_controller.dart';
-import 'package:characterbook/ui/screens/character_management_screen.dart';
-import 'package:characterbook/ui/screens/note_management_screen.dart';
+import 'package:characterbook/ui/screens/characters/character_management_screen.dart';
+import 'package:characterbook/ui/screens/notes/note_management_screen.dart';
 import 'package:characterbook/ui/widgets/items/note_card_item.dart';
-import 'package:characterbook/ui/modals/common_modal.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import 'common_modal.dart';
 
 class CharacterModalCard extends StatelessWidget {
   final Character character;

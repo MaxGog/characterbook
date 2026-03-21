@@ -1,8 +1,8 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/ui/screens/character_list_screen.dart';
+import 'package:characterbook/ui/screens/characters/character_list_screen.dart';
 import 'package:characterbook/ui/screens/home_screen.dart';
-import 'package:characterbook/ui/screens/note_list_screen.dart';
-import 'package:characterbook/ui/screens/race_list_screen.dart';
+import 'package:characterbook/ui/screens/notes/note_list_screen.dart';
+import 'package:characterbook/ui/screens/races/race_list_screen.dart';
 import 'package:flutter/material.dart';
 
 class AppNavigationBar extends StatefulWidget {

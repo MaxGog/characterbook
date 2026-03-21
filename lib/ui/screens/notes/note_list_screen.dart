@@ -6,7 +6,7 @@ import 'package:characterbook/repositories/note_repository.dart';
 import 'package:characterbook/services/note_service.dart';
 import 'package:characterbook/ui/controllers/note_list_controller.dart';
 import 'package:characterbook/ui/screens/folder_screen.dart';
-import 'package:characterbook/ui/screens/note_management_screen.dart';
+
 import 'package:characterbook/ui/screens/settings/swipe_action_settings_screen.dart';
 import 'package:characterbook/ui/widgets/appbar/common_main_app_bar.dart';
 import 'package:characterbook/ui/widgets/buttons/common_fab_menu.dart';
@@ -15,9 +15,12 @@ import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
 import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
 import 'package:characterbook/ui/widgets/states/empty_notes_state.dart';
 import 'package:characterbook/ui/widgets/tags/tag_filter.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+
+import 'note_management_screen.dart';
 
 class NotesListScreen extends StatefulWidget {
   const NotesListScreen({super.key});

@@ -6,12 +6,11 @@ import 'package:characterbook/models/template_model.dart';
 import 'package:characterbook/repositories/character_repository.dart';
 import 'package:characterbook/services/character_service.dart';
 import 'package:characterbook/services/file_picker_service.dart';
-import 'package:characterbook/ui/modals/character_modal_card.dart';
+import 'package:characterbook/ui/widgets/modals/character_modal_card.dart';
 import 'package:characterbook/ui/controllers/character_list_controller.dart';
-import 'package:characterbook/ui/screens/character_management_screen.dart';
 import 'package:characterbook/ui/screens/folder_screen.dart';
 import 'package:characterbook/ui/screens/settings/swipe_action_settings_screen.dart';
-import 'package:characterbook/ui/screens/templates_list_screen.dart';
+import 'package:characterbook/ui/screens/templates/templates_list_screen.dart';
 import 'package:characterbook/ui/widgets/appbar/common_main_app_bar.dart';
 import 'package:characterbook/ui/widgets/buttons/common_fab_menu.dart';
 import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
@@ -19,8 +18,11 @@ import 'package:characterbook/ui/widgets/list/optimized_list_view.dart';
 import 'package:characterbook/ui/widgets/items/character_card_item.dart';
 import 'package:characterbook/ui/widgets/tags/tag_filter.dart';
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'character_management_screen.dart';
 
 class CharacterListScreen extends StatefulWidget {
   const CharacterListScreen({super.key});
