@@ -1,0 +1,1 @@
+enum ToolType { randomNumber, pdfExport, templates, calendar, relationships }

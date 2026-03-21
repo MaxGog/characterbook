@@ -1,3 +1,4 @@
+import 'package:characterbook/enums/tool_type_enum.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/models/character_model.dart';
 import 'package:characterbook/models/race_model.dart';
@@ -17,8 +18,6 @@ final class RaceHomeItem extends HomeItem {
   const RaceHomeItem(this.race);
 }
 
-enum ToolType { randomNumber, pdfExport, templates, calendar }
-
 class ToolHomeItem extends HomeItem {
   final ToolType type;
   final Widget page;
@@ -36,6 +35,8 @@ class ToolHomeItem extends HomeItem {
         return s.templates;
       case ToolType.calendar:
         return s.calendar;
+      case ToolType.relationships:
+        return "s.relationships";
     }
   }
 
@@ -56,6 +57,8 @@ class ToolHomeItem extends HomeItem {
         return Icons.library_books_rounded;
       case ToolType.calendar:
         return Icons.calendar_today_rounded;
+      case ToolType.relationships:
+        return Icons.family_restroom_outlined;
     }
   }
 }

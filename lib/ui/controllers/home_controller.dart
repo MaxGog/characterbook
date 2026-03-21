@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'package:characterbook/enums/tool_type_enum.dart';
 import 'package:characterbook/models/race_model.dart';
 import 'package:characterbook/services/character_service.dart';
 import 'package:characterbook/services/race_service.dart';
 import 'package:characterbook/ui/screens/calendar_screen.dart';
+import 'package:characterbook/ui/screens/characters/relationships_screen.dart';
 import 'package:characterbook/ui/screens/settings/export_pdf_settings_screen.dart';
 import 'package:characterbook/ui/screens/random_number_screen.dart';
 import 'package:characterbook/ui/screens/templates/templates_list_screen.dart';
@@ -38,6 +40,7 @@ class HomeController extends ChangeNotifier {
           type: ToolType.pdfExport, page: const ExportPdfSettingsScreen()),
       ToolHomeItem(type: ToolType.templates, page: const TemplatesListScreen()),
       ToolHomeItem(type: ToolType.calendar, page: const CalendarScreen()),
+      ToolHomeItem(type: ToolType.relationships, page: RelationshipsScreen())
     ]);
   }
 
