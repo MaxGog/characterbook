@@ -163,6 +163,7 @@ class NoteManagementController extends ChangeNotifier {
       }
 
       _hasUnsavedChanges = false;
+      _error = null;
       return true;
     } catch (e) {
       _error = e.toString();
