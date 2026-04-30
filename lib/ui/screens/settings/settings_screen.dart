@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 
 import 'export_pdf_settings_screen.dart';
 import 'swipe_action_settings_screen.dart';
+import 'theme_settings_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -173,17 +174,6 @@ String _displayName(Locale locale) {
   }
 }
 
-const _presetColors = [
-  Colors.blue,
-  Colors.green,
-  Colors.red,
-  Colors.orange,
-  Colors.purple,
-  Colors.pink,
-  Colors.teal,
-  Colors.lightBlue,
-];
-
 class _ThemeSection extends StatelessWidget {
   const _ThemeSection();
 
@@ -195,209 +185,30 @@ class _ThemeSection extends StatelessWidget {
     return SettingsSection(
       title: s.theme,
       children: [
-        const _ThemeModeSelector(),
-        const SizedBox(height: 8),
-        Divider(height: 1, color: colorScheme.outlineVariant),
-        const SizedBox(height: 16),
-        Text(
-          s.accentColor.toUpperCase(),
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: colorScheme.onSurface,
-              ),
-        ),
-        const SizedBox(height: 12),
-        const _AccentColorSelector(),
-      ],
-    );
-  }
-}
-
-class _ThemeModeSelector extends StatelessWidget {
-  const _ThemeModeSelector();
-
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-    return Column(
-      children: [
-        _ThemeListTile(
-          mode: ThemeMode.system,
-          title: s.system,
-          icon: Icons.phone_android,
-        ),
-        _ThemeListTile(
-          mode: ThemeMode.light,
-          title: s.light,
-          icon: Icons.light_mode,
-        ),
-        _ThemeListTile(
-          mode: ThemeMode.dark,
-          title: s.dark,
-          icon: Icons.dark_mode,
-        ),
-      ],
-    );
-  }
-}
-
-class _ThemeListTile extends StatelessWidget {
-  final ThemeMode mode;
-  final String title;
-  final IconData icon;
-
-  const _ThemeListTile({
-    required this.mode,
-    required this.title,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final controller = context.watch<SettingsController>();
-    final isSelected = controller.themeMode == mode;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return ListTile(
-      leading: Icon(icon,
-          color:
-              isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant),
-      title: Text(title),
-      trailing:
-          isSelected ? Icon(Icons.check, color: colorScheme.primary) : null,
-      onTap: () => controller.setThemeMode(mode),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-    );
-  }
-}
-
-class _AccentColorSelector extends StatelessWidget {
-  const _AccentColorSelector();
-
-  @override
-  Widget build(BuildContext context) {
-    final controller = context.watch<SettingsController>();
-    final s = S.of(context);
-    final accentColors = {
-      s.color_blue: Colors.blue,
-      s.color_green: Colors.green,
-      s.color_red: Colors.red,
-      s.color_orange: Colors.orange,
-      s.color_purple: Colors.purple,
-      s.color_pink: Colors.pink,
-      s.color_teal: Colors.teal,
-      s.color_light_blue: Colors.lightBlue,
-    };
-    final currentColor = controller.seedColor;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            ...accentColors.entries.map((entry) => _ColorChoiceChip(
-                  label: entry.key,
-                  color: entry.value,
-                  selected: currentColor == entry.value,
-                  onSelected: (_) => controller.setSeedColor(entry.value),
-                )),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _ColorChoiceChip extends StatelessWidget {
-  final String label;
-  final Color color;
-  final bool selected;
-  final ValueChanged<bool> onSelected;
-
-  const _ColorChoiceChip({
-    required this.label,
-    required this.color,
-    required this.selected,
-    required this.onSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ChoiceChip(
-      label: Text(label),
-      selected: selected,
-      onSelected: onSelected,
-      backgroundColor: color.withOpacity(0.2),
-      selectedColor: color,
-      labelStyle: TextStyle(
-        color: selected ? Colors.white : null,
-      ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-    );
-  }
-}
-
-class _ColorPickerDialog extends StatefulWidget {
-  final Color initialColor;
-
-  const _ColorPickerDialog({required this.initialColor});
-
-  @override
-  State<_ColorPickerDialog> createState() => _ColorPickerDialogState();
-}
-
-class _ColorPickerDialogState extends State<_ColorPickerDialog> {
-  late Color _selectedColor;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedColor = widget.initialColor;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return AlertDialog(
-      title: Text(S.of(context).choose_color),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Wrap(
-              spacing: 8,
-              children: _presetColors.map((color) {
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedColor = color),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: _selectedColor == color
-                            ? colorScheme.primary
-                            : Colors.transparent,
-                        width: 3,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
+        ListTile(
+          leading: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(20),
             ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(S.of(context).cancel),
-        ),
-        TextButton(
-          onPressed: () => Navigator.pop(context, _selectedColor),
-          child: Text(S.of(context).choose_color),
+            child: Icon(
+              Icons.palette_outlined,
+              color: colorScheme.onPrimaryContainer,
+            ),
+          ),
+          title: Text(s.customize_theme),
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+            color: colorScheme.onSurfaceVariant,
+          ),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const ThemeSettingsScreen()),
+          ),
+          contentPadding: EdgeInsets.zero,
         ),
       ],
     );

@@ -239,6 +239,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "color_red": MessageLookupByLibrary.simpleMessage("Красный"),
         "color_settings":
             MessageLookupByLibrary.simpleMessage("Настройки цветов"),
+        "color_spec": MessageLookupByLibrary.simpleMessage("Спецификация"),
+        "color_spec_2021": MessageLookupByLibrary.simpleMessage("2021"),
+        "color_spec_2025": MessageLookupByLibrary.simpleMessage("2025"),
+        "color_style": MessageLookupByLibrary.simpleMessage("Стиль палитры"),
         "color_teal": MessageLookupByLibrary.simpleMessage("Бирюзовый"),
         "community": MessageLookupByLibrary.simpleMessage("Сообщество"),
         "compression": MessageLookupByLibrary.simpleMessage("Сжатие"),
@@ -247,6 +251,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "configuring_environment":
             MessageLookupByLibrary.simpleMessage("Настройка окружения..."),
         "continue_text": MessageLookupByLibrary.simpleMessage("Продолжить"),
+        "contrast": MessageLookupByLibrary.simpleMessage("Контраст"),
         "copied_to_clipboard":
             MessageLookupByLibrary.simpleMessage("Скопировано в буфер обмена"),
         "copy": MessageLookupByLibrary.simpleMessage("Копировать"),
@@ -279,6 +284,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "critical_error_warning": MessageLookupByLibrary.simpleMessage(
             "Приложение попыталось восстановить работоспособность, но некоторые данные могли быть утеряны"),
         "custom": MessageLookupByLibrary.simpleMessage("пользовательских"),
+        "custom_color": MessageLookupByLibrary.simpleMessage("Свой цвет"),
         "custom_fields":
             MessageLookupByLibrary.simpleMessage("Дополнительные поля"),
         "custom_fields_editor_title":
@@ -287,6 +293,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Пользовательский макет"),
         "custom_preset":
             MessageLookupByLibrary.simpleMessage("Пользовательский пресет"),
+        "customize_theme":
+            MessageLookupByLibrary.simpleMessage("Настроить тему"),
         "dark": MessageLookupByLibrary.simpleMessage("Тёмная"),
         "data_initialization_error":
             MessageLookupByLibrary.simpleMessage("Ошибка инициализации данных"),
@@ -511,6 +519,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "markdown_quote": MessageLookupByLibrary.simpleMessage("Цитата"),
         "markdown_underline":
             MessageLookupByLibrary.simpleMessage("Подчёркнутый"),
+        "material_you": MessageLookupByLibrary.simpleMessage("Material You"),
+        "material_you_status_generated": MessageLookupByLibrary.simpleMessage(
+            "Используются сгенерированные цвета Material You"),
+        "material_you_status_system": MessageLookupByLibrary.simpleMessage(
+            "Используются системные цвета обоев"),
         "medium_quality":
             MessageLookupByLibrary.simpleMessage("Среднее качество"),
         "metadata": MessageLookupByLibrary.simpleMessage("Метаданные"),
@@ -798,6 +811,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "unsupported_model_type": MessageLookupByLibrary.simpleMessage(
             "Неподдерживаемый тип модели для экспорта PDF"),
         "updated": MessageLookupByLibrary.simpleMessage("Обновлено"),
+        "use_system_colors":
+            MessageLookupByLibrary.simpleMessage("Системные цвета"),
+        "use_system_colors_unavailable": MessageLookupByLibrary.simpleMessage(
+            "Доступно только на Android 12+"),
         "usedLibraries":
             MessageLookupByLibrary.simpleMessage("Используемые библиотеки"),
         "verifying_integrity":

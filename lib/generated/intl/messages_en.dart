@@ -183,12 +183,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "color_pink": MessageLookupByLibrary.simpleMessage("Pink"),
         "color_purple": MessageLookupByLibrary.simpleMessage("Purple"),
         "color_red": MessageLookupByLibrary.simpleMessage("Red"),
+        "color_spec": MessageLookupByLibrary.simpleMessage("Color spec"),
+        "color_spec_2021": MessageLookupByLibrary.simpleMessage("2021"),
+        "color_spec_2025": MessageLookupByLibrary.simpleMessage("2025"),
+        "color_style": MessageLookupByLibrary.simpleMessage("Color style"),
         "color_teal": MessageLookupByLibrary.simpleMessage("Teal"),
         "configureSwipeActions":
             MessageLookupByLibrary.simpleMessage("Configure swipe actions"),
         "configuring_environment": MessageLookupByLibrary.simpleMessage(
             "Setting up the environment..."),
         "continue_text": MessageLookupByLibrary.simpleMessage("Continue"),
+        "contrast": MessageLookupByLibrary.simpleMessage("Contrast"),
         "copied_to_clipboard":
             MessageLookupByLibrary.simpleMessage("Copied to clipboard"),
         "copy": MessageLookupByLibrary.simpleMessage("Copy"),
@@ -216,9 +221,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "critical_error_warning": MessageLookupByLibrary.simpleMessage(
             "The application tried to restore functionality, but some data may have been lost"),
         "custom": MessageLookupByLibrary.simpleMessage("custom"),
+        "custom_color": MessageLookupByLibrary.simpleMessage("Custom color"),
         "custom_fields": MessageLookupByLibrary.simpleMessage("Custom Fields"),
         "custom_fields_editor_title":
             MessageLookupByLibrary.simpleMessage("Custom Fields"),
+        "customize_theme":
+            MessageLookupByLibrary.simpleMessage("Customize theme"),
         "dark": MessageLookupByLibrary.simpleMessage("Dark"),
         "data_initialization_error":
             MessageLookupByLibrary.simpleMessage("Data initialization error"),
@@ -385,6 +393,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Numbered List"),
         "markdown_quote": MessageLookupByLibrary.simpleMessage("Quote"),
         "markdown_underline": MessageLookupByLibrary.simpleMessage("Underline"),
+        "material_you": MessageLookupByLibrary.simpleMessage("Material You"),
+        "material_you_status_generated": MessageLookupByLibrary.simpleMessage(
+            "Using generated Material You colors"),
+        "material_you_status_system": MessageLookupByLibrary.simpleMessage(
+            "Using system wallpaper colors"),
         "migration_in_progress":
             MessageLookupByLibrary.simpleMessage("Data migration..."),
         "months_ago": m12,
@@ -444,6 +457,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "posts": MessageLookupByLibrary.simpleMessage("Posts"),
         "preparing_services":
             MessageLookupByLibrary.simpleMessage("Preparing services..."),
+        "preview": MessageLookupByLibrary.simpleMessage("Preview"),
         "processing": MessageLookupByLibrary.simpleMessage("Loading..."),
         "race": MessageLookupByLibrary.simpleMessage("Race"),
         "race_copied":
@@ -559,6 +573,10 @@ class MessageLookup extends MessageLookupByLibrary {
             "You have unsaved changes. Do you want to save before exiting?"),
         "unsaved_changes_title":
             MessageLookupByLibrary.simpleMessage("Unsaved Changes"),
+        "use_system_colors":
+            MessageLookupByLibrary.simpleMessage("Use system colors"),
+        "use_system_colors_unavailable": MessageLookupByLibrary.simpleMessage(
+            "Available only on Android 12+"),
         "usedLibraries": MessageLookupByLibrary.simpleMessage("Used Libraries"),
         "verifying_integrity":
             MessageLookupByLibrary.simpleMessage("Integrity check..."),

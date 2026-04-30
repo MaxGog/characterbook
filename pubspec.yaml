@@ -29,6 +29,8 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   flutter_colorpicker: ^1.0.3
+  dynamic_color: ^1.8.1
+  material_color_utilities: ^0.11.1
 
   provider: ^6.0.5
   flutter_bloc: ^9.1.1

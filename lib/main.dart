@@ -34,6 +34,7 @@ import 'package:characterbook/ui/controllers/template_list_controller.dart';
 import 'package:characterbook/ui/navigation/app_navigation_bar.dart';
 import 'package:characterbook/ui/screens/characters/character_management_screen.dart';
 import 'package:characterbook/ui/screens/settings/settings_screen.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
@@ -304,23 +305,32 @@ class _AppContentState extends State<_AppContent> {
     return Consumer3<ThemeProvider, LocaleProvider, NotificationService>(
       builder:
           (context, themeProvider, localeProvider, notificationService, _) {
-        return MaterialApp(
-          navigatorKey: _navigatorKey,
-          debugShowCheckedModeBanner: false,
-          scaffoldMessengerKey: widget.messengerKey,
-          title: 'CharacterBook',
-          locale: localeProvider.locale,
-          theme: themeProvider.lightTheme,
-          darkTheme: themeProvider.darkTheme,
-          themeMode: themeProvider.themeMode,
-          localizationsDelegates: const [
-            S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: S.delegate.supportedLocales,
-          home: const FileHandlerWrapper(child: AppNavigationBar()),
+        return DynamicColorBuilder(
+          builder: (lightDynamic, darkDynamic) {
+            themeProvider.updateDynamicColorSchemes(
+              light: lightDynamic,
+              dark: darkDynamic,
+            );
+
+            return MaterialApp(
+              navigatorKey: _navigatorKey,
+              debugShowCheckedModeBanner: false,
+              scaffoldMessengerKey: widget.messengerKey,
+              title: 'CharacterBook',
+              locale: localeProvider.locale,
+              theme: themeProvider.lightTheme,
+              darkTheme: themeProvider.darkTheme,
+              themeMode: themeProvider.themeMode,
+              localizationsDelegates: const [
+                S.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: S.delegate.supportedLocales,
+              home: const FileHandlerWrapper(child: AppNavigationBar()),
+            );
+          },
         );
       },
     );
