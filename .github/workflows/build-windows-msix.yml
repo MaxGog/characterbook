@@ -5,6 +5,9 @@ on:
     branches: [main, master]
   workflow_dispatch:
 
+env:
+  FLUTTER_VERSION: '3.32.6'
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -15,7 +18,7 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        channel: stable
+        flutter-version: ${{ env.FLUTTER_VERSION }}
         cache: true
         cache-key: flutter-windows-${{ hashFiles('pubspec.yaml') }}
     
@@ -44,4 +47,5 @@ jobs:
       with:
         name: characterbook-windows-msix
         path: build/windows/msix/*.msix
+        if-no-files-found: error
         retention-days: 30
