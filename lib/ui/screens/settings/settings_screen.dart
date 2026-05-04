@@ -52,29 +52,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ? SystemUiOverlayStyle.light
           : SystemUiOverlayStyle.dark,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(s.settings),
-          centerTitle: true,
-        ),
         body: ChangeNotifierProvider.value(
           value: _controller,
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            children: [
-              _LanguageSection(),
-              SizedBox(height: 8),
-              _ThemeSection(),
-              SizedBox(height: 8),
-              SizedBox(height: 8),
-              _SwipeActionsSection(),
-              SizedBox(height: 8),
-              _ImportSection(),
-              SizedBox(height: 8),
-              _BackupSection(),
-              SizedBox(height: 8),
-              _ExportPdfSettingsSection(),
-              SizedBox(height: 8),
-              _buildAboutSection(context),
+          child: CustomScrollView(
+            slivers: [
+              SliverAppBar.large(
+                title: Text(s.settings),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                sliver: SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      _LanguageSection(),
+                      const SizedBox(height: 8),
+                      _ThemeSection(),
+                      const SizedBox(height: 8),
+                      _SwipeActionsSection(),
+                      const SizedBox(height: 8),
+                      _ExportPdfSettingsSection(),
+                      const SizedBox(height: 8),
+                      _ImportSection(),
+                      const SizedBox(height: 8),
+                      _BackupSection(),
+                      const SizedBox(height: 8),
+                      _buildAboutSection(context),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),

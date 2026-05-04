@@ -1,7 +1,6 @@
 import 'package:characterbook/services/pdf_export_serivce.dart';
-import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
-import 'package:characterbook/ui/widgets/sections/settings_section.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:characterbook/data/models/export_pdf_settings_model.dart';
 import 'package:characterbook/generated/l10n.dart';
 
@@ -9,7 +8,8 @@ class ExportPdfSettingsScreen extends StatefulWidget {
   const ExportPdfSettingsScreen({super.key});
 
   @override
-  _ExportPdfSettingsScreenState createState() => _ExportPdfSettingsScreenState();
+  _ExportPdfSettingsScreenState createState() =>
+      _ExportPdfSettingsScreenState();
 }
 
 class _ExportPdfSettingsScreenState extends State<ExportPdfSettingsScreen> {
@@ -26,19 +26,19 @@ class _ExportPdfSettingsScreenState extends State<ExportPdfSettingsScreen> {
   Future<void> _loadSettings() async {
     try {
       _settings = await _settingsService.getSettings();
-    } catch (e) {
+    } catch (_) {
       _settings = ExportPdfSettings();
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   Future<void> _saveSettings() async {
     if (_settings == null) return;
-
     await _settingsService.saveSettings(_settings!);
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(S.of(context).settings_saved),
@@ -56,251 +56,192 @@ class _ExportPdfSettingsScreenState extends State<ExportPdfSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final s = S.of(context);
 
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(
-          title: Text(s.export_pdf_settings),
-        ),
-        body: const Center(
-          child: CircularProgressIndicator(),
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar.large(title: Text(s.export_pdf_settings)),
+            const SliverFillRemaining(
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          ],
         ),
       );
     }
 
     if (_settings == null) {
       return Scaffold(
-        appBar: AppBar(
-          title: Text(s.export_pdf_settings),
-        ),
-        body: Center(
-          child: Text(s.settings_load_error),
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar.large(title: Text(s.export_pdf_settings)),
+            SliverFillRemaining(
+              child: Center(child: Text(s.settings_load_error)),
+            ),
+          ],
         ),
       );
     }
 
-    return Scaffold(
-      appBar: CommonEditAppBar(
-        title: s.export_pdf_settings,
-        additionalActions: [
-          IconButton(
-            icon: const Icon(Icons.restore),
-            onPressed: _resetToDefaults,
-            tooltip: s.reset_settings,
-          ),
-        ],
-        onSave: _saveSettings,
-        saveTooltip: s.save_settings,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Column(
-          children: [
-            SettingsSection(
-              title: s.sections_to_include,
-              children: [
-                _buildSectionSwitch(
-                  s.basic_info,
-                  _settings!.includeBasicInfo,
-                  (value) {
-                    setState(() {
-                      _settings = _settings!.copyWith(includeBasicInfo: value);
-                    });
-                  },
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: theme.brightness == Brightness.dark
+          ? SystemUiOverlayStyle.light
+          : SystemUiOverlayStyle.dark,
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar.large(
+              title: Text(s.export_pdf_settings),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.restore),
+                  onPressed: _resetToDefaults,
+                  tooltip: s.reset_settings,
                 ),
-                _buildSectionSwitch(
-                  s.biography,
-                  _settings!.includeBiography,
-                  (value) {
-                    setState(() {
-                      _settings = _settings!.copyWith(includeBiography: value);
-                    });
-                  },
-                ),
-                _buildSectionSwitch(
-                  s.personality,
-                  _settings!.includePersonality,
-                  (value) {
-                    setState(() {
-                      _settings =
-                          _settings!.copyWith(includePersonality: value);
-                    });
-                  },
-                ),
-                _buildSectionSwitch(
-                  s.appearance,
-                  _settings!.includeAppearance,
-                  (value) {
-                    setState(() {
-                      _settings = _settings!.copyWith(includeAppearance: value);
-                    });
-                  },
-                ),
-                _buildSectionSwitch(
-                  s.abilities,
-                  _settings!.includeAbilities,
-                  (value) {
-                    setState(() {
-                      _settings = _settings!.copyWith(includeAbilities: value);
-                    });
-                  },
-                ),
-                _buildSectionSwitch(
-                  s.other,
-                  _settings!.includeOther,
-                  (value) {
-                    setState(() {
-                      _settings = _settings!.copyWith(includeOther: value);
-                    });
-                  },
-                ),
-                _buildSectionSwitch(
-                  s.custom_fields,
-                  _settings!.includeCustomFields,
-                  (value) {
-                    setState(() {
-                      _settings =
-                          _settings!.copyWith(includeCustomFields: value);
-                    });
-                  },
-                ),
-                _buildSectionSwitch(
-                  s.main_image,
-                  _settings!.includeCharacterImage,
-                  (value) {
-                    setState(() {
-                      _settings =
-                          _settings!.copyWith(includeCharacterImage: value);
-                    });
-                  },
-                ),
-                _buildSectionSwitch(
-                  s.reference_image,
-                  _settings!.includeReferenceImage,
-                  (value) {
-                    setState(() {
-                      _settings =
-                          _settings!.copyWith(includeReferenceImage: value);
-                    });
-                  },
-                ),
-                _buildSectionSwitch(
-                  s.additional_images,
-                  _settings!.includeAdditionalImages,
-                  (value) {
-                    setState(() {
-                      _settings =
-                          _settings!.copyWith(includeAdditionalImages: value);
-                    });
-                  },
+                IconButton(
+                  icon: const Icon(Icons.save),
+                  onPressed: _saveSettings,
+                  tooltip: s.save_settings,
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            SettingsSection(
-              title: s.font_settings,
-              children: [
-                _buildFontSizeSlider(
-                  s.title_font_size,
-                  _settings!.titleFontSize,
-                  16,
-                  32,
-                  (value) {
-                    setState(() {
-                      _settings = _settings!.copyWith(titleFontSize: value);
-                    });
-                  },
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    _SectionsCard(
+                      settings: _settings!,
+                      onChanged: (v) => setState(() => _settings = v),
+                    ),
+                    const SizedBox(height: 16),
+                    _FontSettingsCard(
+                      settings: _settings!,
+                      onChanged: (v) => setState(() => _settings = v),
+                    ),
+                    const SizedBox(height: 16),
+                    _ColorSettingsCard(
+                      settings: _settings!,
+                      onChanged: (v) => setState(() => _settings = v),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
-                _buildFontSizeSlider(
-                  s.body_font_size,
-                  _settings!.bodyFontSize,
-                  10,
-                  20,
-                  (value) {
-                    setState(() {
-                      _settings = _settings!.copyWith(bodyFontSize: value);
-                    });
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            SettingsSection(
-              title: s.color_settings,
-              children: [
-                _buildColorPicker(
-                  s.title_color,
-                  _settings!.titleColor,
-                  (value) {
-                    setState(() {
-                      _settings = _settings!.copyWith(titleColor: value);
-                    });
-                  },
-                ),
-                const SizedBox(height: 16),
-                _buildColorPicker(
-                  s.body_color,
-                  _settings!.bodyColor,
-                  (value) {
-                    setState(() {
-                      _settings = _settings!.copyWith(bodyColor: value);
-                    });
-                  },
-                ),
-              ],
+              ),
             ),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildSectionSwitch(
-    String title,
-    bool value,
-    ValueChanged<bool> onChanged,
-  ) {
-    return SwitchListTile(
-      title: Text(
-        title,
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
-      value: value,
-      onChanged: onChanged,
-      contentPadding: EdgeInsets.zero,
+class _SectionsCard extends StatelessWidget {
+  final ExportPdfSettings settings;
+  final ValueChanged<ExportPdfSettings> onChanged;
+
+  const _SectionsCard({required this.settings, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    return _SettingsCard(
+      title: s.sections_to_include,
+      children: [
+        _buildSwitch(s.basic_info, settings.includeBasicInfo,
+            (v) => onChanged(settings.copyWith(includeBasicInfo: v))),
+        _buildSwitch(s.biography, settings.includeBiography,
+            (v) => onChanged(settings.copyWith(includeBiography: v))),
+        _buildSwitch(s.personality, settings.includePersonality,
+            (v) => onChanged(settings.copyWith(includePersonality: v))),
+        _buildSwitch(s.appearance, settings.includeAppearance,
+            (v) => onChanged(settings.copyWith(includeAppearance: v))),
+        _buildSwitch(s.abilities, settings.includeAbilities,
+            (v) => onChanged(settings.copyWith(includeAbilities: v))),
+        _buildSwitch(s.other, settings.includeOther,
+            (v) => onChanged(settings.copyWith(includeOther: v))),
+        _buildSwitch(s.custom_fields, settings.includeCustomFields,
+            (v) => onChanged(settings.copyWith(includeCustomFields: v))),
+        _buildSwitch(s.main_image, settings.includeCharacterImage,
+            (v) => onChanged(settings.copyWith(includeCharacterImage: v))),
+        _buildSwitch(s.reference_image, settings.includeReferenceImage,
+            (v) => onChanged(settings.copyWith(includeReferenceImage: v))),
+        _buildSwitch(s.additional_images, settings.includeAdditionalImages,
+            (v) => onChanged(settings.copyWith(includeAdditionalImages: v))),
+      ],
     );
   }
 
-  Widget _buildFontSizeSlider(
-    String label,
-    double value,
-    double min,
-    double max,
-    ValueChanged<double> onChanged,
-  ) {
-    final colorScheme = Theme.of(context).colorScheme;
+  Widget _buildSwitch(String title, bool value, ValueChanged<bool> onChanged) {
+    return SwitchListTile(
+      title: Text(title),
+      value: value,
+      onChanged: onChanged,
+      contentPadding: EdgeInsets.zero,
+      dense: true,
+    );
+  }
+}
 
+class _FontSettingsCard extends StatelessWidget {
+  final ExportPdfSettings settings;
+  final ValueChanged<ExportPdfSettings> onChanged;
+
+  const _FontSettingsCard({required this.settings, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    return _SettingsCard(
+      title: s.font_settings,
+      children: [
+        _buildSlider(
+          context: context,
+          label: s.title_font_size,
+          value: settings.titleFontSize,
+          min: 16,
+          max: 32,
+          onChanged: (v) => onChanged(settings.copyWith(titleFontSize: v)),
+        ),
+        const SizedBox(height: 24),
+        _buildSlider(
+          context: context,
+          label: s.body_font_size,
+          value: settings.bodyFontSize,
+          min: 10,
+          max: 20,
+          onChanged: (v) => onChanged(settings.copyWith(bodyFontSize: v)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSlider({
+    required BuildContext context,
+    required String label,
+    required double value,
+    required double min,
+    required double max,
+    required ValueChanged<double> onChanged,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
+            Text(label, style: Theme.of(context).textTheme.bodyLarge),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
               decoration: BoxDecoration(
                 color: colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 value.toStringAsFixed(1),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: colorScheme.onPrimaryContainer,
                       fontWeight: FontWeight.w500,
                     ),
@@ -308,12 +249,11 @@ class _ExportPdfSettingsScreenState extends State<ExportPdfSettingsScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 8),
         Slider(
           value: value,
           min: min,
           max: max,
-          divisions: (max - min).round(),
+          divisions: ((max - min) * 2).round(),
           onChanged: onChanged,
           activeColor: colorScheme.primary,
           inactiveColor: colorScheme.surfaceVariant,
@@ -321,31 +261,59 @@ class _ExportPdfSettingsScreenState extends State<ExportPdfSettingsScreen> {
       ],
     );
   }
+}
 
-  Widget _buildColorPicker(
-    String label,
-    String currentColor,
-    ValueChanged<String> onChanged,
-  ) {
+class _ColorSettingsCard extends StatelessWidget {
+  final ExportPdfSettings settings;
+  final ValueChanged<ExportPdfSettings> onChanged;
+
+  const _ColorSettingsCard({required this.settings, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    return _SettingsCard(
+      title: s.color_settings,
+      children: [
+        _buildColorPicker(
+          context: context,
+          label: s.title_color,
+          currentColor: settings.titleColor,
+          onChanged: (v) => onChanged(settings.copyWith(titleColor: v)),
+        ),
+        const SizedBox(height: 24),
+        _buildColorPicker(
+          context: context,
+          label: s.body_color,
+          currentColor: settings.bodyColor,
+          onChanged: (v) => onChanged(settings.copyWith(bodyColor: v)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildColorPicker({
+    required BuildContext context,
+    required String label,
+    required String currentColor,
+    required ValueChanged<String> onChanged,
+  }) {
     final colorScheme = Theme.of(context).colorScheme;
-    final colors = [
-      '#000000', // Черный
-      '#333333', // Темно-серый
-      '#666666', // Серый
-      '#2E7D32', // Зеленый
-      '#1565C0', // Синий
-      '#6A1B9A', // Фиолетовый
-      '#C62828', // Красный
-      '#EF6C00', // Оранжевый
+    final colors = const [
+      '#000000',
+      '#333333',
+      '#666666',
+      '#2E7D32',
+      '#1565C0',
+      '#6A1B9A',
+      '#C62828',
+      '#EF6C00',
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
+        Text(label, style: Theme.of(context).textTheme.bodyLarge),
         const SizedBox(height: 12),
         Wrap(
           spacing: 12,
@@ -356,8 +324,8 @@ class _ExportPdfSettingsScreenState extends State<ExportPdfSettingsScreen> {
               onTap: () => onChanged(color),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                width: 44,
-                height: 44,
+                width: 48,
+                height: 48,
                 decoration: BoxDecoration(
                   color: _parseColor(color),
                   borderRadius: BorderRadius.circular(12),
@@ -369,18 +337,14 @@ class _ExportPdfSettingsScreenState extends State<ExportPdfSettingsScreen> {
                   boxShadow: [
                     if (isSelected)
                       BoxShadow(
-                        color: colorScheme.primary.withOpacity(0.3),
+                        color: colorScheme.primary.withOpacity(0.4),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
                   ],
                 ),
                 child: isSelected
-                    ? Icon(
-                        Icons.check,
-                        color: colorScheme.onPrimary,
-                        size: 20,
-                      )
+                    ? Icon(Icons.check, color: _checkColor(color), size: 20)
                     : null,
               ),
             );
@@ -390,11 +354,53 @@ class _ExportPdfSettingsScreenState extends State<ExportPdfSettingsScreen> {
     );
   }
 
-  Color _parseColor(String hexColor) {
-    hexColor = hexColor.replaceAll("#", "");
-    if (hexColor.length == 6) {
-      hexColor = "FF$hexColor";
-    }
-    return Color(int.parse(hexColor, radix: 16));
+  Color _parseColor(String hex) {
+    hex = hex.replaceAll('#', '');
+    if (hex.length == 6) hex = 'FF$hex';
+    return Color(int.parse(hex, radix: 16));
+  }
+
+  Color _checkColor(String hex) {
+    final color = _parseColor(hex);
+    return color.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+  }
+}
+
+class _SettingsCard extends StatelessWidget {
+  final String title;
+  final List<Widget> children;
+
+  const _SettingsCard({required this.title, required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Card(
+      margin: EdgeInsets.zero,
+      elevation: 0,
+      color: colorScheme.surfaceContainer,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+            ),
+            ...children,
+          ],
+        ),
+      ),
+    );
   }
 }
