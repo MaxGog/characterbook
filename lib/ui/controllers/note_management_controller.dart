@@ -18,6 +18,7 @@ class NoteManagementController extends ChangeNotifier {
   final bool isCopyMode;
 
   late Note _editable;
+  bool autoGenerateTitle = true;
   List<Folder> _availableFolders = [];
   Folder? _selectedFolder;
   List<String> _tags = [];
@@ -76,6 +77,7 @@ class NoteManagementController extends ChangeNotifier {
     _selectedCharacterIds = List.from(_editable.characterIds);
     _loadFolders();
   }
+  
 
   Future<void> _loadFolders() async {
     _isLoading = true;

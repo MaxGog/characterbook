@@ -61,8 +61,6 @@ class CharacterCardItem extends StatelessWidget {
                   child: AvatarWidget.character(
                     imageBytes: character.imageBytes,
                     size: 36,
-                    shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
                 const SizedBox(width: 16),

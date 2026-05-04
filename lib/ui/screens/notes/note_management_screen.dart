@@ -66,6 +66,20 @@ class _NoteManagementScreenContentState
     super.initState();
     _titleController = TextEditingController();
     _contentController = TextEditingController();
+    _contentController.addListener(_generateAutoTitle);
+  }
+
+  void _generateAutoTitle() {
+    final controller = context.read<NoteManagementController>();
+    if (controller.autoGenerateTitle && _titleController.text.trim().isEmpty) {
+      final text = _contentController.text.trim();
+      if (text.isNotEmpty) {
+        final words = text.split(' ');
+        final title = words.take(4).join(' ');
+        _titleController.text = title;
+        controller.updateTitle(title);
+      }
+    }
   }
 
   @override
@@ -104,6 +118,7 @@ class _NoteManagementScreenContentState
     _contentController.removeListener(_onContentChanged);
     _titleController.dispose();
     _contentController.dispose();
+    _contentController.removeListener(_generateAutoTitle);
     super.dispose();
   }
 
@@ -268,7 +283,7 @@ class _NoteManagementScreenContentState
           child: Scaffold(
             appBar: CommonEditAppBar(
               title: title,
-              onSave: () {}, // Сохранение теперь в BottomAppBar
+              onSave: () => _saveNote(controller),
               saveTooltip: s.save,
             ),
             body: Form(
@@ -394,7 +409,6 @@ class _CharacterSelectorSection extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: Hive.box<Character>('characters').listenable(),
       builder: (context, Box<Character> box, _) {
-        // Безопасно получаем пары (ключ → персонаж), преобразуя ключ в строку
         final entries = box.keys
             .map((key) {
               final character = box.get(key);
