@@ -1270,6 +1270,126 @@ class S {
     );
   }
 
+  /// `Настроить тему`
+  String get customize_theme {
+    return Intl.message(
+      'Настроить тему',
+      name: 'customize_theme',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Системные цвета`
+  String get use_system_colors {
+    return Intl.message(
+      'Системные цвета',
+      name: 'use_system_colors',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Доступно только на Android 12+`
+  String get use_system_colors_unavailable {
+    return Intl.message(
+      'Доступно только на Android 12+',
+      name: 'use_system_colors_unavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Свой цвет`
+  String get custom_color {
+    return Intl.message(
+      'Свой цвет',
+      name: 'custom_color',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Material You`
+  String get material_you {
+    return Intl.message(
+      'Material You',
+      name: 'material_you',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Используются системные цвета обоев`
+  String get material_you_status_system {
+    return Intl.message(
+      'Используются системные цвета обоев',
+      name: 'material_you_status_system',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Используются сгенерированные цвета Material You`
+  String get material_you_status_generated {
+    return Intl.message(
+      'Используются сгенерированные цвета Material You',
+      name: 'material_you_status_generated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Стиль палитры`
+  String get color_style {
+    return Intl.message(
+      'Стиль палитры',
+      name: 'color_style',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Спецификация`
+  String get color_spec {
+    return Intl.message(
+      'Спецификация',
+      name: 'color_spec',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `2021`
+  String get color_spec_2021 {
+    return Intl.message(
+      '2021',
+      name: 'color_spec_2021',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `2025`
+  String get color_spec_2025 {
+    return Intl.message(
+      '2025',
+      name: 'color_spec_2025',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Контраст`
+  String get contrast {
+    return Intl.message(
+      'Контраст',
+      name: 'contrast',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Тёмная`
   String get dark {
     return Intl.message(

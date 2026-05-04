@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main, master]
 
+env:
+  FLUTTER_VERSION: '3.32.6'
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -16,7 +19,7 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        channel: stable
+        flutter-version: ${{ env.FLUTTER_VERSION }}
         cache: true
         cache-key: flutter-${{ runner.os }}-${{ hashFiles('pubspec.yaml') }}
     
@@ -24,10 +27,12 @@ jobs:
       run: flutter pub get
     
     - name: Build Windows
-      run: flutter build windows --release --msix
+      run: flutter build windows --release
     
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: windows-app
-        path: build/windows/runner/Release/
+        name: characterbook-windows
+        path: build/windows/**/runner/Release/**
+        if-no-files-found: error
+        retention-days: 30
