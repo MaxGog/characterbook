@@ -1,9 +1,6 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/data/models/folder_model.dart';
-import 'package:characterbook/data/services/folder_service.dart';
 import 'package:characterbook/ui/widgets/mixins/tag_mixin.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class TagFilter extends StatelessWidget with TagMixin {
   final List<String> tags;
@@ -28,7 +25,6 @@ class TagFilter extends StatelessWidget with TagMixin {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final s = S.of(context);
-    final folderService = context.read<FolderService>();
 
     final standardTags = isForCharacters
         ? [
@@ -46,7 +42,6 @@ class TagFilter extends StatelessWidget with TagMixin {
           ]
         : [];
 
-    final folderTags = generateFolderTags(context);
     final regularTags = tags
         .where((tag) =>
             !isFolderTag(tag) &&
@@ -60,29 +55,6 @@ class TagFilter extends StatelessWidget with TagMixin {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
           if (showAllOption)
-            _buildExpressiveChip(
-              label: s.all,
-              isSelected: selectedTag == null,
-              onSelected: (_) => onTagSelected(null),
-              icon: null,
-              color: colorScheme.secondaryContainer,
-            ),
-          ...folderTags.map((folderTag) {
-            final folderName = getFolderNameFromTag(folderTag);
-            final folderId = getFolderIdFromTag(folderTag);
-            final folder = folderService.getFolderById(folderId);
-            final folderColor = Color.fromARGB(255,255,2555,255);
-
-            return _buildExpressiveChip(
-              label: folderName,
-              isSelected: selectedTag == folderTag,
-              onSelected: (selected) =>
-                  onTagSelected(selected ? folderTag : null),
-              icon: Icon(Icons.folder_rounded, size: 18, color: folderColor),
-              color: folderColor.withOpacity(0.2),
-              selectedTextColor: folderColor,
-            );
-          }),
           ...regularTags.map((tag) => _buildExpressiveChip(
                 label: tag,
                 isSelected: selectedTag == tag,
@@ -110,7 +82,6 @@ class TagFilter extends StatelessWidget with TagMixin {
     required ValueChanged<bool> onSelected,
     required Color color,
     Widget? icon,
-    Color? selectedTextColor,
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;

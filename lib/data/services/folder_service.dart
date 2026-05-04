@@ -6,67 +6,43 @@ class FolderService {
 
   FolderService(this._repository);
 
-  Future<Folder> createFolder({
-    required String name,
-    required FolderType type,
-    String? parentId,
-    int? colorValue,
-  }) async {
-    final folder = Folder(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      name: name,
-      type: type,
-      parentId: parentId,
-      colorValue: colorValue,
-    );
-    await _repository.save(folder);
-    return folder;
-  }
-
-  Future<List<Folder>> getFoldersByType(FolderType type, {String? parentId}) =>
-      _repository.getByType(type, parentId: parentId);
-
-  Future<Folder?> getFolderById(String id) => _repository.getById(id);
-
-  Future<void> updateFolder(Folder folder) => _repository.save(folder);
-
-  Future<void> deleteFolder(String id) async {
-    final hasSubfolders =
-        (await _repository.getByType(FolderType as FolderType, parentId: id))
-            .isNotEmpty;
-    if (hasSubfolders) {
-      throw Exception('Нельзя удалить папку, содержащую вложенные папки');
+  Future<bool> moveFolder(String folderId, String? newParentId) async {
+    if (newParentId != null) {
+      bool isChild = await _isChildFolder(folderId, newParentId);
+      if (isChild) {
+        throw Exception('Cannot move folder into its own child');
+      }
     }
-    await _repository.delete(id);
+
+    final folder = await _repository.getById(folderId);
+    if (folder != null) {
+      final updatedFolder = folder.copyWith(parentId: newParentId);
+      await _repository.save(updatedFolder);
+      return true;
+    }
+    return false;
   }
 
-  Future<void> addToFolder(String folderId, String contentId) =>
-      _repository.addToFolder(folderId, contentId);
+  Future<bool> _isChildFolder(String sourceId, String targetId) async {
+    if (sourceId == targetId) return true;
 
-  Future<void> removeFromFolder(String folderId, String contentId) =>
-      _repository.removeFromFolder(folderId, contentId);
+    final targetFolder = await _repository.getById(targetId);
+    if (targetFolder?.parentId == null) return false;
 
-  Future<void> moveBetweenFolders(
-    String contentId,
-    String fromFolderId,
-    String toFolderId,
-  ) async {
-    await removeFromFolder(fromFolderId, contentId);
-    await addToFolder(toFolderId, contentId);
+    return _isChildFolder(sourceId, targetFolder!.parentId!);
   }
 
-  Future<List<String>> getFolderContents(String folderId) async {
-    final folder = await getFolderById(folderId);
-    return folder?.contentIds ?? [];
-  }
+  Future<List<Folder>> getFolderPath(String folderId) async {
+    final path = <Folder>[];
+    String? currentId = folderId;
 
-  Future<List<Folder>> searchFolders(String query, {FolderType? type}) async {
-    final all = await _repository.getAll();
-    return all.where((folder) {
-      final matchesName =
-          folder.name.toLowerCase().contains(query.toLowerCase());
-      final matchesType = type == null || folder.type == type;
-      return matchesName && matchesType;
-    }).toList();
+    while (currentId != null) {
+      final folder = await _repository.getById(currentId);
+      if (folder == null) break;
+      path.insert(0, folder);
+      currentId = folder.parentId;
+    }
+
+    return path;
   }
 }

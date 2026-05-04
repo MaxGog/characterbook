@@ -1,13 +1,11 @@
 import 'package:characterbook/data/enums/character_sort_enum.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/data/models/character_model.dart';
-import 'package:characterbook/data/models/folder_model.dart';
 import 'package:characterbook/data/models/template_model.dart';
 import 'package:characterbook/data/repositories/character_repository.dart';
 import 'package:characterbook/data/services/character_service.dart';
 import 'package:characterbook/ui/widgets/modals/character_modal_card.dart';
 import 'package:characterbook/ui/controllers/character_list_controller.dart';
-import 'package:characterbook/ui/screens/folder_screen.dart';
 import 'package:characterbook/ui/screens/settings/swipe_action_settings_screen.dart';
 import 'package:characterbook/ui/screens/templates/templates_list_screen.dart';
 import 'package:characterbook/ui/widgets/appbar/common_main_app_bar.dart';
@@ -189,13 +187,6 @@ class _CharacterListScreenState extends State<CharacterListScreen>
               },
               onSearchChanged: (query) => controller.setSearchQuery(query),
               onTemplatesPressed: () => _createFromTemplate(context),
-              onFoldersPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      FoldersScreen(folderType: FolderType.character),
-                ),
-              ),
             ),
             body: Column(
               children: [

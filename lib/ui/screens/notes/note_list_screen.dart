@@ -1,11 +1,9 @@
 import 'package:characterbook/data/enums/note_sort_enum.dart';
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/data/models/folder_model.dart';
 import 'package:characterbook/data/models/note_model.dart';
 import 'package:characterbook/data/repositories/note_repository.dart';
 import 'package:characterbook/data/services/note_service.dart';
 import 'package:characterbook/ui/controllers/note_list_controller.dart';
-import 'package:characterbook/ui/screens/folder_screen.dart';
 import 'package:characterbook/ui/screens/settings/swipe_action_settings_screen.dart';
 import 'package:characterbook/ui/widgets/appbar/common_main_app_bar.dart';
 import 'package:characterbook/ui/widgets/buttons/common_fab_menu.dart';
@@ -96,14 +94,6 @@ class _NotesListScreenState extends State<NotesListScreen>
     );
   }
 
-  void _openFoldersScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const FoldersScreen(folderType: FolderType.note),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +121,6 @@ class _NotesListScreenState extends State<NotesListScreen>
                 });
               },
               onSearchChanged: (query) => controller.setSearchQuery(query),
-              onFoldersPressed: _openFoldersScreen,
             ),
             body: Column(
                 children: [

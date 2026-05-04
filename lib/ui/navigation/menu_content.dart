@@ -1,6 +1,4 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/data/models/folder_model.dart';
-import 'package:characterbook/ui/screens/folder_screen.dart';
 import 'package:characterbook/ui/screens/settings/settings_screen.dart';
 import 'package:characterbook/ui/screens/templates/templates_list_screen.dart';
 import 'package:characterbook/ui/widgets/sections/about_section_widget.dart';
@@ -94,22 +92,6 @@ class MenuContent extends StatelessWidget {
           ),
           child: Column(
             children: [
-              _buildMenuItem(
-                context,
-                icon: Icons.folder_outlined,
-                label: s.folders,
-                index: 3,
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          const FoldersScreen(folderType: FolderType.character),
-                    ),
-                  );
-                },
-              ),
               _buildMenuItem(
                 context,
                 icon: Icons.library_books_outlined,

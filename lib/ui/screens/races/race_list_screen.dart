@@ -1,12 +1,10 @@
 import 'package:characterbook/data/enums/race_sort_enum.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/data/models/character_model.dart';
-import 'package:characterbook/data/models/folder_model.dart';
 import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/repositories/race_repository.dart';
 import 'package:characterbook/data/services/race_service.dart';
 import 'package:characterbook/ui/controllers/race_list_controller.dart';
-import 'package:characterbook/ui/screens/folder_screen.dart';
 
 import 'package:characterbook/ui/screens/settings/swipe_action_settings_screen.dart';
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
@@ -153,15 +151,6 @@ class _RaceListScreenState extends State<RaceListScreen>
     );
   }
 
-  void _openFoldersScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const FoldersScreen(folderType: FolderType.race),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -188,7 +177,6 @@ class _RaceListScreenState extends State<RaceListScreen>
                 });
               },
               onSearchChanged: (query) => controller.setSearchQuery(query),
-              onFoldersPressed: _openFoldersScreen,
             ),
             body: Column(
                 children: [

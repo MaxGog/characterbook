@@ -3,7 +3,7 @@ import 'package:characterbook/data/models/folder_model.dart';
 import 'package:characterbook/data/services/folder_service.dart';
 import 'package:flutter/material.dart';
 
-class FolderSelectorWidget extends StatelessWidget {
+/*class FolderSelectorWidget extends StatelessWidget {
   final Folder? selectedFolder;
   final ValueChanged<Folder?> onFolderSelected;
   final FolderService folderService;
@@ -64,9 +64,9 @@ class FolderSelectorWidget extends StatelessWidget {
     );
   }
 
-  Future<void> _selectFolder(BuildContext context) async {
+  /*Future<void> _selectFolder(BuildContext context) async {
     final theme = Theme.of(context);
-    final folders = await folderService.getFoldersByType(folderType);
+    final folders = await folderService(folderType);
 
     final selected = await showModalBottomSheet<Folder>(
       context: context,
@@ -85,7 +85,7 @@ class FolderSelectorWidget extends StatelessWidget {
       onFolderSelected(selected);
     }
   }
-}
+}*/
 
 class _FolderSelectorDialog extends StatelessWidget {
   final List<Folder> folders;
@@ -178,4 +178,4 @@ class _FolderSelectorDialog extends StatelessWidget {
       ),
     );
   }
-}
+}*/

@@ -61,7 +61,7 @@ void main() async {
 
     characterBox = await _openBoxWithRetry<Character>('characters');
     raceBox = await _openBoxWithRetry<Race>('races');
-    folderBox = await _openBoxWithRetry<Folder>('folders');
+    folderBox = await Hive.openBox<Folder>('folders');
     noteBox = await _openBoxWithRetry<Note>('notes');
     templateBox = await _openBoxWithRetry<QuestionnaireTemplate>('templates');
     settingsBox = await _openBoxWithRetry<ExportPdfSettings>('pdf_settings');

@@ -21,7 +21,7 @@ import 'package:characterbook/ui/widgets/tools_context_menu.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-class FoldersScreen extends StatefulWidget {
+/*class FoldersScreen extends StatefulWidget {
   final FolderType folderType;
 
   const FoldersScreen({super.key, required this.folderType});
@@ -526,4 +526,4 @@ class _FoldersScreenState extends State<FoldersScreen> {
           : null,
     );
   }
-}
+}*/

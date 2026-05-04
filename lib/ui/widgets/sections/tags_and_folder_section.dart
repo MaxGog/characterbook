@@ -1,6 +1,6 @@
 import 'package:characterbook/data/models/folder_model.dart';
 import 'package:characterbook/data/services/folder_service.dart';
-import 'package:characterbook/ui/widgets/folder_selector_widget.dart';
+import 'package:characterbook/ui/widgets/folders/folder_selector_widget.dart';
 import 'package:characterbook/ui/widgets/tags/tags_input_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -34,12 +34,12 @@ class TagsAndFolderSection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         if (folders.isNotEmpty) ...[
-          FolderSelectorWidget(
+          /*FolderSelectorWidget(
             selectedFolder: selectedFolder,
             onFolderSelected: onFolderSelected,
             folderService: folderService,
             folderType: folderType,
-          ),
+          ),*/
           const SizedBox(height: 16),
         ],
       ],
