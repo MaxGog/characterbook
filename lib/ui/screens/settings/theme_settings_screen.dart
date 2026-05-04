@@ -96,7 +96,7 @@ class _ThemePhonePreview extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final s = S.of(context);
     final previewHeight = (MediaQuery.sizeOf(context).height * 0.42)
-        .clamp(260.0, 360.0) as double;
+        .clamp(260.0, 360.0);
     const designWidth = 252.0;
     const designHeight = 448.0;
 

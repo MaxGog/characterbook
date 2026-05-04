@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:characterbook/models/swipe_action.dart';
+import 'package:characterbook/data/models/swipe_action.dart';
 
 class SwipeActionSettingsProvider extends ChangeNotifier {
   static const String _leftActionKey = 'swipe_left_action';

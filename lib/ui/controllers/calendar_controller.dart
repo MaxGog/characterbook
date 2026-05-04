@@ -1,8 +1,8 @@
-import 'package:characterbook/enums/calendar_event_type_enum.dart';
-import 'package:characterbook/models/calendar_event_model.dart';
-import 'package:characterbook/services/character_service.dart';
-import 'package:characterbook/services/note_service.dart';
-import 'package:characterbook/services/race_service.dart';
+import 'package:characterbook/data/enums/calendar_event_type_enum.dart';
+import 'package:characterbook/data/models/calendar_event_model.dart';
+import 'package:characterbook/data/services/character_service.dart';
+import 'package:characterbook/data/services/note_service.dart';
+import 'package:characterbook/data/services/race_service.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 

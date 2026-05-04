@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/models/export_pdf_settings_model.dart';
+import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/data/models/export_pdf_settings_model.dart';
 import 'package:hive/hive.dart';
 import 'package:pdf/pdf.dart' as pw;
 import 'package:pdf/widgets.dart' as pw;

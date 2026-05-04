@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/template_model.dart';
-import 'package:characterbook/repositories/template_repository.dart';
+import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/data/repositories/template_repository.dart';
 import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/services/file_share_service.dart';
 import 'package:path_provider/path_provider.dart';

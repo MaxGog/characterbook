@@ -1,13 +1,13 @@
 import 'dart:typed_data';
 
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/custom_field_model.dart';
-import 'package:characterbook/models/folder_model.dart';
-import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/models/template_model.dart';
-import 'package:characterbook/repositories/character_repository.dart';
-import 'package:characterbook/repositories/folder_repository.dart';
-import 'package:characterbook/repositories/race_repository.dart';
+import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/data/models/custom_field_model.dart';
+import 'package:characterbook/data/models/folder_model.dart';
+import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/data/repositories/character_repository.dart';
+import 'package:characterbook/data/repositories/folder_repository.dart';
+import 'package:characterbook/data/repositories/race_repository.dart';
 import 'package:flutter/material.dart';
 
 class CharacterManagementController extends ChangeNotifier {

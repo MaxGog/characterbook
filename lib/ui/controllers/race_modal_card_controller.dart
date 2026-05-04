@@ -1,9 +1,9 @@
-import 'package:characterbook/models/folder_model.dart';
-import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/repositories/folder_repository.dart';
-import 'package:characterbook/repositories/race_repository.dart';
+import 'package:characterbook/data/models/folder_model.dart';
+import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/data/repositories/folder_repository.dart';
+import 'package:characterbook/data/repositories/race_repository.dart';
 import 'package:characterbook/services/clipboard_service.dart';
-import 'package:characterbook/services/race_service.dart';
+import 'package:characterbook/data/services/race_service.dart';
 import 'package:flutter/material.dart';
 
 class RaceModalController extends ChangeNotifier {

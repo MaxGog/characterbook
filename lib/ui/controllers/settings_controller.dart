@@ -1,6 +1,6 @@
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/data/models/template_model.dart';
 import 'package:characterbook/providers/locale_provider.dart';
 import 'package:characterbook/providers/theme_provider.dart';
 import 'package:characterbook/services/backup_service.dart';

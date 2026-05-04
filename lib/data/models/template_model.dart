@@ -1,4 +1,4 @@
-import 'package:characterbook/models/custom_field_model.dart';
+import 'package:characterbook/data/models/custom_field_model.dart';
 import 'package:hive/hive.dart';
 import 'character_model.dart';
 import 'dart:convert';

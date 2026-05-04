@@ -1,4 +1,4 @@
-import 'package:characterbook/models/note_model.dart';
+import 'package:characterbook/data/models/note_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 abstract class NoteRepository {

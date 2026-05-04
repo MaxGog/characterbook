@@ -1,5 +1,5 @@
-import 'package:characterbook/models/template_model.dart';
-import 'package:characterbook/services/default_templates.dart';
+import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/data/services/default_templates.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 abstract class TemplateRepository {

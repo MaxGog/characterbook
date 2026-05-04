@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:characterbook/enums/character_sort_enum.dart';
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/repositories/character_repository.dart';
+import 'package:characterbook/data/enums/character_sort_enum.dart';
+import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/data/repositories/character_repository.dart';
 import 'package:flutter/material.dart';
 
 class CharacterListController extends ChangeNotifier {

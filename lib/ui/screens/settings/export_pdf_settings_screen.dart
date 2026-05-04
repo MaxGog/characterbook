@@ -2,7 +2,7 @@ import 'package:characterbook/services/pdf_export_serivce.dart';
 import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
 import 'package:characterbook/ui/widgets/sections/settings_section.dart';
 import 'package:flutter/material.dart';
-import 'package:characterbook/models/export_pdf_settings_model.dart';
+import 'package:characterbook/data/models/export_pdf_settings_model.dart';
 import 'package:characterbook/generated/l10n.dart';
 
 class ExportPdfSettingsScreen extends StatefulWidget {

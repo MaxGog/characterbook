@@ -1,10 +1,10 @@
-import 'package:characterbook/enums/race_sort_enum.dart';
+import 'package:characterbook/data/enums/race_sort_enum.dart';
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/folder_model.dart';
-import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/repositories/race_repository.dart';
-import 'package:characterbook/services/race_service.dart';
+import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/data/models/folder_model.dart';
+import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/data/repositories/race_repository.dart';
+import 'package:characterbook/data/services/race_service.dart';
 import 'package:characterbook/ui/controllers/race_list_controller.dart';
 import 'package:characterbook/ui/screens/folder_screen.dart';
 

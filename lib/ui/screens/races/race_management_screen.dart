@@ -1,9 +1,9 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/models/folder_model.dart';
-import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/repositories/folder_repository.dart';
-import 'package:characterbook/repositories/race_repository.dart';
-import 'package:characterbook/services/folder_service.dart';
+import 'package:characterbook/data/models/folder_model.dart';
+import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/data/repositories/folder_repository.dart';
+import 'package:characterbook/data/repositories/race_repository.dart';
+import 'package:characterbook/data/services/folder_service.dart';
 import 'package:characterbook/ui/controllers/race_management_controller.dart';
 import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
 import 'package:characterbook/ui/widgets/avatar_picker_widget.dart';

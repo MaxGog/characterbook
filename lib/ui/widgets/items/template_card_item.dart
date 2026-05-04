@@ -1,5 +1,5 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/data/models/template_model.dart';
 import 'package:flutter/material.dart';
 
 import 'commod_card_item.dart';

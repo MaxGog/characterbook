@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/relationship_model.dart';
-import 'package:characterbook/repositories/character_repository.dart';
-import 'package:characterbook/services/relationship_service.dart';
+import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/data/models/relationship_model.dart';
+import 'package:characterbook/data/repositories/character_repository.dart';
+import 'package:characterbook/data/services/relationship_service.dart';
 import 'package:characterbook/ui/widgets/edit_relationship_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 

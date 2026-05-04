@@ -1,5 +1,5 @@
-import 'package:characterbook/models/template_model.dart';
-import 'package:characterbook/models/custom_field_model.dart';
+import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/data/models/custom_field_model.dart';
 
 QuestionnaireTemplate getDefaultRPGTemplate() {
   return QuestionnaireTemplate(

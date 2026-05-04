@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/services/character_service.dart';
+import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/data/services/character_service.dart';
 import 'package:characterbook/services/date_formatter.dart';
-import 'package:characterbook/services/race_service.dart';
+import 'package:characterbook/data/services/race_service.dart';
 import 'package:characterbook/ui/controllers/home_controller.dart';
 import 'package:characterbook/ui/widgets/modals/character_modal_card.dart';
 import 'package:characterbook/ui/widgets/modals/race_modal_card.dart';

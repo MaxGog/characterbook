@@ -1,6 +1,6 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/models/template_model.dart';
-import 'package:characterbook/repositories/template_repository.dart';
+import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/data/repositories/template_repository.dart';
 import 'package:characterbook/ui/controllers/template_management_controller.dart';
 import 'package:characterbook/ui/widgets/fields/custom_fields_editor.dart';
 import 'package:characterbook/ui/widgets/fields/custom_text_field.dart';

@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import '../models/custom_field_model.dart';
+import '../data/models/custom_field_model.dart';
 
 class CustomFieldAdapter extends TypeAdapter<CustomField> {
   @override

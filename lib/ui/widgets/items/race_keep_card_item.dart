@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:characterbook/models/race_model.dart';
+import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'flip_keep_card_item.dart';
 

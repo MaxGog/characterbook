@@ -1,5 +1,5 @@
-import 'package:characterbook/models/relationship_model.dart';
-import 'package:characterbook/repositories/relationship_repository.dart';
+import 'package:characterbook/data/models/relationship_model.dart';
+import 'package:characterbook/data/repositories/relationship_repository.dart';
 import 'package:collection/collection.dart';
 
 class RelationshipService {

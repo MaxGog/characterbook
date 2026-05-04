@@ -1,10 +1,10 @@
-import 'package:characterbook/enums/character_sort_enum.dart';
+import 'package:characterbook/data/enums/character_sort_enum.dart';
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/folder_model.dart';
-import 'package:characterbook/models/template_model.dart';
-import 'package:characterbook/repositories/character_repository.dart';
-import 'package:characterbook/services/character_service.dart';
+import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/data/models/folder_model.dart';
+import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/data/repositories/character_repository.dart';
+import 'package:characterbook/data/services/character_service.dart';
 import 'package:characterbook/ui/widgets/modals/character_modal_card.dart';
 import 'package:characterbook/ui/controllers/character_list_controller.dart';
 import 'package:characterbook/ui/screens/folder_screen.dart';

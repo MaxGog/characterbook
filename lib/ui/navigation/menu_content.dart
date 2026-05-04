@@ -1,5 +1,5 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/models/folder_model.dart';
+import 'package:characterbook/data/models/folder_model.dart';
 import 'package:characterbook/ui/screens/folder_screen.dart';
 import 'package:characterbook/ui/screens/settings/settings_screen.dart';
 import 'package:characterbook/ui/screens/templates/templates_list_screen.dart';

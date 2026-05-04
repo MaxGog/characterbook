@@ -1,10 +1,10 @@
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/custom_field_model.dart';
-import 'package:characterbook/models/export_pdf_settings_model.dart';
-import 'package:characterbook/models/folder_model.dart';
-import 'package:characterbook/models/note_model.dart';
-import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/data/models/custom_field_model.dart';
+import 'package:characterbook/data/models/export_pdf_settings_model.dart';
+import 'package:characterbook/data/models/folder_model.dart';
+import 'package:characterbook/data/models/note_model.dart';
+import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/data/models/template_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class HiveService {

@@ -1,5 +1,5 @@
-import 'package:characterbook/models/folder_model.dart';
-import 'package:characterbook/repositories/folder_repository.dart';
+import 'package:characterbook/data/models/folder_model.dart';
+import 'package:characterbook/data/repositories/folder_repository.dart';
 
 class FolderService {
   final FolderRepository _repository;

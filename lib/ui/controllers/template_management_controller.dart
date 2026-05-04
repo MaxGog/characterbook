@@ -1,7 +1,7 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/models/custom_field_model.dart';
-import 'package:characterbook/models/template_model.dart';
-import 'package:characterbook/repositories/template_repository.dart';
+import 'package:characterbook/data/models/custom_field_model.dart';
+import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/data/repositories/template_repository.dart';
 import 'package:flutter/material.dart';
 
 class TemplateManagementController extends ChangeNotifier {

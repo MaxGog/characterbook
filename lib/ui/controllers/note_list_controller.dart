@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:characterbook/models/note_model.dart';
-import 'package:characterbook/repositories/note_repository.dart';
-import 'package:characterbook/enums/note_sort_enum.dart';
+import 'package:characterbook/data/models/note_model.dart';
+import 'package:characterbook/data/repositories/note_repository.dart';
+import 'package:characterbook/data/enums/note_sort_enum.dart';
 import 'package:flutter/material.dart';
 
 class NoteListController extends ChangeNotifier {

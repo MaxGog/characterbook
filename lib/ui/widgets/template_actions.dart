@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/models/template_model.dart';
+import 'package:characterbook/data/models/template_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

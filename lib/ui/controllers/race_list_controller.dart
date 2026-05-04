@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:characterbook/enums/race_sort_enum.dart';
-import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/repositories/race_repository.dart';
+import 'package:characterbook/data/enums/race_sort_enum.dart';
+import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/data/repositories/race_repository.dart';
 import 'package:flutter/material.dart';
 
 class RaceListController extends ChangeNotifier {

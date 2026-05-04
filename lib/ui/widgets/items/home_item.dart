@@ -1,7 +1,7 @@
-import 'package:characterbook/enums/tool_type_enum.dart';
+import 'package:characterbook/data/enums/tool_type_enum.dart';
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/race_model.dart';
+import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/data/models/race_model.dart';
 import 'package:flutter/material.dart';
 
 sealed class HomeItem {

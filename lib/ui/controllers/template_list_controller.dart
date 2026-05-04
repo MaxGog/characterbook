@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:characterbook/enums/template_sort_enum.dart';
-import 'package:characterbook/models/template_model.dart';
-import 'package:characterbook/repositories/template_repository.dart';
+import 'package:characterbook/data/enums/template_sort_enum.dart';
+import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/data/repositories/template_repository.dart';
 import 'package:flutter/material.dart';
 
 class TemplateListController extends ChangeNotifier {

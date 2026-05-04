@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/relationship_model.dart';
-import 'package:characterbook/services/character_service.dart';
-import 'package:characterbook/services/relationship_service.dart';
+import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/data/models/relationship_model.dart';
+import 'package:characterbook/data/services/character_service.dart';
+import 'package:characterbook/data/services/relationship_service.dart';
 import 'package:provider/provider.dart';
 
 class EditRelationshipBottomSheet extends StatefulWidget {

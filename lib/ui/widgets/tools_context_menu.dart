@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/note_model.dart';
-import 'package:characterbook/models/race_model.dart';
-import 'package:characterbook/models/template_model.dart';
-import 'package:characterbook/services/character_service.dart';
+import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/data/models/note_model.dart';
+import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/data/services/character_service.dart';
 import 'package:characterbook/services/clipboard_service.dart';
 import 'package:characterbook/services/pdf_export_manager.dart';
 import 'package:flutter/material.dart';

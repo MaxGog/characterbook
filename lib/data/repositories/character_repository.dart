@@ -1,4 +1,4 @@
-import 'package:characterbook/models/character_model.dart';
+import 'package:characterbook/data/models/character_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 abstract class CharacterRepository {

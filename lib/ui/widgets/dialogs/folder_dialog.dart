@@ -1,5 +1,5 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/models/folder_model.dart';
+import 'package:characterbook/data/models/folder_model.dart';
 import 'package:flutter/material.dart';
 
 class FolderDialog extends StatefulWidget {

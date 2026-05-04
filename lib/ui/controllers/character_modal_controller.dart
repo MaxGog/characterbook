@@ -1,12 +1,12 @@
-import 'package:characterbook/models/character_model.dart';
-import 'package:characterbook/models/folder_model.dart';
-import 'package:characterbook/models/note_model.dart';
-import 'package:characterbook/repositories/character_repository.dart';
-import 'package:characterbook/repositories/folder_repository.dart';
-import 'package:characterbook/repositories/note_repository.dart';
-import 'package:characterbook/services/character_service.dart';
+import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/data/models/folder_model.dart';
+import 'package:characterbook/data/models/note_model.dart';
+import 'package:characterbook/data/repositories/character_repository.dart';
+import 'package:characterbook/data/repositories/folder_repository.dart';
+import 'package:characterbook/data/repositories/note_repository.dart';
+import 'package:characterbook/data/services/character_service.dart';
 import 'package:characterbook/services/clipboard_service.dart';
-import 'package:characterbook/services/note_service.dart';
+import 'package:characterbook/data/services/note_service.dart';
 import 'package:flutter/material.dart';
 
 class CharacterModalController extends ChangeNotifier {
