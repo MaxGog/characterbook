@@ -25,6 +25,10 @@ class HomeController extends ChangeNotifier {
   String get searchQuery => _searchQuery;
   bool get hasItems => _filteredItems.isNotEmpty;
 
+  List<CharacterHomeItem> get characters => List.unmodifiable(_characters);
+  List<RaceHomeItem> get races => List.unmodifiable(_races);
+  List<ToolHomeItem> get tools => List.unmodifiable(_tools);
+
   HomeController({
     required CharacterService characterService,
     required RaceService raceService,

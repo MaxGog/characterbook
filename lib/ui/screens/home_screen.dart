@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/data/models/character_model.dart';
 import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/services/character_service.dart';
-import 'package:characterbook/services/date_formatter.dart';
 import 'package:characterbook/data/services/race_service.dart';
+import 'package:characterbook/services/date_formatter.dart';
 import 'package:characterbook/ui/controllers/home_controller.dart';
 import 'package:characterbook/ui/widgets/modals/character_modal_card.dart';
 import 'package:characterbook/ui/widgets/modals/race_modal_card.dart';
@@ -18,6 +19,7 @@ import 'package:characterbook/ui/widgets/items/home_item.dart';
 import 'package:characterbook/ui/widgets/items/race_keep_card_item.dart';
 import 'package:characterbook/ui/widgets/items/tool_keep_card_item.dart';
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
+import 'package:characterbook/ui/widgets/expressive_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -77,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _createNewContent() async {
-    
+    // FAB already handles creation
   }
 
   void _navigateToTool(Widget page) {
@@ -109,7 +111,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: 32,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.4),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurfaceVariant
+                        .withOpacity(0.4),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -135,131 +140,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return ChangeNotifierProvider.value(
-      value: _controller,
-      child: Scaffold(
-        appBar: AppBar(
-          title: _buildSearchBar(context),
-          centerTitle: true,
-          elevation: 0,
-          scrolledUnderElevation: 3,
-          backgroundColor: colorScheme.surface,
-          leading: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Image.asset(
-              'assets/iconapp.png',
-              height: 24,
-              errorBuilder: (_, __, ___) => const Icon(Icons.book_rounded, size: 32),
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.account_circle_rounded),
-              iconSize: 32,
-              onPressed: _showAccountMenu,
-              tooltip: s.more_options,
-            ),
-          ],
-        ),
-        floatingActionButton: HomeFloatingMenu(
-          onCreateCharacter: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const CharacterManagementScreen()),
-            ).then((result) {
-              if (result == true && mounted) _loadData();
-            });
-          },
-          onCreateRace: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const RaceManagementScreen()),
-            ).then((result) {
-              if (result == true && mounted) _loadData();
-            });
-          },
-          onCreateNote: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const NoteManagementScreen()),
-            ).then((result) {
-              if (result == true && mounted) _loadData();
-            });
-          },
-        ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              const SizedBox(height: 4),
-              Expanded(
-                child: Consumer<HomeController>(
-                  builder: (context, controller, _) {
-                    if (!controller.hasItems &&
-                        controller.searchQuery.isEmpty) {
-                      return _EmptyState(
-                        isSearching: false,
-                        onCreateNew: _createNewContent,
-                      );
-                    }
-                    return _ContentGrid(
-                      controller: controller,
-                      onCharacterTap: _showCharacterDetail,
-                      onCharacterContextMenu: _showCharacterContextMenu,
-                      onRaceTap: _showRaceDetail,
-                      onRaceContextMenu: _showRaceContextMenu,
-                      onToolTap: (tool) => _navigateToTool(tool.page),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchBar(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final s = S.of(context);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: SearchBar(
-        controller: _searchController,
-        hintText: s.app_name,
-        padding: const WidgetStatePropertyAll(
-          EdgeInsets.symmetric(horizontal: 16),
-        ),
-        shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        ),
-        backgroundColor:
-            WidgetStatePropertyAll(colorScheme.surfaceContainerHigh),
-        surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
-        elevation: const WidgetStatePropertyAll(0),
-        onChanged: _onSearchChanged,
-        onSubmitted: _onSearchSubmitted,
-        textStyle: WidgetStatePropertyAll(
-          TextStyle(
-            color: colorScheme.onSurface,
-          ),
-        ),
-        hintStyle: WidgetStatePropertyAll(
-          TextStyle(
-            color: colorScheme.onSurfaceVariant,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
       ),
     );
   }
@@ -384,11 +264,139 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
   }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return ChangeNotifierProvider.value(
+      value: _controller,
+      child: Scaffold(
+        appBar: AppBar(
+          title: _buildSearchBar(context),
+          centerTitle: true,
+          elevation: 0,
+          scrolledUnderElevation: 3,
+          backgroundColor: colorScheme.surface,
+          leading: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              'assets/iconapp.png',
+              height: 24,
+              errorBuilder: (_, __, ___) =>
+                  const Icon(Icons.book_rounded, size: 32),
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.account_circle_rounded),
+              iconSize: 32,
+              onPressed: _showAccountMenu,
+              tooltip: S.of(context).more_options,
+            ),
+          ],
+        ),
+        floatingActionButton: HomeFloatingMenu(
+          onCreateCharacter: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const CharacterManagementScreen()),
+            ).then((result) {
+              if (result == true && mounted) _loadData();
+            });
+          },
+          onCreateRace: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const RaceManagementScreen()),
+            ).then((result) {
+              if (result == true && mounted) _loadData();
+            });
+          },
+          onCreateNote: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const NoteManagementScreen()),
+            ).then((result) {
+              if (result == true && mounted) _loadData();
+            });
+          },
+        ),
+        body: SafeArea(
+          child: Consumer<HomeController>(
+            builder: (context, controller, _) {
+              if (controller.searchQuery.isNotEmpty) {
+                return _SearchResultsGrid(
+                  items: controller.filteredItems,
+                  onCharacterTap: _showCharacterDetail,
+                  onCharacterContextMenu: _showCharacterContextMenu,
+                  onRaceTap: _showRaceDetail,
+                  onRaceContextMenu: _showRaceContextMenu,
+                  onToolTap: (tool) => _navigateToTool(tool.page),
+                );
+              }
+
+              if (!controller.hasItems) {
+                return _EmptyState(
+                  isSearching: false,
+                  onCreateNew: _createNewContent,
+                );
+              }
+
+              return _MainExpressiveContent(
+                controller: controller,
+                onCharacterTap: _showCharacterDetail,
+                onCharacterContextMenu: _showCharacterContextMenu,
+                onRaceTap: _showRaceDetail,
+                onRaceContextMenu: _showRaceContextMenu,
+                onToolTap: _navigateToTool,
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final s = S.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: SearchBar(
+        controller: _searchController,
+        hintText: s.app_name,
+        padding: const WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 16),
+        ),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        ),
+        backgroundColor:
+            WidgetStatePropertyAll(colorScheme.surfaceContainerHigh),
+        surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
+        elevation: const WidgetStatePropertyAll(0),
+        onChanged: _onSearchChanged,
+        onSubmitted: _onSearchSubmitted,
+        textStyle: WidgetStatePropertyAll(
+          TextStyle(color: colorScheme.onSurface),
+        ),
+        hintStyle: WidgetStatePropertyAll(
+          TextStyle(
+            color: colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
-class _ContentGrid extends StatelessWidget {
-  const _ContentGrid({
-    required this.controller,
+class _SearchResultsGrid extends StatelessWidget {
+  const _SearchResultsGrid({
+    required this.items,
     required this.onCharacterTap,
     required this.onCharacterContextMenu,
     required this.onRaceTap,
@@ -396,7 +404,7 @@ class _ContentGrid extends StatelessWidget {
     required this.onToolTap,
   });
 
-  final HomeController controller;
+  final List<HomeItem> items;
   final void Function(CharacterHomeItem) onCharacterTap;
   final void Function(CharacterHomeItem) onCharacterContextMenu;
   final void Function(RaceHomeItem) onRaceTap;
@@ -405,61 +413,56 @@ class _ContentGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () => controller.loadData(),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final crossAxisCount =
-              (constraints.maxWidth / 180).floor().clamp(2, 5);
-          return GridView.builder(
-            padding: const EdgeInsets.all(4),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              crossAxisSpacing: 4,
-              mainAxisSpacing: 4,
-              childAspectRatio: 1,
-            ),
-            itemCount: controller.filteredItems.length,
-            itemBuilder: (context, index) {
-              final item = controller.filteredItems[index];
-              return switch (item) {
-                CharacterHomeItem(:final character) => CharacterKeepCardItem(
-                    character: character,
-                    onTap: () => onCharacterTap(item),
-                    onContextMenuTap: () => onCharacterContextMenu(item),
-                    formattedDate:
-                        character.lastEdited.toRelativeString(context),
-                  ),
-                RaceHomeItem(:final race) => RaceKeepCardItem(
-                    race: race,
-                    characterCount: controller.characterCountForRace(race),
-                    onTap: () => onRaceTap(item),
-                    onContextMenuTap: () => onRaceContextMenu(item),
-                  ),
-                ToolHomeItem() => ToolKeepCardItem(
-                    title: item.getTitle(context),
-                    subtitle: item.getSubtitle(context),
-                    icon: item.getIcon(),
-                    iconColor: Theme.of(context).colorScheme.primary,
-                    onTap: () => onToolTap(item),
-                  ),
-              };
-            },
-          );
-        },
-      ),
+    if (items.isEmpty) {
+      return const _EmptyState(isSearching: true, onCreateNew: null);
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisCount = (constraints.maxWidth / 180).floor().clamp(2, 5);
+        return GridView.builder(
+          padding: const EdgeInsets.all(4),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            crossAxisSpacing: 4,
+            mainAxisSpacing: 4,
+            childAspectRatio: 1,
+          ),
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final item = items[index];
+            return switch (item) {
+              CharacterHomeItem(:final character) => CharacterKeepCardItem(
+                  character: character,
+                  onTap: () => onCharacterTap(item),
+                  onContextMenuTap: () => onCharacterContextMenu(item),
+                  formattedDate: character.lastEdited.toRelativeString(context),
+                ),
+              RaceHomeItem(:final race) => RaceKeepCardItem(
+                  race: race,
+                  characterCount: 0,
+                  onTap: () => onRaceTap(item),
+                  onContextMenuTap: () => onRaceContextMenu(item),
+                ),
+              ToolHomeItem() => ToolKeepCardItem(
+                  title: item.getTitle(context),
+                  subtitle: item.getSubtitle(context),
+                  icon: item.getIcon(),
+                  iconColor: Theme.of(context).colorScheme.primary,
+                  onTap: () => onToolTap(item),
+                ),
+            };
+          },
+        );
+      },
     );
   }
 }
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState({
-    required this.isSearching,
-    required this.onCreateNew,
-  });
-
+  const _EmptyState({required this.isSearching, required this.onCreateNew});
   final bool isSearching;
-  final VoidCallback onCreateNew;
+  final VoidCallback? onCreateNew;
 
   @override
   Widget build(BuildContext context) {
@@ -504,6 +507,459 @@ class _EmptyState extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _MainExpressiveContent extends StatelessWidget {
+  const _MainExpressiveContent({
+    required this.controller,
+    required this.onCharacterTap,
+    required this.onCharacterContextMenu,
+    required this.onRaceTap,
+    required this.onRaceContextMenu,
+    required this.onToolTap,
+  });
+
+  final HomeController controller;
+  final void Function(CharacterHomeItem) onCharacterTap;
+  final void Function(CharacterHomeItem) onCharacterContextMenu;
+  final void Function(RaceHomeItem) onRaceTap;
+  final void Function(RaceHomeItem) onRaceContextMenu;
+  final void Function(Widget) onToolTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final characters = controller.characters;
+    final races = controller.races;
+    final tools = controller.tools;
+
+    final List<HomeItem> pinnedItems = [
+      ...characters.take(4),
+      ...races.take(2),
+    ];
+
+    final List<HomeItem> shapeItems = [
+      ...characters,
+      ...races,
+    ].take(12).toList();
+
+    return RefreshIndicator(
+      onRefresh: () => controller.loadData(),
+      child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverToBoxAdapter(
+            child: _PinnedSection(
+              items: pinnedItems,
+              onCharacterTap: onCharacterTap,
+              onCharacterContextMenu: onCharacterContextMenu,
+              onRaceTap: onRaceTap,
+              onRaceContextMenu: onRaceContextMenu,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: _ExpressiveShapesSection(
+              items: shapeItems,
+              onTap: (item) {
+                if (item is CharacterHomeItem) {
+                  onCharacterTap(item);
+                } else if (item is RaceHomeItem) {
+                  onRaceTap(item);
+                }
+              },
+              onContextMenu: (item) {
+                if (item is CharacterHomeItem) {
+                  onCharacterContextMenu(item);
+                } else if (item is RaceHomeItem) {
+                  onRaceContextMenu(item);
+                }
+              },
+            ),
+          ),
+          SliverPadding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            sliver: SliverToBoxAdapter(
+              child: Text(
+                S.of(context).dnd_tools,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: _ToolsGrid(
+              tools: tools,
+              onToolTap: onToolTap,
+            ),
+          ),
+          const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
+        ],
+      ),
+    );
+  }
+}
+
+class _ToolsGrid extends StatelessWidget {
+  const _ToolsGrid({
+    required this.tools,
+    required this.onToolTap,
+  });
+
+  final List<ToolHomeItem> tools;
+  final void Function(Widget) onToolTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    const double cardWidth = 200;
+    const double cardHeight = 100;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Center(
+        child: Wrap(
+          spacing: 4,
+          runSpacing: 4,
+          alignment: WrapAlignment.center,
+          children: tools.map((tool) {
+            return SizedBox(
+              width: cardWidth,
+              height: cardHeight,
+              child: ToolKeepCardItem(
+                title: tool.getTitle(context),
+                subtitle: tool.getSubtitle(context),
+                icon: tool.getIcon(),
+                iconColor: colorScheme.primary,
+                onTap: () => onToolTap(tool as Widget),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+}
+
+class _PinnedSection extends StatelessWidget {
+  const _PinnedSection({
+    required this.items,
+    required this.onCharacterTap,
+    required this.onCharacterContextMenu,
+    required this.onRaceTap,
+    required this.onRaceContextMenu,
+  });
+
+  final List<HomeItem> items;
+  final void Function(CharacterHomeItem) onCharacterTap;
+  final void Function(CharacterHomeItem) onCharacterContextMenu;
+  final void Function(RaceHomeItem) onRaceTap;
+  final void Function(RaceHomeItem) onRaceContextMenu;
+
+  @override
+  Widget build(BuildContext context) {
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Text(
+            "S.of(context).pinned",
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+        ),
+        SizedBox(
+          height: 180,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: _PinnedItemCard(
+                  item: item,
+                  onTap: () {
+                    if (item is CharacterHomeItem) {
+                      onCharacterTap(item);
+                    } else if (item is RaceHomeItem) {
+                      onRaceTap(item);
+                    }
+                  },
+                  onContextMenu: () {
+                    if (item is CharacterHomeItem) {
+                      onCharacterContextMenu(item);
+                    } else if (item is RaceHomeItem) {
+                      onRaceContextMenu(item);
+                    }
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PinnedItemCard extends StatelessWidget {
+  const _PinnedItemCard({
+    required this.item,
+    required this.onTap,
+    required this.onContextMenu,
+  });
+
+  final HomeItem item;
+  final VoidCallback onTap;
+  final VoidCallback onContextMenu;
+
+  Uint8List? _getImage() {
+    if (item is CharacterHomeItem) {
+      return (item as CharacterHomeItem).character.imageBytes;
+    } else if (item is RaceHomeItem) {
+      return (item as RaceHomeItem).race.logo;
+    }
+    return null;
+  }
+
+  String _getTitle() {
+    if (item is CharacterHomeItem) {
+      return (item as CharacterHomeItem).character.name;
+    } else if (item is RaceHomeItem) {
+      return (item as RaceHomeItem).race.name;
+    }
+    return '';
+  }
+
+  String _getSubtitle(BuildContext context) {
+    if (item is CharacterHomeItem) {
+      final race = (item as CharacterHomeItem).character.race;
+      return race?.name ?? S.of(context).character;
+    } else if (item is RaceHomeItem) {
+      return S.of(context).race;
+    }
+    return '';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final image = _getImage();
+
+    return GestureDetector(
+      onTap: onTap,
+      onLongPress: onContextMenu,
+      child: Container(
+        width: 140,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (image != null)
+              Image.memory(
+                image,
+                fit: BoxFit.cover,
+              )
+            else
+              Container(color: colorScheme.primaryContainer),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.6),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              left: 12,
+              right: 12,
+              bottom: 12,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _getTitle(),
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 4,
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                      ],
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _getSubtitle(context),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: Colors.white.withOpacity(0.8),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ExpressiveShapesSection extends StatelessWidget {
+  const _ExpressiveShapesSection({
+    required this.items,
+    required this.onTap,
+    required this.onContextMenu,
+  });
+
+  final List<HomeItem> items;
+  final void Function(HomeItem) onTap;
+  final void Function(HomeItem) onContextMenu;
+
+  static const List<double> _avatarSizes = [
+    72,
+    88,
+    64,
+    96,
+    80,
+    76,
+    92,
+    68,
+    84,
+    100,
+    78,
+    90
+  ];
+
+  static const List<EdgeInsets> _avatarMargins = [
+    EdgeInsets.only(top: 8, right: 4),
+    EdgeInsets.only(top: 0, right: 8),
+    EdgeInsets.only(top: 16, right: 4),
+    EdgeInsets.only(top: 4, right: 12),
+    EdgeInsets.only(top: 12, right: 0),
+    EdgeInsets.only(top: 2, right: 8),
+    EdgeInsets.only(top: 20, right: 4),
+    EdgeInsets.only(top: 6, right: 10),
+    EdgeInsets.only(top: 10, right: 6),
+    EdgeInsets.only(top: 0, right: 12),
+    EdgeInsets.only(top: 14, right: 2),
+    EdgeInsets.only(top: 8, right: 8),
+  ];
+
+  ExpressiveShape _shapeForIndex(int index) {
+    const shapes = ExpressiveShape.values;
+    return shapes[index % shapes.length];
+  }
+
+  Uint8List? _getImage(HomeItem item) {
+    if (item is CharacterHomeItem) return item.character.imageBytes;
+    if (item is RaceHomeItem) return item.race.logo;
+    return null;
+  }
+
+  String _getName(HomeItem item) {
+    if (item is CharacterHomeItem) return item.character.name;
+    if (item is RaceHomeItem) return item.race.name;
+    return '';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+          child: Text(
+            "S.of(context).explore",
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: Wrap(
+            spacing: 4,
+            runSpacing: 4,
+            alignment: WrapAlignment.center,
+            children: List.generate(items.length, (index) {
+              final item = items[index];
+              final shape = _shapeForIndex(index);
+              final image = _getImage(item);
+              final name = _getName(item);
+              final size = _avatarSizes[index % _avatarSizes.length];
+              final margin = _avatarMargins[index % _avatarMargins.length];
+
+              return Padding(
+                padding: margin,
+                child: GestureDetector(
+                  onTap: () => onTap(item),
+                  onLongPress: () => onContextMenu(item),
+                  child: SizedBox(
+                    width: size,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ExpressiveAvatar(
+                          imageBytes: image,
+                          size: size,
+                          shape: shape,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primaryContainer,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          name,
+                          style:
+                              Theme.of(context).textTheme.labelSmall?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+      ],
     );
   }
 }
