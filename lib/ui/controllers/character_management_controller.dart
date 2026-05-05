@@ -147,6 +147,11 @@ class CharacterManagementController extends ChangeNotifier {
     _updateAdditionalImages();
   }
 
+  void insertAdditionalImage(int index, Uint8List bytes) {
+    _additionalImages.insert(index, bytes);
+    _updateAdditionalImages();
+  }
+
   void _updateAdditionalImages() {
     _editable = _editable.copyWith(additionalImages: _additionalImages);
     _markUnsaved();
@@ -200,7 +205,7 @@ class CharacterManagementController extends ChangeNotifier {
     }
   }
 
-  Future<bool> save() async {
+  Future<bool> save({bool closeAfterSave = false}) async {
     if (_editable.name.isEmpty) return false;
 
     _isLoading = true;

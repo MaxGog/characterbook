@@ -83,14 +83,34 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
   }
 
   void _removeField(int index) {
+    final removedField = _fields[index];
+    final removedKeyController = _keyControllers[index];
+    final removedValueController = _valueControllers[index];
+
     setState(() {
-      _keyControllers[index].dispose();
-      _valueControllers[index].dispose();
       _fields.removeAt(index);
       _keyControllers.removeAt(index);
       _valueControllers.removeAt(index);
     });
     widget.onFieldsChanged(_fields);
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("S.of(context).field_removed"),
+        action: SnackBarAction(
+          label: "S.of(context).undo",
+          onPressed: () {
+            setState(() {
+              _fields.insert(index, removedField);
+              _keyControllers.insert(index, removedKeyController);
+              _valueControllers.insert(index, removedValueController);
+            });
+            widget.onFieldsChanged(_fields);
+          },
+        ),
+      ),
+    );
   }
 
   void _updateField(int index, String key, String value) {
@@ -147,24 +167,37 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
           ],
         ),
         const SizedBox(height: 24),
-        ..._fields.asMap().entries.map((entry) {
-          final index = entry.key;
-          return _buildVerticalFieldItem(index, s, theme);
-        }),
+        if (_fields.isNotEmpty)
+          ReorderableListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _fields.length,
+            onReorder: (oldIndex, newIndex) {
+              setState(() {
+                if (newIndex > oldIndex) newIndex--;
+                final field = _fields.removeAt(oldIndex);
+                _fields.insert(newIndex, field);
+                final keyCtrl = _keyControllers.removeAt(oldIndex);
+                _keyControllers.insert(newIndex, keyCtrl);
+                final valCtrl = _valueControllers.removeAt(oldIndex);
+                _valueControllers.insert(newIndex, valCtrl);
+              });
+              widget.onFieldsChanged(_fields);
+            },
+            itemBuilder: (context, index) {
+              return _buildVerticalFieldItem(index, s, theme);
+            },
+          ),
         if (_fields.isEmpty)
           Column(
             children: [
-              Icon(
-                Icons.notes_rounded,
-                size: 48,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+              Icon(Icons.notes_rounded,
+                  size: 48, color: theme.colorScheme.onSurfaceVariant),
               const SizedBox(height: 16),
               Text(
                 s.no_custom_fields,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+                style: theme.textTheme.bodyLarge
+                    ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -174,80 +207,76 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
   }
 
   Widget _buildVerticalFieldItem(int index, S s, ThemeData theme) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: theme.colorScheme.outlineVariant,
-          width: 1,
+    return ReorderableDragStartListener(
+      index: index,
+      key: ValueKey(index),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: theme.colorScheme.outlineVariant,
+            width: 1,
+          ),
         ),
-      ),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _keyControllers[index],
-                  decoration: InputDecoration(
-                    labelText: s.field_name,
-                    hintText: s.field_name_hint,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _keyControllers[index],
+                    decoration: InputDecoration(
+                      labelText: s.field_name,
+                      hintText: s.field_name_hint,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
-                    ),
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              IconButton(
-                icon: Icon(
-                  Icons.delete_rounded,
-                  color: theme.colorScheme.error,
+                const SizedBox(width: 12),
+                IconButton(
+                  icon: Icon(Icons.delete_rounded,
+                      color: theme.colorScheme.error),
+                  onPressed: () => _removeField(index),
+                  tooltip: s.delete,
+                  style: IconButton.styleFrom(
+                    backgroundColor: theme.colorScheme.errorContainer,
+                  ),
                 ),
-                onPressed: () => _removeField(index),
-                tooltip: s.delete,
-                style: IconButton.styleFrom(
-                  backgroundColor: theme.colorScheme.errorContainer,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          ConstrainedBox(
-            constraints: const BoxConstraints(
-              minHeight: 60,
-              maxHeight: 200,
+              ],
             ),
-            child: TextField(
-              controller: _valueControllers[index],
-              decoration: InputDecoration(
-                labelText: s.field_value,
-                hintText: s.field_value_hint,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+            const SizedBox(height: 16),
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 60, maxHeight: 200),
+              child: TextField(
+                controller: _valueControllers[index],
+                decoration: InputDecoration(
+                  labelText: s.field_value,
+                  hintText: s.field_value_hint,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  alignLabelWithHint: true,
                 ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 16,
-                ),
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                alignLabelWithHint: true,
+                maxLines: null,
+                expands: true,
+                textAlignVertical: TextAlignVertical.top,
               ),
-              maxLines: null,
-              expands: true,
-              textAlignVertical: TextAlignVertical.top,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

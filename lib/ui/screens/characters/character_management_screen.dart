@@ -81,49 +81,141 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
             },
             appBar: CommonEditAppBar(
               title: title,
-              onSave: () async {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  final success = await controller.save();
-                  if (success && mounted) {
-                    Navigator.pop(context);
-                  }
-                }
-              },
-              saveTooltip: s.save,
+              onSave: () => _saveCharacter(controller, S.of(context)),
             ),
-            body: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildFolderAndTagsSection(context, controller),
-                  if (widget.template != null) _buildTemplateChip(context),
-                  const SizedBox(height: _sectionSpacing),
-                  _buildAvatarSection(context, controller),
-                  const SizedBox(height: _sectionSpacing),
-                  _buildNameField(context, controller),
-                  const SizedBox(height: _fieldSpacing),
-                  ..._buildCharacterFields(context, controller),
-                  const SizedBox(height: _sectionSpacing),
-                  SaveButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        final success = await controller.save();
-                        if (success && mounted) {
-                          Navigator.pop(context);
-                        }
-                      }
-                    },
-                    text: s.save,
-                  ),
-                  const SizedBox(height: _fieldSpacing),
-                ],
+            body: GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: Form(
+                key: _formKey,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildFolderAndTagsSection(context, controller),
+                    if (widget.template != null) _buildTemplateChip(context),
+                    const SizedBox(height: _sectionSpacing),
+                    _buildAvatarSection(context, controller),
+                    const SizedBox(height: _sectionSpacing),
+                    _buildNameField(context, controller),
+                    const SizedBox(height: _fieldSpacing),
+                    _buildGroupedFields(context, controller),
+                    // Отступ снизу можно убрать, если нет FAB
+                    // const SizedBox(height: 80),
+                  ],
+                ),
               ),
             ),
           );
         },
+      ),
+    );
+  }
+
+  Future<void> _saveCharacter(
+      CharacterManagementController controller, S s) async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      final success = await controller.save();
+      if (!mounted) return;
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(s.save)),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(s.error),
+            content: Text(controller.error ?? s.error),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(s.ok),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
+
+  Widget _buildGroupedFields(
+      BuildContext context, CharacterManagementController controller) {
+    final s = S.of(context);
+    return Column(
+      children: [
+        ExpansionTile(
+          title: Text(s.basic_info),
+          initiallyExpanded: true,
+          children: [
+            const SizedBox(height: _fieldSpacing),
+            _buildAgeAndGenderRow(context, controller),
+            if (_shouldShowField('race'))
+              Padding(
+                padding: const EdgeInsets.only(top: _fieldSpacing),
+                child: RaceSelectorField(
+                  initialRace: controller.character.race,
+                  onChanged: (race) => controller.updateRace(race),
+                ),
+              ),
+            if (_shouldShowField('referenceImage'))
+              Padding(
+                padding: const EdgeInsets.only(top: _fieldSpacing),
+                child: ReferenceImagePicker(
+                  imageBytes: controller.character.referenceImageBytes,
+                  onPickImage: () => _pickReferenceImage(context, controller),
+                  title: s.reference_image,
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: _fieldSpacing),
+        ExpansionTile(
+          title: Text(s.details),
+          initiallyExpanded: false,
+          children: [
+            CustomFieldsEditor(
+              initialFields: controller.customFields,
+              onFieldsChanged: controller.setCustomFields,
+              verticalLayout: true,
+            ),
+            if (_shouldShowField('additionalImages'))
+              Padding(
+                padding: const EdgeInsets.only(top: _fieldSpacing),
+                child: ImageGallerySection(
+                  images: controller.additionalImages,
+                  onAddImage: () => _pickAdditionalImage(context, controller),
+                  onRemoveImage: (index) =>
+                      _removeAdditionalImage(context, controller, index),
+                  title: s.additional_images,
+                  emptyText: s.no_additional_images,
+                  addTooltip: s.add_picture,
+                ),
+              ),
+            ..._buildFullscreenFields(context, controller),
+          ],
+        ),
+      ],
+    );
+  }
+
+  void _removeAdditionalImage(BuildContext context,
+      CharacterManagementController controller, int index) {
+    final removedImage =
+        controller.additionalImages[index];
+    controller.removeAdditionalImage(index);
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("S.of(context).image_removed"),
+        action: SnackBarAction(
+          label: "S.of(context).undo",
+          onPressed: () {
+            controller.insertAdditionalImage(index, removedImage);
+          },
+        ),
       ),
     );
   }
@@ -136,6 +228,34 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
     }
     return s.edit_character;
   }
+
+  List<Widget> _buildFullscreenFields(
+      BuildContext context, CharacterManagementController controller) {
+    final s = S.of(context);
+    final fields = [
+      ('appearance', s.appearance),
+      ('personality', s.personality),
+      ('biography', s.biography),
+      ('abilities', s.abilities),
+      ('other', s.other),
+    ];
+
+    return fields.where((e) => _shouldShowField(e.$1)).map((e) {
+      final (fieldName, label) = e;
+      return Padding(
+        padding: const EdgeInsets.only(top: _fieldSpacing),
+        child: _FullscreenTextField(
+          label: label,
+          value: _getFieldValue(controller, fieldName) ?? '',
+          onChanged: (value) => controller.updateTextField(fieldName, value),
+          onTap: () =>
+              _openFullscreenEditor(context, controller, fieldName, label),
+          maxLines: 3,
+        ),
+      );
+    }).toList();
+  }
+
 
   Widget _buildFolderAndTagsSection(
       BuildContext context, CharacterManagementController controller) {
@@ -192,86 +312,41 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
     );
   }
 
-  List<Widget> _buildCharacterFields(
+  Widget _buildAgeAndGenderRow(
       BuildContext context, CharacterManagementController controller) {
     final s = S.of(context);
-    final fields = <Widget>[];
-
-    if (_shouldShowField('age') || _shouldShowField('gender')) {
-      fields.addAll([
-        _buildAgeAndGenderRow(context, controller),
-        const SizedBox(height: _fieldSpacing),
-      ]);
-    }
-
-    if (_shouldShowField('race')) {
-      fields.addAll([
-        RaceSelectorField(
-          initialRace: controller.character.race,
-          onChanged: (race) => controller.updateRace(race),
-        ),
-        const SizedBox(height: _fieldSpacing),
-      ]);
-    }
-
-    if (_shouldShowField('referenceImage')) {
-      fields.addAll([
-        ReferenceImagePicker(
-          imageBytes: controller.character.referenceImageBytes,
-          onPickImage: () => _pickReferenceImage(context, controller),
-          title: s.reference_image,
-        ),
-        const SizedBox(height: _fieldSpacing),
-      ]);
-    }
-
-    fields.addAll([
-      CustomFieldsEditor(
-        initialFields: controller.customFields,
-        onFieldsChanged: controller.setCustomFields,
-        verticalLayout: true,
-      ),
-    ]);
-
-    if (_shouldShowField('additionalImages')) {
-      fields.addAll([
-        const SizedBox(height: _fieldSpacing),
-        ImageGallerySection(
-          images: controller.additionalImages,
-          onAddImage: () => _pickAdditionalImage(context, controller),
-          onRemoveImage: (index) => controller.removeAdditionalImage(index),
-          title: s.additional_images,
-          emptyText: s.no_additional_images,
-          addTooltip: s.add_picture,
-        ),
-      ]);
-    }
-
-    final fullscreenFields = [
-      ('appearance', s.appearance),
-      ('personality', s.personality),
-      ('biography', s.biography),
-      ('abilities', s.abilities),
-      ('other', s.other),
-    ];
-
-    for (final (fieldName, label) in fullscreenFields) {
-      if (_shouldShowField(fieldName)) {
-        fields.addAll([
-          const SizedBox(height: _fieldSpacing),
-          _FullscreenTextField(
-            label: label,
-            value: _getFieldValue(controller, fieldName) ?? '',
-            onChanged: (value) => controller.updateTextField(fieldName, value),
-            onTap: () =>
-                _openFullscreenEditor(context, controller, fieldName, label),
-            maxLines: 3,
+    return Row(
+      children: [
+        if (_shouldShowField('age')) ...[
+          Expanded(
+            child: CustomTextField(
+              label: s.age,
+              initialValue: controller.character.age.toString(),
+              isRequired: _shouldShowField('age'),
+              keyboardType: TextInputType.number,
+              onSaved: (value) =>
+                  controller.updateAge(int.tryParse(value ?? '0') ?? 0),
+              validator: _shouldShowField('age')
+                  ? (value) {
+                      if (value?.isEmpty ?? true) return s.enter_age;
+                      final age = int.tryParse(value!);
+                      if (age == null || age <= 0) return s.invalid_age;
+                      return null;
+                    }
+                  : null,
+            ),
           ),
-        ]);
-      }
-    }
-
-    return fields;
+          if (_shouldShowField('gender')) const SizedBox(width: _fieldSpacing),
+        ],
+        if (_shouldShowField('gender'))
+          Expanded(
+            child: GenderSelectorField(
+              initialValue: controller.character.gender,
+              onChanged: (value) => controller.updateGender(value ?? ''),
+            ),
+          ),
+      ],
+    );
   }
 
   String? _getFieldValue(CharacterManagementController controller, String fieldName) {
@@ -312,43 +387,6 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
     if (result != null) {
       controller.updateTextField(fieldName, result);
     }
-  }
-
-  Widget _buildAgeAndGenderRow(
-      BuildContext context, CharacterManagementController controller) {
-    final s = S.of(context);
-    return Row(
-      children: [
-        if (_shouldShowField('age')) ...[
-          Expanded(
-            child: CustomTextField(
-              label: s.age,
-              initialValue: controller.character.age.toString(),
-              isRequired: _shouldShowField('age'),
-              keyboardType: TextInputType.number,
-              onSaved: (value) =>
-                  controller.updateAge(int.tryParse(value ?? '0') ?? 0),
-              validator: _shouldShowField('age')
-                  ? (value) {
-                      if (value?.isEmpty ?? true) return s.enter_age;
-                      final age = int.tryParse(value!);
-                      if (age == null || age <= 0) return s.invalid_age;
-                      return null;
-                    }
-                  : null,
-            ),
-          ),
-          if (_shouldShowField('gender')) const SizedBox(width: _fieldSpacing),
-        ],
-        if (_shouldShowField('gender'))
-          Expanded(
-            child: GenderSelectorField(
-              initialValue: controller.character.gender,
-              onChanged: (value) => controller.updateGender(value ?? ''),
-            ),
-          ),
-      ],
-    );
   }
 
   Future<void> _pickReferenceImage(
