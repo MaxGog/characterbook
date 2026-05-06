@@ -31,9 +31,7 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
   void initState() {
     super.initState();
     _fields = widget.initialFields.map((f) => f.copyWith()).toList();
-    _initializeControllers();
     _isFullscreenMode = widget.useFullscreenEditor;
-
     if (!_isFullscreenMode) {
       _initializeControllers();
     } else {
@@ -202,30 +200,43 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
 
   Widget _buildFullscreenFieldItem(
       int index, CustomField field, S s, ThemeData theme) {
-    return ReorderableDragStartListener(
-      index: index,
+    final title = field.key.isEmpty ? s.field_name : field.key;
+    return Card.outlined(
       key: ValueKey('${field.key}_${field.value}_$index'),
-      child: Card(
-        margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      clipBehavior: Clip.antiAlias,
+      child: ReorderableDragStartListener(
+        index: index,
+        key: ValueKey(
+            '${field.key}_${field.value}_$index'),
         child: ListTile(
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          leading: Icon(Icons.drag_handle,
+              color: theme.colorScheme.onSurfaceVariant),
           title: Text(
-            field.key.isEmpty ? s.field_name : field.key,
-            style: theme.textTheme.titleMedium,
+            title,
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: field.key.isEmpty
+                  ? theme.colorScheme.onSurfaceVariant
+                  : theme.colorScheme.onSurface,
+            ),
           ),
           subtitle: field.value.isNotEmpty
               ? Text(
                   field.value,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium,
+                  style: theme.textTheme.bodyMedium
+                      ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 )
               : null,
           trailing: IconButton(
-            icon: Icon(Icons.delete_rounded, color: theme.colorScheme.error),
-            onPressed: () => _removeField(index),
+            icon: const Icon(Icons.delete_outline),
+            color: theme.colorScheme.error,
             tooltip: s.delete,
+            onPressed: () => _removeField(index),
           ),
           onTap: () => _editFieldFullscreen(index),
         ),
@@ -356,28 +367,34 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
   }
 
   Widget _buildVerticalFieldItem(int index, S s, ThemeData theme) {
-    return ReorderableDragStartListener(
-      index: index,
-      key: ValueKey(index),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerLow,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: theme.colorScheme.outlineVariant,
-            width: 1,
-          ),
-        ),
-        child: Column(
+    return Card.filled(
+      key: ValueKey(
+          'v_${_keyControllers[index].text}_${_valueControllers[index].text}_$index'),
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: TextField(
+            ReorderableDragStartListener(
+              index: index,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Icon(
+                  Icons.drag_handle,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                children: [
+                  TextField(
                     controller: _keyControllers[index],
+                    style: theme.textTheme.bodyLarge,
                     decoration: InputDecoration(
                       labelText: s.field_name,
                       hintText: s.field_name_hint,
@@ -385,44 +402,37 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
-                      ),
+                          horizontal: 16, vertical: 16),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                IconButton(
-                  icon: Icon(Icons.delete_rounded,
-                      color: theme.colorScheme.error),
-                  onPressed: () => _removeField(index),
-                  tooltip: s.delete,
-                  style: IconButton.styleFrom(
-                    backgroundColor: theme.colorScheme.errorContainer,
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _valueControllers[index],
+                    style: theme.textTheme.bodyLarge,
+                    maxLines: null,
+                    minLines: 2,
+                    decoration: InputDecoration(
+                      labelText: s.field_value,
+                      hintText: s.field_value_hint,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      alignLabelWithHint: true,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 60, maxHeight: 200),
-              child: TextField(
-                controller: _valueControllers[index],
-                decoration: InputDecoration(
-                  labelText: s.field_value,
-                  hintText: s.field_value_hint,
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  alignLabelWithHint: true,
-                ),
-                maxLines: null,
-                expands: true,
-                textAlignVertical: TextAlignVertical.top,
+                ],
               ),
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              color: theme.colorScheme.error,
+              tooltip: s.delete,
+              onPressed: () => _removeField(index),
             ),
           ],
         ),
@@ -495,83 +505,74 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
   }
 
   Widget _buildHorizontalFieldItem(int index, S s, ThemeData theme) {
-    return Container(
+    return SizedBox(
       width: 320,
-      margin: const EdgeInsets.only(right: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: theme.colorScheme.outlineVariant,
-          width: 1,
+      child: Card.filled(
+        key: ValueKey(
+            'v_${_keyControllers[index].text}_${_valueControllers[index].text}_$index'),
+        margin: const EdgeInsets.only(right: 16, bottom: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  ReorderableDragStartListener(
+                    index: index,
+                    child: Icon(
+                      Icons.drag_handle,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline),
+                    color: theme.colorScheme.error,
+                    tooltip: s.delete,
+                    onPressed: () => _removeField(index),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _keyControllers[index],
+                style: theme.textTheme.bodyLarge,
+                decoration: InputDecoration(
+                  labelText: s.field_name,
+                  hintText: s.field_name_hint,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _valueControllers[index],
+                style: theme.textTheme.bodyLarge,
+                maxLines: null,
+                minLines: 3,
+                decoration: InputDecoration(
+                  labelText: s.field_value,
+                  hintText: s.field_value_hint,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  alignLabelWithHint: true,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TextField(
-            controller: _keyControllers[index],
-            decoration: InputDecoration(
-              labelText: s.field_name,
-              hintText: s.field_name_hint,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 16,
-              ),
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-            ),
-          ),
-          const SizedBox(height: 16),
-          ConstrainedBox(
-            constraints: const BoxConstraints(
-              minHeight: 120,
-              maxHeight: 200,
-            ),
-            child: TextField(
-              controller: _valueControllers[index],
-              decoration: InputDecoration(
-                labelText: s.field_value,
-                hintText: s.field_value_hint,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 16,
-                ),
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                alignLabelWithHint: true,
-              ),
-              maxLines: null,
-              expands: true,
-              textAlignVertical: TextAlignVertical.top,
-            ),
-          ),
-          const SizedBox(height: 16),
-          FilledButton.tonal(
-            onPressed: () => _removeField(index),
-            style: FilledButton.styleFrom(
-              backgroundColor: theme.colorScheme.errorContainer,
-              foregroundColor: theme.colorScheme.error,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.delete_rounded,
-                  size: 18,
-                ),
-                const SizedBox(width: 8),
-                Text(s.delete),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
