@@ -5076,6 +5076,66 @@ class S {
       args: [],
     );
   }
+
+  /// `Готово`
+  String get done {
+    return Intl.message(
+      'Готово',
+      name: 'done',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Изменить закреплённые`
+  String get edit_pins {
+    return Intl.message(
+      'Изменить закреплённые',
+      name: 'edit_pins',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Закреплённые`
+  String get pinned {
+    return Intl.message(
+      'Закреплённые',
+      name: 'pinned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Закреплённые отсутствуют`
+  String get no_pinned_items {
+    return Intl.message(
+      'Закреплённые отсутствуют',
+      name: 'no_pinned_items',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Закрепить`
+  String get pin {
+    return Intl.message(
+      'Закрепить',
+      name: 'pin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Открепить`
+  String get unpin {
+    return Intl.message(
+      'Открепить',
+      name: 'unpin',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

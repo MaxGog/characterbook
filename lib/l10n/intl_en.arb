@@ -416,6 +416,12 @@
   "undo": "Undo",
   "image_removed": "Image removed",
   "field_removed": "Field removed",
-  "changes_saved": "The changes are saved"
+  "changes_saved": "The changes are saved",
+  "done": "Done",
+  "edit_pins": "Edit pins",
+  "pinned": "Pinned",
+  "no_pinned_items": "No pinned items",
+  "pin": "Pin",
+  "unpin": "Unpin"
 
 }

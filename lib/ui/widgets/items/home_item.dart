@@ -6,16 +6,24 @@ import 'package:flutter/material.dart';
 
 sealed class HomeItem {
   const HomeItem();
+
+  String get id;
 }
 
 final class CharacterHomeItem extends HomeItem {
   final Character character;
   const CharacterHomeItem(this.character);
+
+  @override
+  String get id => character.id;
 }
 
 final class RaceHomeItem extends HomeItem {
   final Race race;
   const RaceHomeItem(this.race);
+
+  @override
+  String get id => race.id;
 }
 
 class ToolHomeItem extends HomeItem {
@@ -23,6 +31,10 @@ class ToolHomeItem extends HomeItem {
   final Widget page;
 
   ToolHomeItem({required this.type, required this.page});
+
+  @override
+  String get id =>
+      'tool_${type.name}';
 
   String getTitle(BuildContext context) {
     final s = S.of(context);

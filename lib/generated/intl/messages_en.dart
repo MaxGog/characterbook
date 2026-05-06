@@ -245,6 +245,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "developer": MessageLookupByLibrary.simpleMessage("Developer"),
         "discard_changes": MessageLookupByLibrary.simpleMessage("Discard"),
         "dnd_tools": MessageLookupByLibrary.simpleMessage("D&D Tools"),
+        "done": MessageLookupByLibrary.simpleMessage("Done"),
         "duplicate": MessageLookupByLibrary.simpleMessage("Duplicate"),
         "duplicate_character":
             MessageLookupByLibrary.simpleMessage("Duplicate character"),
@@ -254,6 +255,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "edit_character":
             MessageLookupByLibrary.simpleMessage("Edit Character"),
         "edit_folder": MessageLookupByLibrary.simpleMessage("Edit Folder"),
+        "edit_pins": MessageLookupByLibrary.simpleMessage("Edit pins"),
         "edit_race": MessageLookupByLibrary.simpleMessage("Edit Race"),
         "edit_template": MessageLookupByLibrary.simpleMessage("Edit Template"),
         "elderly": MessageLookupByLibrary.simpleMessage("Elderly"),
@@ -431,6 +433,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("No folder selected"),
         "no_information":
             MessageLookupByLibrary.simpleMessage("No Information"),
+        "no_pinned_items":
+            MessageLookupByLibrary.simpleMessage("No pinned items"),
         "no_race": MessageLookupByLibrary.simpleMessage("No race"),
         "no_races_created":
             MessageLookupByLibrary.simpleMessage("No races created"),
@@ -458,6 +462,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "permission_required":
             MessageLookupByLibrary.simpleMessage("Permission is required"),
         "personality": MessageLookupByLibrary.simpleMessage("Personality"),
+        "pin": MessageLookupByLibrary.simpleMessage("Pin"),
+        "pinned": MessageLookupByLibrary.simpleMessage("Pinned"),
         "posts": MessageLookupByLibrary.simpleMessage("Posts"),
         "preparing_services":
             MessageLookupByLibrary.simpleMessage("Preparing services..."),
@@ -574,6 +580,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "timeout_error": MessageLookupByLibrary.simpleMessage("Timeout"),
         "to": MessageLookupByLibrary.simpleMessage("To"),
         "undo": MessageLookupByLibrary.simpleMessage("Undo"),
+        "unpin": MessageLookupByLibrary.simpleMessage("Unpin"),
         "unsaved_changes_content": MessageLookupByLibrary.simpleMessage(
             "You have unsaved changes. Do you want to save before exiting?"),
         "unsaved_changes_title":

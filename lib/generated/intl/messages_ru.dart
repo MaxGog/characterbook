@@ -318,6 +318,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "developer": MessageLookupByLibrary.simpleMessage("Разработчик"),
         "discard_changes": MessageLookupByLibrary.simpleMessage("Не сохранять"),
         "dnd_tools": MessageLookupByLibrary.simpleMessage("Инструменты D&D"),
+        "done": MessageLookupByLibrary.simpleMessage("Готово"),
         "duplicate": MessageLookupByLibrary.simpleMessage("Дублировать"),
         "duplicate_character":
             MessageLookupByLibrary.simpleMessage("Дублирование персонажа"),
@@ -328,6 +329,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Редактировать персонажа"),
         "edit_folder":
             MessageLookupByLibrary.simpleMessage("Редактирование папки"),
+        "edit_pins":
+            MessageLookupByLibrary.simpleMessage("Изменить закреплённые"),
         "edit_race": MessageLookupByLibrary.simpleMessage("Редактировать расу"),
         "edit_template":
             MessageLookupByLibrary.simpleMessage("Редактирование шаблона"),
@@ -571,6 +574,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Нет выбранной папки"),
         "no_information":
             MessageLookupByLibrary.simpleMessage("Нет информации"),
+        "no_pinned_items":
+            MessageLookupByLibrary.simpleMessage("Закреплённые отсутствуют"),
         "no_race": MessageLookupByLibrary.simpleMessage("Раса не выбрана"),
         "no_races_created":
             MessageLookupByLibrary.simpleMessage("Нет созданных рас"),
@@ -614,6 +619,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Требуется разрешение"),
         "permissions": MessageLookupByLibrary.simpleMessage("Разрешения"),
         "personality": MessageLookupByLibrary.simpleMessage("Характер"),
+        "pin": MessageLookupByLibrary.simpleMessage("Закрепить"),
+        "pinned": MessageLookupByLibrary.simpleMessage("Закреплённые"),
         "popular_tags": MessageLookupByLibrary.simpleMessage("Популярные теги"),
         "portrait": MessageLookupByLibrary.simpleMessage("Портретная"),
         "posts": MessageLookupByLibrary.simpleMessage("Заметки"),
@@ -810,6 +817,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "total_events": MessageLookupByLibrary.simpleMessage("Всего событий"),
         "understood": MessageLookupByLibrary.simpleMessage("Понятно"),
         "undo": MessageLookupByLibrary.simpleMessage("Вернуть"),
+        "unpin": MessageLookupByLibrary.simpleMessage("Открепить"),
         "unsaved_changes_content": MessageLookupByLibrary.simpleMessage(
             "У вас есть несохранённые изменения. Хотите сохранить перед выходом?"),
         "unsaved_changes_title":

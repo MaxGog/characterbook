@@ -10,6 +10,7 @@ import 'package:characterbook/ui/screens/random_number_screen.dart';
 import 'package:characterbook/ui/screens/templates/templates_list_screen.dart';
 import 'package:characterbook/ui/widgets/items/home_item.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeController extends ChangeNotifier {
   final CharacterService _characterService;
@@ -21,6 +22,9 @@ class HomeController extends ChangeNotifier {
   List<HomeItem> _filteredItems = [];
   String _searchQuery = '';
 
+  Set<String> _pinnedIds = {};
+
+
   List<HomeItem> get filteredItems => _filteredItems;
   String get searchQuery => _searchQuery;
   bool get hasItems => _filteredItems.isNotEmpty;
@@ -29,17 +33,26 @@ class HomeController extends ChangeNotifier {
   List<RaceHomeItem> get races => List.unmodifiable(_races);
   List<ToolHomeItem> get tools => List.unmodifiable(_tools);
 
+  List<HomeItem> get pinnedItems {
+    return [
+      ..._characters.where((c) => _pinnedIds.contains(c.character.id)),
+      ..._races.where((r) => _pinnedIds.contains(r.race.id)),
+    ];
+  }
+
   HomeController({
     required CharacterService characterService,
     required RaceService raceService,
   })  : _characterService = characterService,
         _raceService = raceService {
     _initTools();
+    _loadPinnedIds(); // загружаем сохранённые пины
   }
 
   void _initTools() {
     _tools.addAll([
-      ToolHomeItem(type: ToolType.randomNumber, page: const RandomNumberScreen()),
+      ToolHomeItem(
+          type: ToolType.randomNumber, page: const RandomNumberScreen()),
       ToolHomeItem(
           type: ToolType.pdfExport, page: const ExportPdfSettingsScreen()),
       ToolHomeItem(type: ToolType.templates, page: const TemplatesListScreen()),
@@ -103,13 +116,16 @@ class HomeController extends ChangeNotifier {
 
     if (item is CharacterHomeItem) {
       _characters.remove(item);
+      _pinnedIds.remove(item.character.id);
     } else if (item is RaceHomeItem) {
       _races.remove(item);
+      _pinnedIds.remove(item.race.id);
     } else {
       return;
     }
 
     _applyFilter();
+    await _savePinnedIds();
 
     try {
       if (item is CharacterHomeItem) {
@@ -126,4 +142,35 @@ class HomeController extends ChangeNotifier {
   }
 
   int get itemCount => _filteredItems.length;
+
+  Future<void> _loadPinnedIds() async {
+    final prefs = await SharedPreferences.getInstance();
+    final ids = prefs.getStringList('pinned_ids') ?? [];
+    _pinnedIds = Set<String>.from(ids);
+    notifyListeners();
+  }
+
+  Future<void> _savePinnedIds() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('pinned_ids', _pinnedIds.toList());
+  }
+
+  void togglePin(HomeItem item) {
+    final id = item.id;
+    if (_pinnedIds.contains(id)) {
+      _pinnedIds.remove(id);
+    } else {
+      _pinnedIds.add(id);
+    }
+    _savePinnedIds();
+    notifyListeners();
+  }
+
+  void unpinItem(HomeItem item) {
+    _pinnedIds.remove(item.id);
+    _savePinnedIds();
+    notifyListeners();
+  }
+
+  bool isPinned(HomeItem item) => _pinnedIds.contains(item.id);
 }

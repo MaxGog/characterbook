@@ -18,8 +18,6 @@ import 'package:characterbook/ui/widgets/items/character_keep_card_item.dart';
 import 'package:characterbook/ui/widgets/items/home_item.dart';
 import 'package:characterbook/ui/widgets/items/race_keep_card_item.dart';
 import 'package:characterbook/ui/widgets/items/tool_keep_card_item.dart';
-import 'package:characterbook/ui/widgets/tools_context_menu.dart';
-import 'package:characterbook/ui/widgets/expressive_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -76,10 +74,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onSearchSubmitted(String query) {
     _searchDebounce?.cancel();
     _controller.setSearchQuery(query);
-  }
-
-  Future<void> _createNewContent() async {
-    // FAB already handles creation
   }
 
   void _navigateToTool(Widget page) {
@@ -154,16 +148,48 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showCharacterContextMenu(CharacterHomeItem item) {
+    final s = S.of(context);
+    final isPinned = _controller.isPinned(item);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => ContextMenu.character(
-        character: item.character,
-        onEdit: () {
-          Navigator.pop(context);
-          _editCharacter(item.character);
-        },
-        onDelete: () => _showDeleteDialog(item),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: Text(s.edit),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _editCharacter(item.character);
+                },
+              ),
+              ListTile(
+                leading:
+                    Icon(isPinned ? Icons.push_pin : Icons.push_pin_outlined),
+                title: Text(isPinned ? s.unpin : s.pin),
+                onTap: () {
+                  _controller.togglePin(item);
+                  Navigator.pop(ctx);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.delete,
+                    color: Theme.of(context).colorScheme.error),
+                title: Text(s.delete,
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error)),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _showDeleteDialog(item);
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -178,16 +204,48 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showRaceContextMenu(RaceHomeItem item) {
+    final s = S.of(context);
+    final isPinned = _controller.isPinned(item);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => ContextMenu.race(
-        race: item.race,
-        onEdit: () {
-          Navigator.pop(context);
-          _editRace(item.race);
-        },
-        onDelete: () => _showDeleteDialog(item),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: Text(s.edit),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _editRace(item.race);
+                },
+              ),
+              ListTile(
+                leading:
+                    Icon(isPinned ? Icons.push_pin : Icons.push_pin_outlined),
+                title: Text(isPinned ? s.unpin : s.pin),
+                onTap: () {
+                  _controller.togglePin(item);
+                  Navigator.pop(ctx);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.delete,
+                    color: Theme.of(context).colorScheme.error),
+                title: Text(s.delete,
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error)),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _showDeleteDialog(item);
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -357,6 +415,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void _createNewContent() {
+    // FAB уже обрабатывает создание
   }
 
   Widget _buildSearchBar(BuildContext context) {
@@ -530,20 +592,6 @@ class _MainExpressiveContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final characters = controller.characters;
-    final races = controller.races;
-    final tools = controller.tools;
-
-    final List<HomeItem> pinnedItems = [
-      ...characters.take(4),
-      ...races.take(2),
-    ];
-
-    final List<HomeItem> shapeItems = [
-      ...characters,
-      ...races,
-    ].take(12).toList();
-
     return RefreshIndicator(
       onRefresh: () => controller.loadData(),
       child: CustomScrollView(
@@ -551,30 +599,16 @@ class _MainExpressiveContent extends StatelessWidget {
         slivers: [
           SliverToBoxAdapter(
             child: _PinnedSection(
-              items: pinnedItems,
+              items: controller.pinnedItems,
+              allCharactersAndRaces: [
+                ...controller.characters,
+                ...controller.races,
+              ],
+              controller: controller,
               onCharacterTap: onCharacterTap,
               onCharacterContextMenu: onCharacterContextMenu,
               onRaceTap: onRaceTap,
               onRaceContextMenu: onRaceContextMenu,
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: _ExpressiveShapesSection(
-              items: shapeItems,
-              onTap: (item) {
-                if (item is CharacterHomeItem) {
-                  onCharacterTap(item);
-                } else if (item is RaceHomeItem) {
-                  onRaceTap(item);
-                }
-              },
-              onContextMenu: (item) {
-                if (item is CharacterHomeItem) {
-                  onCharacterContextMenu(item);
-                } else if (item is RaceHomeItem) {
-                  onRaceContextMenu(item);
-                }
-              },
             ),
           ),
           SliverPadding(
@@ -589,10 +623,22 @@ class _MainExpressiveContent extends StatelessWidget {
               ),
             ),
           ),
-          SliverToBoxAdapter(
-            child: _ToolsGrid(
-              tools: tools,
-              onToolTap: onToolTap,
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final tool = controller.tools[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: _ToolMaterialCard(
+                      tool: tool,
+                      onTap: () => onToolTap(tool.page),
+                    ),
+                  );
+                },
+                childCount: controller.tools.length,
+              ),
             ),
           ),
           const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
@@ -602,50 +648,73 @@ class _MainExpressiveContent extends StatelessWidget {
   }
 }
 
-class _ToolsGrid extends StatelessWidget {
-  const _ToolsGrid({
-    required this.tools,
-    required this.onToolTap,
+class _ToolMaterialCard extends StatelessWidget {
+  const _ToolMaterialCard({
+    required this.tool,
+    required this.onTap,
   });
 
-  final List<ToolHomeItem> tools;
-  final void Function(Widget) onToolTap;
+  final ToolHomeItem tool;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    const double cardWidth = 200;
-    const double cardHeight = 100;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Center(
-        child: Wrap(
-          spacing: 4,
-          runSpacing: 4,
-          alignment: WrapAlignment.center,
-          children: tools.map((tool) {
-            return SizedBox(
-              width: cardWidth,
-              height: cardHeight,
-              child: ToolKeepCardItem(
-                title: tool.getTitle(context),
-                subtitle: tool.getSubtitle(context),
-                icon: tool.getIcon(),
-                iconColor: colorScheme.primary,
-                onTap: () => onToolTap(tool as Widget),
+    return Material(
+      borderRadius: BorderRadius.circular(16),
+      color: colorScheme.surfaceContainerHighest,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Row(
+            children: [
+              Icon(
+                tool.getIcon(),
+                size: 32,
+                color: colorScheme.primary,
               ),
-            );
-          }).toList(),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      tool.getTitle(context),
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                    if (tool.getSubtitle(context).isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        tool.getSubtitle(context),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _PinnedSection extends StatelessWidget {
+class _PinnedSection extends StatefulWidget {
   const _PinnedSection({
     required this.items,
+    required this.allCharactersAndRaces,
+    required this.controller,
     required this.onCharacterTap,
     required this.onCharacterContextMenu,
     required this.onRaceTap,
@@ -653,58 +722,130 @@ class _PinnedSection extends StatelessWidget {
   });
 
   final List<HomeItem> items;
+  final List<HomeItem> allCharactersAndRaces;
+  final HomeController controller;
   final void Function(CharacterHomeItem) onCharacterTap;
   final void Function(CharacterHomeItem) onCharacterContextMenu;
   final void Function(RaceHomeItem) onRaceTap;
   final void Function(RaceHomeItem) onRaceContextMenu;
 
   @override
+  State<_PinnedSection> createState() => _PinnedSectionState();
+}
+
+class _PinnedSectionState extends State<_PinnedSection> {
+  bool _isEditing = false;
+
+  void _toggleEditMode() {
+    setState(() {
+      _isEditing = !_isEditing;
+    });
+  }
+
+  void _unpinItem(HomeItem item) {
+    widget.controller.unpinItem(item);
+  }
+
+  void _addPin(HomeItem item) {
+    widget.controller.togglePin(item);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (items.isEmpty) return const SizedBox.shrink();
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final s = S.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Text(
-            "S.of(context).pinned",
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
+          padding: const EdgeInsets.fromLTRB(16, 16, 8, 4),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  s.pinned,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
+              ),
+              IconButton(
+                icon: Icon(_isEditing ? Icons.check : Icons.edit_outlined),
+                onPressed: _toggleEditMode,
+                tooltip: _isEditing ? s.done : s.edit_pins,
+                iconSize: 22,
+                splashRadius: 20,
+              ),
+            ],
           ),
         ),
-        SizedBox(
-          height: 180,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final item = items[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: _PinnedItemCard(
-                  item: item,
-                  onTap: () {
-                    if (item is CharacterHomeItem) {
-                      onCharacterTap(item);
-                    } else if (item is RaceHomeItem) {
-                      onRaceTap(item);
-                    }
-                  },
-                  onContextMenu: () {
-                    if (item is CharacterHomeItem) {
-                      onCharacterContextMenu(item);
-                    } else if (item is RaceHomeItem) {
-                      onRaceContextMenu(item);
-                    }
-                  },
-                ),
-              );
-            },
+        if (widget.items.isEmpty && !_isEditing)
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Text(
+              s.no_pinned_items,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
           ),
-        ),
+        if (_isEditing)
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: widget.allCharactersAndRaces.map((item) {
+                final isPinned = widget.controller.isPinned(item);
+                final name = (item is CharacterHomeItem)
+                    ? item.character.name
+                    : (item as RaceHomeItem).race.name;
+                return InputChip(
+                  label: Text(name),
+                  selected: isPinned,
+                  onSelected: (_) => _addPin(item),
+                  deleteIcon: isPinned ? Icon(Icons.check, size: 16) : null,
+                  onDeleted: isPinned ? () => _addPin(item) : null,
+                );
+              }).toList(),
+            ),
+          )
+        else if (widget.items.isNotEmpty)
+          SizedBox(
+            height: 180,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              itemCount: widget.items.length,
+              itemBuilder: (context, index) {
+                final item = widget.items[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: _PinnedItemCard(
+                    item: item,
+                    onTap: () {
+                      if (item is CharacterHomeItem) {
+                        widget.onCharacterTap(item);
+                      } else if (item is RaceHomeItem) {
+                        widget.onRaceTap(item);
+                      }
+                    },
+                    onContextMenu: () {
+                      if (item is CharacterHomeItem) {
+                        widget.onCharacterContextMenu(item);
+                      } else if (item is RaceHomeItem) {
+                        widget.onRaceContextMenu(item);
+                      }
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
       ],
     );
   }
@@ -775,10 +916,7 @@ class _PinnedItemCard extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             if (image != null)
-              Image.memory(
-                image,
-                fit: BoxFit.cover,
-              )
+              Image.memory(image, fit: BoxFit.cover)
             else
               Container(color: colorScheme.primaryContainer),
             Container(
@@ -831,135 +969,6 @@ class _PinnedItemCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _ExpressiveShapesSection extends StatelessWidget {
-  const _ExpressiveShapesSection({
-    required this.items,
-    required this.onTap,
-    required this.onContextMenu,
-  });
-
-  final List<HomeItem> items;
-  final void Function(HomeItem) onTap;
-  final void Function(HomeItem) onContextMenu;
-
-  static const List<double> _avatarSizes = [
-    72,
-    88,
-    64,
-    96,
-    80,
-    76,
-    92,
-    68,
-    84,
-    100,
-    78,
-    90
-  ];
-
-  static const List<EdgeInsets> _avatarMargins = [
-    EdgeInsets.only(top: 8, right: 4),
-    EdgeInsets.only(top: 0, right: 8),
-    EdgeInsets.only(top: 16, right: 4),
-    EdgeInsets.only(top: 4, right: 12),
-    EdgeInsets.only(top: 12, right: 0),
-    EdgeInsets.only(top: 2, right: 8),
-    EdgeInsets.only(top: 20, right: 4),
-    EdgeInsets.only(top: 6, right: 10),
-    EdgeInsets.only(top: 10, right: 6),
-    EdgeInsets.only(top: 0, right: 12),
-    EdgeInsets.only(top: 14, right: 2),
-    EdgeInsets.only(top: 8, right: 8),
-  ];
-
-  ExpressiveShape _shapeForIndex(int index) {
-    const shapes = ExpressiveShape.values;
-    return shapes[index % shapes.length];
-  }
-
-  Uint8List? _getImage(HomeItem item) {
-    if (item is CharacterHomeItem) return item.character.imageBytes;
-    if (item is RaceHomeItem) return item.race.logo;
-    return null;
-  }
-
-  String _getName(HomeItem item) {
-    if (item is CharacterHomeItem) return item.character.name;
-    if (item is RaceHomeItem) return item.race.name;
-    return '';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (items.isEmpty) return const SizedBox.shrink();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-          child: Text(
-            "S.of(context).explore",
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: Wrap(
-            spacing: 4,
-            runSpacing: 4,
-            alignment: WrapAlignment.center,
-            children: List.generate(items.length, (index) {
-              final item = items[index];
-              final shape = _shapeForIndex(index);
-              final image = _getImage(item);
-              final name = _getName(item);
-              final size = _avatarSizes[index % _avatarSizes.length];
-              final margin = _avatarMargins[index % _avatarMargins.length];
-
-              return Padding(
-                padding: margin,
-                child: GestureDetector(
-                  onTap: () => onTap(item),
-                  onLongPress: () => onContextMenu(item),
-                  child: SizedBox(
-                    width: size,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ExpressiveAvatar(
-                          imageBytes: image,
-                          size: size,
-                          shape: shape,
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primaryContainer,
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          name,
-                          style:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }),
-          ),
-        ),
-      ],
     );
   }
 }
