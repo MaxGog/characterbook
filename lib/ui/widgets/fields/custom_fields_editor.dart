@@ -1,3 +1,4 @@
+import 'package:characterbook/ui/screens/custom_field_edit_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:characterbook/data/models/custom_field_model.dart';
 import 'package:characterbook/generated/l10n.dart';
@@ -6,12 +7,14 @@ class CustomFieldsEditor extends StatefulWidget {
   final List<CustomField> initialFields;
   final ValueChanged<List<CustomField>> onFieldsChanged;
   final bool verticalLayout;
+  final bool useFullscreenEditor;
 
   const CustomFieldsEditor({
     super.key,
     required this.initialFields,
     required this.onFieldsChanged,
     this.verticalLayout = false,
+    this.useFullscreenEditor = false,
   });
 
   @override
@@ -22,12 +25,21 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
   late List<CustomField> _fields;
   late List<TextEditingController> _keyControllers;
   late List<TextEditingController> _valueControllers;
+  late bool _isFullscreenMode;
 
   @override
   void initState() {
     super.initState();
     _fields = widget.initialFields.map((f) => f.copyWith()).toList();
     _initializeControllers();
+    _isFullscreenMode = widget.useFullscreenEditor;
+
+    if (!_isFullscreenMode) {
+      _initializeControllers();
+    } else {
+      _keyControllers = [];
+      _valueControllers = [];
+    }
   }
 
   void _initializeControllers() {
@@ -59,52 +71,60 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
       final newField = CustomField('', '');
       _fields.add(newField);
 
-      final keyController = TextEditingController();
-      keyController.addListener(() {
-        final index = _keyControllers.indexOf(keyController);
-        if (index != -1) {
-          _updateField(
-              index, keyController.text, _valueControllers[index].text);
-        }
-      });
-      _keyControllers.add(keyController);
+      if (!_isFullscreenMode) {
+        final keyController = TextEditingController();
+        keyController.addListener(() {
+          final index = _keyControllers.indexOf(keyController);
+          if (index != -1) {
+            _updateField(
+                index, keyController.text, _valueControllers[index].text);
+          }
+        });
+        _keyControllers.add(keyController);
 
-      final valueController = TextEditingController();
-      valueController.addListener(() {
-        final index = _valueControllers.indexOf(valueController);
-        if (index != -1) {
-          _updateField(
-              index, _keyControllers[index].text, valueController.text);
-        }
-      });
-      _valueControllers.add(valueController);
+        final valueController = TextEditingController();
+        valueController.addListener(() {
+          final index = _valueControllers.indexOf(valueController);
+          if (index != -1) {
+            _updateField(
+                index, _keyControllers[index].text, valueController.text);
+          }
+        });
+        _valueControllers.add(valueController);
+      }
     });
     widget.onFieldsChanged(_fields);
   }
 
   void _removeField(int index) {
     final removedField = _fields[index];
-    final removedKeyController = _keyControllers[index];
-    final removedValueController = _valueControllers[index];
+    final removedKeyController =
+        _isFullscreenMode ? null : _keyControllers[index];
+    final removedValueController =
+        _isFullscreenMode ? null : _valueControllers[index];
 
     setState(() {
       _fields.removeAt(index);
-      _keyControllers.removeAt(index);
-      _valueControllers.removeAt(index);
+      if (!_isFullscreenMode) {
+        _keyControllers.removeAt(index);
+        _valueControllers.removeAt(index);
+      }
     });
     widget.onFieldsChanged(_fields);
 
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("S.of(context).field_removed"),
+        content: Text('S.of(context).field_removed'),
         action: SnackBarAction(
-          label: "S.of(context).undo",
+          label: 'S.of(context).undo',
           onPressed: () {
             setState(() {
               _fields.insert(index, removedField);
-              _keyControllers.insert(index, removedKeyController);
-              _valueControllers.insert(index, removedValueController);
+              if (!_isFullscreenMode) {
+                _keyControllers.insert(index, removedKeyController!);
+                _valueControllers.insert(index, removedValueController!);
+              }
             });
             widget.onFieldsChanged(_fields);
           },
@@ -122,13 +142,42 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
 
   @override
   void dispose() {
-    for (final controller in _keyControllers) {
-      controller.dispose();
-    }
-    for (final controller in _valueControllers) {
-      controller.dispose();
+    if (!_isFullscreenMode) {
+      for (final controller in _keyControllers) {
+        controller.dispose();
+      }
+      for (final controller in _valueControllers) {
+        controller.dispose();
+      }
     }
     super.dispose();
+  }
+
+  Future<void> _editFieldFullscreen(int index) async {
+    final field = _fields[index];
+    final result = await Navigator.push<CustomField>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CustomFieldEditScreen(
+          initialKey: field.key,
+          initialValue: field.value,
+        ),
+      ),
+    );
+    if (result != null) {
+      setState(() {
+        _fields[index] = result;
+      });
+      widget.onFieldsChanged(_fields);
+    }
+  }
+
+  void _addAndEditField() async {
+    setState(() {
+      _fields.add(CustomField('', ''));
+    });
+    widget.onFieldsChanged(_fields);
+    await _editFieldFullscreen(_fields.length - 1);
   }
 
   @override
@@ -136,11 +185,107 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
     final s = S.of(context);
     final theme = Theme.of(context);
 
+    if (_isFullscreenMode) {
+      return _buildFullscreenLayout(s, theme);
+    }
+
     if (widget.verticalLayout) {
       return _buildVerticalLayout(s, theme);
     } else {
       return _buildHorizontalLayout(s, theme);
     }
+  }
+
+  Widget _buildFullscreenFieldItem(
+      int index, CustomField field, S s, ThemeData theme) {
+    return ReorderableDragStartListener(
+      index: index,
+      key: ValueKey('${field.key}_${field.value}_$index'),
+      child: Card(
+        margin: const EdgeInsets.only(bottom: 12),
+        child: ListTile(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          title: Text(
+            field.key.isEmpty ? s.field_name : field.key,
+            style: theme.textTheme.titleMedium,
+          ),
+          subtitle: field.value.isNotEmpty
+              ? Text(
+                  field.value,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium,
+                )
+              : null,
+          trailing: IconButton(
+            icon: Icon(Icons.delete_rounded, color: theme.colorScheme.error),
+            onPressed: () => _removeField(index),
+            tooltip: s.delete,
+          ),
+          onTap: () => _editFieldFullscreen(index),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFullscreenLayout(S s, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                s.custom_fields_editor_title,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            FilledButton.tonalIcon(
+              onPressed: _addAndEditField,
+              icon: const Icon(Icons.add_rounded),
+              label: Text(s.add_field),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        if (_fields.isNotEmpty)
+          ReorderableListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _fields.length,
+            onReorder: (oldIndex, newIndex) {
+              setState(() {
+                if (newIndex > oldIndex) newIndex--;
+                final field = _fields.removeAt(oldIndex);
+                _fields.insert(newIndex, field);
+              });
+              widget.onFieldsChanged(_fields);
+            },
+            itemBuilder: (context, index) {
+              return _buildFullscreenFieldItem(index, _fields[index], s, theme);
+            },
+          ),
+        if (_fields.isEmpty)
+          Column(
+            children: [
+              Icon(Icons.notes_rounded,
+                  size: 48, color: theme.colorScheme.onSurfaceVariant),
+              const SizedBox(height: 16),
+              Text(
+                s.no_custom_fields,
+                style: theme.textTheme.bodyLarge
+                    ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+      ],
+    );
   }
 
   Widget _buildVerticalLayout(S s, ThemeData theme) {

@@ -10,7 +10,6 @@ import 'package:characterbook/ui/controllers/character_management_controller.dar
 import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
 import 'package:characterbook/ui/widgets/avatar_picker_widget.dart';
 import 'package:characterbook/ui/widgets/base_edit_page_scaffold.dart';
-import 'package:characterbook/ui/widgets/buttons/save_button_widget.dart';
 import 'package:characterbook/ui/widgets/fields/custom_fields_editor.dart';
 import 'package:characterbook/ui/widgets/fields/custom_text_field.dart';
 import 'package:characterbook/ui/widgets/fields/fullscreen_text_editor.dart';
@@ -82,6 +81,7 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
             appBar: CommonEditAppBar(
               title: title,
               onSave: () => _saveCharacter(controller, S.of(context)),
+              saveTooltip: S.of(context).save,
             ),
             body: GestureDetector(
               onTap: () => FocusScope.of(context).unfocus(),
@@ -99,8 +99,6 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
                     _buildNameField(context, controller),
                     const SizedBox(height: _fieldSpacing),
                     _buildGroupedFields(context, controller),
-                    // Отступ снизу можно убрать, если нет FAB
-                    // const SizedBox(height: 80),
                   ],
                 ),
               ),
@@ -179,6 +177,7 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
               initialFields: controller.customFields,
               onFieldsChanged: controller.setCustomFields,
               verticalLayout: true,
+              useFullscreenEditor: true,
             ),
             if (_shouldShowField('additionalImages'))
               Padding(
