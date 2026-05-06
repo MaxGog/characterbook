@@ -5,13 +5,13 @@ import 'package:characterbook/data/repositories/folder_repository.dart';
 import 'package:characterbook/data/repositories/race_repository.dart';
 import 'package:characterbook/data/services/folder_service.dart';
 import 'package:characterbook/ui/controllers/race_management_controller.dart';
+import 'package:characterbook/ui/screens/field_editor_screen.dart';
 import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
 import 'package:characterbook/ui/widgets/avatar_picker_widget.dart';
 import 'package:characterbook/ui/widgets/base_edit_page_scaffold.dart';
 import 'package:characterbook/ui/widgets/buttons/save_button_widget.dart';
 import 'package:characterbook/ui/widgets/fields/custom_text_field.dart';
 import 'package:characterbook/ui/widgets/fields/fullscreen_field_preview.dart';
-import 'package:characterbook/ui/screens/text_editor_screen.dart';
 import 'package:characterbook/ui/widgets/sections/tags_and_folder_section.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -210,22 +210,23 @@ class _RaceManagementScreenState extends State<RaceManagementScreen> {
   Future<void> _openFullscreenEditor(
     BuildContext context,
     RaceManagementController controller,
-    String title,
+    String label,
     Function(String) onSave,
     String initialValue,
   ) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TextEditorScreen(
-          title: title,
+        builder: (context) => FieldEditorScreen(
+          title: label,
           initialValue: initialValue,
-          onChanged: onSave,
+          onAutoSave: (result) => onSave(result.value),
+          initialKey: 'description',
         ),
       ),
     );
     if (result != null) {
-      onSave(result);
+      onSave(result.value);
     }
   }
 }

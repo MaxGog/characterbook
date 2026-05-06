@@ -1,4 +1,4 @@
-import 'package:characterbook/ui/screens/custom_field_edit_screen.dart';
+import 'package:characterbook/ui/screens/field_editor_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:characterbook/data/models/custom_field_model.dart';
 import 'package:characterbook/generated/l10n.dart';
@@ -155,18 +155,22 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
 
   Future<void> _editFieldFullscreen(int index) async {
     final field = _fields[index];
-    final result = await Navigator.push<CustomField>(
+    final s = S.of(context);
+    final result = await Navigator.push<FieldEditorResult>(
+      // ← FieldEditorResult!
       context,
       MaterialPageRoute(
-        builder: (_) => CustomFieldEditScreen(
+        builder: (_) => FieldEditorScreen(
           initialKey: field.key,
           initialValue: field.value,
+          title: field.key.isNotEmpty ? field.key : s.field_name,
+          isTitleEditable: true,
         ),
       ),
     );
     if (result != null) {
       setState(() {
-        _fields[index] = result;
+        _fields[index] = CustomField(result.key, result.value);
       });
       widget.onFieldsChanged(_fields);
     }

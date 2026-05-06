@@ -7,12 +7,12 @@ import 'package:characterbook/data/repositories/folder_repository.dart';
 import 'package:characterbook/data/repositories/race_repository.dart';
 import 'package:characterbook/data/services/folder_service.dart';
 import 'package:characterbook/ui/controllers/character_management_controller.dart';
+import 'package:characterbook/ui/screens/field_editor_screen.dart';
 import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
 import 'package:characterbook/ui/widgets/avatar_picker_widget.dart';
 import 'package:characterbook/ui/widgets/base_edit_page_scaffold.dart';
 import 'package:characterbook/ui/widgets/fields/custom_fields_editor.dart';
 import 'package:characterbook/ui/widgets/fields/custom_text_field.dart';
-import 'package:characterbook/ui/screens/text_editor_screen.dart';
 import 'package:characterbook/ui/widgets/fields/gender_selector_field.dart';
 import 'package:characterbook/ui/widgets/fields/race_selector_field.dart';
 import 'package:characterbook/ui/widgets/reference_image_picker.dart';
@@ -374,17 +374,18 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TextEditorScreen(
+        builder: (context) => FieldEditorScreen(
           title: label,
+          initialKey: 'description',
           initialValue: _getFieldValue(controller, fieldName) ?? '',
-          onChanged: (value) {
-            controller.updateTextField(fieldName, value);
+          onAutoSave: (result) {
+            controller.updateTextField(fieldName, result.value);
           },
         ),
       ),
     );
     if (result != null) {
-      controller.updateTextField(fieldName, result);
+      controller.updateTextField(fieldName, result.value);
     }
   }
 
