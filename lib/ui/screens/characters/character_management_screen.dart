@@ -12,7 +12,7 @@ import 'package:characterbook/ui/widgets/avatar_picker_widget.dart';
 import 'package:characterbook/ui/widgets/base_edit_page_scaffold.dart';
 import 'package:characterbook/ui/widgets/fields/custom_fields_editor.dart';
 import 'package:characterbook/ui/widgets/fields/custom_text_field.dart';
-import 'package:characterbook/ui/widgets/fields/fullscreen_text_editor.dart';
+import 'package:characterbook/ui/screens/text_editor_screen.dart';
 import 'package:characterbook/ui/widgets/fields/gender_selector_field.dart';
 import 'package:characterbook/ui/widgets/fields/race_selector_field.dart';
 import 'package:characterbook/ui/widgets/reference_image_picker.dart';
@@ -374,7 +374,7 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => FullscreenTextEditor(
+        builder: (context) => TextEditorScreen(
           title: label,
           initialValue: _getFieldValue(controller, fieldName) ?? '',
           onChanged: (value) {
