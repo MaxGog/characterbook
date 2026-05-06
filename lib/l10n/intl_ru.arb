@@ -535,6 +535,11 @@
   "swipeActions": "Действия смахивания",
   "leftSwipeAction": "Действие при смахивании влево",
   "rightSwipeAction": "Действие при смахивании вправо",
-  "configureSwipeActions": "Настроить действия смахивания"
+  "configureSwipeActions": "Настроить действия смахивания",
+
+  "undo": "Вернуть",
+  "image_removed": "Изображение удалено",
+  "field_removed": "Поле удалено",
+  "changes_saved": "Изменения успешно сохранены"
 
 }

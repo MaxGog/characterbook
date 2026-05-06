@@ -1280,6 +1280,16 @@ class S {
     );
   }
 
+  /// `Предпросмотр`
+  String get preview {
+    return Intl.message(
+      'Предпросмотр',
+      name: 'preview',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Системные цвета`
   String get use_system_colors {
     return Intl.message(
@@ -4167,16 +4177,6 @@ class S {
     );
   }
 
-  /// `Предпросмотр`
-  String get preview {
-    return Intl.message(
-      'Предпросмотр',
-      name: 'preview',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Сгенерировать образец`
   String get generate_sample {
     return Intl.message(
@@ -5032,6 +5032,46 @@ class S {
     return Intl.message(
       'Настроить действия смахивания',
       name: 'configureSwipeActions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Вернуть`
+  String get undo {
+    return Intl.message(
+      'Вернуть',
+      name: 'undo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Изображение удалено`
+  String get image_removed {
+    return Intl.message(
+      'Изображение удалено',
+      name: 'image_removed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Поле удалено`
+  String get field_removed {
+    return Intl.message(
+      'Поле удалено',
+      name: 'field_removed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Изменения успешно сохранены`
+  String get changes_saved {
+    return Intl.message(
+      'Изменения успешно сохранены',
+      name: 'changes_saved',
       desc: '',
       args: [],
     );

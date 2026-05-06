@@ -411,6 +411,11 @@
   "swipeActions": "Swipe actions",
   "leftSwipeAction": "Left swipe action",
   "rightSwipeAction": "Right swipe action",
-  "configureSwipeActions": "Configure swipe actions"
+  "configureSwipeActions": "Configure swipe actions",
+
+  "undo": "Undo",
+  "image_removed": "Image removed",
+  "field_removed": "Field removed",
+  "changes_saved": "The changes are saved"
 
 }

@@ -163,6 +163,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Статистика календаря"),
         "calendar_view": MessageLookupByLibrary.simpleMessage("Вид календаря"),
         "cancel": MessageLookupByLibrary.simpleMessage("Отмена"),
+        "changes_saved":
+            MessageLookupByLibrary.simpleMessage("Изменения успешно сохранены"),
         "character": MessageLookupByLibrary.simpleMessage("Персонаж"),
         "character_avatar":
             MessageLookupByLibrary.simpleMessage("Аватар персонажа"),
@@ -372,6 +374,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "field_name": MessageLookupByLibrary.simpleMessage("Название поля"),
         "field_name_hint":
             MessageLookupByLibrary.simpleMessage("Введите название поля"),
+        "field_removed": MessageLookupByLibrary.simpleMessage("Поле удалено"),
         "field_value": MessageLookupByLibrary.simpleMessage("Значение поля"),
         "field_value_hint":
             MessageLookupByLibrary.simpleMessage("Введите значение поля"),
@@ -437,6 +440,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "image_picker_error": m10,
         "image_quality":
             MessageLookupByLibrary.simpleMessage("Качество изображений"),
+        "image_removed":
+            MessageLookupByLibrary.simpleMessage("Изображение удалено"),
         "import": MessageLookupByLibrary.simpleMessage("Импорт"),
         "import_cancelled":
             MessageLookupByLibrary.simpleMessage("Импорт отменен"),
@@ -804,6 +809,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "total_count": m26,
         "total_events": MessageLookupByLibrary.simpleMessage("Всего событий"),
         "understood": MessageLookupByLibrary.simpleMessage("Понятно"),
+        "undo": MessageLookupByLibrary.simpleMessage("Вернуть"),
         "unsaved_changes_content": MessageLookupByLibrary.simpleMessage(
             "У вас есть несохранённые изменения. Хотите сохранить перед выходом?"),
         "unsaved_changes_title":

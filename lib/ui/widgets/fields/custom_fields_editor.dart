@@ -113,9 +113,9 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('S.of(context).field_removed'),
+        content: Text(S.of(context).field_removed),
         action: SnackBarAction(
-          label: 'S.of(context).undo',
+          label: S.of(context).undo,
           onPressed: () {
             setState(() {
               _fields.insert(index, removedField);
@@ -442,7 +442,7 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
 
   Widget _buildHorizontalLayout(S s, ThemeData theme) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Row(
           children: [
@@ -467,7 +467,7 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: _fields.asMap().entries.map((entry) {
               final index = entry.key;
               return _buildHorizontalFieldItem(index, s, theme);

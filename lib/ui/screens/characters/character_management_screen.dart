@@ -8,9 +8,7 @@ import 'package:characterbook/data/repositories/race_repository.dart';
 import 'package:characterbook/data/services/folder_service.dart';
 import 'package:characterbook/ui/controllers/character_management_controller.dart';
 import 'package:characterbook/ui/screens/field_editor_screen.dart';
-import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
 import 'package:characterbook/ui/widgets/avatar_picker_widget.dart';
-import 'package:characterbook/ui/widgets/base_edit_page_scaffold.dart';
 import 'package:characterbook/ui/widgets/fields/custom_fields_editor.dart';
 import 'package:characterbook/ui/widgets/fields/custom_text_field.dart';
 import 'package:characterbook/ui/widgets/fields/gender_selector_field.dart';
@@ -29,12 +27,14 @@ class CharacterManagementScreen extends StatefulWidget {
   const CharacterManagementScreen({super.key, this.character, this.template});
 
   @override
-  State<CharacterManagementScreen> createState() => _CharacterManagementScreenState();
+  State<CharacterManagementScreen> createState() =>
+      _CharacterManagementScreenState();
 }
 
 class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
-  static const _sectionSpacing = 24.0;
+  static const _sectionSpacing = 32.0;
   static const _fieldSpacing = 16.0;
+  static const _maxFormWidth = 600.0;
 
   final GlobalKey<FormState> _formKey = GlobalKey();
   final ImagePicker _picker = ImagePicker();
@@ -52,55 +52,49 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
       child: Consumer<CharacterManagementController>(
         builder: (context, controller, child) {
           final s = S.of(context);
-          final title = _buildPageTitle(s);
-
-          return BaseEditPageScaffold(
-            onWillPop: () async {
-              if (controller.hasUnsavedChanges) {
-                final shouldLeave = await showDialog<bool>(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    title: Text(s.unsaved_changes_title),
-                    content: Text(s.unsaved_changes_content),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(ctx, false),
-                        child: Text(s.cancel),
+          return Scaffold(
+            body: WillPopScope(
+              onWillPop: () => _onWillPop(context, controller),
+              child: CustomScrollView(
+                slivers: [
+                  _buildSliverAppBar(context, controller, s),
+                  SliverToBoxAdapter(
+                    child: SafeArea(
+                      minimum: EdgeInsets.all(16),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints:
+                              const BoxConstraints(maxWidth: _maxFormWidth),
+                          child: Form(
+                            key: _formKey,
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                const SizedBox(height: _sectionSpacing),
+                                _buildFolderAndTagsSection(context, controller),
+                                if (widget.template != null)
+                                  _buildTemplateChip(context),
+                                const SizedBox(height: _sectionSpacing),
+                                Center(
+                                  child: _buildAvatarSection(context, controller),
+                                ),
+                                const SizedBox(height: _sectionSpacing),
+                                _buildNameField(context, controller),
+                                const SizedBox(height: _fieldSpacing),
+                                _buildBasicInfoSection(context, controller),
+                                const SizedBox(height: _sectionSpacing),
+                                _buildDetailsSection(context, controller),
+                                const SizedBox(height: _sectionSpacing),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(ctx, true),
-                        child: Text(s.close),
-                      ),
-                    ],
+                    ),
                   ),
-                );
-                return shouldLeave ?? false;
-              }
-              return true;
-            },
-            appBar: CommonEditAppBar(
-              title: title,
-              onSave: () => _saveCharacter(controller, S.of(context)),
-              saveTooltip: S.of(context).save,
-            ),
-            body: GestureDetector(
-              onTap: () => FocusScope.of(context).unfocus(),
-              child: Form(
-                key: _formKey,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildFolderAndTagsSection(context, controller),
-                    if (widget.template != null) _buildTemplateChip(context),
-                    const SizedBox(height: _sectionSpacing),
-                    _buildAvatarSection(context, controller),
-                    const SizedBox(height: _sectionSpacing),
-                    _buildNameField(context, controller),
-                    const SizedBox(height: _fieldSpacing),
-                    _buildGroupedFields(context, controller),
-                  ],
-                ),
+                ],
               ),
             ),
           );
@@ -109,8 +103,58 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
     );
   }
 
+  Widget _buildSliverAppBar(
+    BuildContext context,
+    CharacterManagementController controller,
+    S s,
+  ) {
+    final title = _buildPageTitle(s);
+    return SliverAppBar.large(
+      title: Text(title),
+      pinned: true,
+      floating: true,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.save),
+          tooltip: s.save,
+          onPressed: () => _saveCharacter(controller, s),
+        ),
+      ],
+    );
+  }
+
+  Future<bool> _onWillPop(
+    BuildContext context,
+    CharacterManagementController controller,
+  ) async {
+    if (controller.hasUnsavedChanges) {
+      final s = S.of(context);
+      final shouldLeave = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(s.unsaved_changes_title),
+          content: Text(s.unsaved_changes_content),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(s.cancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(s.close),
+            ),
+          ],
+        ),
+      );
+      return shouldLeave ?? false;
+    }
+    return true;
+  }
+
   Future<void> _saveCharacter(
-      CharacterManagementController controller, S s) async {
+    CharacterManagementController controller,
+    S s,
+  ) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       final success = await controller.save();
@@ -118,8 +162,9 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
 
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(s.save)),
+          SnackBar(content: Text(s.changes_saved)),
         );
+        Navigator.of(context).pop(true);
       } else {
         showDialog(
           context: context,
@@ -138,79 +183,83 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
     }
   }
 
-  Widget _buildGroupedFields(
-      BuildContext context, CharacterManagementController controller) {
+  Widget _buildBasicInfoSection(
+    BuildContext context,
+    CharacterManagementController controller,
+  ) {
     final s = S.of(context);
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        ExpansionTile(
-          title: Text(s.basic_info),
-          initiallyExpanded: true,
-          children: [
-            const SizedBox(height: _fieldSpacing),
-            _buildAgeAndGenderRow(context, controller),
-            if (_shouldShowField('race'))
-              Padding(
-                padding: const EdgeInsets.only(top: _fieldSpacing),
-                child: RaceSelectorField(
-                  initialRace: controller.character.race,
-                  onChanged: (race) => controller.updateRace(race),
-                ),
-              ),
-            if (_shouldShowField('referenceImage'))
-              Padding(
-                padding: const EdgeInsets.only(top: _fieldSpacing),
-                child: ReferenceImagePicker(
-                  imageBytes: controller.character.referenceImageBytes,
-                  onPickImage: () => _pickReferenceImage(context, controller),
-                  title: s.reference_image,
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: _fieldSpacing),
-        ExpansionTile(
-          title: Text(s.details),
-          initiallyExpanded: false,
-          children: [
-            CustomFieldsEditor(
-              initialFields: controller.customFields,
-              onFieldsChanged: controller.setCustomFields,
-              verticalLayout: true,
-              useFullscreenEditor: true,
+        _buildAgeAndGenderRow(context, controller),
+        if (_shouldShowField('race'))
+          Padding(
+            padding: const EdgeInsets.only(top: _fieldSpacing),
+            child: RaceSelectorField(
+              initialRace: controller.character.race,
+              onChanged: (race) => controller.updateRace(race),
             ),
-            if (_shouldShowField('additionalImages'))
-              Padding(
-                padding: const EdgeInsets.only(top: _fieldSpacing),
-                child: ImageGallerySection(
-                  images: controller.additionalImages,
-                  onAddImage: () => _pickAdditionalImage(context, controller),
-                  onRemoveImage: (index) =>
-                      _removeAdditionalImage(context, controller, index),
-                  title: s.additional_images,
-                  emptyText: s.no_additional_images,
-                  addTooltip: s.add_picture,
-                ),
-              ),
-            ..._buildFullscreenFields(context, controller),
-          ],
-        ),
+          ),
+        if (_shouldShowField('referenceImage'))
+          Padding(
+            padding: const EdgeInsets.only(top: _fieldSpacing),
+            child: ReferenceImagePicker(
+              imageBytes: controller.character.referenceImageBytes,
+              onPickImage: () => _pickReferenceImage(context, controller),
+              title: s.reference_image,
+            ),
+          ),
       ],
     );
   }
 
-  void _removeAdditionalImage(BuildContext context,
-      CharacterManagementController controller, int index) {
-    final removedImage =
-        controller.additionalImages[index];
+  Widget _buildDetailsSection(
+    BuildContext context,
+    CharacterManagementController controller,
+  ) {
+    final s = S.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        CustomFieldsEditor(
+          initialFields: controller.customFields,
+          onFieldsChanged: controller.setCustomFields,
+          verticalLayout: true,
+          useFullscreenEditor: true,
+        ),
+        if (_shouldShowField('additionalImages'))
+          Padding(
+            padding: const EdgeInsets.only(top: _fieldSpacing),
+            child: ImageGallerySection(
+              images: controller.additionalImages,
+              onAddImage: () => _pickAdditionalImage(context, controller),
+              onRemoveImage: (index) =>
+                  _removeAdditionalImage(context, controller, index),
+              title: s.additional_images,
+              emptyText: s.no_additional_images,
+              addTooltip: s.add_picture,
+            ),
+          ),
+        ..._buildFullscreenFields(context, controller),
+      ],
+    );
+  }
+
+  void _removeAdditionalImage(
+    BuildContext context,
+    CharacterManagementController controller,
+    int index,
+  ) {
+    final removedImage = controller.additionalImages[index];
     controller.removeAdditionalImage(index);
+    final s = S.of(context);
 
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("S.of(context).image_removed"),
+        content: Text(s.image_removed),
         action: SnackBarAction(
-          label: "S.of(context).undo",
+          label: s.undo,
           onPressed: () {
             controller.insertAdditionalImage(index, removedImage);
           },
@@ -229,7 +278,9 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
   }
 
   List<Widget> _buildFullscreenFields(
-      BuildContext context, CharacterManagementController controller) {
+    BuildContext context,
+    CharacterManagementController controller,
+  ) {
     final s = S.of(context);
     final fields = [
       ('appearance', s.appearance),
@@ -239,25 +290,34 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
       ('other', s.other),
     ];
 
-    return fields.where((e) => _shouldShowField(e.$1)).map((e) {
-      final (fieldName, label) = e;
-      return Padding(
-        padding: const EdgeInsets.only(top: _fieldSpacing),
-        child: _FullscreenTextField(
-          label: label,
-          value: _getFieldValue(controller, fieldName) ?? '',
-          onChanged: (value) => controller.updateTextField(fieldName, value),
-          onTap: () =>
-              _openFullscreenEditor(context, controller, fieldName, label),
-          maxLines: 3,
-        ),
-      );
-    }).toList();
+    final List<Widget> widgets = [];
+    for (final entry in fields) {
+      final fieldName = entry.$1;
+      final label = entry.$2;
+      if (_shouldShowField(fieldName)) {
+        widgets.add(
+          Padding(
+            padding: const EdgeInsets.only(top: _fieldSpacing),
+            child: _FullscreenTextField(
+              label: label,
+              value: _getFieldValue(controller, fieldName) ?? '',
+              onChanged: (value) =>
+                  controller.updateTextField(fieldName, value),
+              onTap: () =>
+                  _openFullscreenEditor(context, controller, fieldName, label),
+              maxLines: 3,
+            ),
+          ),
+        );
+      }
+    }
+    return widgets;
   }
 
-
   Widget _buildFolderAndTagsSection(
-      BuildContext context, CharacterManagementController controller) {
+    BuildContext context,
+    CharacterManagementController controller,
+  ) {
     final folderService = context.read<FolderService>();
     return TagsAndFolderSection(
       tags: controller.tags,
@@ -287,7 +347,9 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
   }
 
   Widget _buildAvatarSection(
-      BuildContext context, CharacterManagementController controller) {
+    BuildContext context,
+    CharacterManagementController controller,
+  ) {
     return AvatarPicker(
       currentAvatar: controller.character.imageBytes,
       onAvatarChanged: (bytes) {
@@ -297,7 +359,9 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
   }
 
   Widget _buildNameField(
-      BuildContext context, CharacterManagementController controller) {
+    BuildContext context,
+    CharacterManagementController controller,
+  ) {
     final s = S.of(context);
     return CustomTextField(
       label: s.name,
@@ -312,11 +376,14 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
   }
 
   Widget _buildAgeAndGenderRow(
-      BuildContext context, CharacterManagementController controller) {
+    BuildContext context,
+    CharacterManagementController controller,
+  ) {
     final s = S.of(context);
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (_shouldShowField('age')) ...[
+        if (_shouldShowField('age'))
           Expanded(
             child: CustomTextField(
               label: s.age,
@@ -335,8 +402,8 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
                   : null,
             ),
           ),
-          if (_shouldShowField('gender')) const SizedBox(width: _fieldSpacing),
-        ],
+        if (_shouldShowField('age') && _shouldShowField('gender'))
+          const SizedBox(width: _fieldSpacing),
         if (_shouldShowField('gender'))
           Expanded(
             child: GenderSelectorField(
@@ -348,7 +415,10 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
     );
   }
 
-  String? _getFieldValue(CharacterManagementController controller, String fieldName) {
+  String? _getFieldValue(
+    CharacterManagementController controller,
+    String fieldName,
+  ) {
     switch (fieldName) {
       case 'appearance':
         return controller.character.appearance;
@@ -390,7 +460,9 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
   }
 
   Future<void> _pickReferenceImage(
-      BuildContext context, CharacterManagementController controller) async {
+    BuildContext context,
+    CharacterManagementController controller,
+  ) async {
     try {
       final image = await _picker.pickImage(source: ImageSource.gallery);
       if (image == null) return;
@@ -403,7 +475,9 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
   }
 
   Future<void> _pickAdditionalImage(
-      BuildContext context, CharacterManagementController controller) async {
+    BuildContext context,
+    CharacterManagementController controller,
+  ) async {
     try {
       final image = await _picker.pickImage(
         source: ImageSource.gallery,

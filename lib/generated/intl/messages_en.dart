@@ -118,6 +118,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Cache cleanup..."),
         "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "changes_saved":
+            MessageLookupByLibrary.simpleMessage("The changes are saved"),
         "character": MessageLookupByLibrary.simpleMessage("Character"),
         "character_avatar":
             MessageLookupByLibrary.simpleMessage("Character Avatar"),
@@ -281,6 +283,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "field_name": MessageLookupByLibrary.simpleMessage("Field Name"),
         "field_name_hint":
             MessageLookupByLibrary.simpleMessage("Enter field name"),
+        "field_removed": MessageLookupByLibrary.simpleMessage("Field removed"),
         "field_value": MessageLookupByLibrary.simpleMessage("Field Value"),
         "field_value_hint":
             MessageLookupByLibrary.simpleMessage("Enter field value"),
@@ -325,6 +328,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "hours_ago": m9,
         "image": MessageLookupByLibrary.simpleMessage("Image"),
         "image_picker_error": m10,
+        "image_removed": MessageLookupByLibrary.simpleMessage("Image removed"),
         "import": MessageLookupByLibrary.simpleMessage("Import"),
         "import_cancelled":
             MessageLookupByLibrary.simpleMessage("Import cancelled"),
@@ -569,6 +573,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "theme": MessageLookupByLibrary.simpleMessage("Theme"),
         "timeout_error": MessageLookupByLibrary.simpleMessage("Timeout"),
         "to": MessageLookupByLibrary.simpleMessage("To"),
+        "undo": MessageLookupByLibrary.simpleMessage("Undo"),
         "unsaved_changes_content": MessageLookupByLibrary.simpleMessage(
             "You have unsaved changes. Do you want to save before exiting?"),
         "unsaved_changes_title":

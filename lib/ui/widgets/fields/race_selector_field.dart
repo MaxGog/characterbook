@@ -94,10 +94,6 @@ class _RaceSelectorFieldState extends State<RaceSelectorField> {
             ),
           ],
         ),
-        if (_selectedRace != null) ...[
-          const SizedBox(height: 8),
-          Text(_selectedRace!.description, style: theme.textTheme.bodyMedium),
-        ],
       ],
     );
   }

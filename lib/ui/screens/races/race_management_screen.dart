@@ -6,10 +6,7 @@ import 'package:characterbook/data/repositories/race_repository.dart';
 import 'package:characterbook/data/services/folder_service.dart';
 import 'package:characterbook/ui/controllers/race_management_controller.dart';
 import 'package:characterbook/ui/screens/field_editor_screen.dart';
-import 'package:characterbook/ui/widgets/appbar/common_edit_app_bar.dart';
 import 'package:characterbook/ui/widgets/avatar_picker_widget.dart';
-import 'package:characterbook/ui/widgets/base_edit_page_scaffold.dart';
-import 'package:characterbook/ui/widgets/buttons/save_button_widget.dart';
 import 'package:characterbook/ui/widgets/fields/custom_text_field.dart';
 import 'package:characterbook/ui/widgets/fields/fullscreen_field_preview.dart';
 import 'package:characterbook/ui/widgets/sections/tags_and_folder_section.dart';
@@ -28,6 +25,8 @@ class RaceManagementScreen extends StatefulWidget {
 class _RaceManagementScreenState extends State<RaceManagementScreen> {
   static const _logoSize = 120.0;
   static const _fieldSpacing = 16.0;
+  static const _sectionSpacing = 24.0;
+  static const _maxFormWidth = 600.0;
 
   final GlobalKey<FormState> _formKey = GlobalKey();
 
@@ -42,73 +41,48 @@ class _RaceManagementScreenState extends State<RaceManagementScreen> {
       child: Consumer<RaceManagementController>(
         builder: (context, controller, child) {
           final s = S.of(context);
-          final title = widget.race == null ? s.new_race : s.edit_race;
-
-          return BaseEditPageScaffold(
-            onWillPop: () async {
-              if (controller.hasUnsavedChanges) {
-                final shouldLeave = await showDialog<bool>(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    title: Text(s.unsaved_changes_title),
-                    content: Text(s.unsaved_changes_content),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(ctx, false),
-                        child: Text(s.cancel),
+          return Scaffold(
+            body: WillPopScope(
+              onWillPop: () => _onWillPop(context, controller),
+              child: CustomScrollView(
+                slivers: [
+                  _buildSliverAppBar(context, controller, s),
+                  SliverToBoxAdapter(
+                    child: SafeArea(
+                      minimum: const EdgeInsets.all(16),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints:
+                              const BoxConstraints(maxWidth: _maxFormWidth),
+                          child: Form(
+                            key: _formKey,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                const SizedBox(height: _sectionSpacing),
+                                _buildFolderAndTagsSection(context, controller),
+                                const SizedBox(height: _sectionSpacing),
+                                Center(
+                                  child: _buildLogoSection(context, controller),
+                                ),
+                                const SizedBox(height: _sectionSpacing),
+                                _buildNameField(context, controller),
+                                const SizedBox(height: _fieldSpacing),
+                                _buildDescriptionField(context, controller),
+                                const SizedBox(height: _fieldSpacing),
+                                _buildBiologyField(context, controller),
+                                const SizedBox(height: _fieldSpacing),
+                                _buildBackstoryField(context, controller),
+                                const SizedBox(height: _sectionSpacing),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(ctx, true),
-                        child: Text(s.close),
-                      ),
-                    ],
-                  ),
-                );
-                return shouldLeave ?? false;
-              }
-              return true;
-            },
-            appBar: CommonEditAppBar(
-              title: title,
-              onSave: () async {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  final success = await controller.save();
-                  if (success && mounted) {
-                    Navigator.pop(context, true);
-                  }
-                }
-              },
-              saveTooltip: s.save,
-            ),
-            body: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildFolderAndTagsSection(context, controller),
-                  const SizedBox(height: 24),
-                  _buildLogoSection(context, controller),
-                  const SizedBox(height: 24),
-                  _buildNameField(context, controller),
-                  const SizedBox(height: _fieldSpacing),
-                  _buildDescriptionField(context, controller),
-                  const SizedBox(height: _fieldSpacing),
-                  _buildBiologyField(context, controller),
-                  const SizedBox(height: _fieldSpacing),
-                  _buildBackstoryField(context, controller),
-                  const SizedBox(height: 32),
-                  SaveButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        final success = await controller.save();
-                        if (success && mounted) {
-                          Navigator.pop(context, true);
-                        }
-                      }
-                    },
-                    text: s.save_race,
+                    ),
                   ),
                 ],
               ),
@@ -119,8 +93,90 @@ class _RaceManagementScreenState extends State<RaceManagementScreen> {
     );
   }
 
+  Widget _buildSliverAppBar(
+    BuildContext context,
+    RaceManagementController controller,
+    S s,
+  ) {
+    final title = widget.race == null ? s.new_race : s.edit_race;
+    return SliverAppBar.large(
+      title: Text(title),
+      pinned: true,
+      floating: true,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.save),
+          tooltip: s.save,
+          onPressed: () => _saveRace(controller, s),
+        ),
+      ],
+    );
+  }
+
+  Future<bool> _onWillPop(
+    BuildContext context,
+    RaceManagementController controller,
+  ) async {
+    if (controller.hasUnsavedChanges) {
+      final s = S.of(context);
+      final shouldLeave = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(s.unsaved_changes_title),
+          content: Text(s.unsaved_changes_content),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(s.cancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(s.close),
+            ),
+          ],
+        ),
+      );
+      return shouldLeave ?? false;
+    }
+    return true;
+  }
+
+  Future<void> _saveRace(
+    RaceManagementController controller,
+    S s,
+  ) async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      final success = await controller.save();
+      if (!mounted) return;
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(s.save)),
+        );
+        Navigator.of(context).pop(true);
+      } else {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(s.error),
+            content: Text(controller.error ?? s.error),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(s.ok),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
+
   Widget _buildFolderAndTagsSection(
-      BuildContext context, RaceManagementController controller) {
+    BuildContext context,
+    RaceManagementController controller,
+  ) {
     final folderService = context.read<FolderService>();
     return TagsAndFolderSection(
       tags: controller.tags,
@@ -134,7 +190,9 @@ class _RaceManagementScreenState extends State<RaceManagementScreen> {
   }
 
   Widget _buildLogoSection(
-      BuildContext context, RaceManagementController controller) {
+    BuildContext context,
+    RaceManagementController controller,
+  ) {
     return AvatarPicker(
       currentAvatar: controller.race.logo,
       onAvatarChanged: (bytes) => controller.updateLogo(bytes),
@@ -142,7 +200,10 @@ class _RaceManagementScreenState extends State<RaceManagementScreen> {
     );
   }
 
-  Widget _buildNameField(BuildContext context, RaceManagementController controller) {
+  Widget _buildNameField(
+    BuildContext context,
+    RaceManagementController controller,
+  ) {
     final s = S.of(context);
     return CustomTextField(
       label: s.enter_race_name,
@@ -157,7 +218,9 @@ class _RaceManagementScreenState extends State<RaceManagementScreen> {
   }
 
   Widget _buildDescriptionField(
-      BuildContext context, RaceManagementController controller) {
+    BuildContext context,
+    RaceManagementController controller,
+  ) {
     final s = S.of(context);
     return FullscreenFieldPreview(
       label: s.description,
@@ -174,7 +237,9 @@ class _RaceManagementScreenState extends State<RaceManagementScreen> {
   }
 
   Widget _buildBiologyField(
-      BuildContext context, RaceManagementController controller) {
+    BuildContext context,
+    RaceManagementController controller,
+  ) {
     final s = S.of(context);
     return FullscreenFieldPreview(
       label: s.biology,
@@ -191,7 +256,9 @@ class _RaceManagementScreenState extends State<RaceManagementScreen> {
   }
 
   Widget _buildBackstoryField(
-      BuildContext context, RaceManagementController controller) {
+    BuildContext context,
+    RaceManagementController controller,
+  ) {
     final s = S.of(context);
     return FullscreenFieldPreview(
       label: s.backstory,
@@ -225,7 +292,7 @@ class _RaceManagementScreenState extends State<RaceManagementScreen> {
         ),
       ),
     );
-    if (result != null) {
+    if (result != null && mounted) {
       onSave(result.value);
     }
   }
