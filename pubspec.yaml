@@ -72,6 +72,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
+  
+  mocktail: ^1.0.3
+  
   flutter_lints: ^6.0.0
 
   build_runner: ^2.4.13
@@ -99,3 +104,17 @@ flutter_launcher_icons:
   android: false
   ios: true
   image_path: "assets/icon.svg"
+
+
+msix_config:
+  display_name: CharacterBook
+  publisher_display_name: MaxGog
+  identity_name: 52304FeatherProjects.CBook
+  msix_version: 1.8.0.0
+  publisher: CN=B9003DCF-59B1-401C-9896-9F045D0A6C6D
+  logo_path: assets/iconapp.png
+  start_menu_icon_path: assets/iconapp.png
+  tile_icon_path: assets/iconapp.png
+  capabilities: internetClient
+  architecture: x64
+  install_mode: allow_elevation
