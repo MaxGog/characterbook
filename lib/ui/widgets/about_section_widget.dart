@@ -56,7 +56,7 @@ class AboutSection extends StatelessWidget {
           leading:
               Icon(Icons.info_outline, color: colorScheme.onSurfaceVariant),
           title: Text(s.version),
-          trailing: Text('26.6.0', style: theme.textTheme.bodyLarge),
+          trailing: Text('26.6.1', style: theme.textTheme.bodyLarge),
         ),
         const SizedBox(height: 8),
         ListTile(
@@ -78,7 +78,7 @@ class AboutSection extends StatelessWidget {
           onTap: () => showLicensePage(
               context: context,
               applicationName: s.app_name,
-              applicationVersion: '26.6.0',
+              applicationVersion: '26.6.1',
               applicationIcon:
                   Image.asset('assets/iconapp.png', width: 50, height: 50),
               useRootNavigator: true),
@@ -98,14 +98,15 @@ class AboutSection extends StatelessWidget {
           spacing: 4,
           runSpacing: 4,
           children: [
-            _buildContributorChip(context, '🐺Артём Голубев'),
             _buildContributorChip(context, '😎Евгений Стратий'),
             _buildContributorChip(context, 'Максим Семенков'),
+            _buildContributorChip(context, '☠️Артём Актимиров'),
             _buildContributorChip(context, '🐼Богдан Чернов'),
             _buildContributorChip(context, 'Александр Черняев'),
             _buildContributorChip(context, 'Мария Война'),
             _buildContributorChip(context, 'Дарья Воробьёва'),
             _buildContributorChip(context, '🦊Михаил Антонюк'),
+            _buildContributorChip(context, '🐺Артём Голубев'),
             _buildContributorChip(context, 'Алексей Головкин'),
             _buildContributorChip(context, 'Никита Жевнерович'),
             _buildContributorChip(context, '🦝Данила Ганьков'),
