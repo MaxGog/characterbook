@@ -6,10 +6,12 @@ import 'package:characterbook/data/models/note_model.dart';
 import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/models/relationship_model.dart';
 import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/data/services/hive_migration.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class HiveService {
+  static const _hiveDirectoryName = 'Characterbook data';
   static bool _isInitialized = false;
 
   static Box<Character>? _characterBox;
@@ -32,7 +34,8 @@ class HiveService {
 
   static Future<void> initializeAll() async {
     if (!_isInitialized) {
-      await Hive.initFlutter('Characterbook data');
+      await migrateLegacyHiveFiles();
+      await Hive.initFlutter(_hiveDirectoryName);
       _registerAdapters();
       _isInitialized = true;
     }
