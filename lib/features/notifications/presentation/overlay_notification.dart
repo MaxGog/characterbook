@@ -1,15 +1,18 @@
-import 'package:characterbook/services/app_navigator.dart';
+import 'package:characterbook/core/app_notification_actions.dart';
 import 'package:flutter/material.dart';
 
-enum OverlayNotificationType { success, error, info }
+class OverlayNotificationService implements AppNotificationActions {
+  final GlobalKey<NavigatorState> navigatorKey;
 
-class OverlayNotification {
-  static void show(
+  const OverlayNotificationService({required this.navigatorKey});
+
+  @override
+  void showNotification(
     String message, {
-    OverlayNotificationType type = OverlayNotificationType.success,
+    AppNotificationType type = AppNotificationType.success,
     Duration duration = const Duration(seconds: 2),
   }) {
-    final navigator = AppNavigator.navigator;
+    final navigator = navigatorKey.currentState;
     if (navigator == null) return;
 
     final overlay = navigator.overlay;
@@ -36,7 +39,7 @@ class OverlayNotification {
 
 class _NotificationWidget extends StatefulWidget {
   final String message;
-  final OverlayNotificationType type;
+  final AppNotificationType type;
   final VoidCallback onDismiss;
 
   const _NotificationWidget({
@@ -78,24 +81,24 @@ class _NotificationWidgetState extends State<_NotificationWidget>
     super.dispose();
   }
 
-  Color _backgroundColor(ThemeData theme, OverlayNotificationType type) {
+  Color _backgroundColor(ThemeData theme, AppNotificationType type) {
     switch (type) {
-      case OverlayNotificationType.success:
+      case AppNotificationType.success:
         return theme.colorScheme.primaryContainer;
-      case OverlayNotificationType.error:
+      case AppNotificationType.error:
         return theme.colorScheme.errorContainer;
-      case OverlayNotificationType.info:
+      case AppNotificationType.info:
         return theme.colorScheme.secondaryContainer;
     }
   }
 
-  Color _textColor(ThemeData theme, OverlayNotificationType type) {
+  Color _textColor(ThemeData theme, AppNotificationType type) {
     switch (type) {
-      case OverlayNotificationType.success:
+      case AppNotificationType.success:
         return theme.colorScheme.onPrimaryContainer;
-      case OverlayNotificationType.error:
+      case AppNotificationType.error:
         return theme.colorScheme.onErrorContainer;
-      case OverlayNotificationType.info:
+      case AppNotificationType.info:
         return theme.colorScheme.onSecondaryContainer;
     }
   }
@@ -136,7 +139,7 @@ class _NotificationWidgetState extends State<_NotificationWidget>
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black.withValues(alpha: 0.2),
                                 blurRadius: 12,
                                 offset: const Offset(0, 6),
                               ),

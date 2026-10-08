@@ -9,9 +9,9 @@ import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/services/character_service.dart';
 import 'package:characterbook/data/services/note_service.dart';
 import 'package:characterbook/data/services/race_service.dart';
+import 'package:characterbook/core/local_notification_actions.dart';
 import 'package:characterbook/services/app_navigator.dart';
 import 'package:characterbook/services/device_calendar_service.dart';
-import 'package:characterbook/services/notification_service.dart';
 import 'package:characterbook/ui/widgets/modals/character_modal_card.dart';
 import 'package:characterbook/ui/widgets/modals/custom_event_modal.dart';
 import 'package:characterbook/ui/widgets/modals/race_modal_card.dart';
@@ -35,7 +35,7 @@ class CalendarScreen extends StatelessWidget {
     final noteService = context.read<NoteService>();
     final customEventService = context.read<CustomEventService>();
     final deviceCalendarService = context.read<DeviceCalendarService>();
-    final localNotificationService = context.read<LocalNotificationService>();
+    final localNotificationService = context.read<LocalNotificationActions>();
 
     return ChangeNotifierProvider(
       create: (_) => CalendarController(

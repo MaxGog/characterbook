@@ -6,7 +6,7 @@ import 'package:characterbook/data/repositories/note_repository.dart';
 import 'package:characterbook/ui/controllers/note_management_controller.dart';
 import 'package:characterbook/ui/widgets/avatar_widget.dart';
 import 'package:characterbook/ui/widgets/markdown_context_menu.dart';
-import 'package:characterbook/ui/widgets/overlay_notification.dart';
+import 'package:characterbook/services/app_navigator.dart';
 import 'package:characterbook/ui/widgets/tags_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -116,10 +116,7 @@ class _NoteManagementScreenState extends State<NoteManagementScreen> {
       );
       return;
     }
-    OverlayNotification.show(
-      S.of(context).changes_saved,
-      type: OverlayNotificationType.success,
-    );
+    AppNavigator.showSuccess(S.of(context).changes_saved);
     Navigator.of(context).pop(true);
   }
 

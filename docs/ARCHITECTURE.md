@@ -14,6 +14,9 @@
 │   │   │   ├── data/         # Адаптеры репозиториев, файлов и Google Drive
 │   │   │   ├── domain/       # Порты, контракт хранилища и use case
 │   │   │   └── presentation/ # Экран настроек, контроллер, автокопирование
+│   │   ├── notifications/    # Локальные напоминания и in-app уведомления
+│   │   │   ├── data/         # Адаптер flutter_local_notifications
+│   │   │   └── presentation/ # Оверлей уведомлений
 │   │   └── sharing/          # Системный шаринг, clipboard и экспорт файлов
 │   │       ├── data/
 │   │       │   ├── file_share_service.dart
@@ -29,7 +32,9 @@
 │   │   └── custom_field_adapter.dart
 │   ├── core/                 # Ядро приложения, базовые сущности
 │   │   ├── base_entity.dart
-│   │   └── file_share_actions.dart
+│   │   ├── app_notification_actions.dart
+│   │   ├── file_share_actions.dart
+│   │   └── local_notification_actions.dart
 │   ├── data/                 # Слой данных
 │   │   ├── enums/            # Перечисления
 │   │   │   ├── calendar_event_type_enum.dart
@@ -77,7 +82,6 @@
 │   │   └── theme_provider.dart
 │   ├── services/             # Внешние сервисы и утилиты
 │   │   ├── date_formatter.dart
-│   │   ├── notification_service.dart   # Локальные уведомления
 │   │   └── ...
 │   └── ui/                   # Компоненты пользовательского интерфейса
 │       ├── controllers/      # Контроллеры для экранов
@@ -148,7 +152,8 @@ main.dart                     # Точка входа в приложение
 
 ### Календарь и уведомления
 - table_calendar — виджет календаря
-- flutter_local_notifications — локальные напоминания о событиях
+- `features/notifications/data/LocalNotificationService` — локальные напоминания через flutter_local_notifications
+- `features/notifications/presentation/OverlayNotificationService` — внутриигровые уведомления-оверлеи
 
 ### Форматирование
 - flutter_markdown — отображение Markdown в описаниях
@@ -156,6 +161,7 @@ main.dart                     # Точка входа в приложение
 ## Модульная структура
 Разделение приложения на модули выполняется постепенно. Сейчас в проекте выделяются слои и функциональные модули, но архитектура ещё не является полностью независимой clean architecture:
 - Ядро (`core/`) — базовые сущности предметной области.
+- Общие контракты (`core/`) — интерфейсы интеграции, не привязанные к реализациям модулей.
 - Данные (`data/`) — модели, репозитории, сервисы для работы с данными.
 - Функциональные модули (`features/`) — самостоятельные вертикальные части функциональности.
 - Обработчики (`handlers/`) — платформозависимая работа с файлами.
@@ -171,6 +177,12 @@ main.dart                     # Точка входа в приложение
 - `presentation/SharingManager` содержит сценарии сериализации и отправки персонажей (`.character`), рас (`.race`), заметок (`.note`/`.json`) и шаблонов (`.chax`). UI-контроллеры вызывают модуль; data-сервисы отвечают только за чтение и изменение хранимых данных.
 - Формирование PDF/DOCX, показ статусов экспорта, системный share sheet и форматирование текста для clipboard находятся внутри модуля. UI-компоненты импортируют нужные возможности из `features/sharing/`.
 - Порт `core/FileShareActions` позволяет другим сценариям передавать байты на системный share sheet без зависимости от sharing-модуля. Composition root (`main.dart`) связывает порт с `features/sharing/data/FileShareService`; модуль резервного копирования не зависит от sharing.
+
+### Модуль `features/notifications/`
+- `data/LocalNotificationService` — адаптер платформенного плагина для планирования и отмены уведомлений. Он реализует контракт `core/LocalNotificationActions`; календарь использует контракт и не зависит от плагина.
+- `presentation/OverlayNotificationService` реализует `core/AppNotificationActions` и отображает in-app уведомления поверх корневого Navigator. Оверлей и platform-specific SDK остаются внутри модуля.
+- Composition root (`main.dart`) инициализирует платформенный адаптер и связывает реализации с контрактами. `AppNavigator` зависит только от `AppNotificationActions`, а календарь — только от `LocalNotificationActions`. Модуль уведомлений не зависит от backup, sharing, календаря или навигации.
+- Зависимости передаются у composition root; локальные уведомления инициализируются до `runApp`. Это соответствует рекомендациям Flutter разделять UI и data-слои, использовать явные контракты и внедрение зависимостей: [Flutter app architecture guide](https://docs.flutter.dev/app-architecture/guide).
 
 ### Модуль `features/backup/`
 - `domain/BackupManager` координирует создание и восстановление резервной копии через абстракции `BackupRepository` и `LocalBackupActions`/`CloudBackupActions`; доменный слой не обращается к Hive, файловой системе, Google Drive или UI.
@@ -238,7 +250,7 @@ main.dart                     # Точка входа в приложение
 - Регистрация адаптеров Hive (например, `RelationshipAdapter`)
 - Открытие всех боксов с повторными попытками (`_openBoxWithRetry`)
 - Инициализация `FileHandler.initialize()`
-- Инициализация `NotificationService` (настройка каналов уведомлений для Android)
+- Инициализация `LocalNotificationService` до `runApp`; `AppNavigator` получает in-app адаптер через core-порт
 - Запуск `runApp` с `CharacterBookApp`
 - В `CharacterBookApp` создаётся `MultiProvider` с репозиториями, сервисами и провайдерами состояния
 - В `_AppContent` настраивается метод-канал (`MenuChannel`) и проверяется успешность инициализации Hive
@@ -247,16 +259,12 @@ main.dart                     # Точка входа в приложение
 - `ThemeProvider` — управление светлой/тёмной темой
 - `LocaleProvider` — управление локализацией
 - `SwipeActionSettingsProvider` — настройки жестов свайпа
-- `NotificationService` — управление уведомлениями (через `ScaffoldMessenger` и `flutter_local_notifications`)
+- Уведомления приложения управляются модулем `features/notifications/`; его интеграция описана выше в разделе модульной структуры
 
 ### Работа с данными
 - Репозитории (`*Repository`) инкапсулируют доступ к Hive боксам.
 - Сервисы (`*Service`) используют репозитории для бизнес-логики.
 - Провайдеры связывают UI с состоянием (например, `HomeController` использует сервисы для загрузки данных).
-
-### NotificationService
-- Отображает SnackBar уведомления через глобальный `ScaffoldMessengerKey`.
-- Управляет локальными уведомлениями: планирование напоминаний для событий календаря (`CalendarEvent.reminder`), показ уведомлений в заданное время.
 
 ### MenuChannelService
 - Обработка вызовов из нативного меню (например, открытие файла, создание персонажа).

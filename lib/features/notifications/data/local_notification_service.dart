@@ -1,23 +1,8 @@
-import 'package:characterbook/services/app_navigator.dart';
-import 'package:flutter/material.dart';
+import 'package:characterbook/core/local_notification_actions.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-class NotificationService {
-  final GlobalKey<ScaffoldMessengerState> messengerKey;
-
-  NotificationService(this.messengerKey);
-
-  void showSuccess(String message) {
-    AppNavigator.showSuccess(message);
-  }
-
-  void showError(String message) {
-    AppNavigator.showError(message);
-  }
-}
-
-class LocalNotificationService {
+class LocalNotificationService implements LocalNotificationActions {
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
 
@@ -34,6 +19,7 @@ class LocalNotificationService {
     );
   }
 
+  @override
   Future<int?> scheduleNotification({
     required String title,
     required String body,
@@ -68,10 +54,12 @@ class LocalNotificationService {
     return id;
   }
 
+  @override
   Future<void> cancelNotification(int id) async {
     await _plugin.cancel(id);
   }
 
+  @override
   Future<void> cancelForEvent(String title, DateTime eventDate) async {
     final id = title.hashCode + eventDate.hashCode;
     await cancelNotification(id);

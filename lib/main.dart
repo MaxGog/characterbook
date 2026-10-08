@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:characterbook/config/app_router.dart';
 import 'package:characterbook/data/repositories/custom_event_repository.dart';
 import 'package:characterbook/data/services/custom_event_service.dart';
@@ -11,6 +13,9 @@ import 'package:characterbook/features/backup/domain/backup_repository.dart';
 import 'package:characterbook/features/backup/presentation/auto_backup_provider.dart';
 import 'package:characterbook/features/backup/presentation/backup_controller.dart';
 import 'package:characterbook/core/file_share_actions.dart';
+import 'package:characterbook/core/local_notification_actions.dart';
+import 'package:characterbook/features/notifications/data/local_notification_service.dart';
+import 'package:characterbook/features/notifications/presentation/overlay_notification.dart';
 import 'package:characterbook/features/sharing/data/file_share_service.dart';
 import 'package:characterbook/providers/locale_provider.dart';
 import 'package:characterbook/providers/swipe_action_settings_provider.dart';
@@ -27,7 +32,6 @@ import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/data/services/hive_service.dart';
 import 'package:characterbook/services/menu_channel_service.dart';
 import 'package:characterbook/data/services/note_service.dart';
-import 'package:characterbook/services/notification_service.dart';
 import 'package:characterbook/data/services/race_service.dart';
 import 'package:characterbook/data/services/relationship_service.dart';
 import 'package:characterbook/data/services/template_service.dart';
@@ -42,6 +46,8 @@ import 'package:timezone/data/latest.dart' as tz;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
+  final localNotificationService = LocalNotificationService();
+  await localNotificationService.initialize();
 
   bool hiveInitialized = false;
   try {
@@ -54,18 +60,31 @@ void main() async {
 
   await FileHandler.initialize();
 
-  runApp(CharacterBookApp(hiveInitialized: hiveInitialized));
+  runApp(
+    CharacterBookApp(
+      hiveInitialized: hiveInitialized,
+      localNotificationActions: localNotificationService,
+    ),
+  );
 }
 
 class CharacterBookApp extends StatelessWidget {
   final bool hiveInitialized;
+  final LocalNotificationActions? localNotificationActions;
 
-  const CharacterBookApp({super.key, required this.hiveInitialized});
+  const CharacterBookApp({
+    super.key,
+    required this.hiveInitialized,
+    this.localNotificationActions,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final messengerKey = GlobalKey<ScaffoldMessengerState>();
-
+    AppNavigator.configureNotifications(
+      OverlayNotificationService(
+        navigatorKey: appRouter.routerDelegate.navigatorKey,
+      ),
+    );
     final characterBox = HiveService.characterBox;
     final raceBox = HiveService.raceBox;
     final noteBox = HiveService.noteBox;
@@ -112,11 +131,16 @@ class CharacterBookApp extends StatelessWidget {
         Provider<DeviceCalendarService>(
           create: (_) => DeviceCalendarService(),
         ),
-        Provider<LocalNotificationService>(
-          create: (_) => LocalNotificationService()..initialize(),
-        ),
-        Provider<NotificationService>(
-          create: (_) => NotificationService(messengerKey),
+        Provider<LocalNotificationActions>(
+          create: (_) {
+            final configuredActions = localNotificationActions;
+            if (configuredActions != null) {
+              return configuredActions;
+            }
+            final service = LocalNotificationService();
+            unawaited(service.initialize());
+            return service;
+          },
         ),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
@@ -124,19 +148,16 @@ class CharacterBookApp extends StatelessWidget {
       ],
       child: _AppServicesWrapper(
         hiveInitialized: hiveInitialized,
-        messengerKey: messengerKey,
       ),
     );
   }
+
 }
 
 class _AppServicesWrapper extends StatelessWidget {
   final bool hiveInitialized;
-  final GlobalKey<ScaffoldMessengerState> messengerKey;
-
   const _AppServicesWrapper({
     required this.hiveInitialized,
-    required this.messengerKey,
   });
 
   @override
@@ -216,7 +237,6 @@ class _AppServicesWrapper extends StatelessWidget {
       ],
       child: _AppContent(
         hiveInitialized: hiveInitialized,
-        messengerKey: messengerKey,
       ),
     );
   }
@@ -224,11 +244,8 @@ class _AppServicesWrapper extends StatelessWidget {
 
 class _AppContent extends StatefulWidget {
   final bool hiveInitialized;
-  final GlobalKey<ScaffoldMessengerState> messengerKey;
-
   const _AppContent({
     required this.hiveInitialized,
-    required this.messengerKey,
   });
 
   @override
@@ -294,9 +311,8 @@ class _AppContentState extends State<_AppContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer3<ThemeProvider, LocaleProvider, NotificationService>(
-      builder:
-          (context, themeProvider, localeProvider, notificationService, _) {
+    return Consumer2<ThemeProvider, LocaleProvider>(
+      builder: (context, themeProvider, localeProvider, _) {
         return DynamicColorBuilder(
           builder: (lightDynamic, darkDynamic) {
             themeProvider.updateDynamicColorSchemes(

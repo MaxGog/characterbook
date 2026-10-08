@@ -3,13 +3,19 @@ import 'package:characterbook/data/models/character_model.dart';
 import 'package:characterbook/data/models/note_model.dart';
 import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/core/app_notification_actions.dart';
 import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/ui/navigation/menu_content.dart';
-import 'package:characterbook/ui/widgets/overlay_notification.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AppNavigator {
+  static AppNotificationActions? _notificationActions;
+
+  static void configureNotifications(AppNotificationActions actions) {
+    _notificationActions = actions;
+  }
+
   static BuildContext? get _context => appRouter.routerDelegate.navigatorKey.currentContext;
 
   static NavigatorState? get navigator => appRouter.routerDelegate.navigatorKey.currentState;
@@ -77,18 +83,22 @@ class AppNavigator {
 
   static void showNotification(
     String message, {
-    OverlayNotificationType type = OverlayNotificationType.success,
+    AppNotificationType type = AppNotificationType.success,
     Duration duration = const Duration(seconds: 2),
   }) {
-    OverlayNotification.show(message, type: type, duration: duration);
+    final actions = _notificationActions;
+    if (actions == null) {
+      throw StateError('App notifications have not been configured.');
+    }
+    actions.showNotification(message, type: type, duration: duration);
   }
 
   static void showSuccess(String message) =>
-      showNotification(message, type: OverlayNotificationType.success);
+      showNotification(message, type: AppNotificationType.success);
   static void showError(String message) =>
-      showNotification(message, type: OverlayNotificationType.error);
+      showNotification(message, type: AppNotificationType.error);
   static void showInfo(String message) =>
-      showNotification(message, type: OverlayNotificationType.info);
+      showNotification(message, type: AppNotificationType.info);
 
   static void openMenu(BuildContext context) {
     if (MediaQuery.of(context).size.width >= 600) {
