@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/data/models/character_model.dart';
 import 'package:characterbook/data/repositories/character_repository.dart';
-import 'package:characterbook/features/sharing/file_share_service.dart';
+import 'package:characterbook/services/file_share_service.dart';
 import 'package:characterbook/services/pdf_export_manager.dart';
 import 'package:characterbook/data/services/relationship_service.dart';
 import 'package:characterbook/services/word_export_manager.dart';

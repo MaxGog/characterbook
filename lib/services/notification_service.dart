@@ -1,4 +1,3 @@
-import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/services/app_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -15,22 +14,6 @@ class NotificationService {
 
   void showError(String message) {
     AppNavigator.showError(message);
-  }
-
-  void showBackupSuccess() {
-    AppNavigator.showSuccess(S.current.local_backup_success);
-  }
-
-  void showBackupError(String error) {
-    showError('${S.current.local_backup_error}: $error');
-  }
-
-  void showRestoreSuccess() {
-    showSuccess(S.current.local_restore_success);
-  }
-
-  void showRestoreError(String error) {
-    showError('${S.current.local_restore_error}: $error');
   }
 }
 
@@ -79,7 +62,8 @@ class LocalNotificationService {
       tz.TZDateTime.from(scheduledDate, tz.local),
       details,
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
     );
     return id;
   }

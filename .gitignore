@@ -261,6 +261,11 @@ UpgradeLog*.XML
 UpgradeLog*.htm
 ServiceFabricBackup/
 *.rptproj.bak
+# Keep the app's backup feature module under version control.
+!/lib/features/backup/
+!/lib/features/backup/**
+!/test/unit/features/backup/
+!/test/unit/features/backup/**
 
 # SQL Server files
 *.mdf

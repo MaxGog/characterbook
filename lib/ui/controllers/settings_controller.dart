@@ -3,7 +3,6 @@ import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/models/template_model.dart';
 import 'package:characterbook/providers/locale_provider.dart';
 import 'package:characterbook/providers/theme_provider.dart';
-import 'package:characterbook/services/backup_service.dart';
 import 'package:characterbook/services/file_picker_service.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -12,15 +11,11 @@ class SettingsController extends ChangeNotifier {
   final LocaleProvider localeProvider;
   final ThemeProvider themeProvider;
   final FilePickerService filePickerService;
-  final CloudBackupService cloudBackupService;
-  final LocalBackupService localBackupService;
 
   SettingsController({
     required this.localeProvider,
     required this.themeProvider,
     required this.filePickerService,
-    required this.cloudBackupService,
-    required this.localBackupService,
   });
 
   Locale get locale => localeProvider.locale;
@@ -136,85 +131,4 @@ class SettingsController extends ChangeNotifier {
     );
   }
 
-  bool _isLocalBackupExporting = false;
-  bool _isLocalBackupImporting = false;
-  bool _isCloudBackupExporting = false;
-  bool _isCloudBackupImporting = false;
-
-  bool get isLocalBackupExporting => _isLocalBackupExporting;
-  bool get isLocalBackupImporting => _isLocalBackupImporting;
-  bool get isCloudBackupExporting => _isCloudBackupExporting;
-  bool get isCloudBackupImporting => _isCloudBackupImporting;
-
-  Future<void> exportLocalBackup() async {
-    if (_isLocalBackupExporting) return;
-    _setLocalBackupExporting(true);
-    try {
-      await localBackupService.exportData();
-    } catch (e) {
-
-    } finally {
-      _setLocalBackupExporting(false);
-    }
-  }
-
-  Future<void> importLocalBackup() async {
-    if (_isLocalBackupImporting) return;
-    _setLocalBackupImporting(true);
-    try {
-      await localBackupService.importData();
-    } catch (e) {
-
-    } finally {
-      _setLocalBackupImporting(false);
-    }
-  }
-
-  Future<void> exportCloudBackup() async {
-    if (_isCloudBackupExporting) return;
-    _setCloudBackupExporting(true);
-    try {
-      await cloudBackupService.exportData();
-    } catch (e) {
-
-    } finally {
-      _setCloudBackupExporting(false);
-    }
-  }
-
-  Future<void> importCloudBackup() async {
-    if (_isCloudBackupImporting) return;
-    _setCloudBackupImporting(true);
-    try {
-      await cloudBackupService.importData();
-    } catch (e) {
-
-    } finally {
-      _setCloudBackupImporting(false);
-    }
-  }
-
-  void _setLocalBackupExporting(bool value) {
-    if (_isLocalBackupExporting == value) return;
-    _isLocalBackupExporting = value;
-    notifyListeners();
-  }
-
-  void _setLocalBackupImporting(bool value) {
-    if (_isLocalBackupImporting == value) return;
-    _isLocalBackupImporting = value;
-    notifyListeners();
-  }
-
-  void _setCloudBackupExporting(bool value) {
-    if (_isCloudBackupExporting == value) return;
-    _isCloudBackupExporting = value;
-    notifyListeners();
-  }
-
-  void _setCloudBackupImporting(bool value) {
-    if (_isCloudBackupImporting == value) return;
-    _isCloudBackupImporting = value;
-    notifyListeners();
-  }
 }

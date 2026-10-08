@@ -11,12 +11,13 @@ import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/models/template_model.dart';
 import 'package:characterbook/data/models/relationship_model.dart';
 import 'package:characterbook/data/models/export_pdf_settings_model.dart';
-import 'package:characterbook/data/repositories/character_repository.dart';
-import 'package:characterbook/data/repositories/note_repository.dart';
-import 'package:characterbook/data/repositories/race_repository.dart';
-import 'package:characterbook/data/repositories/template_repository.dart';
-import 'package:characterbook/data/repositories/relationship_repository.dart';
-import 'package:characterbook/services/backup_service.dart';
+import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/features/backup/data/cloud_backup_service.dart';
+import 'package:characterbook/features/backup/data/local_backup_service.dart';
+import 'package:characterbook/features/backup/data/repository_backup_repository.dart';
+import 'package:characterbook/features/backup/domain/backup_manager.dart';
+import 'package:characterbook/features/backup/domain/backup_repository.dart';
+import 'package:characterbook/features/backup/presentation/backup_settings_screen.dart';
 import 'package:characterbook/data/services/hive_service.dart';
 
 void main() {
@@ -34,11 +35,14 @@ void main() {
     Hive.init(dir.path);
 
     if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(CharacterAdapter());
-    if (!Hive.isAdapterRegistered(1)) Hive.registerAdapter(CustomFieldAdapter());
+    if (!Hive.isAdapterRegistered(1))
+      Hive.registerAdapter(CustomFieldAdapter());
     if (!Hive.isAdapterRegistered(2)) Hive.registerAdapter(NoteAdapter());
     if (!Hive.isAdapterRegistered(3)) Hive.registerAdapter(RaceAdapter());
-    if (!Hive.isAdapterRegistered(4)) Hive.registerAdapter(QuestionnaireTemplateAdapter());
-    if (!Hive.isAdapterRegistered(12)) Hive.registerAdapter(RelationshipAdapter());
+    if (!Hive.isAdapterRegistered(4))
+      Hive.registerAdapter(QuestionnaireTemplateAdapter());
+    if (!Hive.isAdapterRegistered(12))
+      Hive.registerAdapter(RelationshipAdapter());
 
     charBox = await Hive.openBox<Character>('test_chars');
     raceBox = await Hive.openBox<Race>('test_races');
@@ -47,8 +51,7 @@ void main() {
     settingsBox = await Hive.openBox<ExportPdfSettings>('test_pdf_settings');
     relBox = await Hive.openBox<Relationship>('test_relationships');
     appSettingsBox = await Hive.openBox<bool>('test_app_settings');
-    charactersBox =
-        await Hive.openBox<Character>('characters');
+    charactersBox = await Hive.openBox<Character>('characters');
 
     HiveService.setBoxesForTesting(
       characterBox: charBox,
@@ -85,7 +88,7 @@ void main() {
     HiveService.setBoxesForTesting();
   });
 
-  testWidgets('CharacterBookApp создаёт BackupManager с RelationshipRepository',
+  testWidgets('CharacterBookApp создаёт backup-модуль с репозиториями',
       (tester) async {
     await tester.pumpWidget(
       CharacterBookApp(hiveInitialized: true),
@@ -93,14 +96,14 @@ void main() {
     await tester.pumpAndSettle();
 
     final context = tester.element(find.byType(MaterialApp));
-    final backupManager = Provider.of<BackupManager>(context, listen: false);
+    final backupRepository =
+        Provider.of<BackupRepository>(context, listen: false);
 
-    expect(backupManager, isNotNull);
-    expect(backupManager.characterRepo, isA<CharacterRepository>());
-    expect(backupManager.noteRepo, isA<NoteRepository>());
-    expect(backupManager.raceRepo, isA<RaceRepository>());
-    expect(backupManager.templateRepo, isA<TemplateRepository>());
-    expect(backupManager.relationshipRepo, isA<RelationshipRepository>());
+    expect(backupRepository, isA<RepositoryBackupRepository>());
+    expect(
+      Provider.of<BackupManager>(context, listen: false),
+      isA<BackupManager>(),
+    );
   });
 
   testWidgets('LocalBackupService и CloudBackupService доступны',
@@ -117,5 +120,24 @@ void main() {
 
     expect(localBackup, isNotNull);
     expect(cloudBackup, isNotNull);
+  });
+
+  testWidgets('BackupSettingsScreen is hosted by the backup feature',
+      (tester) async {
+    await tester.pumpWidget(
+      CharacterBookApp(hiveInitialized: true),
+    );
+    await tester.pumpAndSettle();
+
+    final navigator = tester.state<NavigatorState>(find.byType(Navigator).first);
+    navigator.push(
+      MaterialPageRoute<void>(
+        builder: (_) => const BackupSettingsScreen(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BackupSettingsScreen), findsOneWidget);
+    expect(find.text(S.current.auto_cloud_backup_title), findsOneWidget);
   });
 }

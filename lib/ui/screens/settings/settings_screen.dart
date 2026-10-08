@@ -1,4 +1,4 @@
-import 'package:characterbook/ui/screens/settings/backup_settings_screen.dart';
+import 'package:characterbook/features/backup/presentation/backup_settings_screen.dart';
 import 'package:characterbook/ui/widgets/easter_egg_helper.dart';
 import 'package:characterbook/ui/widgets/about_section_widget.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +7,6 @@ import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/ui/controllers/settings_controller.dart';
 import 'package:characterbook/ui/widgets/settings_section.dart';
 import 'package:characterbook/services/file_picker_service.dart';
-import 'package:characterbook/services/backup_service.dart';
 import 'package:characterbook/providers/locale_provider.dart';
 import 'package:characterbook/providers/theme_provider.dart';
 import 'package:flutter/services.dart';
@@ -33,15 +32,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final localeProvider = context.read<LocaleProvider>();
     final themeProvider = context.read<ThemeProvider>();
     final filePickerService = context.read<FilePickerService>();
-    final cloudBackupService = context.read<CloudBackupService>();
-    final localBackupService = context.read<LocalBackupService>();
-
     _controller = SettingsController(
       localeProvider: localeProvider,
       themeProvider: themeProvider,
       filePickerService: filePickerService,
-      cloudBackupService: cloudBackupService,
-      localBackupService: localBackupService,
     );
   }
 

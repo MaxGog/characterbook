@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+/// Creates temporary files and shares them through the platform share sheet.
 class FileShareService {
   static Future<void> shareTextFile(
     String content,
@@ -77,6 +78,7 @@ class FileShareService {
       case 'race':
       case 'note':
       case 'chax':
+      case 'characterbook':
       case 'json':
         return 'application/json';
       default:

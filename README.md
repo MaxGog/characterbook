@@ -18,6 +18,7 @@ Want to keep all your player characters and NPCs organised in one place? Charact
 *   **🗂️ Smart organisation:** Organise characters, races, and notes with tags, then use search to find them quickly.
 *   **🔗 Share your content:** Share characters, races, notes, and templates as files or copy their content; export characters and races to PDF or Word.
 *   **📄 Export to PDF and Word:** Turn characters and races into ready‑to‑print sheets (PDF), and characters, races, and templates into editable documents (DOCX).
+*   **💾 Backups:** Export or restore all app data using a local file or Google Drive, with optional automatic cloud backups.
 *   **📱 Cross‑platform:** The app works seamlessly on Android, Windows, and macOS. Web and iOS versions are in development.
 *   **💯 Free and ad‑free:** All features are available without any limitations or hidden fees.
 

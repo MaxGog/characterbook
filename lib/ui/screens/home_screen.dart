@@ -5,7 +5,7 @@ import 'package:characterbook/data/models/character_model.dart';
 import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/services/character_service.dart';
 import 'package:characterbook/data/services/race_service.dart';
-import 'package:characterbook/features/sharing/file_share_service.dart';
+import 'package:characterbook/services/file_share_service.dart';
 import 'package:characterbook/features/sharing/share_options_dialog.dart';
 import 'package:characterbook/providers/pins_provider.dart';
 import 'package:characterbook/services/app_navigator.dart';

@@ -12,8 +12,9 @@ import 'package:characterbook/data/repositories/note_repository.dart';
 import 'package:characterbook/data/repositories/race_repository.dart';
 import 'package:characterbook/data/repositories/template_repository.dart';
 import 'package:characterbook/data/repositories/relationship_repository.dart';
-import 'package:characterbook/services/backup_service.dart';
-import '../../helpers/hive_test_utils.dart';
+import 'package:characterbook/features/backup/data/repository_backup_repository.dart';
+import 'package:characterbook/features/backup/domain/backup_manager.dart';
+import '../../../helpers/hive_test_utils.dart';
 
 void main() {
   late BackupManager backupManager;
@@ -54,11 +55,13 @@ void main() {
     relationshipRepo = RelationshipRepositoryHive(relBox);
 
     backupManager = BackupManager(
-      characterRepo: characterRepo,
-      noteRepo: noteRepo,
-      raceRepo: raceRepo,
-      templateRepo: templateRepo,
-      relationshipRepo: relationshipRepo,
+      RepositoryBackupRepository(
+        characterRepository: characterRepo,
+        noteRepository: noteRepo,
+        raceRepository: raceRepo,
+        templateRepository: templateRepo,
+        relationshipRepository: relationshipRepo,
+      ),
     );
   });
 
@@ -75,7 +78,7 @@ void main() {
   });
 
   group('BackupManager', () {
-    test('getBackupData returns all data types including relationships',
+    test('createBackup returns all data types including relationships',
         () async {
       final char = Character(id: 'c1', name: 'Hero');
       await characterRepo.save(char, key: char.id);
@@ -94,23 +97,25 @@ void main() {
           id: 'rel1', character1Id: 'c1', character2Id: 'c2', name: 'Friends');
       await relationshipRepo.save(rel, key: rel.id);
 
-      final data = await backupManager.getBackupData();
+      final data = await backupManager.createBackup();
 
       expect(
           data.keys,
           containsAll(
               ['characters', 'notes', 'races', 'templates', 'relationships']));
       expect(data['characters']!.length, 1);
-      expect((data['characters']![0] as Character).id, 'c1');
+      expect((data['characters']![0] as Map<String, dynamic>)['id'], 'c1');
       expect(data['notes']!.length, 1);
       expect(data['races']!.length, 1);
       expect(data['templates']!.length, 1);
       expect(data['relationships']!.length, 1);
-      expect((data['relationships']![0] as Relationship).id, 'rel1');
+      expect(
+        (data['relationships']![0] as Map<String, dynamic>)['id'],
+        'rel1',
+      );
     });
 
-    test('restoreFromBackupData restores all types including relationships',
-        () async {
+    test('restoreBackup restores all types including relationships', () async {
       final char = Character(id: 'c1', name: 'Hero');
       await characterRepo.save(char, key: char.id);
       final note = Note(id: 'n1', title: 'Test', content: '', folderId: null);
@@ -123,7 +128,7 @@ void main() {
           id: 'rel1', character1Id: 'c1', character2Id: 'c2', name: 'Friend');
       await relationshipRepo.save(rel, key: rel.id);
 
-      final rawData = await backupManager.getBackupData();
+      final rawData = await backupManager.createBackup();
 
       final jsonString = jsonEncode(rawData);
       final importData = jsonDecode(jsonString) as Map<String, dynamic>;
@@ -134,7 +139,7 @@ void main() {
       await templateRepo.clear();
       await relationshipRepo.clear();
 
-      await backupManager.restoreFromBackupData(importData);
+      await backupManager.restoreBackup(importData);
 
       final chars = await characterRepo.getAll();
       expect(chars.length, 1);
@@ -157,7 +162,7 @@ void main() {
       expect(relationships.first.name, 'Friend');
     });
 
-    test('restoreFromBackupData clears all data before restoring', () async {
+    test('restoreBackup clears all data before restoring', () async {
       final charOld = Character(id: 'old', name: 'Old');
       await characterRepo.save(charOld, key: charOld.id);
       final relOld =
@@ -172,7 +177,7 @@ void main() {
         'relationships': <Map>[],
       };
 
-      await backupManager.restoreFromBackupData(newData);
+      await backupManager.restoreBackup(newData);
 
       final chars = await characterRepo.getAll();
       expect(chars.length, 1);
@@ -183,7 +188,7 @@ void main() {
     });
 
     test(
-        'restoreFromBackupData handles missing relationships key gracefully for old backups',
+        'restoreBackup handles missing relationships key gracefully for old backups',
         () async {
       final oldFormatData = {
         'characters': [Character(id: 'c1', name: 'OldHero').toJson()],
@@ -195,7 +200,7 @@ void main() {
       final rel = Relationship(id: 'r1', character1Id: 'x', character2Id: 'y');
       await relationshipRepo.save(rel, key: rel.id);
 
-      await backupManager.restoreFromBackupData(oldFormatData);
+      await backupManager.restoreBackup(oldFormatData);
 
       final relationships = await relationshipRepo.getAll();
       expect(relationships.length, 0);
@@ -205,7 +210,7 @@ void main() {
       expect(chars.first.name, 'OldHero');
     });
 
-    test('restoreFromBackupData with empty data clears all', () async {
+    test('restoreBackup with empty sections clears all', () async {
       await characterRepo.save(Character(id: '1', name: 'A'), key: '1');
       await relationshipRepo.save(
           Relationship(id: 'r1', character1Id: '1', character2Id: '2'),
@@ -219,10 +224,36 @@ void main() {
         'relationships': [],
       };
 
-      await backupManager.restoreFromBackupData(emptyData);
+      await backupManager.restoreBackup(emptyData);
 
       expect((await characterRepo.getAll()).length, 0);
       expect((await relationshipRepo.getAll()).length, 0);
+    });
+
+    test('restoreBackup rejects an unknown format without clearing data',
+        () async {
+      await characterRepo.save(Character(id: 'kept', name: 'Keep me'));
+
+      expect(
+        () => backupManager.restoreBackup({'unknown': []}),
+        throwsFormatException,
+      );
+
+      expect((await characterRepo.getAll()).single.name, 'Keep me');
+    });
+
+    test('restoreBackup validates rows before clearing existing data',
+        () async {
+      await characterRepo.save(Character(id: 'kept', name: 'Keep me'));
+
+      expect(
+        () => backupManager.restoreBackup({
+          'characters': ['not an object'],
+        }),
+        throwsFormatException,
+      );
+
+      expect((await characterRepo.getAll()).single.name, 'Keep me');
     });
   });
 }

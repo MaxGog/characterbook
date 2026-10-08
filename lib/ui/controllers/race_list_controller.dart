@@ -4,7 +4,7 @@ import 'package:characterbook/data/enums/race_sort_enum.dart';
 import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/repositories/race_repository.dart';
 import 'package:characterbook/data/services/race_service.dart';
-import 'package:characterbook/features/sharing/file_share_service.dart';
+import 'package:characterbook/services/file_share_service.dart';
 import 'package:characterbook/services/clipboard_service.dart';
 import 'package:characterbook/services/pdf_export_manager.dart';
 import 'package:characterbook/services/word_export_manager.dart';

@@ -3,7 +3,13 @@ import 'package:characterbook/data/repositories/custom_event_repository.dart';
 import 'package:characterbook/data/services/custom_event_service.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/handlers/file_handler.dart';
-import 'package:characterbook/providers/auto_backup_provider.dart';
+import 'package:characterbook/features/backup/data/cloud_backup_service.dart';
+import 'package:characterbook/features/backup/data/local_backup_service.dart';
+import 'package:characterbook/features/backup/data/repository_backup_repository.dart';
+import 'package:characterbook/features/backup/domain/backup_manager.dart';
+import 'package:characterbook/features/backup/domain/backup_repository.dart';
+import 'package:characterbook/features/backup/presentation/auto_backup_provider.dart';
+import 'package:characterbook/features/backup/presentation/backup_controller.dart';
 import 'package:characterbook/providers/locale_provider.dart';
 import 'package:characterbook/providers/swipe_action_settings_provider.dart';
 import 'package:characterbook/providers/theme_provider.dart';
@@ -13,12 +19,11 @@ import 'package:characterbook/data/repositories/race_repository.dart';
 import 'package:characterbook/data/repositories/relationship_repository.dart';
 import 'package:characterbook/data/repositories/template_repository.dart';
 import 'package:characterbook/services/app_navigator.dart';
-import 'package:characterbook/services/backup_service.dart';
 import 'package:characterbook/data/services/character_service.dart';
 import 'package:characterbook/services/clipboard_service.dart';
 import 'package:characterbook/services/device_calendar_service.dart';
 import 'package:characterbook/services/file_picker_service.dart';
-import 'package:characterbook/features/sharing/file_share_service.dart';
+import 'package:characterbook/services/file_share_service.dart';
 import 'package:characterbook/data/services/hive_service.dart';
 import 'package:characterbook/services/menu_channel_service.dart';
 import 'package:characterbook/data/services/note_service.dart';
@@ -167,30 +172,36 @@ class _AppServicesWrapper extends StatelessWidget {
           update: (_, repo, __) => CustomEventService(repo),
         ),
         ProxyProvider5<CharacterRepository, RaceRepository, NoteRepository,
-            TemplateRepository, RelationshipRepository, BackupManager>(
+            TemplateRepository, RelationshipRepository, BackupRepository>(
           update: (_, charRepo, raceRepo, noteRepo, templateRepo,
                   relationshipRepo, __) =>
-              BackupManager(
-            characterRepo: charRepo,
-            noteRepo: noteRepo,
-            raceRepo: raceRepo,
-            templateRepo: templateRepo,
-            relationshipRepo: relationshipRepo,
+              RepositoryBackupRepository(
+            characterRepository: charRepo,
+            noteRepository: noteRepo,
+            raceRepository: raceRepo,
+            templateRepository: templateRepo,
+            relationshipRepository: relationshipRepo,
           ),
         ),
-        ProxyProvider3<BackupManager, FilePickerService, NotificationService,
-            LocalBackupService>(
-          update: (_, backupManager, filePicker, notification, __) =>
-              LocalBackupService(
+        ProxyProvider<BackupRepository, BackupManager>(
+          update: (_, repository, __) => BackupManager(repository),
+        ),
+        ProxyProvider2<BackupManager, FilePickerService, LocalBackupService>(
+          update: (_, backupManager, filePicker, __) => LocalBackupService(
             backupManager: backupManager,
             filePickerService: filePicker,
-            notificationService: notification,
           ),
         ),
-        ProxyProvider2<BackupManager, NotificationService, CloudBackupService>(
-          update: (_, backupManager, notification, __) => CloudBackupService(
+        ProxyProvider<BackupManager, CloudBackupService>(
+          update: (_, backupManager, __) => CloudBackupService(
             backupManager: backupManager,
-            notificationService: notification,
+          ),
+        ),
+        ChangeNotifierProvider<BackupController>(
+          create: (context) => BackupController(
+            localBackupService: context.read<LocalBackupService>(),
+            cloudBackupService: context.read<CloudBackupService>(),
+            autoBackupSettings: context.read<AutoBackupProvider>(),
           ),
         ),
         ChangeNotifierProvider<TemplateListController>(
@@ -242,11 +253,11 @@ class _AppContentState extends State<_AppContent> {
   }
 
   void _performAutoBackupIfEnabled() {
-    final autoBackupProvider = context.read<AutoBackupProvider>();
-    if (autoBackupProvider.isEnabled) {
-      final cloudBackupService = context.read<CloudBackupService>();
-      cloudBackupService.autoExportIfSignedIn().catchError((_) {});
-    }
+    context.read<BackupController>().runAutomaticBackup().catchError(
+      (Object error, StackTrace stackTrace) {
+        debugPrint('Automatic backup failed: $error\n$stackTrace');
+      },
+    );
   }
 
   void _checkInitializationStatus() {

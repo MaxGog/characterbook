@@ -1,7 +1,8 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/providers/auto_backup_provider.dart';
+import 'package:characterbook/features/backup/domain/backup_manager.dart';
+import 'package:characterbook/features/backup/presentation/auto_backup_provider.dart';
+import 'package:characterbook/features/backup/presentation/backup_controller.dart';
 import 'package:characterbook/services/app_navigator.dart';
-import 'package:characterbook/services/backup_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -14,79 +15,53 @@ class BackupSettingsScreen extends StatefulWidget {
 }
 
 class _BackupSettingsScreenState extends State<BackupSettingsScreen> {
-  bool _isExportingLocal = false;
-  bool _isImportingLocal = false;
-  bool _isExportingCloud = false;
-  bool _isImportingCloud = false;
-
-  Future<bool> _hasData() async {
-    final backupManager = context.read<BackupManager>();
-    final data = await backupManager.getBackupData();
-    return data.values.any((list) => list.isNotEmpty);
-  }
-
-  Future<void> _exportLocal() async {
-    if (_isExportingLocal) return;
-    setState(() => _isExportingLocal = true);
+  Future<void> _runBackup(
+    Future<void> Function() action,
+    String successMessage,
+    String failureMessage,
+  ) async {
     try {
-      final hasData = await _hasData();
-      if (!hasData) {
-        AppNavigator.showInfo(S.of(context).no_data_for_backup);
-        return;
-      }
-      await context.read<LocalBackupService>().exportData();
+      await action();
+      if (mounted) AppNavigator.showSuccess(successMessage);
+    } on EmptyBackupException {
+      if (mounted) AppNavigator.showInfo(S.of(context).no_data_for_backup);
     } catch (e) {
-      AppNavigator.showError('${S.of(context).export_failed}: $e');
-    } finally {
-      if (mounted) setState(() => _isExportingLocal = false);
+      if (mounted) AppNavigator.showError('$failureMessage: $e');
     }
   }
 
-  Future<void> _exportCloud() async {
-    if (_isExportingCloud) return;
-    setState(() => _isExportingCloud = true);
-    try {
-      final hasData = await _hasData();
-      if (!hasData) {
-        AppNavigator.showInfo(S.of(context).no_data_for_backup);
-        return;
-      }
-      await context.read<CloudBackupService>().exportData();
-    } catch (e) {
-      AppNavigator.showError('${S.of(context).export_failed}: $e');
-    } finally {
-      if (mounted) setState(() => _isExportingCloud = false);
-    }
-  }
+  Future<void> _exportLocal() => _runBackup(
+        context.read<BackupController>().exportLocalBackup,
+        S.of(context).local_backup_success,
+        S.of(context).local_backup_error,
+      );
+
+  Future<void> _exportCloud() => _runBackup(
+        context.read<BackupController>().exportCloudBackup,
+        S.of(context).cloud_backup_full_success,
+        S.of(context).cloud_backup_error,
+      );
 
   Future<void> _importLocal() async {
-    if (_isImportingLocal) return;
     final confirmed = await _showRestoreWarning();
-    if (confirmed != true) return;
+    if (!mounted || confirmed != true) return;
 
-    setState(() => _isImportingLocal = true);
-    try {
-      await context.read<LocalBackupService>().importData();
-    } catch (e) {
-      AppNavigator.showError('${S.of(context).import_failed}: $e');
-    } finally {
-      if (mounted) setState(() => _isImportingLocal = false);
-    }
+    await _runBackup(
+      context.read<BackupController>().importLocalBackup,
+      S.of(context).local_restore_success,
+      S.of(context).local_restore_error,
+    );
   }
 
   Future<void> _importCloud() async {
-    if (_isImportingCloud) return;
     final confirmed = await _showRestoreWarning();
-    if (confirmed != true) return;
+    if (!mounted || confirmed != true) return;
 
-    setState(() => _isImportingCloud = true);
-    try {
-      await context.read<CloudBackupService>().importData();
-    } catch (e) {
-      AppNavigator.showError('${S.of(context).import_failed}: $e');
-    } finally {
-      if (mounted) setState(() => _isImportingCloud = false);
-    }
+    await _runBackup(
+      context.read<BackupController>().importCloudBackup,
+      S.of(context).cloud_restore_success(0, 0, 0, 0, 0),
+      S.of(context).cloud_restore_error,
+    );
   }
 
   Future<bool?> _showRestoreWarning() {
@@ -114,6 +89,7 @@ class _BackupSettingsScreenState extends State<BackupSettingsScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final s = S.of(context);
+    final controller = context.watch<BackupController>();
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: theme.brightness == Brightness.dark
@@ -135,10 +111,7 @@ class _BackupSettingsScreenState extends State<BackupSettingsScreen> {
                     _AutoBackupToggle(),
                     const SizedBox(height: 16),
                     _BackupActionsCard(
-                      isExportingLocal: _isExportingLocal,
-                      isImportingLocal: _isImportingLocal,
-                      isExportingCloud: _isExportingCloud,
-                      isImportingCloud: _isImportingCloud,
+                      controller: controller,
                       onExportLocal: _exportLocal,
                       onImportLocal: _importLocal,
                       onExportCloud: _exportCloud,
@@ -212,7 +185,14 @@ class _AutoBackupToggle extends StatelessWidget {
         title: Text(S.of(context).auto_cloud_backup_title),
         subtitle: Text(S.of(context).auto_cloud_backup_subtitle),
         value: provider.isEnabled,
-        onChanged: (val) => provider.setEnabled(val),
+        onChanged: (val) async {
+          final errorLabel = S.of(context).error;
+          try {
+            await provider.setEnabled(val);
+          } catch (error) {
+            AppNavigator.showError('$errorLabel: $error');
+          }
+        },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
@@ -220,20 +200,14 @@ class _AutoBackupToggle extends StatelessWidget {
 }
 
 class _BackupActionsCard extends StatelessWidget {
-  final bool isExportingLocal;
-  final bool isImportingLocal;
-  final bool isExportingCloud;
-  final bool isImportingCloud;
+  final BackupController controller;
   final VoidCallback onExportLocal;
   final VoidCallback onImportLocal;
   final VoidCallback onExportCloud;
   final VoidCallback onImportCloud;
 
   const _BackupActionsCard({
-    required this.isExportingLocal,
-    required this.isImportingLocal,
-    required this.isExportingCloud,
-    required this.isImportingCloud,
+    required this.controller,
     required this.onExportLocal,
     required this.onImportLocal,
     required this.onExportCloud,
@@ -244,6 +218,14 @@ class _BackupActionsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final textTheme = Theme.of(context).textTheme;
+    final isExportingLocal =
+        controller.isRunning(BackupOperation.localExport);
+    final isImportingLocal =
+        controller.isRunning(BackupOperation.localImport);
+    final isExportingCloud =
+        controller.isRunning(BackupOperation.cloudExport);
+    final isImportingCloud =
+        controller.isRunning(BackupOperation.cloudImport);
 
     return Card(
       elevation: 0,
@@ -262,7 +244,7 @@ class _BackupActionsCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed: isExportingLocal ? null : onExportLocal,
+                    onPressed: controller.isBusy ? null : onExportLocal,
                     icon: isExportingLocal
                         ? const SizedBox(
                             width: 20,
@@ -276,7 +258,7 @@ class _BackupActionsCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed: isImportingLocal ? null : onImportLocal,
+                    onPressed: controller.isBusy ? null : onImportLocal,
                     icon: isImportingLocal
                         ? const SizedBox(
                             width: 20,
@@ -298,7 +280,7 @@ class _BackupActionsCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed: isExportingCloud ? null : onExportCloud,
+                    onPressed: controller.isBusy ? null : onExportCloud,
                     icon: isExportingCloud
                         ? const SizedBox(
                             width: 20,
@@ -312,7 +294,7 @@ class _BackupActionsCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed: isImportingCloud ? null : onImportCloud,
+                    onPressed: controller.isBusy ? null : onImportCloud,
                     icon: isImportingCloud
                         ? const SizedBox(
                             width: 20,
