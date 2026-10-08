@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:characterbook/data/models/swipe_action.dart';
+import 'package:characterbook/core/app_settings_actions.dart';
 
-class SwipeActionSettingsProvider extends ChangeNotifier {
+class SwipeActionSettingsProvider extends ChangeNotifier
+    implements SwipeActionSettingsActions {
   static const String _leftActionKey = 'swipe_left_action';
   static const String _rightActionKey = 'swipe_right_action';
 
   SwipeAction _leftAction = SwipeAction.edit;
   SwipeAction _rightAction = SwipeAction.settings;
 
+  @override
   SwipeAction get leftAction => _leftAction;
+  @override
   SwipeAction get rightAction => _rightAction;
 
   SwipeActionSettingsProvider() {
@@ -33,6 +36,7 @@ class SwipeActionSettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  @override
   Future<void> setLeftAction(SwipeAction action) async {
     if (_leftAction == action) return;
     _leftAction = action;
@@ -41,6 +45,7 @@ class SwipeActionSettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  @override
   Future<void> setRightAction(SwipeAction action) async {
     if (_rightAction == action) return;
     _rightAction = action;

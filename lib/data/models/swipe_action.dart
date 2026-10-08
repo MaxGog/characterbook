@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/core/app_settings_actions.dart';
 
-enum SwipeAction {
-  edit,
-  delete,
-  share,
-  duplicate,
-  settings,
-}
+export 'package:characterbook/core/app_settings_actions.dart' show SwipeAction;
 
 extension SwipeActionExtension on SwipeAction {
   IconData get icon {

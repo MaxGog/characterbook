@@ -14,12 +14,14 @@ import 'package:characterbook/features/backup/presentation/auto_backup_provider.
 import 'package:characterbook/features/backup/presentation/backup_controller.dart';
 import 'package:characterbook/core/file_share_actions.dart';
 import 'package:characterbook/core/local_notification_actions.dart';
+import 'package:characterbook/core/app_settings_actions.dart';
 import 'package:characterbook/features/notifications/data/local_notification_service.dart';
 import 'package:characterbook/features/notifications/presentation/overlay_notification.dart';
 import 'package:characterbook/features/sharing/data/file_share_service.dart';
-import 'package:characterbook/providers/locale_provider.dart';
-import 'package:characterbook/providers/swipe_action_settings_provider.dart';
-import 'package:characterbook/providers/theme_provider.dart';
+import 'package:characterbook/features/settings/data/locale_provider.dart';
+import 'package:characterbook/features/settings/data/swipe_action_settings_provider.dart';
+import 'package:characterbook/features/settings/data/theme_provider.dart';
+import 'package:characterbook/features/settings/domain/settings_actions.dart';
 import 'package:characterbook/data/repositories/character_repository.dart';
 import 'package:characterbook/data/repositories/note_repository.dart';
 import 'package:characterbook/data/repositories/race_repository.dart';
@@ -145,6 +147,16 @@ class CharacterBookApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (_) => SwipeActionSettingsProvider()),
+        ListenableProxyProvider<ThemeProvider, ThemeSettingsActions>(
+          update: (_, settings, __) => settings,
+        ),
+        ListenableProxyProvider<LocaleProvider, LocaleSettingsActions>(
+          update: (_, settings, __) => settings,
+        ),
+        ListenableProxyProvider<SwipeActionSettingsProvider,
+            SwipeActionSettingsActions>(
+          update: (_, settings, __) => settings,
+        ),
       ],
       child: _AppServicesWrapper(
         hiveInitialized: hiveInitialized,

@@ -1,19 +1,12 @@
-import 'package:characterbook/features/backup/presentation/backup_settings_screen.dart';
 import 'package:characterbook/ui/widgets/easter_egg_helper.dart';
 import 'package:characterbook/ui/widgets/about_section_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/ui/controllers/settings_controller.dart';
 import 'package:characterbook/ui/widgets/settings_section.dart';
-import 'package:characterbook/services/file_picker_service.dart';
-import 'package:characterbook/providers/locale_provider.dart';
-import 'package:characterbook/providers/theme_provider.dart';
+import 'package:characterbook/features/settings/domain/settings_actions.dart';
 import 'package:flutter/services.dart';
-
-import 'export_pdf_settings_screen.dart';
-import 'swipe_action_settings_screen.dart';
-import 'theme_settings_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -23,21 +16,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  late final SettingsController _controller;
   bool _showEasterEgg = false;
-
-  @override
-  void initState() {
-    super.initState();
-    final localeProvider = context.read<LocaleProvider>();
-    final themeProvider = context.read<ThemeProvider>();
-    final filePickerService = context.read<FilePickerService>();
-    _controller = SettingsController(
-      localeProvider: localeProvider,
-      themeProvider: themeProvider,
-      filePickerService: filePickerService,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,47 +28,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ? SystemUiOverlayStyle.light
           : SystemUiOverlayStyle.dark,
       child: Scaffold(
-        body: ChangeNotifierProvider.value(
-          value: _controller,
-          child: Stack(
-            children: [
-              CustomScrollView(
-                slivers: [
-                  SliverAppBar.large(
-                    title: Text(s.settings),
-                  ),
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    sliver: SliverToBoxAdapter(
-                      child: Column(
-                        children: [
-                          _LanguageSection(),
-                          const SizedBox(height: 8),
-                          _PreferencesSection(),
-                          const SizedBox(height: 8),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _showEasterEgg = true;
-                              });
-                            },
-                            child: _buildAboutSection(context),
-                          ),
-                        ],
-                      ),
+        body: Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                SliverAppBar.large(
+                  title: Text(s.settings),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        _LanguageSection(),
+                        const SizedBox(height: 8),
+                        _PreferencesSection(),
+                        const SizedBox(height: 8),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _showEasterEgg = true;
+                            });
+                          },
+                          child: _buildAboutSection(context),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-              if (_showEasterEgg)
-                const Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: EasterEggHelper(),
                 ),
-            ],
-          ),
+              ],
+            ),
+            if (_showEasterEgg)
+              const Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: EasterEggHelper(),
+              ),
+          ],
         ),
       ),
     );
@@ -119,7 +95,7 @@ class _LanguageSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<SettingsController>();
+    final localeSettings = context.watch<LocaleSettingsActions>();
     final colorScheme = Theme.of(context).colorScheme;
     final s = S.of(context);
 
@@ -129,9 +105,9 @@ class _LanguageSelector extends StatelessWidget {
       trailing: SizedBox(
         width: 120,
         child: DropdownButton<Locale>(
-          value: controller.locale,
+          value: localeSettings.locale,
           onChanged: (Locale? newLocale) {
-            if (newLocale != null) controller.setLocale(newLocale);
+            if (newLocale != null) localeSettings.setLocale(newLocale);
           },
           items: S.delegate.supportedLocales.map((Locale locale) {
             return DropdownMenuItem<Locale>(
@@ -200,38 +176,25 @@ class _PreferencesSection extends StatelessWidget {
         _PreferenceTile(
           icon: Icons.palette_outlined,
           title: s.customize_theme,
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const ThemeSettingsScreen()),
-          ),
+          onTap: () => context.push('/settings/theme'),
         ),
         const SizedBox(height: 8),
         _PreferenceTile(
           icon: Icons.swipe,
           title: s.configureSwipeActions,
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (_) => const SwipeActionSettingsScreen()),
-          ),
+          onTap: () => context.push('/settings/swipe-actions'),
         ),
         const SizedBox(height: 8),
         _PreferenceTile(
           icon: Icons.picture_as_pdf,
           title: s.export_pdf_settings,
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const ExportPdfSettingsScreen()),
-          ),
+          onTap: () => context.push('/settings/export-pdf'),
         ),
         const SizedBox(height: 8),
         _PreferenceTile(
           icon: Icons.backup,
           title: s.backup,
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const BackupSettingsScreen()),
-          ),
+          onTap: () => context.push('/settings/backup'),
         ),
       ],
     );

@@ -6,7 +6,7 @@ import 'package:characterbook/data/services/race_service.dart';
 import 'package:characterbook/providers/pins_provider.dart';
 import 'package:characterbook/ui/screens/calendar_screen.dart';
 import 'package:characterbook/ui/screens/characters/relationships_screen.dart';
-import 'package:characterbook/ui/screens/settings/export_pdf_settings_screen.dart';
+import 'package:characterbook/features/sharing/presentation/export_pdf_settings_screen.dart';
 import 'package:characterbook/ui/screens/random_number_screen.dart';
 import 'package:characterbook/ui/screens/templates/template_list_screen.dart';
 import 'package:characterbook/ui/widgets/items/home_item.dart';

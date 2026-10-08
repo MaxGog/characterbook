@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/data/models/swipe_action.dart';
-import 'package:characterbook/providers/swipe_action_settings_provider.dart';
+import 'package:characterbook/core/app_settings_actions.dart';
 import 'package:provider/provider.dart';
 
 class CommonCardItem extends StatelessWidget {
@@ -46,7 +46,7 @@ class CommonCardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final swipeSettings = context.watch<SwipeActionSettingsProvider>();
+    final swipeSettings = context.watch<SwipeActionSettingsActions>();
 
     final Map<SwipeAction, VoidCallback> availableActions = {};
     if (onEdit != null) availableActions[SwipeAction.edit] = onEdit!;

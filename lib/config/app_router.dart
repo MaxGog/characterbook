@@ -9,8 +9,11 @@ import 'package:characterbook/ui/screens/notes/note_management_screen.dart';
 import 'package:characterbook/ui/screens/notes/note_list_screen.dart';
 import 'package:characterbook/ui/screens/races/race_management_screen.dart';
 import 'package:characterbook/ui/screens/races/race_list_screen.dart';
-import 'package:characterbook/ui/screens/settings/settings_screen.dart';
-import 'package:characterbook/ui/screens/settings/swipe_action_settings_screen.dart';
+import 'package:characterbook/features/settings/presentation/settings_screen.dart';
+import 'package:characterbook/features/settings/presentation/swipe_action_settings_screen.dart';
+import 'package:characterbook/features/settings/presentation/theme_settings_screen.dart';
+import 'package:characterbook/features/sharing/presentation/export_pdf_settings_screen.dart';
+import 'package:characterbook/features/backup/presentation/backup_settings_screen.dart';
 import 'package:characterbook/ui/screens/templates/template_list_screen.dart';
 import 'package:characterbook/ui/navigation/app_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -233,10 +236,31 @@ final appRouter = GoRouter(
       ),
       routes: [
         GoRoute(
+          path: 'theme',
+          pageBuilder: (context, state) => SharedAxisPage<bool>(
+            key: const ValueKey('theme_settings'),
+            child: const ThemeSettingsScreen(),
+          ),
+        ),
+        GoRoute(
           path: 'swipe-actions',
           pageBuilder: (context, state) => SharedAxisPage<bool>(
             key: const ValueKey('swipe_actions'),
             child: const SwipeActionSettingsScreen(),
+          ),
+        ),
+        GoRoute(
+          path: 'export-pdf',
+          pageBuilder: (context, state) => SharedAxisPage<bool>(
+            key: const ValueKey('export_pdf_settings'),
+            child: const ExportPdfSettingsScreen(),
+          ),
+        ),
+        GoRoute(
+          path: 'backup',
+          pageBuilder: (context, state) => SharedAxisPage<bool>(
+            key: const ValueKey('backup_settings'),
+            child: const BackupSettingsScreen(),
           ),
         ),
       ],

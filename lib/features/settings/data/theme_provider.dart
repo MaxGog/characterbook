@@ -2,25 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:characterbook/features/settings/domain/settings_actions.dart';
 
-enum ThemePaletteStyle {
-  tonalSpot,
-  vibrant,
-  expressive,
-  fidelity,
-  monochrome,
-  neutral,
-  rainbow,
-  fruitSalad,
-  content,
-}
-
-enum ThemeColorSpec {
-  spec2021,
-  spec2025,
-}
-
-class ThemeProvider with ChangeNotifier {
+class ThemeProvider with ChangeNotifier implements ThemeSettingsActions {
   ThemeMode _themeMode = ThemeMode.system;
   Color _seedColor = Colors.blue;
   bool _useDynamicColor = false;
@@ -30,12 +14,19 @@ class ThemeProvider with ChangeNotifier {
   ColorScheme? _dynamicLightColorScheme;
   ColorScheme? _dynamicDarkColorScheme;
 
+  @override
   ThemeMode get themeMode => _themeMode;
+  @override
   Color get seedColor => _seedColor;
+  @override
   bool get useDynamicColor => _useDynamicColor;
+  @override
   ThemePaletteStyle get paletteStyle => _paletteStyle;
+  @override
   ThemeColorSpec get colorSpec => _colorSpec;
+  @override
   bool get useAmoledBlack => _useAmoledBlack;
+  @override
   bool get supportsDynamicColor =>
       _dynamicLightColorScheme != null && _dynamicDarkColorScheme != null;
 
@@ -65,6 +56,7 @@ class ThemeProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  @override
   void setThemeMode(ThemeMode mode) async {
     _themeMode = mode;
     notifyListeners();
@@ -73,6 +65,7 @@ class ThemeProvider with ChangeNotifier {
     await prefs.setInt('themeMode', mode.index);
   }
 
+  @override
   void setSeedColor(Color color) async {
     _seedColor = color;
     notifyListeners();
@@ -81,6 +74,7 @@ class ThemeProvider with ChangeNotifier {
     await prefs.setInt('seedColor', color.value);
   }
 
+  @override
   void setUseDynamicColor(bool value) async {
     if (_useDynamicColor == value) return;
     _useDynamicColor = value;
@@ -90,6 +84,7 @@ class ThemeProvider with ChangeNotifier {
     await prefs.setBool('useDynamicColor', value);
   }
 
+  @override
   void setPaletteStyle(ThemePaletteStyle value) async {
     if (_paletteStyle == value) return;
     _paletteStyle = value;
@@ -99,6 +94,7 @@ class ThemeProvider with ChangeNotifier {
     await prefs.setInt('paletteStyle', value.index);
   }
 
+  @override
   void setColorSpec(ThemeColorSpec value) async {
     if (_colorSpec == value) return;
     _colorSpec = value;
@@ -108,6 +104,7 @@ class ThemeProvider with ChangeNotifier {
     await prefs.setInt('colorSpec', value.index);
   }
 
+  @override
   void setUseAmoledBlack(bool value) async {
     if (_useAmoledBlack == value) return;
     _useAmoledBlack = value;
@@ -225,6 +222,7 @@ class ThemeProvider with ChangeNotifier {
     );
   }
 
+  @override
   ColorScheme generateMaterialYouColorSchemeFromSeed({
     required Color seed,
     required Brightness brightness,

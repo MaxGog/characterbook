@@ -1,9 +1,9 @@
 import 'package:characterbook/extensions/color_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:characterbook/providers/theme_provider.dart';
+import 'package:characterbook/features/settings/domain/settings_actions.dart';
 
 class ColorChoiceChip extends StatelessWidget {
-  final ThemeProvider themeProvider;
+  final ThemeSettingsActions themeProvider;
   final String label;
   final Color color;
 

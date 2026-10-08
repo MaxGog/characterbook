@@ -14,6 +14,10 @@
 │   │   │   ├── data/         # Адаптеры репозиториев, файлов и Google Drive
 │   │   │   ├── domain/       # Порты, контракт хранилища и use case
 │   │   │   └── presentation/ # Экран настроек, контроллер, автокопирование
+│   │   ├── settings/         # Тема, локаль и настройки жестов
+│   │   │   ├── data/         # Реализации состояния и локального хранения
+│   │   │   ├── domain/       # Контракты действий настроек и типы темы
+│   │   │   └── presentation/ # Экраны и виджеты настроек
 │   │   ├── notifications/    # Локальные напоминания и in-app уведомления
 │   │   │   ├── data/         # Адаптер flutter_local_notifications
 │   │   │   └── presentation/ # Оверлей уведомлений
@@ -24,6 +28,7 @@
 │   │       │   └── word_export_service.dart
 │   │       └── presentation/
 │   │           ├── clipboard_service.dart
+│   │           ├── export_pdf_settings_screen.dart
 │   │           ├── pdf_export_manager.dart
 │   │           ├── share_options_dialog.dart
 │   │           ├── sharing_manager.dart
@@ -32,6 +37,7 @@
 │   │   └── custom_field_adapter.dart
 │   ├── core/                 # Ядро приложения, базовые сущности
 │   │   ├── base_entity.dart
+│   │   ├── app_settings_actions.dart
 │   │   ├── app_notification_actions.dart
 │   │   ├── file_share_actions.dart
 │   │   └── local_notification_actions.dart
@@ -76,10 +82,7 @@
 │   ├── l10n/                 # Исходные файлы локализации
 │   │   ├── intl_en.arb
 │   │   └── intl_ru.arb
-│   ├── providers/            # Провайдеры состояния
-│   │   ├── locale_provider.dart
-│   │   ├── swipe_action_settings_provider.dart
-│   │   └── theme_provider.dart
+│   ├── providers/            # Общие, не принадлежащие feature-модулям провайдеры
 │   ├── services/             # Внешние сервисы и утилиты
 │   │   ├── date_formatter.dart
 │   │   └── ...
@@ -87,7 +90,6 @@
 │       ├── controllers/      # Контроллеры для экранов
 │       ├── navigation/       # Навигационные компоненты
 │       ├── screens/          # Основные экраны
-│       │   ├── settings/
 │       │   ├── characters/
 │       │   ├── races/
 │       │   ├── notes/
@@ -171,6 +173,14 @@ main.dart                     # Точка входа в приложение
 - UI (`ui/`) — представление данных, экраны, виджеты, контроллеры.
 
 Новые функциональные области следует выделять в `features/`, сохраняя зависимости направленными внутрь модуля и не перенося в него модели или хранилища без необходимости.
+
+### Модуль `features/settings/`
+- Экраны настроек темы, языка и жестов, а также соответствующие реализации состояния и локального хранения принадлежат модулю. Экран настроек приложения не импортирует экраны backup или sharing.
+- `domain/SettingsActions` — контракты UI для темы и локали. Экраны зависят от этих контрактов, а не от провайдеров/хранилища; composition root (`main.dart`) связывает реализации с портами.
+- `core/SwipeActionSettingsActions` — минимальный контракт для общего виджета карточки вне модуля. Settings реализует его, а composition root публикует реализацию; общий UI не зависит от конкретного провайдера настроек.
+- `AppRouter` — composition root навигации: он связывает маршруты settings с экранами settings, backup и PDF-экспорта. Переходы между feature-модулями выполняются по маршрутам, поэтому settings не импортирует соседние модули.
+- Провайдеры темы и локали создаются у composition root, так как ими пользуется всё приложение (`MaterialApp`). Реализации и UI настроек при этом остаются внутри `features/settings/`.
+- Модуль следует направлению зависимостей Flutter: presentation использует состояние/контракты, а платформенные и внешние реализации остаются в data; общие зависимости передаются через composition root. См. [Flutter app architecture guide](https://docs.flutter.dev/app-architecture/guide).
 
 ### Модуль `features/sharing/`
 - `presentation/ShareOptionsDialog` показывает действия «Копировать», «Поделиться файлом», «Экспорт в PDF» и «Экспорт в Word», получая конкретные действия от вызывающей стороны.

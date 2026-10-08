@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/data/models/swipe_action.dart';
-import 'package:characterbook/providers/swipe_action_settings_provider.dart';
+import 'package:characterbook/core/app_settings_actions.dart';
 
 class SwipeActionSettingsScreen extends StatelessWidget {
   const SwipeActionSettingsScreen({super.key});
@@ -31,10 +31,10 @@ class SwipeActionSettingsScreen extends StatelessWidget {
                     _SwipeDirectionCard(
                       title: s.leftSwipeAction,
                       selectedAction: context
-                          .watch<SwipeActionSettingsProvider>()
+                          .watch<SwipeActionSettingsActions>()
                           .leftAction,
                       onChanged: (action) => context
-                          .read<SwipeActionSettingsProvider>()
+                          .read<SwipeActionSettingsActions>()
                           .setLeftAction(action),
                       icon: Icons.swipe_left_rounded,
                     ),
@@ -42,10 +42,10 @@ class SwipeActionSettingsScreen extends StatelessWidget {
                     _SwipeDirectionCard(
                       title: s.rightSwipeAction,
                       selectedAction: context
-                          .watch<SwipeActionSettingsProvider>()
+                          .watch<SwipeActionSettingsActions>()
                           .rightAction,
                       onChanged: (action) => context
-                          .read<SwipeActionSettingsProvider>()
+                          .read<SwipeActionSettingsActions>()
                           .setRightAction(action),
                       icon: Icons.swipe_right_rounded,
                     ),

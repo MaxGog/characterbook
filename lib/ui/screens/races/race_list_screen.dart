@@ -9,7 +9,6 @@ import 'package:characterbook/services/app_navigator.dart';
 import 'package:characterbook/services/pin_service.dart';
 import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/ui/controllers/race_list_controller.dart';
-import 'package:characterbook/ui/screens/settings/swipe_action_settings_screen.dart';
 import 'package:characterbook/features/sharing/presentation/share_options_dialog.dart';
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
 import 'package:characterbook/ui/widgets/common_fab_menu.dart';

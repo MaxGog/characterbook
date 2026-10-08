@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:characterbook/providers/theme_provider.dart';
+import 'package:characterbook/features/settings/domain/settings_actions.dart';
 
 class ThemeListTile extends StatelessWidget {
-  final ThemeProvider themeProvider;
+  final ThemeSettingsActions themeProvider;
   final ThemeMode mode;
   final String title;
   final IconData icon;

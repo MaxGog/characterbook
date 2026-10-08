@@ -1,5 +1,5 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/providers/theme_provider.dart';
+import 'package:characterbook/features/settings/domain/settings_actions.dart';
 import 'package:characterbook/extensions/color_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -45,7 +45,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
 
     if (!context.mounted) return;
     if (selected != null) {
-      context.read<ThemeProvider>().setSeedColor(selected);
+      context.read<ThemeSettingsActions>().setSeedColor(selected);
     }
   }
 
@@ -201,7 +201,7 @@ class _ThemeKeyColorTiles extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = context.watch<ThemeProvider>();
+    final themeProvider = context.watch<ThemeSettingsActions>();
     final brightness = Theme.of(context).brightness;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -371,7 +371,7 @@ class _ThemeModePills extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = context.watch<ThemeProvider>();
+    final themeProvider = context.watch<ThemeSettingsActions>();
     final colorScheme = Theme.of(context).colorScheme;
 
     final selectedIndex = switch (themeProvider.themeMode) {
@@ -475,7 +475,7 @@ class _MaterialYouOptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = context.watch<ThemeProvider>();
+    final themeProvider = context.watch<ThemeSettingsActions>();
     final colorScheme = Theme.of(context).colorScheme;
     final s = S.of(context);
 
@@ -528,13 +528,13 @@ class _MaterialYouOptions extends StatelessWidget {
   }
 
   Future<void> _showPaletteStyleSheet(BuildContext context) {
-    final themeProvider = context.read<ThemeProvider>();
+    final themeProvider = context.read<ThemeSettingsActions>();
 
     return showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
       builder: (context) {
-        final current = context.watch<ThemeProvider>().paletteStyle;
+        final current = context.watch<ThemeSettingsActions>().paletteStyle;
         return SafeArea(
           child: ListView(
             padding: const EdgeInsets.only(bottom: 16),
@@ -558,13 +558,13 @@ class _MaterialYouOptions extends StatelessWidget {
   }
 
   Future<void> _showColorSpecSheet(BuildContext context) {
-    final themeProvider = context.read<ThemeProvider>();
+    final themeProvider = context.read<ThemeSettingsActions>();
 
     return showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
       builder: (context) {
-        final current = context.watch<ThemeProvider>().colorSpec;
+        final current = context.watch<ThemeSettingsActions>().colorSpec;
         return SafeArea(
           child: ListView(
             padding: const EdgeInsets.only(bottom: 16),
