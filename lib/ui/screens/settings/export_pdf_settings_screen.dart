@@ -1,4 +1,4 @@
-import 'package:characterbook/services/pdf_export_serivce.dart';
+import 'package:characterbook/features/sharing/data/pdf_export_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:characterbook/data/models/export_pdf_settings_model.dart';

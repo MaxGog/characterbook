@@ -1,13 +1,12 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:characterbook/data/enums/race_sort_enum.dart';
 import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/repositories/race_repository.dart';
 import 'package:characterbook/data/services/race_service.dart';
-import 'package:characterbook/services/file_share_service.dart';
-import 'package:characterbook/services/clipboard_service.dart';
-import 'package:characterbook/services/pdf_export_manager.dart';
-import 'package:characterbook/services/word_export_manager.dart';
+import 'package:characterbook/features/sharing/presentation/clipboard_service.dart';
+import 'package:characterbook/features/sharing/presentation/pdf_export_manager.dart';
+import 'package:characterbook/features/sharing/presentation/sharing_manager.dart';
+import 'package:characterbook/features/sharing/presentation/word_export_manager.dart';
 import 'package:flutter/material.dart';
 
 class RaceListController extends ChangeNotifier {
@@ -115,13 +114,7 @@ class RaceListController extends ChangeNotifier {
   }
 
   Future<void> shareRaceAsFile(Race race) async {
-    final fileName = '${race.name}.race';
-    final content = jsonEncode(race.toJson());
-    await FileShareService.shareTextFile(
-      content,
-      fileName,
-      text: race.name,
-    );
+    await SharingManager.shareRaceAsFile(race);
   }
 
   Future<Race?> importRace(

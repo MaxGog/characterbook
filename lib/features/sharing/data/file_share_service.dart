@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:characterbook/core/file_share_actions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 /// Creates temporary files and shares them through the platform share sheet.
-class FileShareService {
-  static Future<void> shareTextFile(
+class FileShareService implements FileShareActions {
+  const FileShareService();
+
+  Future<void> shareTextFile(
     String content,
     String fileName, {
     String? text,
@@ -22,7 +25,8 @@ class FileShareService {
     );
   }
 
-  static Future<void> shareFile(
+  @override
+  Future<void> shareFile(
     Uint8List bytes,
     String fileName, {
     String? text,

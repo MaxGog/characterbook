@@ -2,13 +2,12 @@ import 'dart:async';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/data/models/note_model.dart';
 import 'package:characterbook/data/repositories/note_repository.dart';
-import 'package:characterbook/services/clipboard_service.dart';
-import 'package:characterbook/data/services/note_service.dart';
+import 'package:characterbook/features/sharing/presentation/clipboard_service.dart';
+import 'package:characterbook/features/sharing/presentation/sharing_manager.dart';
 import 'package:flutter/material.dart';
 
 class NoteManagementController extends ChangeNotifier {
   final NoteRepository _noteRepo;
-  final NoteService? _noteService;
 
   final Note? _originalNote;
   final bool isCopyMode;
@@ -35,11 +34,9 @@ class NoteManagementController extends ChangeNotifier {
 
   NoteManagementController({
     required NoteRepository noteRepo,
-    NoteService? noteService,
     Note? note,
     this.isCopyMode = false,
   })  : _noteRepo = noteRepo,
-        _noteService = noteService,
         _originalNote = note {
     _initialize();
   }
@@ -157,10 +154,6 @@ class NoteManagementController extends ChangeNotifier {
   }
 
   Future<void> share(BuildContext context) async {
-    if (_noteService != null) {
-      await _noteService!.shareNote(context, _editable);
-    } else {
-      throw Exception('NoteService not provided');
-    }
+    await SharingManager.shareNote(context, _editable);
   }
 }

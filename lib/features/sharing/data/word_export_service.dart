@@ -1,8 +1,9 @@
 import 'dart:typed_data';
+
+import 'package:characterbook/data/models/character_model.dart';
 import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/models/template_model.dart';
 import 'package:docs_gee/docs_gee.dart';
-import 'package:characterbook/data/models/character_model.dart';
 
 class WordExportService {
   final Character character;

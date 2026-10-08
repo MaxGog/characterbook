@@ -1,13 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
-import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/repositories/race_repository.dart';
-import 'package:characterbook/services/pdf_export_manager.dart';
-import 'package:characterbook/services/file_share_service.dart';
-import 'package:characterbook/services/word_export_manager.dart';
-import 'package:characterbook/ui/widgets/dialogs/error_dialog.dart';
-import 'package:characterbook/ui/widgets/dialogs/loading_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -210,55 +203,4 @@ class RaceService extends ChangeNotifier {
     return tagCounts.entries.reduce((a, b) => a.value > b.value ? a : b).key;
   }
 
-  Future<void> exportToPdf(BuildContext context, Race race) async {
-    await PdfExportManager.exportRaceWithDialog(
-      context,
-      race,
-      fileName: '${race.name}.pdf',
-      shareText: 'Описание расы ${race.name}',
-    );
-  }
-
-  Future<void> exportToJson(BuildContext context, Race race) async {
-    try {
-      showLoadingDialog(context: context, message: S.of(context).creating_file);
-      final jsonStr = jsonEncode(race.toJson());
-      final fileName =
-          '${race.name}_${DateTime.now().millisecondsSinceEpoch}.race';
-      if (context.mounted) hideLoadingDialog(context);
-      await FileShareService.shareFile(
-        Uint8List.fromList(jsonStr.codeUnits),
-        fileName,
-        text: 'Раса: ${race.name}',
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () => throw TimeoutException(
-            'Экспорт в JSON занял слишком много времени'),
-      );
-    } on TimeoutException {
-      if (context.mounted) {
-        hideLoadingDialog(context);
-        _showErrorDialog(
-            context, 'Таймаут', 'Экспорт в JSON занял слишком много времени');
-      }
-    } catch (e) {
-      if (context.mounted) {
-        hideLoadingDialog(context);
-        _showErrorDialog(context, 'Ошибка экспорта',
-            'Не удалось экспортировать в JSON: ${e.toString()}');
-      }
-    }
-  }
-
-  void _showErrorDialog(BuildContext context, String title, String message) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context.mounted) {
-        showErrorDialog(context: context, title: title, message: message);
-      }
-    });
-  }
-
-  Future<void> exportToWord(BuildContext context, Race race) async {
-    await WordExportManager.exportRaceWithDialog(context, race);
-  }
 }

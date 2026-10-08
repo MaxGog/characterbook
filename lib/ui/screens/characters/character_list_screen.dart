@@ -7,7 +7,8 @@ import 'package:characterbook/providers/pins_provider.dart';
 import 'package:characterbook/services/app_navigator.dart';
 import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/services/pin_service.dart';
-import 'package:characterbook/features/sharing/share_options_dialog.dart';
+import 'package:characterbook/features/sharing/presentation/pdf_export_manager.dart';
+import 'package:characterbook/features/sharing/presentation/share_options_dialog.dart';
 import 'package:characterbook/ui/widgets/modals/character_modal_card.dart';
 import 'package:characterbook/ui/controllers/character_list_controller.dart';
 import 'package:characterbook/ui/widgets/common_fab_menu.dart';
@@ -560,8 +561,17 @@ class _CharacterListScreenState extends State<CharacterListScreen> {
                                                     onSettings: () => AppNavigator
                                                         .openSwipeActionSettings(),
                                                     onShare: () =>
-                                                        service.exportToPdf(
-                                                            context, character),
+                                                        PdfExportManager
+                                                            .exportCharacterWithDialog(
+                                                          context,
+                                                          character,
+                                                          fileName:
+                                                              '${character.name}.pdf',
+                                                          shareText: S.current
+                                                              .character_exported(
+                                                            character.name,
+                                                          ),
+                                                        ),
                                                   ))
                                               .toList(),
                                         )
@@ -595,7 +605,14 @@ class _CharacterListScreenState extends State<CharacterListScreen> {
                               onSettings: () =>
                                   AppNavigator.openSwipeActionSettings(),
                               onShare: () =>
-                                  service.exportToPdf(context, character),
+                                  PdfExportManager.exportCharacterWithDialog(
+                                    context,
+                                    character,
+                                    fileName: '${character.name}.pdf',
+                                    shareText: S.current.character_exported(
+                                      character.name,
+                                    ),
+                                  ),
                             );
                           },
                           childCount: controller.filteredItems.length,

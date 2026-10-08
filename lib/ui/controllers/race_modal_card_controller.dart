@@ -1,14 +1,14 @@
 import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/repositories/race_repository.dart';
-import 'package:characterbook/services/clipboard_service.dart';
-import 'package:characterbook/data/services/race_service.dart';
-import 'package:characterbook/services/word_export_manager.dart';
+import 'package:characterbook/features/sharing/presentation/clipboard_service.dart';
+import 'package:characterbook/features/sharing/presentation/pdf_export_manager.dart';
+import 'package:characterbook/features/sharing/presentation/sharing_manager.dart';
+import 'package:characterbook/features/sharing/presentation/word_export_manager.dart';
 import 'package:flutter/material.dart';
 
 class RaceModalController extends ChangeNotifier {
   final Race race;
   final RaceRepository _raceRepo;
-  final RaceService _raceService;
 
   bool _isLoading = false;
   String? _error;
@@ -22,11 +22,7 @@ class RaceModalController extends ChangeNotifier {
   RaceModalController({
     required this.race,
     required RaceRepository raceRepo,
-    required RaceService raceService,
-    ClipboardService? clipboardService,
-  })  : _raceRepo = raceRepo,
-        _raceService = raceService {
-  }
+  }) : _raceRepo = raceRepo;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -50,7 +46,12 @@ class RaceModalController extends ChangeNotifier {
 
   Future<void> exportToPdf(BuildContext context) async {
     try {
-      await _raceService.exportToPdf(context, race);
+      await PdfExportManager.exportRaceWithDialog(
+        context,
+        race,
+        fileName: '${race.name}.pdf',
+        shareText: 'Описание расы ${race.name}',
+      );
     } catch (e) {
       _error = e.toString();
       notifyListeners();
@@ -60,7 +61,7 @@ class RaceModalController extends ChangeNotifier {
 
   Future<void> exportToJson(BuildContext context) async {
     try {
-      await _raceService.exportToJson(context, race);
+      await SharingManager.shareRaceAsJson(context, race);
     } catch (e) {
       _error = e.toString();
       notifyListeners();

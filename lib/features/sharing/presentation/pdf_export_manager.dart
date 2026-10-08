@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/data/models/character_model.dart';
 import 'package:characterbook/data/models/race_model.dart';
-import 'package:characterbook/services/file_share_service.dart';
-import 'package:characterbook/services/pdf_export_serivce.dart';
+import 'package:characterbook/features/sharing/data/file_share_service.dart';
+import 'package:characterbook/features/sharing/data/pdf_export_service.dart';
 import 'package:characterbook/ui/widgets/dialogs/error_dialog.dart';
 import 'package:characterbook/ui/widgets/dialogs/loading_dialog.dart';
 import 'package:characterbook/ui/widgets/dialogs/success_dialog.dart';
@@ -86,7 +86,7 @@ class PdfExportManager {
         hideLoadingDialog(context);
       }
 
-      await FileShareService.shareFile(
+      await const FileShareService().shareFile(
         pdfBytes,
         fileName,
         text: shareText,

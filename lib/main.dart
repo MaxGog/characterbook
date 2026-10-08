@@ -10,6 +10,8 @@ import 'package:characterbook/features/backup/domain/backup_manager.dart';
 import 'package:characterbook/features/backup/domain/backup_repository.dart';
 import 'package:characterbook/features/backup/presentation/auto_backup_provider.dart';
 import 'package:characterbook/features/backup/presentation/backup_controller.dart';
+import 'package:characterbook/core/file_share_actions.dart';
+import 'package:characterbook/features/sharing/data/file_share_service.dart';
 import 'package:characterbook/providers/locale_provider.dart';
 import 'package:characterbook/providers/swipe_action_settings_provider.dart';
 import 'package:characterbook/providers/theme_provider.dart';
@@ -20,10 +22,8 @@ import 'package:characterbook/data/repositories/relationship_repository.dart';
 import 'package:characterbook/data/repositories/template_repository.dart';
 import 'package:characterbook/services/app_navigator.dart';
 import 'package:characterbook/data/services/character_service.dart';
-import 'package:characterbook/services/clipboard_service.dart';
 import 'package:characterbook/services/device_calendar_service.dart';
 import 'package:characterbook/services/file_picker_service.dart';
-import 'package:characterbook/services/file_share_service.dart';
 import 'package:characterbook/data/services/hive_service.dart';
 import 'package:characterbook/services/menu_channel_service.dart';
 import 'package:characterbook/data/services/note_service.dart';
@@ -77,8 +77,9 @@ class CharacterBookApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<FilePickerService>(create: (_) => FilePickerService()),
-        Provider<ClipboardService>(create: (_) => ClipboardService()),
-        Provider<FileShareService>(create: (_) => FileShareService()),
+        Provider<FileShareActions>(
+          create: (_) => const FileShareService(),
+        ),
         ChangeNotifierProvider(create: (_) => PinsProvider()),
         if (characterBox != null)
           Provider<CharacterRepository>(
@@ -186,10 +187,13 @@ class _AppServicesWrapper extends StatelessWidget {
         ProxyProvider<BackupRepository, BackupManager>(
           update: (_, repository, __) => BackupManager(repository),
         ),
-        ProxyProvider2<BackupManager, FilePickerService, LocalBackupService>(
-          update: (_, backupManager, filePicker, __) => LocalBackupService(
+        ProxyProvider3<BackupManager, FilePickerService, FileShareActions,
+            LocalBackupService>(
+          update: (_, backupManager, filePicker, fileShareActions, __) =>
+              LocalBackupService(
             backupManager: backupManager,
             filePickerService: filePicker,
+            fileShareActions: fileShareActions,
           ),
         ),
         ProxyProvider<BackupManager, CloudBackupService>(

@@ -6,7 +6,8 @@ import 'package:characterbook/services/app_navigator.dart';
 import 'package:characterbook/ui/controllers/template_list_controller.dart';
 import 'package:characterbook/ui/screens/characters/character_management_screen.dart';
 import 'package:characterbook/ui/screens/settings/swipe_action_settings_screen.dart';
-import 'package:characterbook/features/sharing/share_options_dialog.dart';
+import 'package:characterbook/features/sharing/presentation/share_options_dialog.dart';
+import 'package:characterbook/features/sharing/presentation/sharing_manager.dart';
 import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
 import 'package:characterbook/ui/widgets/items/template_card_item.dart';
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
@@ -409,7 +410,7 @@ class _TemplatesListScreenState extends State<TemplatesListScreen> {
                           onLongPress: () => _showTemplateContextMenu(template, context, controller),
                           onEdit: () => _navigateToEdit(context, template),
                           onDelete: () => _deleteTemplate(template, controller),
-                          onShare: () => service.shareTemplate(template),
+                          onShare: () => SharingManager.shareTemplate(template),
                           onDuplicate: null,
                           onSettings: () => AppNavigator.openSwipeActionSettings(),
                       );

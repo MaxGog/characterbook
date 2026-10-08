@@ -2,7 +2,7 @@ import 'package:characterbook/data/models/character_model.dart';
 import 'package:characterbook/data/models/custom_field_model.dart';
 import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/models/template_model.dart';
-import 'package:characterbook/services/word_export_service.dart';
+import 'package:characterbook/features/sharing/data/word_export_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 

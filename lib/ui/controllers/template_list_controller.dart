@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:characterbook/data/enums/template_sort_enum.dart';
 import 'package:characterbook/data/models/template_model.dart';
 import 'package:characterbook/data/repositories/template_repository.dart';
-import 'package:characterbook/services/file_share_service.dart';
-import 'package:characterbook/services/word_export_manager.dart';
+import 'package:characterbook/features/sharing/presentation/sharing_manager.dart';
+import 'package:characterbook/features/sharing/presentation/word_export_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -121,13 +120,7 @@ class TemplateListController extends ChangeNotifier {
   }
 
   Future<void> shareTemplateAsFile(QuestionnaireTemplate template) async {
-    final fileName = '${template.name}.chax';
-    final content = jsonEncode(template.toJson());
-    await FileShareService.shareTextFile(
-      content,
-      fileName,
-      text: template.name,
-    );
+    await SharingManager.shareTemplateAsFile(template);
   }
 
   Future<void> exportTemplateToWord(QuestionnaireTemplate template, BuildContext context) async {

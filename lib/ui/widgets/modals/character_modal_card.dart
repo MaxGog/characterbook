@@ -8,11 +8,9 @@ import 'package:characterbook/data/repositories/character_repository.dart';
 import 'package:characterbook/data/repositories/note_repository.dart';
 import 'package:characterbook/data/services/character_service.dart';
 import 'package:characterbook/services/app_navigator.dart';
-import 'package:characterbook/services/clipboard_service.dart';
 import 'package:characterbook/services/pin_service.dart';
-import 'package:characterbook/data/services/note_service.dart';
 import 'package:characterbook/ui/controllers/character_modal_controller.dart';
-import 'package:characterbook/features/sharing/share_options_dialog.dart';
+import 'package:characterbook/features/sharing/presentation/share_options_dialog.dart';
 import 'package:characterbook/ui/widgets/edit_relationship_bottom_sheet.dart';
 import 'package:characterbook/ui/widgets/items/note_card_item.dart';
 
@@ -35,8 +33,6 @@ class CharacterModalCard extends StatelessWidget {
         characterRepo: context.read<CharacterRepository>(),
         noteRepo: context.read<NoteRepository>(),
         characterService: context.read<CharacterService>(),
-        noteService: context.read<NoteService>(),
-        clipboardService: context.read<ClipboardService>(),
         relationshipService: context.read<RelationshipService>(),
       ),
       child: Consumer<CharacterModalController>(
@@ -220,9 +216,11 @@ class CharacterModalCard extends StatelessWidget {
     }
   }
 
-  void _showShareMenu(BuildContext context, CharacterModalController controller) {
+  void _showShareMenu(
+      BuildContext context, CharacterModalController controller) {
     var s = S.of(context);
-    ShareOptionsDialog.show(context,
+    ShareOptionsDialog.show(
+      context,
       onCopy: () async {
         try {
           await _handleCopy(context, controller);
@@ -338,9 +336,9 @@ class CharacterModalCard extends StatelessWidget {
   }
 
   void _showSnackBar(BuildContext context, String message,
-    {bool isError = true}) {
-      AppNavigator.showError(message);
-    }
+      {bool isError = true}) {
+    AppNavigator.showError(message);
+  }
 
   Future<void> _navigateToEdit(BuildContext context) async {
     Navigator.pop(context);
@@ -461,7 +459,8 @@ class CharacterModalCard extends StatelessWidget {
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
-                          builder: (_) => EditRelationshipBottomSheet(relationship: rel),
+                          builder: (_) =>
+                              EditRelationshipBottomSheet(relationship: rel),
                         );
                       },
                     ),

@@ -3,13 +3,15 @@ import 'dart:async';
 import 'package:characterbook/data/models/character_model.dart';
 import 'package:characterbook/data/models/note_model.dart';
 import 'package:characterbook/data/models/relationship_model.dart';
+import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/data/repositories/character_repository.dart';
 import 'package:characterbook/data/repositories/note_repository.dart';
 import 'package:characterbook/data/services/character_service.dart';
 import 'package:characterbook/data/services/relationship_service.dart';
-import 'package:characterbook/services/clipboard_service.dart';
-import 'package:characterbook/data/services/note_service.dart';
-import 'package:characterbook/services/word_export_manager.dart';
+import 'package:characterbook/features/sharing/presentation/clipboard_service.dart';
+import 'package:characterbook/features/sharing/presentation/pdf_export_manager.dart';
+import 'package:characterbook/features/sharing/presentation/sharing_manager.dart';
+import 'package:characterbook/features/sharing/presentation/word_export_manager.dart';
 import 'package:flutter/material.dart';
 
 class CharacterModalController extends ChangeNotifier {
@@ -43,8 +45,6 @@ class CharacterModalController extends ChangeNotifier {
     required CharacterRepository characterRepo,
     required NoteRepository noteRepo,
     required CharacterService characterService,
-    required NoteService noteService,
-    required ClipboardService clipboardService,
     required RelationshipService relationshipService,
   })  : _characterRepo = characterRepo,
         _noteRepo = noteRepo,
@@ -125,7 +125,12 @@ class CharacterModalController extends ChangeNotifier {
 
   Future<void> exportToPdf(BuildContext context) async {
     try {
-      await _characterService.exportToPdf(context, character);
+      await PdfExportManager.exportCharacterWithDialog(
+        context,
+        character,
+        fileName: '${character.name}.pdf',
+        shareText: S.current.character_exported(character.name),
+      );
     } catch (e) {
       _error = e.toString();
       notifyListeners();
@@ -135,7 +140,7 @@ class CharacterModalController extends ChangeNotifier {
 
   Future<void> exportToJson(BuildContext context) async {
     try {
-      await _characterService.exportToJson(context, character);
+      await SharingManager.shareCharacterAsJson(context, character);
     } catch (e) {
       _error = e.toString();
       notifyListeners();

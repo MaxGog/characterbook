@@ -1,14 +1,12 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:characterbook/data/enums/character_sort_enum.dart';
 import 'package:characterbook/data/models/character_model.dart';
 import 'package:characterbook/data/repositories/character_repository.dart';
 import 'package:characterbook/data/services/character_service.dart';
-import 'package:characterbook/services/file_share_service.dart';
-import 'package:characterbook/services/clipboard_service.dart';
-import 'package:characterbook/services/pdf_export_manager.dart';
-import 'package:characterbook/services/word_export_manager.dart';
+import 'package:characterbook/features/sharing/presentation/clipboard_service.dart';
+import 'package:characterbook/features/sharing/presentation/pdf_export_manager.dart';
+import 'package:characterbook/features/sharing/presentation/sharing_manager.dart';
+import 'package:characterbook/features/sharing/presentation/word_export_manager.dart';
 import 'package:flutter/material.dart';
 
 class CharacterListController extends ChangeNotifier {
@@ -107,7 +105,8 @@ class CharacterListController extends ChangeNotifier {
     }
   }
 
-  Future<void> exportCharacterToWord(Character character, BuildContext context) async {
+  Future<void> exportCharacterToWord(
+      Character character, BuildContext context) async {
     await WordExportManager.exportCharacterWithDialog(context, character);
   }
 
@@ -120,7 +119,8 @@ class CharacterListController extends ChangeNotifier {
     }
   }
 
-  Future<void> characterClipboardText(Character character, BuildContext context) async {
+  Future<void> characterClipboardText(
+      Character character, BuildContext context) async {
     await ClipboardService.copyCharacterToClipboard(
       context: context,
       name: character.name,
@@ -139,13 +139,7 @@ class CharacterListController extends ChangeNotifier {
   }
 
   Future<void> shareCharacterAsFile(Character character) async {
-    final fileName = '${character.name}.character';
-    final content = jsonEncode(character.toJson());
-    await FileShareService.shareTextFile(
-      content,
-      fileName,
-      text: '${character.name}',
-    );
+    await SharingManager.shareCharacterAsFile(character);
   }
 
   Future<void> duplicateCharacter(

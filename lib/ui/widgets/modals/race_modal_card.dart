@@ -2,12 +2,11 @@ import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/repositories/race_repository.dart';
 import 'package:characterbook/services/app_navigator.dart';
-import 'package:characterbook/services/clipboard_service.dart';
+
 import 'package:characterbook/services/pin_service.dart';
-import 'package:characterbook/data/services/race_service.dart';
 import 'package:characterbook/ui/controllers/race_modal_card_controller.dart';
 import 'package:characterbook/ui/screens/races/race_management_screen.dart';
-import 'package:characterbook/features/sharing/share_options_dialog.dart';
+import 'package:characterbook/features/sharing/presentation/share_options_dialog.dart';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -26,8 +25,6 @@ class RaceModalCard extends StatelessWidget {
       create: (_) => RaceModalController(
         race: race,
         raceRepo: context.read<RaceRepository>(),
-        raceService: context.read<RaceService>(),
-        clipboardService: context.read<ClipboardService>(),
       ),
       child: Consumer<RaceModalController>(
         builder: (context, controller, child) {

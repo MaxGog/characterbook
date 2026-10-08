@@ -4,8 +4,8 @@ import 'package:characterbook/data/models/template_model.dart';
 import 'package:characterbook/services/app_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/services/file_share_service.dart';
-import 'package:characterbook/services/word_export_service.dart';
+import 'package:characterbook/features/sharing/data/file_share_service.dart';
+import 'package:characterbook/features/sharing/data/word_export_service.dart';
 import 'package:characterbook/ui/widgets/dialogs/loading_dialog.dart';
 
 class WordExportManager {
@@ -22,7 +22,7 @@ class WordExportManager {
 
       if (context.mounted) hideLoadingDialog(context);
 
-      await FileShareService.shareFile(
+      await const FileShareService().shareFile(
         bytes,
         '${character.name}.docx',
         text: s.character_share_text(character.name),
@@ -51,7 +51,7 @@ class WordExportManager {
       final bytes = await service.generate();
       if (context.mounted) hideLoadingDialog(context);
 
-      await FileShareService.shareFile(
+      await const FileShareService().shareFile(
         bytes,
         '${race.name}.docx',
         text: 'Раса: ${race.name}',
@@ -79,7 +79,7 @@ class WordExportManager {
       final bytes = await service.generate();
       if (context.mounted) hideLoadingDialog(context);
 
-      await FileShareService.shareFile(
+      await const FileShareService().shareFile(
         bytes,
         '${template.name}.docx',
         text: 'Шаблон: ${template.name}',

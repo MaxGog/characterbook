@@ -1,18 +1,10 @@
-import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/data/models/character_model.dart';
 import 'package:characterbook/data/repositories/character_repository.dart';
-import 'package:characterbook/services/file_share_service.dart';
-import 'package:characterbook/services/pdf_export_manager.dart';
 import 'package:characterbook/data/services/relationship_service.dart';
-import 'package:characterbook/services/word_export_manager.dart';
-import 'package:characterbook/ui/widgets/dialogs/error_dialog.dart';
-import 'package:characterbook/ui/widgets/dialogs/loading_dialog.dart';
-import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 
 class CharacterService extends ChangeNotifier {
   final CharacterRepository _repository;
@@ -69,64 +61,4 @@ class CharacterService extends ChangeNotifier {
     return '${timestamp}_$randomNum';
   }
 
-  Future<void> exportToPdf(BuildContext context, Character character) async {
-    try {
-      await PdfExportManager.exportCharacterWithDialog(
-        context,
-        character,
-        fileName: '${character.name}.pdf',
-        shareText: S.current.character_exported(character.name),
-      );
-    } catch (e) {
-      _handleError(context, S.current.export_error, e);
-    }
-  }
-
-  Future<void> exportToJson(BuildContext context, Character character) async {
-    try {
-      showLoadingDialog(context: context, message: S.current.creating_file);
-      final jsonStr = jsonEncode(character.toJson());
-      final fileName =
-          '${character.name}_${DateTime.now().millisecondsSinceEpoch}.character';
-      if (context.mounted) hideLoadingDialog(context);
-      await FileShareService.shareFile(
-        Uint8List.fromList(jsonStr.codeUnits),
-        fileName,
-        text: '${S.current.character}: ${character.name}',
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () => throw TimeoutException(S.current.export_error),
-      );
-    } on TimeoutException {
-      if (context.mounted) {
-        hideLoadingDialog(context);
-        _showErrorDialog(
-            context, S.current.export_error, S.current.export_timeout);
-      }
-    } catch (e) {
-      if (context.mounted) {
-        hideLoadingDialog(context);
-        _showErrorDialog(
-            context, S.current.export_error, '${S.current.export_error}: $e');
-      }
-    }
-  }
-
-  void _handleError(BuildContext context, String title, Object error) {
-    if (context.mounted) {
-      _showErrorDialog(context, title, error.toString());
-    }
-  }
-
-  void _showErrorDialog(BuildContext context, String title, String message) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context.mounted) {
-        showErrorDialog(context: context, title: title, message: message);
-      }
-    });
-  }
-
-  Future<void> exportToWord(BuildContext context, Character character) async {
-    await WordExportManager.exportCharacterWithDialog(context, character);
-  }
 }

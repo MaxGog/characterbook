@@ -1,13 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:characterbook/data/models/character_model.dart';
 import 'package:characterbook/data/models/template_model.dart';
 import 'package:characterbook/data/repositories/template_repository.dart';
 import 'package:characterbook/services/file_picker_service.dart';
-import 'package:characterbook/services/file_share_service.dart';
-import 'package:characterbook/services/word_export_manager.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 class TemplateService extends ChangeNotifier {
@@ -63,22 +60,4 @@ class TemplateService extends ChangeNotifier {
     }
   }
 
-  Future<void> shareTemplate(QuestionnaireTemplate template) async {
-    try {
-      final String templateJson = jsonEncode(template.toJson());
-      final Uint8List bytes = Uint8List.fromList(utf8.encode(templateJson));
-      await FileShareService.shareFile(
-        bytes,
-        '${template.name}.chax',
-        text: 'Шаблон персонажа: ${template.name}',
-        subject: 'Шаблон персонажа',
-      );
-    } catch (e) {
-      throw Exception('Ошибка при шаринге шаблона: ${e.toString()}');
-    }
-  }
-
-  Future<void> exportToWord(BuildContext context, QuestionnaireTemplate template) async {
-    await WordExportManager.exportTemplateWithDialog(context, template);
-  }
 }

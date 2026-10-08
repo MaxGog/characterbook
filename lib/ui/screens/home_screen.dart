@@ -1,17 +1,16 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/data/models/character_model.dart';
 import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/services/character_service.dart';
 import 'package:characterbook/data/services/race_service.dart';
-import 'package:characterbook/services/file_share_service.dart';
-import 'package:characterbook/features/sharing/share_options_dialog.dart';
+import 'package:characterbook/features/sharing/presentation/share_options_dialog.dart';
+import 'package:characterbook/features/sharing/presentation/sharing_manager.dart';
 import 'package:characterbook/providers/pins_provider.dart';
 import 'package:characterbook/services/app_navigator.dart';
-import 'package:characterbook/services/clipboard_service.dart';
+import 'package:characterbook/features/sharing/presentation/clipboard_service.dart';
 import 'package:characterbook/services/date_formatter.dart';
-import 'package:characterbook/services/pdf_export_manager.dart';
+import 'package:characterbook/features/sharing/presentation/pdf_export_manager.dart';
 import 'package:characterbook/ui/controllers/home_controller.dart';
 import 'package:characterbook/ui/widgets/modals/character_modal_card.dart';
 import 'package:characterbook/ui/widgets/modals/race_modal_card.dart';
@@ -249,12 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () async {
                   Navigator.pop(dialogContext);
                   try {
-                    final content = jsonEncode(item.character.toJson());
-                    await FileShareService.shareTextFile(
-                      content,
-                      '${item.character.name}.character',
-                      text: '${item.character.name}',
-                    );
+                    await SharingManager.shareCharacterAsFile(item.character);
                   } catch (e) {
                     if (context.mounted) {
                       AppNavigator.showError('${s.error}: $e');
@@ -307,12 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       onShareFile: () async {
         try {
-          final content = jsonEncode(item.race.toJson());
-          await FileShareService.shareTextFile(
-            content,
-            '${item.race.name}.race',
-            text: '${item.race.name}',
-          );
+          await SharingManager.shareRaceAsFile(item.race);
         } catch (e) {
           if (context.mounted) {
             AppNavigator.showError('${s.error}: $e');
