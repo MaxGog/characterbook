@@ -18,7 +18,7 @@ import 'package:characterbook/data/services/character_service.dart';
 import 'package:characterbook/services/clipboard_service.dart';
 import 'package:characterbook/services/device_calendar_service.dart';
 import 'package:characterbook/services/file_picker_service.dart';
-import 'package:characterbook/services/file_share_service.dart';
+import 'package:characterbook/features/sharing/file_share_service.dart';
 import 'package:characterbook/data/services/hive_service.dart';
 import 'package:characterbook/services/menu_channel_service.dart';
 import 'package:characterbook/data/services/note_service.dart';

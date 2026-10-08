@@ -1,18 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/data/models/character_model.dart';
 import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/services/character_service.dart';
 import 'package:characterbook/data/services/race_service.dart';
+import 'package:characterbook/features/sharing/file_share_service.dart';
+import 'package:characterbook/features/sharing/share_options_dialog.dart';
 import 'package:characterbook/providers/pins_provider.dart';
 import 'package:characterbook/services/app_navigator.dart';
 import 'package:characterbook/services/clipboard_service.dart';
 import 'package:characterbook/services/date_formatter.dart';
 import 'package:characterbook/services/pdf_export_manager.dart';
 import 'package:characterbook/ui/controllers/home_controller.dart';
-import 'package:characterbook/ui/widgets/dialogs/share_options_dialog.dart';
 import 'package:characterbook/ui/widgets/modals/character_modal_card.dart';
 import 'package:characterbook/ui/widgets/modals/race_modal_card.dart';
 import 'package:characterbook/ui/widgets/home_fab_menu.dart';
@@ -24,9 +24,7 @@ import 'package:characterbook/ui/widgets/pinned_section.dart';
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -252,12 +250,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pop(dialogContext);
                   try {
                     final content = jsonEncode(item.character.toJson());
-                    final tempDir = await getTemporaryDirectory();
-                    final file = File(
-                        '${tempDir.path}/${item.character.name}.character');
-                    await file.writeAsString(content);
-                    await Share.shareXFiles(
-                      [XFile(file.path)],
+                    await FileShareService.shareTextFile(
+                      content,
+                      '${item.character.name}.character',
                       text: '${item.character.name}',
                     );
                   } catch (e) {
@@ -313,11 +308,9 @@ class _HomeScreenState extends State<HomeScreen> {
       onShareFile: () async {
         try {
           final content = jsonEncode(item.race.toJson());
-          final tempDir = await getTemporaryDirectory();
-          final file = File('${tempDir.path}/${item.race.name}.race');
-          await file.writeAsString(content);
-          await Share.shareXFiles(
-            [XFile(file.path)],
+          await FileShareService.shareTextFile(
+            content,
+            '${item.race.name}.race',
             text: '${item.race.name}',
           );
         } catch (e) {

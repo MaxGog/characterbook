@@ -1,17 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:characterbook/data/enums/character_sort_enum.dart';
 import 'package:characterbook/data/models/character_model.dart';
 import 'package:characterbook/data/repositories/character_repository.dart';
 import 'package:characterbook/data/services/character_service.dart';
+import 'package:characterbook/features/sharing/file_share_service.dart';
 import 'package:characterbook/services/clipboard_service.dart';
 import 'package:characterbook/services/pdf_export_manager.dart';
 import 'package:characterbook/services/word_export_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 class CharacterListController extends ChangeNotifier {
   final CharacterRepository _repository;
@@ -143,11 +141,9 @@ class CharacterListController extends ChangeNotifier {
   Future<void> shareCharacterAsFile(Character character) async {
     final fileName = '${character.name}.character';
     final content = jsonEncode(character.toJson());
-    final tempDir = await getTemporaryDirectory();
-    final file = File('${tempDir.path}/$fileName');
-    await file.writeAsString(content);
-    await Share.shareXFiles(
-      [XFile(file.path)],
+    await FileShareService.shareTextFile(
+      content,
+      fileName,
       text: '${character.name}',
     );
   }

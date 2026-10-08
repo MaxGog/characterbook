@@ -7,7 +7,7 @@ import 'package:characterbook/providers/pins_provider.dart';
 import 'package:characterbook/services/app_navigator.dart';
 import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/services/pin_service.dart';
-import 'package:characterbook/ui/widgets/dialogs/share_options_dialog.dart';
+import 'package:characterbook/features/sharing/share_options_dialog.dart';
 import 'package:characterbook/ui/widgets/modals/character_modal_card.dart';
 import 'package:characterbook/ui/controllers/character_list_controller.dart';
 import 'package:characterbook/ui/widgets/common_fab_menu.dart';

@@ -7,7 +7,7 @@ import 'package:characterbook/services/app_navigator.dart';
 import 'package:characterbook/services/file_picker_service.dart';
 import 'package:characterbook/ui/controllers/note_list_controller.dart';
 import 'package:characterbook/ui/widgets/common_fab_menu.dart';
-import 'package:characterbook/ui/widgets/dialogs/share_options_dialog.dart';
+import 'package:characterbook/features/sharing/share_options_dialog.dart';
 import 'package:characterbook/ui/widgets/items/note_card_item.dart';
 import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
 import 'package:characterbook/ui/widgets/empty_notes_state.dart';

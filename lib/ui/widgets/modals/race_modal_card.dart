@@ -7,7 +7,7 @@ import 'package:characterbook/services/pin_service.dart';
 import 'package:characterbook/data/services/race_service.dart';
 import 'package:characterbook/ui/controllers/race_modal_card_controller.dart';
 import 'package:characterbook/ui/screens/races/race_management_screen.dart';
-import 'package:characterbook/ui/widgets/dialogs/share_options_dialog.dart';
+import 'package:characterbook/features/sharing/share_options_dialog.dart';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -233,7 +233,8 @@ class RaceModalCard extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildChips(BuildContext context, RaceModalController controller) {
+  List<Widget> _buildChips(
+      BuildContext context, RaceModalController controller) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return [

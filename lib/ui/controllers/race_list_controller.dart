@@ -1,16 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:characterbook/data/enums/race_sort_enum.dart';
 import 'package:characterbook/data/models/race_model.dart';
 import 'package:characterbook/data/repositories/race_repository.dart';
 import 'package:characterbook/data/services/race_service.dart';
+import 'package:characterbook/features/sharing/file_share_service.dart';
 import 'package:characterbook/services/clipboard_service.dart';
 import 'package:characterbook/services/pdf_export_manager.dart';
 import 'package:characterbook/services/word_export_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 class RaceListController extends ChangeNotifier {
   final RaceRepository _repository;
@@ -119,11 +117,9 @@ class RaceListController extends ChangeNotifier {
   Future<void> shareRaceAsFile(Race race) async {
     final fileName = '${race.name}.race';
     final content = jsonEncode(race.toJson());
-    final tempDir = await getTemporaryDirectory();
-    final file = File('${tempDir.path}/$fileName');
-    await file.writeAsString(content);
-    await Share.shareXFiles(
-      [XFile(file.path)],
+    await FileShareService.shareTextFile(
+      content,
+      fileName,
       text: race.name,
     );
   }

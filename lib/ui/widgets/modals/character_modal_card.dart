@@ -12,7 +12,7 @@ import 'package:characterbook/services/clipboard_service.dart';
 import 'package:characterbook/services/pin_service.dart';
 import 'package:characterbook/data/services/note_service.dart';
 import 'package:characterbook/ui/controllers/character_modal_controller.dart';
-import 'package:characterbook/ui/widgets/dialogs/share_options_dialog.dart';
+import 'package:characterbook/features/sharing/share_options_dialog.dart';
 import 'package:characterbook/ui/widgets/edit_relationship_bottom_sheet.dart';
 import 'package:characterbook/ui/widgets/items/note_card_item.dart';
 

@@ -6,7 +6,7 @@ import 'package:characterbook/services/app_navigator.dart';
 import 'package:characterbook/ui/controllers/template_list_controller.dart';
 import 'package:characterbook/ui/screens/characters/character_management_screen.dart';
 import 'package:characterbook/ui/screens/settings/swipe_action_settings_screen.dart';
-import 'package:characterbook/ui/widgets/dialogs/share_options_dialog.dart';
+import 'package:characterbook/features/sharing/share_options_dialog.dart';
 import 'package:characterbook/ui/widgets/list/list_state_indicator.dart';
 import 'package:characterbook/ui/widgets/items/template_card_item.dart';
 import 'package:characterbook/ui/widgets/tools_context_menu.dart';
