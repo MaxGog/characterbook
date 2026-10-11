@@ -5,47 +5,36 @@ on:
     branches: [main, master]
   workflow_dispatch:
 
-env:
-  FLUTTER_VERSION: '3.41.9'
-
 jobs:
   build-windows:
     runs-on: windows-latest
     
     steps:
     - uses: actions/checkout@v4
+
+    - name: Read Flutter version
+      shell: bash
+      run: |
+        FLUTTER_VERSION=$(node -p "JSON.parse(require('fs').readFileSync('.fvmrc', 'utf8')).flutter")
+        echo "FLUTTER_VERSION=$FLUTTER_VERSION" >> "$GITHUB_ENV"
     
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: ${{ env.FLUTTER_VERSION }}
         cache: true
-        cache-key: flutter-windows-${{ hashFiles('pubspec.yaml') }}
+        cache-key: flutter-windows-${{ hashFiles('pubspec.lock') }}
     
     - name: Install dependencies
       run: flutter pub get
     
-    - name: Build Windows
-      run: flutter build windows --release
-    
     - name: Create MSIX package
-      run: |
-        # Убираем windows-sdk установку, используем то что есть
-        flutter pub run msix:create --config msix_config.yaml
-        
-        # Проверяем результат
-        if (Test-Path "build/windows/msix/*.msix") {
-          echo "✅ MSIX создан успешно!"
-          Get-ChildItem build/windows/msix/*.msix
-        } else {
-          echo "❌ MSIX не создан"
-          exit 1
-        }
+      run: dart run msix:create
     
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: characterbook-windows-msix
-        path: build/windows/msix/*.msix
+        path: build/windows/**/runner/Release/*.msix
         if-no-files-found: error
         retention-days: 30

@@ -5,14 +5,17 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
-env:
-  FLUTTER_VERSION: '3.41.9'
-
 jobs:
   build-macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Read Flutter version
+        shell: bash
+        run: |
+          FLUTTER_VERSION=$(node -p "JSON.parse(require('fs').readFileSync('.fvmrc', 'utf8')).flutter")
+          echo "FLUTTER_VERSION=$FLUTTER_VERSION" >> "$GITHUB_ENV"
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2

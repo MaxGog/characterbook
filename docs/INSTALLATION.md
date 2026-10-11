@@ -36,18 +36,20 @@
 
 | Компонент | Минимальная версия | Рекомендуемая версия | Проверка |
 |-----------|-------------------|----------------------|----------|
-| **Flutter SDK** | 3.0.0 | 3.13.0+ | `flutter --version` |
-| **Dart SDK** | 2.17.0 | 3.7.2+ | `dart --version` |
+| **Flutter SDK** | 3.41.9 | 3.41.9 (закреплена в `.fvmrc`) | `fvm flutter --version` |
+| **Dart SDK** | Входит в Flutter SDK | Версия из выбранного Flutter SDK | `fvm dart --version` |
 | **Git** | 2.25.0 | 2.40.0+ | `git --version` |
+
+Для выбора одинаковой версии Flutter на разных устройствах используйте [FVM](https://fvm.app/). Сначала установите Flutter SDK, затем установите FVM командой `dart pub global activate fvm` и добавьте каталог глобальных Dart-пакетов в `PATH`. Если FVM не используется, установите Flutter 3.41.9 и замените `fvm flutter` на `flutter`.
 
 #### **Платформо-специфичные требования:**
 
 | Платформа | Требования |
 |-----------|------------|
-| **Android** | Android SDK, Java JDK 11+, включённый режим разработчика |
-| **Windows** | Visual Studio 2019+ с C++ инструментами |
-| **Linux** | Clang, GTK3, Ninja |
-| **macOS** | Xcode 12+ (для iOS/macOS сборки) |
+| **Android** | Android SDK, Java JDK 17+, включённый режим разработчика |
+| **Windows** | Visual Studio 2022+ с инструментами разработки классических приложений на C++ |
+| **Linux** | Clang, CMake, Ninja, pkg-config, GTK 3 и liblzma |
+| **macOS/iOS** | macOS и Xcode (для сборки iOS/macOS) |
 | **Web** | Chrome 90+ для тестирования |
 
 ### ⚙️ Пошаговая установка
@@ -57,48 +59,57 @@
 git clone https://github.com/maxgog/characterbook.git
 cd characterbook
 
-# 2. Установите зависимости Flutter
-flutter pub get
+# 2. Установите закреплённую в проекте версию Flutter и зависимости
+fvm install
+fvm flutter pub get
 
 # 3. Проверьте окружение разработки
-flutter doctor
+fvm flutter doctor
 
 # 4. Запустите приложение в режиме разработки
-flutter run
+fvm flutter run
 ```
 
 #### **Сборка для различных платформ:**
 
 ```bash
-# 📱 Android APK
-flutter build apk --release
+# Проверки, выполняемые в CI
+fvm flutter analyze --no-fatal-infos --no-fatal-warnings
+fvm flutter test
+
+# Android APK (отладочная сборка, не требует ключа подписи релиза)
+fvm flutter build apk --debug
+
+# iOS (подписание выполняется отдельно)
+fvm flutter build ios --debug --no-codesign
 
 # 🤖 Android App Bundle
-flutter build appbundle --release
+fvm flutter build appbundle --release
 
 # 🪟 Windows
-flutter build windows --release
+fvm flutter build windows --release
 
 # 🌐 Web
-flutter build web --release
+fvm flutter build web --release
 
 # 🐧 Linux
-flutter build linux --release
+fvm flutter build linux --release
 
 # 🍎 macOS
-flutter build macos --release
+fvm flutter build macos --release
 ```
+
+Для локальной сборки платформы необходимы её инструменты разработки из таблицы выше. CI запускается для pull request и push в `main`/`master`: анализирует код, выполняет тесты и собирает Android, iOS, Web, Linux, Windows и macOS. Результаты сборок доступны в артефактах запуска GitHub Actions. Дополнительные workflow создают Android APK, MSIX и macOS-пакет; их статусы и артефакты также доступны во вкладке **Actions**.
 
 #### **Создание установочных пакетов:**
 
 ```bash
 # Windows MSIX (для Microsoft Store)
-flutter build windows
-flutter pub run msix:create
+fvm dart run msix:create
 
 # Android APK/AAB (для Google Play)
-flutter build apk --release
-flutter build appbundle --release
+fvm flutter build apk --release
+fvm flutter build appbundle --release
 ```
 
 ---
@@ -164,14 +175,14 @@ graph TD
 # Обновите исходный код
 git pull origin main
 
-# Обновите зависимости
-flutter pub get
+# Обновите зависимости закреплённой версией Flutter
+fvm flutter pub get
 
 # Очистите предыдущие сборки (при необходимости)
-flutter clean
+fvm flutter clean
 
 # Пересоберите приложение
-flutter build
+fvm flutter build
 ```
 
 ---
@@ -194,19 +205,19 @@ flutter build
 # 🔧 Команды для диагностики и решения проблем:
 
 # 1. Проверка окружения Flutter
-flutter doctor -v
+fvm flutter doctor -v
 
 # 2. Очистка кэша сборки
-flutter clean
+fvm flutter clean
 
 # 3. Восстановление зависимостей
-flutter pub deps
+fvm flutter pub deps
 
-# 4. Обновление Flutter SDK
-flutter upgrade
+# 4. Синхронизация SDK с версией проекта из .fvmrc
+fvm install
 
 # 5. Проверка целостности проекта
-flutter analyze
+fvm flutter analyze --no-fatal-infos --no-fatal-warnings
 ```
 
 #### **Проблемы с экспортом данных:**

@@ -7,9 +7,6 @@ on:
     branches: [main, master]
   workflow_dispatch:
 
-env:
-  FLUTTER_VERSION: '3.41.9'
-
 jobs:
   build-android-apk:
     runs-on: ubuntu-latest
@@ -22,6 +19,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Read Flutter version
+        shell: bash
+        run: |
+          FLUTTER_VERSION=$(node -p "JSON.parse(require('fs').readFileSync('.fvmrc', 'utf8')).flutter")
+          echo "FLUTTER_VERSION=$FLUTTER_VERSION" >> "$GITHUB_ENV"
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
@@ -33,7 +36,7 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
-          cache-key: flutter-${{ runner.os }}-${{ hashFiles('pubspec.yaml') }}
+          cache-key: flutter-${{ runner.os }}-${{ hashFiles('pubspec.lock') }}
 
       - name: Install dependencies
         run: flutter pub get

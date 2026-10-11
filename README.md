@@ -1,4 +1,4 @@
-[![Flutter](https://img.shields.io/badge/Flutter-3.13+-02569B?style=flat&logo=flutter&logoColor=white)](https://flutter.dev)
+[![Flutter](https://img.shields.io/badge/Flutter-3.41.9-02569B?style=flat&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.7+-0175C2?style=flat&logo=dart&logoColor=white)](https://dart.dev)
 [![License](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat)](LICENSE)
 
@@ -45,28 +45,29 @@ To build and run the project locally:
     ```
 2.  **Install dependencies:**
     ```bash
-    flutter pub get
+    fvm install
+    fvm flutter pub get
     ```
 3.  **Run the app:**
     ```bash
-    flutter run
+    fvm flutter run
     ```
 
-> For detailed information, see our [installation guide](INSTALLATION.md).
+> For detailed information, see our [installation guide](docs/INSTALLATION.md).
 
 ## 🧱 Tech Stack
 
-*   **Framework:** [Flutter](https://flutter.dev/) (3.13+).
+*   **Framework:** [Flutter](https://flutter.dev/) (3.41.9; pinned in `.fvmrc`).
 *   **Language:** [Dart](https://dart.dev/) (3.7+).
 *   **Database:** [Hive](https://docs.hivedb.dev/) for fast local storage.
 *   **State management:** `Provider` and `flutter_bloc`.
 *   **Document generation:** `pdf`, `printing`, and `docs_gee` for creating PDF and DOCX files.
 
-For a full list of dependencies and architectural details, refer to the [ARCHITECTURE.md](ARCHITECTURE.md) file.
+For a full list of dependencies and architectural details, refer to the [ARCHITECTURE.md](docs/ARCHITECTURE.md) file.
 
 ## 👥 Contributing
 
-We welcome any suggestions and help in developing the project! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for information on how to report bugs, suggest improvements, and submit Pull Requests.
+We welcome any suggestions and help in developing the project! Please read [CONTRIBUTING.md](docs/CONTRIBUTING.md) for information on how to report bugs, suggest improvements, and submit Pull Requests.
 
 ## ⚖️ License
 

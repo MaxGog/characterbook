@@ -12,9 +12,10 @@
 
 ### Требования
 
-- Flutter 3.13+ (стабильная версия)
-- Dart 3.7.2+
+- Flutter 3.41.9 (закреплён в `.fvmrc`; рекомендуется установить через FVM)
+- Dart из закреплённого Flutter SDK
 - Любая IDE с поддержкой Flutter (рекомендуем VS Code или Android Studio)
+- Платформенные инструменты сборки — см. [инструкцию по установке](./INSTALLATION.md)
 
 ### Установка
 
@@ -26,15 +27,13 @@
    ```
 3. Установите зависимости:
    ```bash
-   flutter pub get
+   fvm install
+   fvm flutter pub get
    ```
-4. Сгенерируйте код (сериализация, локализация, ассеты):
+4. Проверьте окружение и запустите приложение:
    ```bash
-   dart run build_runner build --delete-conflicting-outputs
-   ```
-5. Проверьте, что всё работает:
-   ```bash
-   flutter run
+   fvm flutter doctor
+   fvm flutter run
    ```
 
 ## Процесс внесения изменений
@@ -69,15 +68,15 @@
 Обязательно выполните перед коммитом:
 
 ```bash
-flutter analyze
-dart format lib test
+fvm flutter analyze --no-fatal-infos --no-fatal-warnings
+fvm dart format lib test
 ```
 
-При CI-сборке эти проверки запускаются автоматически, и PR без их прохождения не будет принят.
+CI автоматически анализирует код (ошибки блокируют сборку, существующие предупреждения — нет), выполняет тесты и проверяет сборки для поддерживаемых платформ. Перед отправкой PR локально форматируйте изменённые Dart-файлы.
 
 ## Архитектура проекта
 
-CharacterBook следует принципам чистой архитектуры. Перед тем как писать код, ознакомьтесь с [ARCHITECTURE.md](./docs/ARCHITECTURE.md). Краткая структура:
+CharacterBook следует принципам чистой архитектуры. Перед тем как писать код, ознакомьтесь с [ARCHITECTURE.md](./ARCHITECTURE.md). Краткая структура:
 
 - `lib/core/` — базовые сущности
 - `lib/data/` — модели, репозитории, сервисы, перечисления
@@ -103,20 +102,22 @@ CharacterBook следует принципам чистой архитекту�
 
 ```bash
 # Все тесты
-flutter test
+fvm flutter test
 
 # С покрытием
-flutter test --coverage
+fvm flutter test --coverage
 
 # Интеграционные тесты
-flutter test integration_test
+fvm flutter test integration_test
 ```
+
+При push в `main`/`master` и для каждого pull request GitHub Actions запускает анализ и тесты, а затем проверяет сборки Android, iOS, Web, Linux, Windows и macOS. Дополнительные workflow собирают APK, MSIX и macOS-пакет; их результаты доступны во вкладке **Actions**.
 
 В идеале пишите тесты одновременно с кодом. Если вы исправляете баг, добавьте тест, который воспроизводит проблему.
 
 ## Pull Request
 
-1. Убедитесь, что ваш код проходит `flutter analyze`, отформатирован и все тесты зелёные.
+1. Убедитесь, что ваш код проходит `fvm flutter analyze --no-fatal-infos --no-fatal-warnings`, отформатирован (`fvm dart format lib test`) и все тесты зелёные (`fvm flutter test`).
 2. Обновите документацию, если изменили API или архитектуру.
 3. Создайте Pull Request в ветку `main` вашего форка.
 4. Опишите, что сделано, и сошлитесь на связанный issue (например, «Closes #42»).
@@ -141,7 +142,7 @@ Closes #номер_issue
 Опишите, как проверяли работоспособность.
 
 ## Чеклист
-- [ ] Код прошёл `flutter analyze`
+- [ ] Код прошёл `fvm flutter analyze --no-fatal-infos --no-fatal-warnings`
 - [ ] Добавлены/обновлены тесты
 - [ ] Документация обновлена
 ```
