@@ -60,7 +60,6 @@ class CharacterManagementController extends ChangeNotifier {
   List<Relationship> get relationships => _relationships;
   Character? getCharacter(String id) => _characterMap[id];
   bool get isNameValid => _editable.name.trim().isNotEmpty;
-  bool get isRaceValid => _editable.race != null;
 
   void _initialize() {
     if (_originalCharacter != null) {
@@ -84,11 +83,11 @@ class CharacterManagementController extends ChangeNotifier {
       _additionalImages = [];
       _hasUnsavedChanges = true;
     }
-    _loadRacesAndFolders();
+    _loadRaces();
     _loadRelationships();
   }
 
-  Future<void> _loadRacesAndFolders() async {
+  Future<void> _loadRaces() async {
     _isLoading = true;
     notifyListeners();
     try {
@@ -133,11 +132,6 @@ class CharacterManagementController extends ChangeNotifier {
     return null;
   }
 
-  String? get raceErrorKey {
-    if (_editable.race == null) return 'select_race';
-    return null;
-  }
-
   void updateName(String name) {
     _editable = _editable.copyWith(name: name);
     _markUnsaved(notify: false);
@@ -154,9 +148,7 @@ class CharacterManagementController extends ChangeNotifier {
   }
 
   void updateRace(Race? race) {
-    _editable = _editable.copyWith(
-      race: race != null ? Race(id: race.id, name: race.name) : null,
-    );
+    _editable = _editable.copyWith(race: race);
     _markUnsaved();
   }
 
@@ -236,11 +228,6 @@ class CharacterManagementController extends ChangeNotifier {
     if (_isSaving) return false;
     if (_editable.name.trim().isEmpty) {
       _error = 'Имя не может быть пустым';
-      notifyListeners();
-      return false;
-    }
-    if (_editable.race == null) {
-      _error = 'Необходимо выбрать расу';
       notifyListeners();
       return false;
     }

@@ -7,13 +7,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 class RaceSelectorField extends StatefulWidget {
   final Race? initialRace;
   final ValueChanged<Race?>? onChanged;
+
   final bool isRequired;
 
   const RaceSelectorField({
     super.key,
     this.initialRace,
     this.onChanged,
-    this.isRequired = true,
+    this.isRequired = false,
   });
 
   @override
@@ -30,6 +31,16 @@ class _RaceSelectorFieldState extends State<RaceSelectorField> {
   }
 
   @override
+  void didUpdateWidget(RaceSelectorField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final oldId = oldWidget.initialRace?.id;
+    final newId = widget.initialRace?.id;
+    if (oldId != newId) {
+      _selectedRace = widget.initialRace;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final s = S.of(context);
 
@@ -38,45 +49,48 @@ class _RaceSelectorFieldState extends State<RaceSelectorField> {
       builder: (context, Box<Race> box, _) {
         final races = box.values.toList();
 
-        if (_selectedRace != null) {
-          final found = races.cast<Race?>().firstWhere(
-                (r) => r!.id == _selectedRace!.id,
-                orElse: () => null,
-              );
-          if (found != _selectedRace) {
-            _selectedRace =
-                found;
-          }
+        if (_selectedRace != null &&
+            !races.any((r) => r.id == _selectedRace!.id)) {
+          _selectedRace = null;
         }
 
         return Row(
           children: [
             Expanded(
-              child: DropdownButtonFormField<Race>(
+              child: DropdownButtonFormField<Race?>(
                 value: _selectedRace,
                 decoration: InputDecoration(
-                  labelText: s.race,
+                  labelText: widget.isRequired ? '${s.race} *' : s.race,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 items: [
-                  if (!widget.isRequired)
-                    DropdownMenuItem<Race>(
-                      value: null,
-                      child: Text(s.not_selected,
-                          style: TextStyle(color: Colors.grey)),
+                  DropdownMenuItem<Race?>(
+                    value: null,
+                    child: Text(
+                      s.not_selected,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ...races.map((race) => DropdownMenuItem<Race>(
-                        value: race,
-                        child: Text(race.name),
-                      )),
+                  ),
+                  ...races.map(
+                    (race) => DropdownMenuItem<Race?>(
+                      value: race,
+                      child: Text(race.name),
+                    ),
+                  ),
                 ],
                 onChanged: (race) {
                   setState(() => _selectedRace = race);
                   widget.onChanged?.call(race);
                 },
-                validator: widget.isRequired && _selectedRace == null
-                    ? (value) => s.select_race_error
+                validator: widget.isRequired
+                    ? (value) {
+                        if (value == null) return s.select_race_error;
+                        return null;
+                      }
                     : null,
               ),
             ),
@@ -86,7 +100,8 @@ class _RaceSelectorFieldState extends State<RaceSelectorField> {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const RaceManagementScreen()),
+                    builder: (context) => const RaceManagementScreen(),
+                  ),
                 );
               },
               tooltip: s.race_management,

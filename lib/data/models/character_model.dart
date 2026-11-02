@@ -7,6 +7,8 @@ part 'character_model.g.dart';
 
 @HiveType(typeId: 0)
 class Character extends HiveObject {
+  static const _unset = Object();
+
   @HiveField(0)
   String id;
 
@@ -29,7 +31,7 @@ class Character extends HiveObject {
   String appearance;
 
   @HiveField(7)
-  Uint8List? imageBytes; // Основное изображение (портрет)
+  Uint8List? imageBytes;
 
   @HiveField(8)
   String abilities;
@@ -38,7 +40,7 @@ class Character extends HiveObject {
   String other;
 
   @HiveField(10)
-  Uint8List? referenceImageBytes; // Дополнительное изображение референс
+  Uint8List? referenceImageBytes;
 
   @HiveField(11)
   List<CustomField> customFields;
@@ -82,14 +84,12 @@ class Character extends HiveObject {
         lastEdited = lastEdited ?? DateTime.now(),
         tags = List.from(tags);
 
-  /// Генерирует уникальный идентификатор на основе времени и случайного числа.
   static String _generateUniqueId() {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final random = DateTime.now().microsecond;
     return '${timestamp}_$random';
   }
 
-  /// Сериализация в JSON для экспорта.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -114,8 +114,13 @@ class Character extends HiveObject {
     };
   }
 
-  /// Десериализация из JSON.
   factory Character.fromJson(Map<String, dynamic> json) {
+    final raceName = json['race'] as String?;
+    final raceId = json['raceId'] as String?;
+    final Race? parsedRace = raceName != null
+        ? Race(id: raceId ?? _generateUniqueId(), name: raceName)
+        : null;
+
     return Character(
       id: (json['id'] as String?)?.isNotEmpty == true
           ? json['id']
@@ -145,10 +150,8 @@ class Character extends HiveObject {
       lastEdited: json['lastEdited'] != null
           ? DateTime.parse(json['lastEdited'])
           : DateTime.now(),
-      race: json['race'] != null
-          ? Race(id: json['raceId'], name: json['race'])
-          : null,
-      folderId: json['folderId'],
+      race: parsedRace,
+      folderId: json['folderId'] as String?,
       tags: (json['tags'] as List?)?.cast<String>() ?? [],
     );
   }
@@ -191,7 +194,7 @@ class Character extends HiveObject {
     Uint8List? referenceImageBytes,
     List<CustomField>? customFields,
     List<Uint8List>? additionalImages,
-    Race? race,
+    Object? race = _unset,
     String? folderId,
     List<String>? tags,
   }) {
@@ -211,11 +214,7 @@ class Character extends HiveObject {
           ? customFields.map((f) => f.copyWith()).toList()
           : this.customFields.map((f) => f.copyWith()).toList(),
       additionalImages: additionalImages ?? List.from(this.additionalImages),
-      race: race != null
-          ? Race(id: race.id, name: race.name)
-          : (this.race != null
-              ? Race(id: this.race!.id, name: this.race!.name)
-              : null),
+      race: identical(race, _unset) ? this.race : race as Race?,
       folderId: folderId ?? this.folderId,
       tags: tags ?? List.from(this.tags),
       lastEdited: DateTime.now(),
@@ -228,7 +227,7 @@ class Character extends HiveObject {
       'id': id,
       'name': name,
       'description': biography,
-      'mainImage': mainImage, // используем согласованный геттер
+      'mainImage': mainImage,
       'additionalImages': additionalImages,
       'tags': tags,
       'lastEdited': lastEdited,

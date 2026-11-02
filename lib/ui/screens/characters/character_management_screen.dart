@@ -106,20 +106,11 @@ class _CharacterManagementScreenState extends State<CharacterManagementScreen> {
 
     final s = S.of(context);
     final nameValid = controller.character.name.trim().isNotEmpty;
-    final raceValid = controller.character.race != null;
 
     if (!nameValid) {
       showErrorDialog(
         context: context,
         title: s.enter_name_character,
-        message: s.save_error,
-      );
-      return;
-    }
-    if (!raceValid) {
-      showErrorDialog(
-        context: context,
-        title: s.choose_race_character,
         message: s.save_error,
       );
       return;
@@ -473,24 +464,9 @@ ${controller.character.age}''';
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (_shouldShowField('race'))
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RaceSelectorField(
-                  initialRace: controller.character.race,
-                  onChanged: (race) => controller.updateRace(race),
-                ),
-                if (controller.character.race == null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Text(
-                      s.select_race,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.error,
-                          ),
-                    ),
-                  ),
-              ],
+            RaceSelectorField(
+              initialRace: controller.character.race,
+              onChanged: (race) => controller.updateRace(race),
             ),
           if (widget.template != null) _buildTemplateChip(context),
         ],
