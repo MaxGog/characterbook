@@ -16,13 +16,20 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import android.provider.OpenableColumns
+import android.content.res.Configuration
+import android.os.Build
+import android.provider.Settings
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 
 class MainActivity: FlutterActivity() {
     private val TAG = "MainActivity"
     private val CHANNEL = "file_picker"
     private val FILE_HANDLE_CHANNEL = "file_handler"
+    private val LOCALE_CHANNEL = "app_locale"
     private var result: MethodChannel.Result? = null
     private lateinit var fileHandlerChannel: MethodChannel
+    private var localeChannel: MethodChannel? = null
     private val STORAGE_PERMISSION_CODE = 102
     private var pendingFileUri: Uri? = null
 
@@ -54,6 +61,22 @@ class MainActivity: FlutterActivity() {
                 else -> result.notImplemented()
             }
         }
+
+        localeChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, LOCALE_CHANNEL)
+        localeChannel?.setMethodCallHandler { call, result ->
+            when (call.method) {
+                "setLocale" -> {
+                    val tag = call.argument<String>("tag") ?: ""
+                    applyLocale(tag)
+                    result.success(true)
+                }
+                "getLocale" -> result.success(currentLocaleTag())
+                "openSystemLanguageSettings" -> {
+                    result.success(openSystemLanguageSettings())
+                }
+                else -> result.notImplemented()
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +88,11 @@ class MainActivity: FlutterActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         handleIntent(intent, null)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        localeChannel?.invokeMethod("onLocaleChanged", currentLocaleTag())
     }
 
     private fun handleIntent(intent: Intent) {
@@ -248,5 +276,45 @@ class MainActivity: FlutterActivity() {
                 processFile(uri, result)
             }
         })
+    }
+
+    private fun applyLocale(languageTag: String) {
+        val locales = if (languageTag.isBlank()) {
+            LocaleListCompat.getEmptyLocaleList()
+        } else {
+            LocaleListCompat.forLanguageTags(languageTag)
+        }
+        AppCompatDelegate.setApplicationLocales(locales)
+    }
+
+    private fun currentLocaleTag(): String {
+        val locales = AppCompatDelegate.getApplicationLocales()
+        if (!locales.isEmpty) return locales.toLanguageTags()
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            resources.configuration.locales[0].toLanguageTag()
+        } else {
+            @Suppress("DEPRECATION")
+            resources.configuration.locale.toLanguageTag()
+        }
+    }
+
+    private fun openSystemLanguageSettings(): Boolean {
+        return try {
+            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                Intent(
+                    Settings.ACTION_APP_LOCALE_SETTINGS,
+                    Uri.parse("package:$packageName")
+                )
+            } else {
+                Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.parse("package:$packageName")
+                )
+            }
+            startActivity(intent)
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 }

@@ -5866,6 +5866,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Язык приложения синхронизирован с системными настройками Android. Чтобы изменить его, откройте настройки и выберите язык для CharacterBook.`
+  String get language_sync_system_note {
+    return Intl.message(
+      'Язык приложения синхронизирован с системными настройками Android. Чтобы изменить его, откройте настройки и выберите язык для CharacterBook.',
+      name: 'language_sync_system_note',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Открыть настройки системы`
+  String get open_system_settings {
+    return Intl.message(
+      'Открыть настройки системы',
+      name: 'open_system_settings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Не удалось открыть настройки системы`
+  String get open_settings_failed {
+    return Intl.message(
+      'Не удалось открыть настройки системы',
+      name: 'open_settings_failed',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

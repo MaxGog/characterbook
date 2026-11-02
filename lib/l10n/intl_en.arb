@@ -454,5 +454,8 @@
   "enter_name": "Enter name",
   "note_delete_title": "Delete note?",
   "note_delete_confirm": "Do you really want to delete the note? It will be impossible to restore it.",
-  "note_deleted": "the note was successfully deleted"
+  "note_deleted": "the note was successfully deleted",
+  "language_sync_system_note": "The app language is synced with Android system settings. To change it, open the system settings and select a language for CharacterBook.",
+  "open_system_settings": "Open system settings",
+  "open_settings_failed": "Could not open system settings"
 }

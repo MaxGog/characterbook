@@ -517,6 +517,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "keywords": MessageLookupByLibrary.simpleMessage("Ключевые слова"),
         "landscape": MessageLookupByLibrary.simpleMessage("Альбом"),
         "language": MessageLookupByLibrary.simpleMessage("Язык"),
+        "language_sync_system_note": MessageLookupByLibrary.simpleMessage(
+            "Язык приложения синхронизирован с системными настройками Android. Чтобы изменить его, откройте настройки и выберите язык для CharacterBook."),
         "last_created":
             MessageLookupByLibrary.simpleMessage("Последнее создано"),
         "last_edited":
@@ -624,6 +626,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "nothing_found":
             MessageLookupByLibrary.simpleMessage("Ничего не найдено"),
         "ok": MessageLookupByLibrary.simpleMessage("ОК"),
+        "open_settings_failed": MessageLookupByLibrary.simpleMessage(
+            "Не удалось открыть настройки системы"),
+        "open_system_settings":
+            MessageLookupByLibrary.simpleMessage("Открыть настройки системы"),
         "operationCompleted": MessageLookupByLibrary.simpleMessage("Готово"),
         "operation_timeout":
             MessageLookupByLibrary.simpleMessage("Таймаут операции"),

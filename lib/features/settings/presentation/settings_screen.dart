@@ -1,5 +1,7 @@
+import 'package:characterbook/features/settings/data/locale_channel_service.dart';
 import 'package:characterbook/ui/widgets/easter_egg_helper.dart';
 import 'package:characterbook/ui/widgets/about_section_widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -85,7 +87,10 @@ class _LanguageSection extends StatelessWidget {
     final s = S.of(context);
     return SettingsSection(
       title: s.appLanguage,
-      children: const [_LanguageSelector()],
+      children: const [
+        _LanguageSelector(),
+        _AndroidLanguageSyncNote(),
+      ],
     );
   }
 }
@@ -149,6 +154,75 @@ class _LanguageSelector extends StatelessWidget {
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );
+  }
+}
+
+class _AndroidLanguageSyncNote extends StatelessWidget {
+  const _AndroidLanguageSyncNote();
+
+  @override
+  Widget build(BuildContext context) {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+      return const SizedBox.shrink();
+    }
+
+    final s = S.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: colorScheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.info_outline_rounded,
+                  size: 20,
+                  color: colorScheme.onSecondaryContainer,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    s.language_sync_system_note,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSecondaryContainer,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerRight,
+              child: FilledButton.tonalIcon(
+                onPressed: () => _openSystemLanguageSettings(context, s),
+                icon: const Icon(Icons.settings_outlined, size: 18),
+                label: Text(s.open_system_settings),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openSystemLanguageSettings(BuildContext context, S s) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final ok = await LocaleChannelService.openSystemLanguageSettings();
+    if (!ok) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(s.open_settings_failed)),
+      );
+    }
   }
 }
 

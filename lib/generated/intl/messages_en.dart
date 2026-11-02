@@ -407,6 +407,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "items": MessageLookupByLibrary.simpleMessage("items"),
         "just_now": MessageLookupByLibrary.simpleMessage("Just now"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
+        "language_sync_system_note": MessageLookupByLibrary.simpleMessage(
+            "The app language is synced with Android system settings. To change it, open the system settings and select a language for CharacterBook."),
         "last_updated": MessageLookupByLibrary.simpleMessage("Updated"),
         "leftSwipeAction": MessageLookupByLibrary.simpleMessage("Left swipe"),
         "licenses": MessageLookupByLibrary.simpleMessage("Licenses"),
@@ -491,6 +493,10 @@ class MessageLookup extends MessageLookupByLibrary {
             "the note was successfully deleted"),
         "nothing_found": MessageLookupByLibrary.simpleMessage("Nothing found"),
         "ok": MessageLookupByLibrary.simpleMessage("OK"),
+        "open_settings_failed": MessageLookupByLibrary.simpleMessage(
+            "Could not open system settings"),
+        "open_system_settings":
+            MessageLookupByLibrary.simpleMessage("Open system settings"),
         "operationCompleted": MessageLookupByLibrary.simpleMessage("Completed"),
         "operation_timeout": MessageLookupByLibrary.simpleMessage("Timeout"),
         "optimizing_performance":

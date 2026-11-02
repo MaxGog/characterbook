@@ -151,6 +151,7 @@ main.dart                     # Точка входа в приложение
 
 - url_launcher — открытие внешних ссылок
 - dynamic_color — поддержка динамических цветов Material You
+- androidx.appcompat — нативная per-app локализация Android через `AppCompatDelegate.setApplicationLocales` (см. раздел «Android-специфичные функции»)
 
 ### Взаимодействие с платформой и облаком
 
@@ -195,6 +196,9 @@ main.dart                     # Точка входа в приложение
 - `AppRouter` — composition root навигации: он связывает маршруты settings с экранами settings, backup и PDF-экспорта. Переходы между feature-модулями выполняются по маршрутам, поэтому settings не импортирует соседние модули.
 - Провайдеры темы и локали создаются у composition root, так как ими пользуется всё приложение (`MaterialApp`). Реализации и UI настроек при этом остаются внутри `features/settings/`.
 - Модуль следует направлению зависимостей Flutter: presentation использует состояние/контракты, а платформенные и внешние реализации остаются в data; общие зависимости передаются через composition root. См. [Flutter app architecture guide](https://docs.flutter.dev/app-architecture/guide).
+- `data/LocaleChannelService` — тонкая обёртка над `MethodChannel('app_locale')`. Инкапсулирует три операции: `setNativeLocale`, `getNativeLocale`, `openSystemLanguageSettings`. Сервис проверяет платформу через `!kIsWeb && defaultTargetPlatform == TargetPlatform.android` и делает ранний `return` на не-Android платформах — вызовы MethodChannel на iOS, macOS, Windows, Linux и Web не происходят, `MissingPluginException` и `PlatformException` исключены. Ошибки нативного канала логируются через `debugPrint` и не пробрасываются в UI.
+- `data/LocaleProvider` остаётся единственным источником истины для `MaterialApp.locale`. При старте он вызывает `_loadPreferences()` (SharedPreferences) и `_syncFromNative()` (только Android). В `setLocale` сначала обновляется Dart-состояние и вызывается `notifyListeners()`, затем сохраняется в SharedPreferences и синхронизируется с Android через `LocaleChannelService.setNativeLocale`. Обработчик `onLocaleChanged` из нативного канала обновляет `_locale` без перезапуска приложения.
+- `presentation/SettingsScreen` содержит `_AndroidLanguageSyncNote` — информационный блок по гайдлайнам Material 3 (`secondaryContainer`, `FilledButton.tonalIcon`). Виджет рендерится только на Android и скрыт на остальных платформах через `kIsWeb` + `defaultTargetPlatform`.
 
 ### Модуль `features/sharing/`
 
@@ -320,6 +324,21 @@ main.dart                     # Точка входа в приложение
 - Автоматическое определение платформы и адаптация UI.
 - Поддержка нативных диалогов выбора файлов через `file_selector`.
 - Интеграция с системным меню через `MenuChannelService`.
+
+## Android-специфичные функции
+
+### Нативная локализация
+
+- `MainActivity` (`android/app/src/main/kotlin/ru/maxgog/listcharacters/MainActivity.kt`) регистрирует MethodChannel `app_locale` с обработчиками `setLocale`, `getLocale`, `openSystemLanguageSettings`. Канал работает параллельно с существующими каналами `file_picker` и `file_handler` — файловая логика не затронута.
+- Применение локали выполняется через `AppCompatDelegate.setApplicationLocales(LocaleListCompat)`. Это единый API для Android 13+ (нативно) и Android ≤ 12 (бэкпорт AppCompat). Требуется `androidx.appcompat:appcompat` версии ≥ 1.6.0.
+- В `AndroidManifest.xml`:
+  - `android:localeConfig="@xml/locales_config"` — список поддерживаемых локалей (`en`, `ru`) для системного экрана выбора языка.
+  - `AppLocalesMetadataHolderService` с `android:enabled="false"` и `autoStoreLocales=true` — автоматическое сохранение per-app локали на API ≤ 32 (без ручного `SharedPreferences`).
+  - `locale` в `android:configChanges` — Activity не пересоздаётся при смене языка; вместо этого `MainActivity.onConfigurationChanged` отправляет `onLocaleChanged` в Dart-канал, а `LocaleProvider` обновляет состояние.
+- `res/xml/locales_config.xml` перечисляет поддерживаемые локали. Синхронизируется с `S.delegate.supportedLocales` в Dart-слое.
+- `androidResources.localeFilters.addAll("en", "ru")` в `android/app/build.gradle.kts` — аналог устаревшего `resourceConfigurations`, оставляет в сборке только перечисленные языковые ресурсы (уменьшает размер APK/AAB).
+- Кнопка «Открыть настройки системы» вызывает `Settings.ACTION_APP_LOCALE_SETTINGS` (Android 13+) или `Settings.ACTION_APPLICATION_DETAILS_SETTINGS` (Android ≤ 12). На остальных платформах метод возвращает `false`, UI показывает SnackBar с ошибкой.
+- На iOS, macOS, Windows, Linux и Web нативной per-app локализации нет — `LocaleChannelService` не вызывает MethodChannel, а `LocaleProvider` использует только `SharedPreferences`. Единое поведение UI (селектор языка) при этом сохраняется на всех платформах.
 
 ## Облачная синхронизация
 
