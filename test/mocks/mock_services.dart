@@ -1,5 +1,5 @@
-import 'package:characterbook/data/services/character_service.dart';
-import 'package:characterbook/data/services/race_service.dart';
+import 'package:characterbook/features/characters/application/character_service.dart';
+import 'package:characterbook/features/races/application/race_service.dart';
 
 class MockCharacterService implements CharacterService {
   @override

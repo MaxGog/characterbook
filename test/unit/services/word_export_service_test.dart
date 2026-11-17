@@ -1,6 +1,6 @@
-import 'package:characterbook/data/models/character_model.dart';
-import 'package:characterbook/data/models/custom_field_model.dart';
-import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/features/characters/domain/character_model.dart';
+import 'package:characterbook/features/characters/domain/custom_field_model.dart';
+import 'package:characterbook/features/races/domain/race_model.dart';
 import 'package:characterbook/data/models/template_model.dart';
 import 'package:characterbook/features/sharing/data/word_export_service.dart';
 import 'package:flutter_test/flutter_test.dart';

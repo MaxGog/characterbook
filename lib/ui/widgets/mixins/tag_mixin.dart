@@ -1,5 +1,5 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/features/characters/domain/character_model.dart';
 import 'package:flutter/material.dart';
 
 mixin TagMixin<T> {

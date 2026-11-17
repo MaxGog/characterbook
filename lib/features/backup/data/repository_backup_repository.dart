@@ -1,11 +1,11 @@
-import 'package:characterbook/data/models/character_model.dart';
-import 'package:characterbook/data/models/note_model.dart';
-import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/features/characters/domain/character_model.dart';
+import 'package:characterbook/features/notes/domain/note_model.dart';
+import 'package:characterbook/features/races/domain/race_model.dart';
 import 'package:characterbook/data/models/relationship_model.dart';
 import 'package:characterbook/data/models/template_model.dart';
-import 'package:characterbook/data/repositories/character_repository.dart';
-import 'package:characterbook/data/repositories/note_repository.dart';
-import 'package:characterbook/data/repositories/race_repository.dart';
+import 'package:characterbook/features/characters/domain/character_repository.dart';
+import 'package:characterbook/features/notes/domain/note_repository.dart';
+import 'package:characterbook/features/races/domain/race_repository.dart';
 import 'package:characterbook/data/repositories/relationship_repository.dart';
 import 'package:characterbook/data/repositories/template_repository.dart';
 

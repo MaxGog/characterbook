@@ -11,6 +11,21 @@
 │   └── ...                   # Изображения и иконки
 ├── lib/                      # Основная кодовая база на Dart
 │   ├── features/             # Функциональные модули
+│   │   ├── characters/       # Персонажи и связанные сценарии/экраны
+│   │   │   ├── application/  # Прикладные сервисы персонажей
+│   │   │   ├── data/         # Hive-репозиторий персонажей
+│   │   │   ├── domain/       # Сущности, enums/, контракт репозитория
+│   │   │   └── presentation/ # Контроллеры, экраны и виджеты персонажей
+│   │   ├── races/            # Расы, выбор расы и связанные экраны
+│   │   │   ├── application/
+│   │   │   ├── data/
+│   │   │   ├── domain/
+│   │   │   └── presentation/
+│   │   ├── notes/            # Заметки и связанные экраны
+│   │   │   ├── application/
+│   │   │   ├── data/
+│   │   │   ├── domain/
+│   │   │   └── presentation/
 │   │   ├── backup/           # Резервное копирование и восстановление
 │   │   │   ├── data/         # Адаптеры репозиториев, файлов и Google Drive
 │   │   │   ├── domain/       # Порты, контракт хранилища и use case
@@ -34,8 +49,6 @@
 │   │           ├── share_options_dialog.dart
 │   │           ├── sharing_manager.dart
 │   │           └── word_export_manager.dart
-│   ├── adapters/             # Адаптеры для Hive
-│   │   └── custom_field_adapter.dart
 │   ├── core/                 # Ядро приложения, базовые сущности
 │   │   ├── base_entity.dart
 │   │   ├── app_settings_actions.dart
@@ -45,22 +58,18 @@
 │   ├── data/                 # Слой данных
 │   │   ├── enums/            # Перечисления
 │   │   │   ├── calendar_event_type_enum.dart
-│   │   │   ├── character_sort_enum.dart
 │   │   │   ├── home_content_type_enum.dart
-│   │   │   ├── note_sort_enum.dart
 │   │   │   ├── template_sort_enum.dart
-│   │   │   └── race_sort_enum.dart
-│   │   ├── models/           # Модели данных
+│   │   │   └── tool_type_enum.dart
+│   │   ├── models/           # Общие и пока не выделенные модели
 │   │   │   ├── calendar_event_model.dart
-│   │   │   ├── character_model.dart
 │   │   │   ├── ... (другие модели)
 │   │   │   └── relationship_model.dart
 │   │   ├── repositories/     # Репозитории для доступа к данным
-│   │   │   ├── character_repository.dart
-│   │   │   ├── ... (другие репозитории)
+│   │   │   ├── hive_box_repository.dart # Общие операции Hive-репозиториев
+│   │   │   ├── ... (репозитории оставшихся областей)
 │   │   │   └── template_repository.dart
 │   │   └── services/         # Сервисы для работы с данными
-│   │       ├── character_service.dart
 │   │       ├── ... (другие сервисы)
 │   │       └── template_service.dart
 │   ├── extensions/           # Расширения для встроенных классов
@@ -88,16 +97,9 @@
 │   │   ├── date_formatter.dart
 │   │   └── ...
 │   └── ui/                   # Компоненты пользовательского интерфейса
-│       ├── controllers/      # Контроллеры для экранов
 │       ├── navigation/       # Навигационные компоненты
-│       ├── screens/          # Основные экраны
-│       │   ├── characters/
-│       │   ├── races/
-│       │   ├── notes/
-│       │   ├── templates/
-│       │   ├── calendar/     # Экран календаря
-│       │   └── ...
-│       └── widgets/          # Переиспользуемые виджеты
+│       ├── screens/          # Общие экраны приложения
+│       └── widgets/          # Общие и переиспользуемые виджеты
 ├── test/                     # Модульные и виджет-тесты
 │   ├── unit/                 # Unit-тесты сервисов и репозиториев
 │   └── widget/               # Виджет-тесты экранов
@@ -186,7 +188,18 @@ main.dart                     # Точка входа в приложение
 - Провайдеры (`providers/`) — управление состоянием приложения (тема, язык, настройки).
 - UI (`ui/`) — представление данных, экраны, виджеты, контроллеры.
 
-Новые функциональные области следует выделять в `features/`, сохраняя зависимости направленными внутрь модуля и не перенося в него модели или хранилища без необходимости.
+Персонажи, расы и заметки организованы как вертикальные feature-модули: модель и контракт репозитория находятся в `domain/`, Hive-реализация — в `data/`, прикладная логика — в `application/`, а контроллеры, экраны и специфичные виджеты — в `presentation/`. Composition root и общие UI-компоненты остаются в корневых `config/`, `services/` и `ui/`. Новые области следует оформлять аналогично, сохраняя зависимости направленными к доменным контрактам.
+
+В этих трёх feature-модулях сущности пока используют Hive-типы напрямую для совместимости с существующими данными и сериализацией. Поэтому структура разделена по фичам, но доменные модели ещё не полностью независимы от технологии хранения.
+
+### Модули `features/characters/`, `features/races/` и `features/notes/`
+
+- Для каждой области определены контракты репозиториев в `domain/`, Hive-репозитории в `data/` и прикладные сервисы в `application/`. Общие операции над Hive-box вынесены в `data/repositories/HiveBoxRepository`.
+- Модели `Character` и `CustomField` находятся в `features/characters/domain/`, `Race` — в `features/races/domain/`, `Note` — в `features/notes/domain/`. Сгенерированные Hive-адаптеры хранятся рядом со своими моделями; тип `CustomFieldAdapter` генерируется вместе с `CustomField`.
+- Типы сортировки персонажей, рас и заметок также принадлежат `domain/enums/` соответствующей фичи.
+- Экраны, контроллеры и специфичные для фичи виджеты находятся в её `presentation/`. Общие компоненты приложения остаются в `ui/`; навигация связывает их с экранами фич.
+- Presentation-слой получает данные через доменные контракты репозиториев и не открывает Hive-box напрямую.
+- `Character.race` опциональна. Форма персонажа проверяет наличие имени, но не требует выбранной расы.
 
 ### Модуль `features/settings/`
 
@@ -224,10 +237,13 @@ main.dart                     # Точка входа в приложение
 - Composition root (`main.dart`) соединяет модуль с общими репозиториями и платформенными адаптерами. Backup использует общие порты хранения и share sheet; модули backup и sharing не зависят друг от друга.
 - Локализационные строки остаются в общей локализации приложения; предметная логика и отображение ошибок принадлежат presentation-слою, а сервисы возвращают ошибки вызывающему коду вместо их подавления.
 
-## Модели данных (из `lib/data/models/`)
+## Модели доменных функций
+
+Модели персонажей, рас и заметок размещены в соответствующих feature-модулях; остальные общие и пока не выделенные модели остаются в `lib/data/models/`.
 
 ### Character (Персонаж)
 
+- Путь: `features/characters/domain/character_model.dart`; сортировка: `features/characters/domain/enums/character_sort_enum.dart`
 - Тип Hive: `typeId: 0`
 - Назначение: Основная сущность приложения для хранения данных о персонажах.
 - Ключевые поля: `id`, `name`, `age`, `gender`, `biography`, `personality`, `appearance`, `imageBytes`, `referenceImageBytes`, `additionalImages`, `customFields`, `race`, `tags` (вместо `folderId` используется система тегов).
@@ -237,12 +253,14 @@ main.dart                     # Точка входа в приложение
 
 ### Race (Раса)
 
+- Путь: `features/races/domain/race_model.dart`; сортировка: `features/races/domain/enums/race_sort_enum.dart`
 - Тип Hive: `typeId: 3`
 - Назначение: Хранение данных о расах персонажей.
 - Ключевые поля: `name`, `description`, `biology`, `backstory`, `logo`, `tags`.
 
 ### Note (Заметка)
 
+- Путь: `features/notes/domain/note_model.dart`; сортировка: `features/notes/domain/enums/note_sort_enum.dart`
 - Тип Hive: `typeId: 2`
 - Назначение: Система заметок, связанных с персонажами.
 - Ключевые поля: `title`, `content`, `characterIds`, `tags`.
@@ -267,6 +285,7 @@ main.dart                     # Точка входа в приложение
 
 ### CustomField (Пользовательское поле)
 
+- Путь: `features/characters/domain/custom_field_model.dart`
 - Тип Hive: `typeId: 1`
 - Назначение: Хранение пользовательских полей типа ключ-значение.
 - Ключевые поля: `key`, `value`.
@@ -349,7 +368,7 @@ main.dart                     # Точка входа в приложение
 
 ## Календарь и напоминания
 
-- Экран календаря (`ui/screens/calendar/`) построен на виджете `table_calendar`.
+- Экран календаря (`ui/screens/calendar_screen.dart`) построен на виджете `table_calendar`.
 - События (`CalendarEvent`) отображаются на календаре с цветовой индикацией по типу.
 - При создании/редактировании события можно установить время напоминания (через `flutter_local_notifications`).
 - В указанное время приложение показывает уведомление даже в фоновом режиме (на платформах, где это поддерживается).
@@ -370,19 +389,19 @@ main.dart                     # Точка входа в приложение
 
 ### Модальные окна
 
-- `CharacterModalCard` — детальный просмотр персонажа.
-- `RaceModalCard` — детальный просмотр расы.
+- `features/characters/presentation/widgets/modals/CharacterModalCard` — детальный просмотр персонажа.
+- `features/races/presentation/widgets/modals/RaceModalCard` — детальный просмотр расы.
 - `EventModalCard` — детальный просмотр/редактирование события календаря.
 
 ### Виджеты списков
 
-- `CharacterKeepCardItem` — карточка персонажа на главном экране.
-- `RaceKeepCardItem` — карточка расы.
+- `features/characters/presentation/widgets/items/CharacterKeepCardItem` — карточка персонажа на главном экране.
+- `features/races/presentation/widgets/items/RaceKeepCardItem` — карточка расы.
 - `ToolKeepCardItem` — карточка инструмента.
 
 ## Тестирование
 
-- **Unit-тесты** (`test/unit/`) — покрывают бизнес-логику модулей и репозиториев; тесты резервного копирования находятся рядом с соответствующей feature-областью.
+- **Unit-тесты** (`test/unit/`) — покрывают бизнес-логику модулей и репозиториев; тесты персонажей, рас и заметок размещены в `test/unit/features/` рядом с соответствующими областями.
 - **Виджет-тесты** (`test/widget/`) — проверяют ключевые экраны: `HomeScreen`, `CharacterScreen`, `CalendarScreen`, а также переиспользуемые виджеты.
 - **Интеграционные тесты** (`integration_test/`) — проверяют сквозные сценарии (импорт/экспорт, синхронизация с облаком).
 

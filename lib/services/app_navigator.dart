@@ -1,7 +1,7 @@
 import 'package:characterbook/config/app_router.dart';
-import 'package:characterbook/data/models/character_model.dart';
-import 'package:characterbook/data/models/note_model.dart';
-import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/features/characters/domain/character_model.dart';
+import 'package:characterbook/features/notes/domain/note_model.dart';
+import 'package:characterbook/features/races/domain/race_model.dart';
 import 'package:characterbook/data/models/template_model.dart';
 import 'package:characterbook/core/app_notification_actions.dart';
 import 'package:characterbook/services/file_picker_service.dart';

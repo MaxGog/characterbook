@@ -1,6 +1,6 @@
 import 'package:characterbook/ui/screens/field_editor_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:characterbook/data/models/custom_field_model.dart';
+import 'package:characterbook/features/characters/domain/custom_field_model.dart';
 import 'package:characterbook/generated/l10n.dart';
 
 class CustomFieldsEditor extends StatefulWidget {

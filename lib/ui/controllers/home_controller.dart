@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:characterbook/data/enums/tool_type_enum.dart';
-import 'package:characterbook/data/models/race_model.dart';
-import 'package:characterbook/data/services/character_service.dart';
-import 'package:characterbook/data/services/race_service.dart';
+import 'package:characterbook/features/races/domain/race_model.dart';
+import 'package:characterbook/features/characters/application/character_service.dart';
+import 'package:characterbook/features/races/application/race_service.dart';
 import 'package:characterbook/providers/pins_provider.dart';
 import 'package:characterbook/ui/screens/calendar_screen.dart';
-import 'package:characterbook/ui/screens/characters/relationships_screen.dart';
+import 'package:characterbook/features/characters/presentation/screens/relationships_screen.dart';
 import 'package:characterbook/features/sharing/presentation/export_pdf_settings_screen.dart';
 import 'package:characterbook/ui/screens/random_number_screen.dart';
 import 'package:characterbook/ui/screens/templates/template_list_screen.dart';

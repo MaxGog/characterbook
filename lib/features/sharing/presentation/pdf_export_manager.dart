@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/data/models/character_model.dart';
-import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/features/characters/domain/character_model.dart';
+import 'package:characterbook/features/races/domain/race_model.dart';
 import 'package:characterbook/features/sharing/data/file_share_service.dart';
 import 'package:characterbook/features/sharing/data/pdf_export_service.dart';
 import 'package:characterbook/ui/widgets/dialogs/error_dialog.dart';

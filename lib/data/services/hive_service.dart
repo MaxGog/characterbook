@@ -1,9 +1,9 @@
-import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/features/characters/domain/character_model.dart';
 import 'package:characterbook/data/models/custom_event_model.dart';
-import 'package:characterbook/data/models/custom_field_model.dart';
+import 'package:characterbook/features/characters/domain/custom_field_model.dart';
 import 'package:characterbook/data/models/export_pdf_settings_model.dart';
-import 'package:characterbook/data/models/note_model.dart';
-import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/features/notes/domain/note_model.dart';
+import 'package:characterbook/features/races/domain/race_model.dart';
 import 'package:characterbook/data/models/relationship_model.dart';
 import 'package:characterbook/data/models/template_model.dart';
 import 'package:characterbook/data/services/hive_migration.dart';

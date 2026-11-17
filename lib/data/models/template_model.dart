@@ -1,6 +1,6 @@
-import 'package:characterbook/data/models/custom_field_model.dart';
+import 'package:characterbook/features/characters/domain/custom_field_model.dart';
 import 'package:hive/hive.dart';
-import 'character_model.dart';
+import 'package:characterbook/features/characters/domain/character_model.dart';
 import 'dart:convert';
 
 part 'template_model.g.dart';

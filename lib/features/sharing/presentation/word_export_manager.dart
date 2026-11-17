@@ -1,5 +1,5 @@
-import 'package:characterbook/data/models/character_model.dart';
-import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/features/characters/domain/character_model.dart';
+import 'package:characterbook/features/races/domain/race_model.dart';
 import 'package:characterbook/data/models/template_model.dart';
 import 'package:characterbook/services/app_navigator.dart';
 import 'package:flutter/material.dart';

@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:characterbook/data/models/character_model.dart';
-import 'package:characterbook/data/models/race_model.dart';
+import 'package:characterbook/features/characters/domain/character_model.dart';
+import 'package:characterbook/features/races/domain/race_model.dart';
 import 'package:characterbook/data/models/export_pdf_settings_model.dart';
 import 'package:hive/hive.dart';
 import 'package:pdf/pdf.dart' as pw;

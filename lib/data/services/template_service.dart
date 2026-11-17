@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:characterbook/data/models/character_model.dart';
+import 'package:characterbook/features/characters/domain/character_model.dart';
 import 'package:characterbook/data/models/template_model.dart';
 import 'package:characterbook/data/repositories/template_repository.dart';
 import 'package:characterbook/services/file_picker_service.dart';
