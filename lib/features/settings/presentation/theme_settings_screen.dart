@@ -1,5 +1,5 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/features/settings/domain/settings_actions.dart';
+import 'package:characterbook/features/settings/presentation/settings_actions.dart';
 import 'package:characterbook/extensions/color_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

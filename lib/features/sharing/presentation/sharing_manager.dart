@@ -2,49 +2,54 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:characterbook/core/file_share_actions.dart';
 import 'package:characterbook/features/characters/domain/character_model.dart';
 import 'package:characterbook/features/notes/domain/note_model.dart';
 import 'package:characterbook/features/races/domain/race_model.dart';
-import 'package:characterbook/data/models/template_model.dart';
-import 'package:characterbook/features/sharing/data/file_share_service.dart';
+import 'package:characterbook/features/templates/domain/template_model.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/ui/widgets/dialogs/error_dialog.dart';
 import 'package:characterbook/ui/widgets/dialogs/loading_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SharingManager {
-  static const _fileShareService = FileShareService();
-
-  static Future<void> shareCharacterAsFile(Character character) {
-    return _fileShareService.shareTextFile(
-      jsonEncode(character.toJson()),
-      '${character.name}.character',
-      text: character.name,
-    );
+  static Future<void> shareCharacterAsFile(
+    BuildContext context,
+    Character character,
+  ) {
+    return context.read<FileShareActions>().shareTextFile(
+          jsonEncode(character.toJson()),
+          '${character.name}.character',
+          text: character.name,
+        );
   }
 
-  static Future<void> shareRaceAsFile(Race race) {
-    return _fileShareService.shareTextFile(
-      jsonEncode(race.toJson()),
-      '${race.name}.race',
-      text: race.name,
-    );
+  static Future<void> shareRaceAsFile(BuildContext context, Race race) {
+    return context.read<FileShareActions>().shareTextFile(
+          jsonEncode(race.toJson()),
+          '${race.name}.race',
+          text: race.name,
+        );
   }
 
-  static Future<void> shareNoteAsFile(Note note) {
-    return _fileShareService.shareTextFile(
-      jsonEncode(note.toJson()),
-      '${note.title}_note.json',
-      text: note.title,
-    );
+  static Future<void> shareNoteAsFile(BuildContext context, Note note) {
+    return context.read<FileShareActions>().shareTextFile(
+          jsonEncode(note.toJson()),
+          '${note.title}_note.json',
+          text: note.title,
+        );
   }
 
-  static Future<void> shareTemplateAsFile(QuestionnaireTemplate template) {
-    return _fileShareService.shareTextFile(
-      jsonEncode(template.toJson()),
-      '${template.name}.chax',
-      text: template.name,
-    );
+  static Future<void> shareTemplateAsFile(
+    BuildContext context,
+    QuestionnaireTemplate template,
+  ) {
+    return context.read<FileShareActions>().shareTextFile(
+          jsonEncode(template.toJson()),
+          '${template.name}.chax',
+          text: template.name,
+        );
   }
 
   static Future<void> shareCharacterAsJson(
@@ -57,7 +62,8 @@ class SharingManager {
       final fileName =
           '${character.name}_${DateTime.now().millisecondsSinceEpoch}.character';
       if (context.mounted) hideLoadingDialog(context);
-      await _fileShareService
+      await context
+          .read<FileShareActions>()
           .shareFile(
             Uint8List.fromList(utf8.encode(jsonEncode(character.toJson()))),
             fileName,
@@ -91,7 +97,8 @@ class SharingManager {
       final fileName =
           '${race.name}_${DateTime.now().millisecondsSinceEpoch}.race';
       if (context.mounted) hideLoadingDialog(context);
-      await _fileShareService
+      await context
+          .read<FileShareActions>()
           .shareFile(
             Uint8List.fromList(utf8.encode(json)),
             fileName,
@@ -139,12 +146,12 @@ class SharingManager {
         await Future<void>.delayed(const Duration(milliseconds: 200));
       }
 
-      await _fileShareService.shareFile(
-        Uint8List.fromList(utf8.encode(jsonEncode(note.toJson()))),
-        fileName,
-        text: 'Заметка: ${note.title}',
-        subject: 'Заметка из CharacterBook',
-      );
+      await context.read<FileShareActions>().shareFile(
+            Uint8List.fromList(utf8.encode(jsonEncode(note.toJson()))),
+            fileName,
+            text: 'Заметка: ${note.title}',
+            subject: 'Заметка из CharacterBook',
+          );
     } catch (error) {
       if (isLoadingVisible && context.mounted) hideLoadingDialog(context);
       throw Exception('Ошибка при шаринге заметки: $error');
@@ -166,25 +173,28 @@ class SharingManager {
         await Future<void>.delayed(const Duration(milliseconds: 200));
       }
 
-      await _fileShareService.shareFile(
-        Uint8List.fromList(utf8.encode(jsonEncode(note.toJson()))),
-        fileName,
-        text: 'Заметка: ${note.title}',
-      );
+      await context.read<FileShareActions>().shareFile(
+            Uint8List.fromList(utf8.encode(jsonEncode(note.toJson()))),
+            fileName,
+            text: 'Заметка: ${note.title}',
+          );
     } catch (error) {
       if (isLoadingVisible && context.mounted) hideLoadingDialog(context);
       throw Exception('Ошибка экспорта в JSON: $error');
     }
   }
 
-  static Future<void> shareTemplate(QuestionnaireTemplate template) async {
+  static Future<void> shareTemplate(
+    BuildContext context,
+    QuestionnaireTemplate template,
+  ) async {
     try {
-      await _fileShareService.shareFile(
-        Uint8List.fromList(utf8.encode(jsonEncode(template.toJson()))),
-        '${template.name}.chax',
-        text: 'Шаблон персонажа: ${template.name}',
-        subject: 'Шаблон персонажа',
-      );
+      await context.read<FileShareActions>().shareFile(
+            Uint8List.fromList(utf8.encode(jsonEncode(template.toJson()))),
+            '${template.name}.chax',
+            text: 'Шаблон персонажа: ${template.name}',
+            subject: 'Шаблон персонажа',
+          );
     } catch (error) {
       throw Exception('Ошибка при шаринге шаблона: $error');
     }

@@ -1,5 +1,5 @@
 import 'package:characterbook/features/notes/domain/enums/note_sort_enum.dart';
-import 'package:characterbook/features/notes/application/note_service.dart';
+import 'package:characterbook/features/notes/presentation/providers/note_service.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/features/notes/domain/note_model.dart';
 import 'package:characterbook/features/notes/domain/note_repository.dart';
@@ -115,7 +115,7 @@ class _NotesListScreenState extends State<NotesListScreen> {
             },
             onShareFile: () async {
               try {
-                await controller.shareNoteAsFile(note);
+                await controller.shareNoteAsFile(note, context);
               } catch (e) {
                 if (context.mounted) AppNavigator.showError('${s.error}: $e');
               }
@@ -434,7 +434,7 @@ class _NotesListScreenState extends State<NotesListScreen> {
                                       ? Column(
                                           children: group.notes
                                               .map((note) => NoteCardItem(
-                                                    key: ValueKey(note.key),
+                                                    key: ValueKey(note.id),
                                                     note: note,
                                                     onTap: () =>
                                                         AppNavigator.editNote(
@@ -448,7 +448,8 @@ class _NotesListScreenState extends State<NotesListScreen> {
                                                     onDelete: () => _deleteNote(
                                                         note, controller),
                                                     onShare: () => controller
-                                                        .shareNoteAsFile(note),
+                                                        .shareNoteAsFile(
+                                                            note, context),
                                                     onDuplicate: null,
                                                     onSettings: () => AppNavigator
                                                         .openSwipeActionSettings(),
@@ -470,7 +471,7 @@ class _NotesListScreenState extends State<NotesListScreen> {
                           (context, index) {
                             final note = controller.filteredItems[index];
                             return NoteCardItem(
-                              key: ValueKey(note.key),
+                              key: ValueKey(note.id),
                               note: note,
                               onTap: () => AppNavigator.editNote(note),
                               onEdit: () => AppNavigator.editNote(note),

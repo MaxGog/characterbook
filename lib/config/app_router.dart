@@ -1,10 +1,10 @@
 import 'package:characterbook/features/characters/domain/character_model.dart';
 import 'package:characterbook/features/notes/domain/note_model.dart';
 import 'package:characterbook/features/races/domain/race_model.dart';
-import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/features/templates/domain/template_model.dart';
 import 'package:characterbook/features/characters/presentation/screens/character_management_screen.dart';
 import 'package:characterbook/features/characters/presentation/screens/character_list_screen.dart';
-import 'package:characterbook/ui/screens/home_screen.dart';
+import 'package:characterbook/features/home/presentation/home_screen.dart';
 import 'package:characterbook/features/notes/presentation/screens/note_management_screen.dart';
 import 'package:characterbook/features/notes/presentation/screens/note_list_screen.dart';
 import 'package:characterbook/features/races/presentation/screens/race_management_screen.dart';
@@ -14,7 +14,7 @@ import 'package:characterbook/features/settings/presentation/swipe_action_settin
 import 'package:characterbook/features/settings/presentation/theme_settings_screen.dart';
 import 'package:characterbook/features/sharing/presentation/export_pdf_settings_screen.dart';
 import 'package:characterbook/features/backup/presentation/backup_settings_screen.dart';
-import 'package:characterbook/ui/screens/templates/template_list_screen.dart';
+import 'package:characterbook/features/templates/presentation/template_list_screen.dart';
 import 'package:characterbook/ui/navigation/app_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

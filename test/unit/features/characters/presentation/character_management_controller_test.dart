@@ -2,16 +2,16 @@ import 'dart:async';
 import 'package:characterbook/features/characters/domain/character_model.dart';
 import 'package:characterbook/features/characters/domain/custom_field_model.dart';
 import 'package:characterbook/features/races/domain/race_model.dart';
-import 'package:characterbook/data/models/relationship_model.dart';
+import 'package:characterbook/features/relationships/domain/relationship_model.dart';
 import 'package:characterbook/features/characters/domain/character_repository.dart';
 import 'package:characterbook/features/races/domain/race_repository.dart';
-import 'package:characterbook/data/services/relationship_service.dart';
+import 'package:characterbook/features/relationships/presentation/providers/relationship_service.dart';
 import 'package:characterbook/features/characters/presentation/controllers/character_management_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class FakeCharacterRepository implements CharacterRepository {
-  final Map<dynamic, Character> _store = {};
+  final Map<String, Character> _store = {};
 
   @override
   Stream<List<Character>> watchAll() => Stream.value(_store.values.toList());
@@ -20,19 +20,15 @@ class FakeCharacterRepository implements CharacterRepository {
   Future<List<Character>> getAll() async => _store.values.toList();
 
   @override
-  Future<dynamic> save(Character character, {dynamic key}) async {
-    if (key != null) {
-      _store[key] = character;
-    } else {
-      final newKey = _store.length;
-      _store[newKey] = character;
-      key = newKey;
-    }
-    return key;
+  Future<Character?> getById(String id) async => _store[id];
+
+  @override
+  Future<void> save(Character character) async {
+    _store[character.id] = character;
   }
 
   @override
-  Future<void> delete(dynamic key) async => _store.remove(key);
+  Future<void> delete(String id) async => _store.remove(id);
 
   @override
   Future<void> reorder(int oldIndex, int newIndex) async {}
@@ -42,7 +38,7 @@ class FakeCharacterRepository implements CharacterRepository {
 }
 
 class FakeRaceRepository implements RaceRepository {
-  final Map<dynamic, Race> _store = {};
+  final Map<String, Race> _store = {};
 
   @override
   Stream<List<Race>> watchAll() => Stream.value(_store.values.toList());
@@ -59,22 +55,12 @@ class FakeRaceRepository implements RaceRepository {
   }
 
   @override
-  Future<Race?> getByKey(dynamic key) async => _store[key];
-
-  @override
-  Future<dynamic> save(Race race, {dynamic key}) async {
-    if (key != null) {
-      _store[key] = race;
-    } else {
-      final newKey = _store.length;
-      _store[newKey] = race;
-      key = newKey;
-    }
-    return key;
+  Future<void> save(Race race) async {
+    _store[race.id] = race;
   }
 
   @override
-  Future<void> delete(dynamic key) async => _store.remove(key);
+  Future<void> delete(String id) async => _store.remove(id);
 
   @override
   Future<void> reorder(int oldIndex, int newIndex) async {}
@@ -92,8 +78,7 @@ class FakeRelationshipService extends ChangeNotifier
   Stream<List<Relationship>> watchAll() => _controller.stream;
 
   @override
-  Future<void> saveRelationship(Relationship relationship,
-      {dynamic key}) async {}
+  Future<void> saveRelationship(Relationship relationship) async {}
 
   @override
   Future<void> deleteRelationship(Relationship relationship) async {}
@@ -109,7 +94,7 @@ class FakeRelationshipService extends ChangeNotifier
   Future<List<Relationship>> getAllRelationships() async => [];
 
   @override
-  Future<Relationship?> getRelationshipByKey(dynamic key) async => null;
+  Future<Relationship?> getRelationshipById(String id) async => null;
 
   @override
   Future<List<Relationship>> getRelationshipsForCharacter(

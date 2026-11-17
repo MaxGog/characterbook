@@ -4,9 +4,8 @@ abstract class RaceRepository {
   Stream<List<Race>> watchAll();
   Future<List<Race>> getAll();
   Future<Race?> getById(String id);
-  Future<Race?> getByKey(dynamic key);
-  Future<dynamic> save(Race race, {dynamic key});
-  Future<void> delete(dynamic key);
+  Future<void> save(Race race);
+  Future<void> delete(String id);
   Future<void> reorder(int oldIndex, int newIndex);
   Future<void> clear();
 }

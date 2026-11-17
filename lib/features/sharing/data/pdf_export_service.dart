@@ -1,14 +1,19 @@
 import 'dart:async';
 
+import 'package:characterbook/features/sharing/application/pdf_export_actions.dart';
+import 'package:characterbook/features/sharing/application/pdf_localization_data.dart';
 import 'package:flutter/services.dart';
 import 'package:characterbook/features/characters/domain/character_model.dart';
 import 'package:characterbook/features/races/domain/race_model.dart';
-import 'package:characterbook/data/models/export_pdf_settings_model.dart';
+import 'package:characterbook/features/sharing/domain/export_pdf_settings.dart';
+import 'package:characterbook/features/sharing/data/export_pdf_settings_record.dart';
+import 'package:characterbook/features/sharing/data/export_pdf_settings_mapper.dart';
+import 'package:characterbook/features/sharing/domain/export_pdf_settings_actions.dart';
 import 'package:hive/hive.dart';
 import 'package:pdf/pdf.dart' as pw;
 import 'package:pdf/widgets.dart' as pw;
 
-class PdfExportService {
+class PdfExportService implements PdfExportDocument {
   static const String _regularFontPath = 'assets/fonts/NotoSans-Regular.ttf';
   static const String _boldFontPath = 'assets/fonts/NotoSans-Bold.ttf';
 
@@ -24,10 +29,12 @@ class PdfExportService {
   });
 
   static Future<PdfExportService> createForCharacter(
-      Character character, PdfLocalizationData localization) async {
+    Character character,
+    PdfLocalizationData localization, {
+    required ExportPdfSettingsActions settingsActions,
+  }) async {
     try {
-      final settingsService = ExportPdfSettingsService();
-      final settings = await settingsService.getSettings();
+      final settings = await settingsActions.getSettings();
       return PdfExportService(
         model: character,
         settings: settings,
@@ -39,10 +46,12 @@ class PdfExportService {
   }
 
   static Future<PdfExportService> createForRace(
-      Race race, PdfLocalizationData localization) async {
+    Race race,
+    PdfLocalizationData localization, {
+    required ExportPdfSettingsActions settingsActions,
+  }) async {
     try {
-      final settingsService = ExportPdfSettingsService();
-      final settings = await settingsService.getSettings();
+      final settings = await settingsActions.getSettings();
       return PdfExportService(
         model: race,
         settings: settings,
@@ -66,6 +75,7 @@ class PdfExportService {
     );
   }
 
+  @override
   Future<Uint8List> generatePdf() async {
     try {
       final font = await _loadFont(_regularFontPath);
@@ -502,151 +512,38 @@ class _Section {
   _Section(this.title, this.content, this.include);
 }
 
-class ExportPdfSettingsService {
+class ExportPdfSettingsService implements ExportPdfSettingsActions {
   static const String _boxName = 'export_pdf_settings';
   static const String _settingsKey = 'settings';
 
-  Future<Box<ExportPdfSettings>> get _box =>
-      Hive.openBox<ExportPdfSettings>(_boxName);
+  Future<Box<ExportPdfSettingsRecord>> get _box =>
+      Hive.openBox<ExportPdfSettingsRecord>(_boxName);
 
+  @override
   Future<ExportPdfSettings> getSettings() async {
     try {
       final box = await _box;
-      return box.get(_settingsKey) ?? ExportPdfSettings();
+      final record = box.get(_settingsKey);
+      return record == null
+          ? ExportPdfSettings()
+          : const ExportPdfSettingsMapper().toDomain(record);
     } catch (e) {
       throw Exception(
           '${PdfLocalizationData.defaultLocalization().settingsLoadError}: ${e.toString()}');
     }
   }
 
+  @override
   Future<void> saveSettings(ExportPdfSettings settings) async {
     try {
       final box = await _box;
-      await box.put(_settingsKey, settings);
+      await box.put(
+        _settingsKey,
+        const ExportPdfSettingsMapper().toRecord(settings),
+      );
     } catch (e) {
       throw Exception(
           '${PdfLocalizationData.defaultLocalization().settingsSaveError}: ${e.toString()}');
     }
-  }
-}
-
-class PdfLocalizationData {
-  final String serviceCreationError;
-  final String raceServiceCreationError;
-  final String unsupportedModelType;
-  final String pdfGenerationError;
-  final String fontLoadTimeout;
-  final String settingsLoadError;
-  final String settingsSaveError;
-
-  final String characterProfileTitle;
-  final String raceProfileTitle;
-  final String basicInfo;
-  final String name;
-  final String age;
-  final String gender;
-  final String race;
-  final String description;
-  final String biography;
-  final String personality;
-  final String appearance;
-  final String abilities;
-  final String other;
-  final String referenceImage;
-  final String customFields;
-  final String additionalImages;
-  final String biology;
-  final String backstory;
-
-  const PdfLocalizationData({
-    required this.serviceCreationError,
-    required this.raceServiceCreationError,
-    required this.unsupportedModelType,
-    required this.pdfGenerationError,
-    required this.fontLoadTimeout,
-    required this.settingsLoadError,
-    required this.settingsSaveError,
-    required this.characterProfileTitle,
-    required this.raceProfileTitle,
-    required this.basicInfo,
-    required this.name,
-    required this.age,
-    required this.gender,
-    required this.race,
-    required this.description,
-    required this.biography,
-    required this.personality,
-    required this.appearance,
-    required this.abilities,
-    required this.other,
-    required this.referenceImage,
-    required this.customFields,
-    required this.additionalImages,
-    required this.biology,
-    required this.backstory,
-  });
-
-  factory PdfLocalizationData.russian() {
-    return const PdfLocalizationData(
-      serviceCreationError: 'Ошибка создания сервиса для персонажа',
-      raceServiceCreationError: 'Ошибка создания сервиса для расы',
-      unsupportedModelType: 'Неподдерживаемый тип модели для экспорта PDF',
-      pdfGenerationError: 'Ошибка генерации PDF',
-      fontLoadTimeout: 'Таймаут загрузки шрифта',
-      settingsLoadError: 'Ошибка загрузки настроек PDF',
-      settingsSaveError: 'Ошибка сохранения настроек PDF',
-      characterProfileTitle: 'Характеристика персонажа',
-      raceProfileTitle: 'Описание расы',
-      basicInfo: 'Основная информация',
-      name: 'Название',
-      age: 'Возраст',
-      gender: 'Пол',
-      race: 'Раса',
-      description: 'Описание',
-      biography: 'Биография',
-      personality: 'Характер',
-      appearance: 'Внешность',
-      abilities: 'Способности',
-      other: 'Другое',
-      referenceImage: 'Референс изображение',
-      customFields: 'Дополнительные поля',
-      additionalImages: 'Дополнительные изображения',
-      biology: 'Биология',
-      backstory: 'История',
-    );
-  }
-
-  factory PdfLocalizationData.english() {
-    return const PdfLocalizationData(
-      serviceCreationError: 'Error creating service for character',
-      raceServiceCreationError: 'Error creating service for race',
-      unsupportedModelType: 'Unsupported model type for PDF export',
-      pdfGenerationError: 'PDF generation error',
-      fontLoadTimeout: 'Font load timeout',
-      settingsLoadError: 'PDF settings load error',
-      settingsSaveError: 'PDF settings save error',
-      characterProfileTitle: 'Character Profile',
-      raceProfileTitle: 'Race Description',
-      basicInfo: 'Basic Information',
-      name: 'Name',
-      age: 'Age',
-      gender: 'Gender',
-      race: 'Race',
-      description: 'Description',
-      biography: 'Biography',
-      personality: 'Personality',
-      appearance: 'Appearance',
-      abilities: 'Abilities',
-      other: 'Other',
-      referenceImage: 'Reference Image',
-      customFields: 'Custom Fields',
-      additionalImages: 'Additional Images',
-      biology: 'Biology',
-      backstory: 'Backstory',
-    );
-  }
-
-  static PdfLocalizationData defaultLocalization() {
-    return PdfLocalizationData.russian();
   }
 }

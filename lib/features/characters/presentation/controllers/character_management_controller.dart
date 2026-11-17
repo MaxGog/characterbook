@@ -4,11 +4,11 @@ import 'dart:typed_data';
 import 'package:characterbook/features/characters/domain/character_model.dart';
 import 'package:characterbook/features/characters/domain/custom_field_model.dart';
 import 'package:characterbook/features/races/domain/race_model.dart';
-import 'package:characterbook/data/models/relationship_model.dart';
-import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/features/relationships/domain/relationship_model.dart';
+import 'package:characterbook/features/templates/domain/template_model.dart';
 import 'package:characterbook/features/characters/domain/character_repository.dart';
 import 'package:characterbook/features/races/domain/race_repository.dart';
-import 'package:characterbook/data/services/relationship_service.dart';
+import 'package:characterbook/features/relationships/presentation/providers/relationship_service.dart';
 import 'package:flutter/material.dart';
 
 class CharacterManagementController extends ChangeNotifier {
@@ -29,8 +29,6 @@ class CharacterManagementController extends ChangeNotifier {
   String? _error;
   bool _hasUnsavedChanges = false;
   bool _isSaving = false;
-  dynamic _currentKey;
-
   Map<String, Character> _characterMap = {};
   List<Relationship> _relationships = [];
   StreamSubscription<List<Relationship>>? _relSub;
@@ -63,7 +61,6 @@ class CharacterManagementController extends ChangeNotifier {
 
   void _initialize() {
     if (_originalCharacter != null) {
-      _currentKey = _originalCharacter!.key;
       _editable = _originalCharacter!.copyWith();
       _customFields = _editable.customFields.map((f) => f.copyWith()).toList();
       _tags = List.from(_editable.tags);
@@ -76,7 +73,6 @@ class CharacterManagementController extends ChangeNotifier {
       _additionalImages = List.from(_editable.additionalImages);
       _hasUnsavedChanges = true;
     } else {
-      _currentKey = null;
       _editable = Character.empty();
       _customFields = [];
       _tags = [];
@@ -238,9 +234,7 @@ class CharacterManagementController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final key = _currentKey;
-      final savedKey = await _characterRepo.save(_editable, key: key);
-      _currentKey ??= savedKey;
+      await _characterRepo.save(_editable);
       _originalCharacter ??= _editable;
       _hasUnsavedChanges = false;
       return true;

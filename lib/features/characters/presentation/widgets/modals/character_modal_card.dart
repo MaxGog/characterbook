@@ -1,17 +1,17 @@
 import 'dart:typed_data';
 
-import 'package:characterbook/data/services/relationship_service.dart';
+import 'package:characterbook/features/relationships/presentation/providers/relationship_service.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/features/characters/domain/character_model.dart';
 import 'package:characterbook/features/notes/domain/note_model.dart';
-import 'package:characterbook/features/characters/application/character_service.dart';
+import 'package:characterbook/features/characters/presentation/providers/character_service.dart';
 import 'package:characterbook/features/characters/domain/character_repository.dart';
 import 'package:characterbook/features/notes/domain/note_repository.dart';
 import 'package:characterbook/services/app_navigator.dart';
 import 'package:characterbook/services/pin_service.dart';
 import 'package:characterbook/features/characters/presentation/controllers/character_modal_controller.dart';
 import 'package:characterbook/features/sharing/presentation/share_options_dialog.dart';
-import 'package:characterbook/features/characters/presentation/widgets/edit_relationship_bottom_sheet.dart';
+import 'package:characterbook/features/relationships/presentation/edit_relationship_bottom_sheet.dart';
 import 'package:characterbook/features/notes/presentation/widgets/note_card_item.dart';
 
 import 'package:flutter/material.dart';
@@ -58,7 +58,7 @@ class CharacterModalCard extends StatelessWidget {
                   ? () => showFullImage(
                       context, character.imageBytes!, s.character_avatar)
                   : null,
-              heroTag: 'character-avatar-${character.key}',
+              heroTag: 'character-avatar-${character.id}',
             ),
             contentSections: _buildContentSections(context, controller),
           );

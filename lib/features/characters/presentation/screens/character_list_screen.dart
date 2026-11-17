@@ -1,7 +1,7 @@
 import 'package:characterbook/features/characters/domain/enums/character_sort_enum.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/features/characters/domain/character_model.dart';
-import 'package:characterbook/features/characters/application/character_service.dart';
+import 'package:characterbook/features/characters/presentation/providers/character_service.dart';
 import 'package:characterbook/features/characters/domain/character_repository.dart';
 import 'package:characterbook/providers/pins_provider.dart';
 import 'package:characterbook/services/app_navigator.dart';
@@ -235,7 +235,7 @@ class _CharacterListScreenState extends State<CharacterListScreen> {
                 },
                 onShareFile: () async {
                   try {
-                    await controller.shareCharacterAsFile(character);
+                    await controller.shareCharacterAsFile(character, context);
                   } catch (e) {
                     if (context.mounted) {
                       AppNavigator.showError('${s.error}: $e');
@@ -532,8 +532,7 @@ class _CharacterListScreenState extends State<CharacterListScreen> {
                                           children: group.characters
                                               .map((character) =>
                                                   CharacterCardItem(
-                                                    key:
-                                                        ValueKey(character.key),
+                                                    key: ValueKey(character.id),
                                                     animateHero:
                                                         _animatingHeroId !=
                                                             character.id,
@@ -589,7 +588,7 @@ class _CharacterListScreenState extends State<CharacterListScreen> {
                           (context, index) {
                             final character = controller.filteredItems[index];
                             return CharacterCardItem(
-                              key: ValueKey(character.key),
+                              key: ValueKey(character.id),
                               character: character,
                               isSelected: false,
                               animateHero: _animatingHeroId != character.id,

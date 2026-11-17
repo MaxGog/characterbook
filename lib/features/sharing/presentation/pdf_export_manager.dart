@@ -1,14 +1,16 @@
 import 'dart:async';
 
+import 'package:characterbook/core/file_share_actions.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/features/characters/domain/character_model.dart';
 import 'package:characterbook/features/races/domain/race_model.dart';
-import 'package:characterbook/features/sharing/data/file_share_service.dart';
-import 'package:characterbook/features/sharing/data/pdf_export_service.dart';
+import 'package:characterbook/features/sharing/application/pdf_export_actions.dart';
+import 'package:characterbook/features/sharing/application/pdf_localization_data.dart';
 import 'package:characterbook/ui/widgets/dialogs/error_dialog.dart';
 import 'package:characterbook/ui/widgets/dialogs/loading_dialog.dart';
 import 'package:characterbook/ui/widgets/dialogs/success_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PdfExportManager {
   static Future<void> exportCharacterWithDialog(
@@ -20,13 +22,12 @@ class PdfExportManager {
     final s = S.of(context);
     await _exportWithDialog(
       context,
-      () => PdfExportService.createForCharacter(
-        character,
-        _getLocalizationFromContext(context),
-      ),
+      () => context.read<PdfExportActions>().createForCharacter(
+            character,
+            _getLocalizationFromContext(context),
+          ),
       fileName ?? '${character.name}.pdf',
-      shareText ??
-          s.character_share_text(character.name),
+      shareText ?? s.character_share_text(character.name),
       s.character.toLowerCase(),
       s.character_exported(character.name),
     );
@@ -41,10 +42,10 @@ class PdfExportManager {
     final s = S.of(context);
     await _exportWithDialog(
       context,
-      () => PdfExportService.createForRace(
-        race,
-        _getLocalizationFromContext(context),
-      ),
+      () => context.read<PdfExportActions>().createForRace(
+            race,
+            _getLocalizationFromContext(context),
+          ),
       fileName ?? '${race.name}.pdf',
       shareText ?? s.race_share_text(race.name),
       s.race.toLowerCase(),
@@ -54,7 +55,7 @@ class PdfExportManager {
 
   static Future<void> _exportWithDialog(
     BuildContext context,
-    Future<PdfExportService> Function() createService,
+    Future<PdfExportDocument> Function() createService,
     String fileName,
     String shareText,
     String entityType,
@@ -86,16 +87,19 @@ class PdfExportManager {
         hideLoadingDialog(context);
       }
 
-      await const FileShareService().shareFile(
-        pdfBytes,
-        fileName,
-        text: shareText,
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () => throw TimeoutException(
-          s.file_sharing_timeout,
-        ),
-      );
+      await context
+          .read<FileShareActions>()
+          .shareFile(
+            pdfBytes,
+            fileName,
+            text: shareText,
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw TimeoutException(
+              s.file_sharing_timeout,
+            ),
+          );
 
       if (context.mounted) {
         showSuccessDialog(

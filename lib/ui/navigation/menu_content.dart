@@ -1,6 +1,6 @@
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/services/app_navigator.dart';
-import 'package:characterbook/ui/screens/templates/template_list_screen.dart';
+import 'package:characterbook/features/templates/presentation/template_list_screen.dart';
 import 'package:characterbook/ui/widgets/about_section_widget.dart';
 import 'package:flutter/material.dart';
 

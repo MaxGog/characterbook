@@ -62,8 +62,7 @@ class ClipboardService {
     required BuildContext context,
     required String content,
   }) async {
-    final buffer = StringBuffer()
-      ..writeln(content);
+    final buffer = StringBuffer()..writeln(content);
 
     await Clipboard.setData(ClipboardData(text: buffer.toString()));
   }

@@ -4,21 +4,20 @@ import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/features/backup/domain/backup_actions.dart';
 import 'package:characterbook/features/backup/domain/backup_manager.dart';
 import 'package:characterbook/core/file_share_actions.dart';
-import 'package:characterbook/services/file_picker_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:universal_html/html.dart' as html;
 
 class LocalBackupService implements LocalBackupActions {
   final BackupManager _backupManager;
-  final FilePickerService _filePickerService;
+  final PickBackupFile _pickBackupFile;
   final FileShareActions _fileShareActions;
 
   LocalBackupService({
     required BackupManager backupManager,
-    required FilePickerService filePickerService,
+    required PickBackupFile pickBackupFile,
     required FileShareActions fileShareActions,
   })  : _backupManager = backupManager,
-        _filePickerService = filePickerService,
+        _pickBackupFile = pickBackupFile,
         _fileShareActions = fileShareActions;
 
   @override
@@ -63,7 +62,7 @@ class LocalBackupService implements LocalBackupActions {
 
   @override
   Future<void> importData() async {
-    final data = await _filePickerService.pickRestoreFile();
+    final data = await _pickBackupFile();
     if (data == null) {
       throw FormatException(S.current.local_restore_error);
     }

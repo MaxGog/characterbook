@@ -1,15 +1,16 @@
 import 'dart:async';
 
 import 'package:characterbook/config/app_router.dart';
-import 'package:characterbook/data/repositories/custom_event_repository.dart';
-import 'package:characterbook/data/services/custom_event_service.dart';
-import 'package:characterbook/features/characters/application/character_service.dart';
+import 'package:characterbook/features/calendar/domain/custom_event_repository.dart';
+import 'package:characterbook/features/calendar/application/custom_event_service.dart';
+import 'package:characterbook/features/calendar/data/custom_event_repository_hive.dart';
+import 'package:characterbook/features/characters/presentation/providers/character_service.dart';
 import 'package:characterbook/features/characters/data/character_repository_hive.dart';
 import 'package:characterbook/features/characters/domain/character_repository.dart';
-import 'package:characterbook/features/notes/application/note_service.dart';
+import 'package:characterbook/features/notes/presentation/providers/note_service.dart';
 import 'package:characterbook/features/notes/data/note_repository_hive.dart';
 import 'package:characterbook/features/notes/domain/note_repository.dart';
-import 'package:characterbook/features/races/application/race_service.dart';
+import 'package:characterbook/features/races/presentation/providers/race_service.dart';
 import 'package:characterbook/features/races/data/race_repository_hive.dart';
 import 'package:characterbook/features/races/domain/race_repository.dart';
 import 'package:characterbook/generated/l10n.dart';
@@ -27,20 +28,31 @@ import 'package:characterbook/core/app_settings_actions.dart';
 import 'package:characterbook/features/notifications/data/local_notification_service.dart';
 import 'package:characterbook/features/notifications/presentation/overlay_notification.dart';
 import 'package:characterbook/features/sharing/data/file_share_service.dart';
-import 'package:characterbook/features/settings/data/locale_provider.dart';
-import 'package:characterbook/features/settings/data/swipe_action_settings_provider.dart';
-import 'package:characterbook/features/settings/data/theme_provider.dart';
-import 'package:characterbook/features/settings/domain/settings_actions.dart';
-import 'package:characterbook/data/repositories/relationship_repository.dart';
-import 'package:characterbook/data/repositories/template_repository.dart';
+import 'package:characterbook/features/sharing/data/pdf_export_action_service.dart';
+import 'package:characterbook/features/sharing/data/pdf_export_service.dart';
+import 'package:characterbook/features/sharing/application/pdf_export_actions.dart';
+import 'package:characterbook/features/settings/presentation/providers/locale_provider.dart';
+import 'package:characterbook/features/settings/presentation/providers/swipe_action_settings_provider.dart';
+import 'package:characterbook/features/settings/presentation/providers/theme_provider.dart';
+import 'package:characterbook/features/settings/presentation/settings_actions.dart';
+import 'package:characterbook/features/settings/data/locale_channel_service.dart';
+import 'package:characterbook/features/settings/domain/locale_channel_actions.dart';
+import 'package:characterbook/features/sharing/domain/export_pdf_settings_actions.dart';
+import 'package:characterbook/features/relationships/domain/relationship_repository.dart';
+import 'package:characterbook/features/relationships/data/relationship_repository_hive.dart';
+import 'package:characterbook/features/templates/domain/template_repository.dart';
 import 'package:characterbook/services/app_navigator.dart';
-import 'package:characterbook/services/device_calendar_service.dart';
+import 'package:characterbook/features/calendar/data/device_calendar_service.dart';
+import 'package:characterbook/features/calendar/domain/device_calendar_actions.dart';
 import 'package:characterbook/services/file_picker_service.dart';
-import 'package:characterbook/data/services/hive_service.dart';
+import 'package:characterbook/core/storage/hive_service.dart';
 import 'package:characterbook/services/menu_channel_service.dart';
-import 'package:characterbook/data/services/relationship_service.dart';
-import 'package:characterbook/data/services/template_service.dart';
-import 'package:characterbook/ui/controllers/template_list_controller.dart';
+import 'package:characterbook/features/relationships/presentation/providers/relationship_service.dart';
+import 'package:characterbook/features/templates/application/template_service.dart';
+import 'package:characterbook/features/templates/data/template_file_picker.dart';
+import 'package:characterbook/features/templates/data/template_repository_hive.dart';
+import 'package:characterbook/features/templates/domain/template_import_actions.dart';
+import 'package:characterbook/features/templates/presentation/template_list_controller.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -104,10 +116,20 @@ class CharacterBookApp extends StatelessWidget {
         Provider<FileShareActions>(
           create: (_) => const FileShareService(),
         ),
+        Provider<ExportPdfSettingsActions>(
+          create: (_) => ExportPdfSettingsService(),
+        ),
+        ProxyProvider<ExportPdfSettingsActions, PdfExportActions>(
+          update: (_, settings, __) => PdfExportActionService(settings),
+        ),
         ChangeNotifierProvider(create: (_) => PinsProvider()),
         if (characterBox != null)
-          Provider<CharacterRepository>(
+          Provider<CharacterRepositoryHive>(
             create: (_) => CharacterRepositoryHive(characterBox),
+          ),
+        if (characterBox != null)
+          Provider<CharacterRepository>(
+            create: (context) => context.read<CharacterRepositoryHive>(),
           ),
         if (raceBox != null)
           Provider<RaceRepository>(
@@ -115,7 +137,12 @@ class CharacterBookApp extends StatelessWidget {
           ),
         if (noteBox != null)
           Provider<NoteRepository>(
-            create: (_) => NoteRepositoryHive(noteBox),
+            create: (context) => NoteRepositoryHive(
+              noteBox,
+              resolveLegacyCharacterId: characterBox == null
+                  ? null
+                  : context.read<CharacterRepositoryHive>().resolveLegacyKey,
+            ),
           ),
         if (templateBox != null)
           Provider<TemplateRepository>(
@@ -133,7 +160,7 @@ class CharacterBookApp extends StatelessWidget {
           Provider<CustomEventRepository>(
             create: (_) => CustomEventRepositoryHive(customEventBox),
           ),
-        Provider<DeviceCalendarService>(
+        Provider<DeviceCalendarActions>(
           create: (_) => DeviceCalendarService(),
         ),
         Provider<LocalNotificationActions>(
@@ -148,7 +175,13 @@ class CharacterBookApp extends StatelessWidget {
           },
         ),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        Provider<LocaleChannelActions>(
+          create: (_) => LocaleChannelService(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) =>
+              LocaleProvider(context.read<LocaleChannelActions>()),
+        ),
         ChangeNotifierProvider(create: (_) => SwipeActionSettingsProvider()),
         ListenableProxyProvider<ThemeProvider, ThemeSettingsActions>(
           update: (_, settings, __) => settings,
@@ -166,7 +199,6 @@ class CharacterBookApp extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class _AppServicesWrapper extends StatelessWidget {
@@ -187,7 +219,7 @@ class _AppServicesWrapper extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => CharacterService(
             context.read<CharacterRepository>(),
-            context.read<RelationshipService>(),
+            context.read<RelationshipRepository>(),
           ),
         ),
         ChangeNotifierProvider(
@@ -200,9 +232,15 @@ class _AppServicesWrapper extends StatelessWidget {
             context.read<NoteRepository>(),
           ),
         ),
-        ChangeNotifierProvider(
+        Provider<TemplateImportActions>(
+          create: (context) => TemplateFilePicker(
+            () => context.read<FilePickerService>().importTemplate(),
+          ),
+        ),
+        Provider<TemplateService>(
           create: (context) => TemplateService(
             context.read<TemplateRepository>(),
+            context.read<TemplateImportActions>(),
           ),
         ),
         ProxyProvider<CustomEventRepository, CustomEventService>(
@@ -228,7 +266,7 @@ class _AppServicesWrapper extends StatelessWidget {
           update: (_, backupManager, filePicker, fileShareActions, __) =>
               LocalBackupService(
             backupManager: backupManager,
-            filePickerService: filePicker,
+            pickBackupFile: () => filePicker.pickRestoreFile(),
             fileShareActions: fileShareActions,
           ),
         ),

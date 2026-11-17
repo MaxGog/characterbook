@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:characterbook/features/characters/domain/character_model.dart';
 import 'package:characterbook/features/notes/domain/note_model.dart';
-import 'package:characterbook/data/models/relationship_model.dart';
+import 'package:characterbook/features/relationships/domain/relationship_model.dart';
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/features/characters/application/character_service.dart';
+import 'package:characterbook/features/characters/presentation/providers/character_service.dart';
 import 'package:characterbook/features/characters/domain/character_repository.dart';
 import 'package:characterbook/features/notes/domain/note_repository.dart';
-import 'package:characterbook/data/services/relationship_service.dart';
+import 'package:characterbook/features/relationships/presentation/providers/relationship_service.dart';
 import 'package:characterbook/features/sharing/presentation/clipboard_service.dart';
 import 'package:characterbook/features/sharing/presentation/pdf_export_manager.dart';
 import 'package:characterbook/features/sharing/presentation/sharing_manager.dart';
@@ -82,8 +82,7 @@ class CharacterModalController extends ChangeNotifier {
         notifyListeners();
       });
 
-      _relatedNotes =
-          await _noteRepo.getNotesForCharacter(character.key.toString());
+      _relatedNotes = await _noteRepo.getNotesForCharacter(character.id);
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -94,8 +93,7 @@ class CharacterModalController extends ChangeNotifier {
 
   Future<void> refreshNotes() async {
     try {
-      _relatedNotes =
-          await _noteRepo.getNotesForCharacter(character.key.toString());
+      _relatedNotes = await _noteRepo.getNotesForCharacter(character.id);
       notifyListeners();
     } catch (e) {
       _error = e.toString();
@@ -105,7 +103,7 @@ class CharacterModalController extends ChangeNotifier {
 
   Future<void> deleteCharacter() async {
     try {
-      await _characterRepo.delete(character.key);
+      await _characterRepo.delete(character.id);
     } catch (e) {
       _error = e.toString();
       notifyListeners();
@@ -174,7 +172,7 @@ class CharacterModalController extends ChangeNotifier {
 
   Future<void> deleteNote(Note note) async {
     try {
-      await _noteRepo.delete(note.key);
+      await _noteRepo.delete(note.id);
       await refreshNotes();
     } catch (e) {
       _error = e.toString();

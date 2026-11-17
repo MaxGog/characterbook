@@ -1,40 +1,27 @@
 import 'dart:math';
+import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
-import 'package:hive/hive.dart';
+import 'package:collection/collection.dart';
 
-part 'race_model.g.dart';
-
-@HiveType(typeId: 3)
-class Race extends HiveObject {
-  @HiveField(0)
+class Race {
   String id;
 
-  @HiveField(1)
   String name;
 
-  @HiveField(2)
   String description;
 
-  @HiveField(3)
   String biology;
 
-  @HiveField(4)
   String backstory;
 
-  @HiveField(5)
   Uint8List? logo;
 
-  @HiveField(6, defaultValue: null)
   String? folderId;
 
-  @HiveField(7, defaultValue: const [])
   List<String> tags;
 
-  @HiveField(8, defaultValue: const [])
   List<Uint8List> additionalImages;
 
-  @HiveField(9)
   DateTime lastEdited;
 
   Race({
@@ -70,8 +57,9 @@ class Race extends HiveObject {
           biology == other.biology &&
           backstory == other.backstory &&
           folderId == other.folderId &&
-          listEquals(tags, other.tags) &&
-          listEquals(additionalImages, other.additionalImages) &&
+          const ListEquality<String>().equals(tags, other.tags) &&
+          const ListEquality<Uint8List>()
+              .equals(additionalImages, other.additionalImages) &&
           lastEdited == other.lastEdited;
 
   @override

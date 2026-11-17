@@ -80,7 +80,7 @@ class CharacterCardItem extends StatelessWidget {
             HeroMode(
               enabled: animateHero,
               child: Hero(
-                tag: 'character-avatar-${character.key ?? character.id}',
+                tag: 'character-avatar-${character.id}',
                 child: AvatarWidget.character(
                   imageBytes: character.imageBytes,
                   size: 34,

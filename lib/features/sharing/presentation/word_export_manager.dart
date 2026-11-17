@@ -1,12 +1,13 @@
 import 'package:characterbook/features/characters/domain/character_model.dart';
 import 'package:characterbook/features/races/domain/race_model.dart';
-import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/features/templates/domain/template_model.dart';
 import 'package:characterbook/services/app_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/features/sharing/data/file_share_service.dart';
-import 'package:characterbook/features/sharing/data/word_export_service.dart';
+import 'package:characterbook/features/sharing/application/word_export_service.dart';
 import 'package:characterbook/ui/widgets/dialogs/loading_dialog.dart';
+import 'package:characterbook/core/file_share_actions.dart';
+import 'package:provider/provider.dart';
 
 class WordExportManager {
   static Future<void> exportCharacterWithDialog(
@@ -22,11 +23,11 @@ class WordExportManager {
 
       if (context.mounted) hideLoadingDialog(context);
 
-      await const FileShareService().shareFile(
-        bytes,
-        '${character.name}.docx',
-        text: s.character_share_text(character.name),
-      );
+      await context.read<FileShareActions>().shareFile(
+            bytes,
+            '${character.name}.docx',
+            text: s.character_share_text(character.name),
+          );
 
       if (context.mounted) {
         AppNavigator.showSuccess(s.word_export_success);
@@ -34,7 +35,8 @@ class WordExportManager {
     } catch (e) {
       if (context.mounted) {
         hideLoadingDialog(context);
-        AppNavigator.showError('${s.word_export_error}: $e',
+        AppNavigator.showError(
+          '${s.word_export_error}: $e',
         );
       }
     }
@@ -51,11 +53,11 @@ class WordExportManager {
       final bytes = await service.generate();
       if (context.mounted) hideLoadingDialog(context);
 
-      await const FileShareService().shareFile(
-        bytes,
-        '${race.name}.docx',
-        text: 'Раса: ${race.name}',
-      );
+      await context.read<FileShareActions>().shareFile(
+            bytes,
+            '${race.name}.docx',
+            text: 'Раса: ${race.name}',
+          );
 
       if (context.mounted) {
         AppNavigator.showSuccess(s.word_export_success);
@@ -79,11 +81,11 @@ class WordExportManager {
       final bytes = await service.generate();
       if (context.mounted) hideLoadingDialog(context);
 
-      await const FileShareService().shareFile(
-        bytes,
-        '${template.name}.docx',
-        text: 'Шаблон: ${template.name}',
-      );
+      await context.read<FileShareActions>().shareFile(
+            bytes,
+            '${template.name}.docx',
+            text: 'Шаблон: ${template.name}',
+          );
 
       if (context.mounted) {
         AppNavigator.showSuccess(s.word_export_success);

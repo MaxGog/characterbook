@@ -3,18 +3,25 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:characterbook/features/characters/domain/character_model.dart';
+import 'package:characterbook/features/characters/data/character_record.dart';
 import 'package:characterbook/features/notes/domain/note_model.dart';
+import 'package:characterbook/features/notes/data/note_record.dart';
 import 'package:characterbook/features/races/domain/race_model.dart';
-import 'package:characterbook/data/models/template_model.dart';
-import 'package:characterbook/data/models/relationship_model.dart';
+import 'package:characterbook/features/races/data/race_record.dart';
+import 'package:characterbook/features/templates/domain/template_model.dart';
+import 'package:characterbook/features/templates/data/template_record.dart';
+import 'package:characterbook/features/relationships/domain/relationship_model.dart';
+import 'package:characterbook/features/relationships/data/relationship_record.dart';
 import 'package:characterbook/features/characters/data/character_repository_hive.dart';
 import 'package:characterbook/features/characters/domain/character_repository.dart';
 import 'package:characterbook/features/notes/data/note_repository_hive.dart';
 import 'package:characterbook/features/notes/domain/note_repository.dart';
 import 'package:characterbook/features/races/data/race_repository_hive.dart';
 import 'package:characterbook/features/races/domain/race_repository.dart';
-import 'package:characterbook/data/repositories/template_repository.dart';
-import 'package:characterbook/data/repositories/relationship_repository.dart';
+import 'package:characterbook/features/templates/domain/template_repository.dart';
+import 'package:characterbook/features/relationships/domain/relationship_repository.dart';
+import 'package:characterbook/features/templates/data/template_repository_hive.dart';
+import 'package:characterbook/features/relationships/data/relationship_repository_hive.dart';
 import 'package:characterbook/features/backup/data/repository_backup_repository.dart';
 import 'package:characterbook/features/backup/domain/backup_manager.dart';
 import '../../../helpers/hive_test_utils.dart';
@@ -27,23 +34,23 @@ void main() {
   late TemplateRepository templateRepo;
   late RelationshipRepository relationshipRepo;
 
-  late Box<Character> charBox;
-  late Box<Note> noteBox;
-  late Box<Race> raceBox;
-  late Box<QuestionnaireTemplate> templateBox;
-  late Box<Relationship> relBox;
+  late Box<CharacterRecord> charBox;
+  late Box<NoteRecord> noteBox;
+  late Box<RaceRecord> raceBox;
+  late Box<TemplateRecord> templateBox;
+  late Box<RelationshipRecord> relBox;
 
   setUpAll(() async {
     await setUpTestHive();
   });
 
   setUp(() async {
-    charBox = await Hive.openBox<Character>('test_characters_backup');
-    noteBox = await Hive.openBox<Note>('test_notes_backup');
-    raceBox = await Hive.openBox<Race>('test_races_backup');
-    templateBox =
-        await Hive.openBox<QuestionnaireTemplate>('test_templates_backup');
-    relBox = await Hive.openBox<Relationship>('test_relationships_backup');
+    charBox = await Hive.openBox<CharacterRecord>('test_characters_backup');
+    noteBox = await Hive.openBox<NoteRecord>('test_notes_backup');
+    raceBox = await Hive.openBox<RaceRecord>('test_races_backup');
+    templateBox = await Hive.openBox<TemplateRecord>('test_templates_backup');
+    relBox =
+        await Hive.openBox<RelationshipRecord>('test_relationships_backup');
 
     await charBox.clear();
     await noteBox.clear();
@@ -84,13 +91,13 @@ void main() {
     test('createBackup returns all data types including relationships',
         () async {
       final char = Character(id: 'c1', name: 'Hero');
-      await characterRepo.save(char, key: char.id);
+      await characterRepo.save(char);
 
       final note = Note(id: 'n1', title: 'Note1', content: '', folderId: null);
-      await noteRepo.save(note, key: note.id);
+      await noteRepo.save(note);
 
       final race = Race(id: 'r1', name: 'Elf');
-      await raceRepo.save(race, key: race.id);
+      await raceRepo.save(race);
 
       final template =
           QuestionnaireTemplate(name: 'Basic', standardFields: ['name']);
@@ -98,7 +105,7 @@ void main() {
 
       final rel = Relationship(
           id: 'rel1', character1Id: 'c1', character2Id: 'c2', name: 'Friends');
-      await relationshipRepo.save(rel, key: rel.id);
+      await relationshipRepo.save(rel);
 
       final data = await backupManager.createBackup();
 
@@ -120,16 +127,16 @@ void main() {
 
     test('restoreBackup restores all types including relationships', () async {
       final char = Character(id: 'c1', name: 'Hero');
-      await characterRepo.save(char, key: char.id);
+      await characterRepo.save(char);
       final note = Note(id: 'n1', title: 'Test', content: '', folderId: null);
-      await noteRepo.save(note, key: note.id);
+      await noteRepo.save(note);
       final race = Race(id: 'r1', name: 'Dwarf');
-      await raceRepo.save(race, key: race.id);
+      await raceRepo.save(race);
       final template = QuestionnaireTemplate(name: 'T1', standardFields: []);
       await templateRepo.save(template);
       final rel = Relationship(
           id: 'rel1', character1Id: 'c1', character2Id: 'c2', name: 'Friend');
-      await relationshipRepo.save(rel, key: rel.id);
+      await relationshipRepo.save(rel);
 
       final rawData = await backupManager.createBackup();
 
@@ -167,10 +174,10 @@ void main() {
 
     test('restoreBackup clears all data before restoring', () async {
       final charOld = Character(id: 'old', name: 'Old');
-      await characterRepo.save(charOld, key: charOld.id);
+      await characterRepo.save(charOld);
       final relOld =
           Relationship(id: 'oldRel', character1Id: 'a', character2Id: 'b');
-      await relationshipRepo.save(relOld, key: relOld.id);
+      await relationshipRepo.save(relOld);
 
       final newData = {
         'characters': [Character(id: 'new', name: 'New').toJson()],
@@ -201,7 +208,7 @@ void main() {
       };
 
       final rel = Relationship(id: 'r1', character1Id: 'x', character2Id: 'y');
-      await relationshipRepo.save(rel, key: rel.id);
+      await relationshipRepo.save(rel);
 
       await backupManager.restoreBackup(oldFormatData);
 
@@ -214,10 +221,10 @@ void main() {
     });
 
     test('restoreBackup with empty sections clears all', () async {
-      await characterRepo.save(Character(id: '1', name: 'A'), key: '1');
+      await characterRepo.save(Character(id: '1', name: 'A'));
       await relationshipRepo.save(
-          Relationship(id: 'r1', character1Id: '1', character2Id: '2'),
-          key: 'r1');
+        Relationship(id: 'r1', character1Id: '1', character2Id: '2'),
+      );
 
       final emptyData = {
         'characters': [],

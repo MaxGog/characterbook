@@ -91,8 +91,7 @@ class RaceManagementController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final key = _originalRace?.key;
-      await _raceRepo.save(_editable, key: key);
+      await _raceRepo.save(_editable);
 
       _hasUnsavedChanges = false;
       return true;

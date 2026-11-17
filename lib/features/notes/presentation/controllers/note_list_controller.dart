@@ -92,7 +92,7 @@ class NoteListController extends ChangeNotifier {
     try {
       _isLoading = true;
       notifyListeners();
-      await _repository.delete(note.key);
+      await _repository.delete(note.id);
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -105,8 +105,8 @@ class NoteListController extends ChangeNotifier {
     await Clipboard.setData(ClipboardData(text: note.content));
   }
 
-  Future<void> shareNoteAsFile(Note note) async {
-    await SharingManager.shareNoteAsFile(note);
+  Future<void> shareNoteAsFile(Note note, BuildContext context) async {
+    await SharingManager.shareNoteAsFile(context, note);
   }
 
   Future<void> reorder(int oldIndex, int newIndex) async {

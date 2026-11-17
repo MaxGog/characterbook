@@ -12,10 +12,10 @@
 ├── lib/                      # Основная кодовая база на Dart
 │   ├── features/             # Функциональные модули
 │   │   ├── characters/       # Персонажи и связанные сценарии/экраны
-│   │   │   ├── application/  # Прикладные сервисы персонажей
-│   │   │   ├── data/         # Hive-репозиторий персонажей
+│   │   │   ├── application/  # Сценарии использования
+│   │   │   ├── data/         # Hive records, мапперы и репозиторий
 │   │   │   ├── domain/       # Сущности, enums/, контракт репозитория
-│   │   │   └── presentation/ # Контроллеры, экраны и виджеты персонажей
+│   │   │   └── presentation/ # UI, контроллеры и Provider-состояние
 │   │   ├── races/            # Расы, выбор расы и связанные экраны
 │   │   │   ├── application/
 │   │   │   ├── data/
@@ -26,6 +26,10 @@
 │   │   │   ├── data/
 │   │   │   ├── domain/
 │   │   │   └── presentation/
+│   │   ├── relationships/    # Связи между персонажами
+│   │   ├── templates/        # Шаблоны персонажей
+│   │   ├── calendar/         # События календаря и напоминания
+│   │   ├── home/             # Главный экран, контроллер и его виджеты
 │   │   ├── backup/           # Резервное копирование и восстановление
 │   │   │   ├── data/         # Адаптеры репозиториев, файлов и Google Drive
 │   │   │   ├── domain/       # Порты, контракт хранилища и use case
@@ -38,6 +42,8 @@
 │   │   │   ├── data/         # Адаптер flutter_local_notifications
 │   │   │   └── presentation/ # Оверлей уведомлений
 │   │   └── sharing/          # Системный шаринг, clipboard и экспорт файлов
+│   │       ├── application/  # Use cases экспорта документов
+│   │       ├── domain/       # Контракты настроек экспорта
 │   │       ├── data/
 │   │       │   ├── file_share_service.dart
 │   │       │   ├── pdf_export_service.dart
@@ -55,23 +61,8 @@
 │   │   ├── app_notification_actions.dart
 │   │   ├── file_share_actions.dart
 │   │   └── local_notification_actions.dart
-│   ├── data/                 # Слой данных
-│   │   ├── enums/            # Перечисления
-│   │   │   ├── calendar_event_type_enum.dart
-│   │   │   ├── home_content_type_enum.dart
-│   │   │   ├── template_sort_enum.dart
-│   │   │   └── tool_type_enum.dart
-│   │   ├── models/           # Общие и пока не выделенные модели
-│   │   │   ├── calendar_event_model.dart
-│   │   │   ├── ... (другие модели)
-│   │   │   └── relationship_model.dart
-│   │   ├── repositories/     # Репозитории для доступа к данным
-│   │   │   ├── hive_box_repository.dart # Общие операции Hive-репозиториев
-│   │   │   ├── ... (репозитории оставшихся областей)
-│   │   │   └── template_repository.dart
-│   │   └── services/         # Сервисы для работы с данными
-│   │       ├── ... (другие сервисы)
-│   │       └── template_service.dart
+│   │   └── storage/          # Общая Hive-инфраструктура и маппинг-репозиторий
+│   ├── data/                 # Старый каталог; Dart-модели и репозитории перенесены
 │   ├── extensions/           # Расширения для встроенных классов
 │   │   └── color_extension.dart
 │   ├── gen/                  # Сгенерированные файлы (assets)
@@ -176,11 +167,11 @@ main.dart                     # Точка входа в приложение
 
 ## Модульная структура
 
-Разделение приложения на модули выполняется постепенно. Сейчас в проекте выделяются слои и функциональные модули, но архитектура ещё не является полностью независимой clean architecture:
+Фичи организованы по слоям `domain`, `application`, `data` и `presentation`. Направление зависимостей — внутрь: доменные сущности и контракты не импортируют Flutter, Hive или реализации репозиториев. `main.dart` выступает composition root для зависимостей и маршрутизации.
 
 - Ядро (`core/`) — базовые сущности предметной области.
 - Общие контракты (`core/`) — интерфейсы интеграции, не привязанные к реализациям модулей.
-- Данные (`data/`) — модели, репозитории, сервисы для работы с данными.
+- Данные (`features/*/data/`) — адаптеры хранилища и мапперы доменных сущностей.
 - Функциональные модули (`features/`) — самостоятельные вертикальные части функциональности.
 - Обработчики (`handlers/`) — платформозависимая работа с файлами.
 - Интерфейсы (`interfaces/`) — контракты для реализации функций.
@@ -188,37 +179,38 @@ main.dart                     # Точка входа в приложение
 - Провайдеры (`providers/`) — управление состоянием приложения (тема, язык, настройки).
 - UI (`ui/`) — представление данных, экраны, виджеты, контроллеры.
 
-Персонажи, расы и заметки организованы как вертикальные feature-модули: модель и контракт репозитория находятся в `domain/`, Hive-реализация — в `data/`, прикладная логика — в `application/`, а контроллеры, экраны и специфичные виджеты — в `presentation/`. Composition root и общие UI-компоненты остаются в корневых `config/`, `services/` и `ui/`. Новые области следует оформлять аналогично, сохраняя зависимости направленными к доменным контрактам.
-
-В этих трёх feature-модулях сущности пока используют Hive-типы напрямую для совместимости с существующими данными и сериализацией. Поэтому структура разделена по фичам, но доменные модели ещё не полностью независимы от технологии хранения.
+Персонажи, расы и заметки разделены на независимые доменные модели и Hive persistence records. `data/` преобразует records в сущности через мапперы и реализует контракты из `domain/`; UI не открывает Hive-box напрямую. Provider-классы, наследующие `ChangeNotifier`, находятся в `presentation/providers/`, а прикладные сценарии без UI-зависимостей — в `application/`. Общая Hive-инфраструктура находится в `core/storage/`.
 
 ### Модули `features/characters/`, `features/races/` и `features/notes/`
 
-- Для каждой области определены контракты репозиториев в `domain/`, Hive-репозитории в `data/` и прикладные сервисы в `application/`. Общие операции над Hive-box вынесены в `data/repositories/HiveBoxRepository`.
-- Модели `Character` и `CustomField` находятся в `features/characters/domain/`, `Race` — в `features/races/domain/`, `Note` — в `features/notes/domain/`. Сгенерированные Hive-адаптеры хранятся рядом со своими моделями; тип `CustomFieldAdapter` генерируется вместе с `CustomField`.
+- Для каждой области определены контракты репозиториев в `domain/`, Hive-реализации и мапперы в `data/`. Общие операции над Hive-box вынесены в `core/storage/HiveBoxRepository`.
+- Доменные модели `Character`, `Race`, `Note` и `CustomField` не зависят от Hive. Адаптеры регистрируются для отдельных persistence records в соответствующих каталогах `data/`; Hive typeId и индексы полей сохранены для чтения существующих данных.
+- Hive records персонажей, рас, заметок и связей содержат опциональное поле `sortOrder`; отсутствие этого поля в старых записях поддерживается. Порядок обновляется без изменения Hive-ключей, на которые могли ссылаться старые заметки.
 - Типы сортировки персонажей, рас и заметок также принадлежат `domain/enums/` соответствующей фичи.
-- Экраны, контроллеры и специфичные для фичи виджеты находятся в её `presentation/`. Общие компоненты приложения остаются в `ui/`; навигация связывает их с экранами фич.
+- Экраны, контроллеры, Provider-состояние и специфичные для фичи виджеты находятся в её `presentation/`. Переиспользуемые компоненты приложения остаются в `ui/`; навигация связывает их с экранами фич.
 - Presentation-слой получает данные через доменные контракты репозиториев и не открывает Hive-box напрямую.
 - `Character.race` опциональна. Форма персонажа проверяет наличие имени, но не требует выбранной расы.
 
 ### Модуль `features/settings/`
 
 - Экраны настроек темы, языка и жестов, а также соответствующие реализации состояния и локального хранения принадлежат модулю. Экран настроек приложения не импортирует экраны backup или sharing.
-- `domain/SettingsActions` — контракты UI для темы и локали. Экраны зависят от этих контрактов, а не от провайдеров/хранилища; composition root (`main.dart`) связывает реализации с портами.
+- `presentation/SettingsActions` — UI-контракты для темы и локали. Экраны зависят от них, а не от конкретных провайдеров; composition root (`main.dart`) связывает реализации с портами.
+- `domain/LocaleChannelActions` — платформенно-независимый порт для нативной синхронизации языка; реализация `data/LocaleChannelService` использует `MethodChannel`.
 - `core/SwipeActionSettingsActions` — минимальный контракт для общего виджета карточки вне модуля. Settings реализует его, а composition root публикует реализацию; общий UI не зависит от конкретного провайдера настроек.
 - `AppRouter` — composition root навигации: он связывает маршруты settings с экранами settings, backup и PDF-экспорта. Переходы между feature-модулями выполняются по маршрутам, поэтому settings не импортирует соседние модули.
-- Провайдеры темы и локали создаются у composition root, так как ими пользуется всё приложение (`MaterialApp`). Реализации и UI настроек при этом остаются внутри `features/settings/`.
+- Провайдеры темы, локали и жестов находятся в `presentation/providers/` и создаются у composition root, так как ими пользуется всё приложение (`MaterialApp`). Провайдер локали получает `LocaleChannelActions`, а не вызывает MethodChannel-адаптер напрямую.
 - Модуль следует направлению зависимостей Flutter: presentation использует состояние/контракты, а платформенные и внешние реализации остаются в data; общие зависимости передаются через composition root. См. [Flutter app architecture guide](https://docs.flutter.dev/app-architecture/guide).
-- `data/LocaleChannelService` — тонкая обёртка над `MethodChannel('app_locale')`. Инкапсулирует три операции: `setNativeLocale`, `getNativeLocale`, `openSystemLanguageSettings`. Сервис проверяет платформу через `!kIsWeb && defaultTargetPlatform == TargetPlatform.android` и делает ранний `return` на не-Android платформах — вызовы MethodChannel на iOS, macOS, Windows, Linux и Web не происходят, `MissingPluginException` и `PlatformException` исключены. Ошибки нативного канала логируются через `debugPrint` и не пробрасываются в UI.
-- `data/LocaleProvider` остаётся единственным источником истины для `MaterialApp.locale`. При старте он вызывает `_loadPreferences()` (SharedPreferences) и `_syncFromNative()` (только Android). В `setLocale` сначала обновляется Dart-состояние и вызывается `notifyListeners()`, затем сохраняется в SharedPreferences и синхронизируется с Android через `LocaleChannelService.setNativeLocale`. Обработчик `onLocaleChanged` из нативного канала обновляет `_locale` без перезапуска приложения.
+- `data/LocaleChannelService` — адаптер над `MethodChannel('app_locale')`; он реализует порт `LocaleChannelActions`, проверяет Android-платформу и перехватывает недоступность нативного канала.
+- `presentation/providers/LocaleProvider` остаётся единственным источником истины для `MaterialApp.locale`. При старте он вызывает `_loadPreferences()` (SharedPreferences) и `_syncFromNative()` (только Android). `setLocale` сохраняет выбор, обновляет состояние и вызывает порт `LocaleChannelActions`.
 - `presentation/SettingsScreen` содержит `_AndroidLanguageSyncNote` — информационный блок по гайдлайнам Material 3 (`secondaryContainer`, `FilledButton.tonalIcon`). Виджет рендерится только на Android и скрыт на остальных платформах через `kIsWeb` + `defaultTargetPlatform`.
 
 ### Модуль `features/sharing/`
 
 - `presentation/ShareOptionsDialog` показывает действия «Копировать», «Поделиться файлом», «Экспорт в PDF» и «Экспорт в Word», получая конкретные действия от вызывающей стороны.
 - `presentation/SharingManager` содержит сценарии сериализации и отправки персонажей (`.character`), рас (`.race`), заметок (`.note`/`.json`) и шаблонов (`.chax`). UI-контроллеры вызывают модуль; data-сервисы отвечают только за чтение и изменение хранимых данных.
-- Формирование PDF/DOCX, показ статусов экспорта, системный share sheet и форматирование текста для clipboard находятся внутри модуля. UI-компоненты импортируют нужные возможности из `features/sharing/`.
-- Порт `core/FileShareActions` позволяет другим сценариям передавать байты на системный share sheet без зависимости от sharing-модуля. Composition root (`main.dart`) связывает порт с `features/sharing/data/FileShareService`; модуль резервного копирования не зависит от sharing.
+- Формирование DOCX находится в `application/WordExportService`; PDF-экспорт вызывается через `application/PdfExportActions`. Настройки PDF доступны через контракт `domain/ExportPdfSettingsActions`.
+- `presentation/` отвечает за статусы экспорта и форматирование clipboard; системный share sheet вызывается через порт `core/FileShareActions`, а не прямым созданием data-реализации.
+- Composition root (`main.dart`) связывает порты с адаптерами `features/sharing/data/`; модуль резервного копирования также использует `FileShareActions` и не зависит от sharing-модуля.
 
 ### Модуль `features/notifications/`
 
@@ -237,68 +229,70 @@ main.dart                     # Точка входа в приложение
 - Composition root (`main.dart`) соединяет модуль с общими репозиториями и платформенными адаптерами. Backup использует общие порты хранения и share sheet; модули backup и sharing не зависят друг от друга.
 - Локализационные строки остаются в общей локализации приложения; предметная логика и отображение ошибок принадлежат presentation-слою, а сервисы возвращают ошибки вызывающему коду вместо их подавления.
 
-## Модели доменных функций
+## Доменные модели и Hive records
 
-Модели персонажей, рас и заметок размещены в соответствующих feature-модулях; остальные общие и пока не выделенные модели остаются в `lib/data/models/`.
+Доменные модели и контракты расположены в `features/*/domain/`. Hive records, соответствующие адаптеры и мапперы находятся в `features/*/data/`. Их Hive typeId и индексы полей сохраняют совместимость с уже созданными базами.
 
 ### Character (Персонаж)
 
 - Путь: `features/characters/domain/character_model.dart`; сортировка: `features/characters/domain/enums/character_sort_enum.dart`
-- Тип Hive: `typeId: 0`
+- Hive record: `features/characters/data/CharacterRecord` (`typeId: 0`)
 - Назначение: Основная сущность приложения для хранения данных о персонажах.
-- Ключевые поля: `id`, `name`, `age`, `gender`, `biography`, `personality`, `appearance`, `imageBytes`, `referenceImageBytes`, `additionalImages`, `customFields`, `race`, `tags` (вместо `folderId` используется система тегов).
+- Ключевые поля: `id`, `name`, `age`, `gender`, `biography`, `personality`, `appearance`, `imageBytes`, `referenceImageBytes`, `additionalImages`, `customFields`, опциональные `race` и `folderId`, `tags`.
 - **Раса необязательна.** Поле `race` имеет тип `Race?`; персонажа можно сохранить без привязки к расе. `RaceSelectorField` по умолчанию работает в опциональном режиме (`isRequired: false`), всегда содержит пункт «Не выбрано» и не блокирует отправку формы. Валидация в `CharacterManagementController.save()` и `CharacterManagementScreen._onSaveAttempt()` проверяет только имя.
 - `Character.copyWith(race: null)` снимает привязку к расе (sentinel-аргумент отличает «не передано» от «передано `null`»); при передаче непустой расы объект `Race` используется как есть, без пересоздания через `Race(id, name)` — остальные поля расы (`description`, `biology`, `backstory`, `logo`, `tags`) сохраняются.
 - `Character.fromJson` восстанавливает расу только при наличии имени в JSON; отсутствующий `raceId` больше не приводит к ошибке — идентификатор генерируется.
+- Hive-ключи не используются как доменные идентификаторы. Старые ссылки заметок на ключи персонажей преобразуются в стабильные ID при чтении; если строка уже является доменным ID, она сохраняется без преобразования.
+- `sortOrder` хранится только в persistence records. Старые записи без этого поля читаются с порядком по существующей последовательности box; новые изменения порядка сохраняют ключи Hive.
 
 ### Race (Раса)
 
 - Путь: `features/races/domain/race_model.dart`; сортировка: `features/races/domain/enums/race_sort_enum.dart`
-- Тип Hive: `typeId: 3`
+- Hive record: `features/races/data/RaceRecord` (`typeId: 3`)
 - Назначение: Хранение данных о расах персонажей.
 - Ключевые поля: `name`, `description`, `biology`, `backstory`, `logo`, `tags`.
 
 ### Note (Заметка)
 
 - Путь: `features/notes/domain/note_model.dart`; сортировка: `features/notes/domain/enums/note_sort_enum.dart`
-- Тип Hive: `typeId: 2`
+- Hive record: `features/notes/data/NoteRecord` (`typeId: 2`)
 - Назначение: Система заметок, связанных с персонажами.
 - Ключевые поля: `title`, `content`, `characterIds`, `tags`.
 
 ### QuestionnaireTemplate (Шаблон анкеты)
 
-- Тип Hive: `typeId: 4`
+- Hive record: `features/templates/data/TemplateRecord` (`typeId: 4`)
 - Назначение: Шаблоны для быстрого создания персонажей.
 - Ключевые поля: `name`, `standardFields`, `customFields`.
 
 ### Relationship (Связь)
 
-- Тип Hive: `typeId: 6`
+- Hive record: `features/relationships/data/RelationshipRecord` (`typeId: 12`)
 - Назначение: Хранение связей между персонажами.
 - Ключевые поля: `fromCharacterId`, `toCharacterId`, `type`, `description`.
 
 ### ExportPdfSettings (Настройки экспорта PDF)
 
-- Тип Hive: `typeId: 7`
+- Hive record: `features/sharing/data/ExportPdfSettingsRecord` (`typeId: 11`)
 - Назначение: Настройки для генерации PDF.
 - Ключевые поля: `paperSize`, `orientation`, `includeImages`, `template`.
 
 ### CustomField (Пользовательское поле)
 
 - Путь: `features/characters/domain/custom_field_model.dart`
-- Тип Hive: `typeId: 1`
+- Hive record: `CustomFieldRecord`, вложенный в `CharacterRecord` (`typeId: 1`)
 - Назначение: Хранение пользовательских полей типа ключ-значение.
 - Ключевые поля: `key`, `value`.
 
-### CalendarEvent (Событие календаря)
+### CustomEvent (Событие календаря)
 
-- Тип Hive: `typeId: 11`
+- Hive record: `features/calendar/data/CustomEventRecord` (`typeId: 13`)
 - Назначение: Планирование событий, связанных с персонажами или кампанией.
 - Ключевые поля: `title`, `description`, `date`, `characterIds`, `type`, `reminder` (время напоминания).
 
 ### SwipeAction (Жесты свайпа)
 
-- Тип Hive: `typeId: 12`
+- Хранится в настройках приложения; Hive-адаптера у модели нет.
 - Назначение: Хранение настроек действий по свайпу для списков.
 - Ключевые поля: `leftAction`, `rightAction`, `enabled`.
 
@@ -309,9 +303,9 @@ main.dart                     # Точка входа в приложение
 ### Инициализация
 
 - `WidgetsFlutterBinding.ensureInitialized()`
-- Инициализация Hive через `HiveService.initHive()`
-- Регистрация адаптеров Hive (например, `RelationshipAdapter`)
-- Открытие всех боксов с повторными попытками (`_openBoxWithRetry`)
+- Инициализация Hive через `HiveService.initializeAll()`
+- Регистрация адаптеров Hive для persistence records (`CharacterRecordAdapter`, `NoteRecordAdapter` и т. д.)
+- Открытие типизированных Hive-боксов; ошибки открытия не приводят к автоматическому удалению данных
 - Инициализация `FileHandler.initialize()`
 - Инициализация `LocalNotificationService` до `runApp`; `AppNavigator` получает in-app адаптер через core-порт
 - Запуск `runApp` с `CharacterBookApp`
@@ -327,9 +321,9 @@ main.dart                     # Точка входа в приложение
 
 ### Работа с данными
 
-- Репозитории (`*Repository`) инкапсулируют доступ к Hive боксам.
-- Сервисы (`*Service`) используют репозитории для бизнес-логики.
-- Провайдеры связывают UI с состоянием (например, `HomeController` использует сервисы для загрузки данных).
+- Репозитории (`*Repository`) инкапсулируют доступ к Hive-боксам и предоставляют доменные сущности.
+- Сценарии приложения используют контракты репозиториев, а Provider-классы в `presentation/providers/` связывают UI с состоянием.
+- Ошибки открытия Hive-боксов передаются вызывающему коду; приложение не удаляет автоматически повреждённые или несовместимые пользовательские данные.
 
 ### MenuChannelService
 
@@ -368,8 +362,9 @@ main.dart                     # Точка входа в приложение
 
 ## Календарь и напоминания
 
-- Экран календаря (`ui/screens/calendar_screen.dart`) построен на виджете `table_calendar`.
-- События (`CalendarEvent`) отображаются на календаре с цветовой индикацией по типу.
+- Экран календаря (`features/calendar/presentation/calendar_screen.dart`) построен на виджете `table_calendar`.
+- Доменные события календаря и их Hive records находятся в `features/calendar/`; события отображаются с цветовой индикацией по типу.
+- `CalendarController` зависит от порта `DeviceCalendarActions`; реализация `DeviceCalendarService` остаётся в data-слое.
 - При создании/редактировании события можно установить время напоминания (через `flutter_local_notifications`).
 - В указанное время приложение показывает уведомление даже в фоновом режиме (на платформах, где это поддерживается).
 
@@ -377,8 +372,9 @@ main.dart                     # Точка входа в приложение
 
 ### Экран «Главный» (HomeScreen)
 
+- Путь: `features/home/presentation/`.
 - Отображает сетку последних персонажей, рас и инструментов.
-- Использует `HomeController` для загрузки данных и управления поиском.
+- Использует `HomeController` для загрузки данных и управления поиском; модели карточек и закреплённая секция находятся в том же feature-модуле.
 - Плавающая кнопка `HomeFloatingMenu` для быстрого создания нового контента.
 - Контекстное меню для элементов (через `tools_context_menu.dart`).
 

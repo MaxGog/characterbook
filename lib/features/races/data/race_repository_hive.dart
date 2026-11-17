@@ -1,16 +1,23 @@
 import 'package:characterbook/features/races/domain/race_model.dart';
-import 'package:characterbook/data/repositories/hive_box_repository.dart';
+import 'package:characterbook/core/storage/hive_box_repository.dart';
 import 'package:characterbook/features/races/domain/race_repository.dart';
-import 'package:collection/collection.dart';
+import 'package:characterbook/features/races/data/race_mapper.dart';
+import 'package:characterbook/features/races/data/race_record.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-class RaceRepositoryHive extends HiveBoxRepository<Race>
+class RaceRepositoryHive extends HiveBoxRepository<Race, RaceRecord>
     implements RaceRepository {
-  RaceRepositoryHive(super.box);
+  RaceRepositoryHive(Box<RaceRecord> box)
+      : super(
+          box: box,
+          toEntity: const RaceMapper().toDomain,
+          toRecord: const RaceMapper().toRecord,
+          idOf: (race) => race.id,
+          sortOrderOf: (record) => record.sortOrder,
+          withSortOrder: (record, sortOrder) =>
+              record.copyWithSortOrder(sortOrder),
+        );
 
   @override
-  Future<Race?> getById(String id) async =>
-      (await getAll()).firstWhereOrNull((race) => race.id == id);
-
-  @override
-  Future<Race?> getByKey(dynamic key) async => super.findByKey(key);
+  Future<Race?> getById(String id) => super.getById(id);
 }

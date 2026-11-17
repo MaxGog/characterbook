@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:characterbook/features/races/domain/enums/race_sort_enum.dart';
 import 'package:characterbook/features/races/domain/race_model.dart';
-import 'package:characterbook/features/races/application/race_service.dart';
+import 'package:characterbook/features/races/presentation/providers/race_service.dart';
 import 'package:characterbook/features/races/domain/race_repository.dart';
 import 'package:characterbook/features/sharing/presentation/clipboard_service.dart';
 import 'package:characterbook/features/sharing/presentation/pdf_export_manager.dart';
@@ -86,11 +86,11 @@ class RaceListController extends ChangeNotifier {
 
   Set<String> get allTags => _all.expand((r) => r.tags).toSet();
 
-  Future<void> deleteRace(dynamic key) async {
+  Future<void> deleteRace(String id) async {
     try {
       _isLoading = true;
       notifyListeners();
-      await _repository.delete(key);
+      await _repository.delete(id);
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -113,8 +113,8 @@ class RaceListController extends ChangeNotifier {
     await WordExportManager.exportRaceWithDialog(context, race);
   }
 
-  Future<void> shareRaceAsFile(Race race) async {
-    await SharingManager.shareRaceAsFile(race);
+  Future<void> shareRaceAsFile(Race race, BuildContext context) async {
+    await SharingManager.shareRaceAsFile(context, race);
   }
 
   Future<Race?> importRace(

@@ -2,20 +2,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:characterbook/features/notes/domain/note_model.dart';
 import 'package:characterbook/features/notes/data/note_repository_hive.dart';
+import 'package:characterbook/features/notes/data/note_record.dart';
 import 'package:characterbook/features/notes/domain/note_repository.dart';
 
 import '../../../../helpers/hive_test_utils.dart';
 
 void main() {
   late NoteRepository repository;
-  late Box<Note> box;
+  late Box<NoteRecord> box;
 
   setUpAll(() async {
     await setUpTestHive();
   });
 
   setUp(() async {
-    box = await Hive.openBox<Note>('test_notes');
+    box = await Hive.openBox<NoteRecord>('test_notes');
     await box.clear();
     repository = NoteRepositoryHive(box);
   });
@@ -35,9 +36,9 @@ void main() {
         content: 'Hello',
         folderId: null,
       );
-      await repository.save(note, key: note.id);
+      await repository.save(note);
       expect(box.values.length, 1);
-      expect(box.get(note.id)?.title, 'First note');
+      expect(box.values.single.title, 'First note');
     });
 
     test('save() updates existing note', () async {
@@ -47,7 +48,7 @@ void main() {
         content: '...',
         folderId: null,
       );
-      await repository.save(original, key: original.id);
+      await repository.save(original);
 
       final updated = Note(
         id: 'note-1',
@@ -55,15 +56,15 @@ void main() {
         content: 'New content',
         folderId: null,
       );
-      await repository.save(updated, key: updated.id);
+      await repository.save(updated);
 
-      expect(box.get('note-1')?.title, 'Updated');
+      expect(box.values.single.title, 'Updated');
       expect(box.values.length, 1);
     });
 
     test('delete() removes note', () async {
       final note = Note(title: 'To delete', content: '', folderId: null);
-      await repository.save(note, key: note.id);
+      await repository.save(note);
       await repository.delete(note.id);
       expect(box.isEmpty, isTrue);
     });
@@ -72,8 +73,8 @@ void main() {
       final note1 = Note(title: 'A', content: '', folderId: null);
       final note2 = Note(title: 'B', content: '', folderId: null);
 
-      await repository.save(note1, key: note1.id);
-      await repository.save(note2, key: note2.id);
+      await repository.save(note1);
+      await repository.save(note2);
 
       final all = await repository.getAll();
       expect(all.length, 2);
@@ -93,8 +94,8 @@ void main() {
         characterIds: ['char2'],
         folderId: null,
       );
-      await repository.save(note1, key: note1.id);
-      await repository.save(note2, key: note2.id);
+      await repository.save(note1);
+      await repository.save(note2);
 
       final forChar1 = await repository.getNotesForCharacter('char1');
       expect(forChar1.length, 1);
@@ -104,8 +105,8 @@ void main() {
     test('clear() removes all notes', () async {
       final note1 = Note(title: '1', content: '', folderId: null);
       final note2 = Note(title: '2', content: '', folderId: null);
-      await repository.save(note1, key: note1.id);
-      await repository.save(note2, key: note2.id);
+      await repository.save(note1);
+      await repository.save(note2);
       await repository.clear();
       expect(await repository.getAll(), isEmpty);
     });
@@ -115,9 +116,9 @@ void main() {
       final noteB = Note(id: 'b', title: 'B', content: '', folderId: null);
       final noteC = Note(id: 'c', title: 'C', content: '', folderId: null);
 
-      await repository.save(noteA, key: noteA.id);
-      await repository.save(noteB, key: noteB.id);
-      await repository.save(noteC, key: noteC.id);
+      await repository.save(noteA);
+      await repository.save(noteB);
+      await repository.save(noteC);
 
       await repository.reorder(0, 2);
       final ordered = await repository.getAll();

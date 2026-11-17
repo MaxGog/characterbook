@@ -1,3 +1,5 @@
+typedef PickBackupFile = Future<Map<String, dynamic>?> Function();
+
 abstract interface class LocalBackupActions {
   Future<void> exportData();
 

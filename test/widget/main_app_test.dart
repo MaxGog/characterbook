@@ -1,16 +1,15 @@
 import 'dart:io';
-import 'package:characterbook/features/characters/domain/custom_field_model.dart';
 import 'package:characterbook/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
-import 'package:characterbook/features/characters/domain/character_model.dart';
-import 'package:characterbook/features/notes/domain/note_model.dart';
-import 'package:characterbook/features/races/domain/race_model.dart';
-import 'package:characterbook/data/models/template_model.dart';
-import 'package:characterbook/data/models/relationship_model.dart';
-import 'package:characterbook/data/models/export_pdf_settings_model.dart';
+import 'package:characterbook/features/characters/data/character_record.dart';
+import 'package:characterbook/features/notes/data/note_record.dart';
+import 'package:characterbook/features/races/data/race_record.dart';
+import 'package:characterbook/features/templates/data/template_record.dart';
+import 'package:characterbook/features/relationships/data/relationship_record.dart';
+import 'package:characterbook/features/sharing/data/export_pdf_settings_record.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/features/backup/data/cloud_backup_service.dart';
 import 'package:characterbook/features/backup/data/local_backup_service.dart';
@@ -18,40 +17,33 @@ import 'package:characterbook/features/backup/data/repository_backup_repository.
 import 'package:characterbook/features/backup/domain/backup_manager.dart';
 import 'package:characterbook/features/backup/domain/backup_repository.dart';
 import 'package:characterbook/features/backup/presentation/backup_settings_screen.dart';
-import 'package:characterbook/data/services/hive_service.dart';
+import 'package:characterbook/core/storage/hive_service.dart';
+import '../helpers/hive_test_utils.dart';
 
 void main() {
-  late Box<Character> charBox;
-  late Box<Race> raceBox;
-  late Box<Note> noteBox;
-  late Box<QuestionnaireTemplate> templateBox;
-  late Box<ExportPdfSettings> settingsBox;
-  late Box<Relationship> relBox;
+  late Box<CharacterRecord> charBox;
+  late Box<RaceRecord> raceBox;
+  late Box<NoteRecord> noteBox;
+  late Box<TemplateRecord> templateBox;
+  late Box<ExportPdfSettingsRecord> settingsBox;
+  late Box<RelationshipRecord> relBox;
   late Box<bool> appSettingsBox;
-  late Box<Character> charactersBox;
+  late Box<CharacterRecord> charactersBox;
 
   setUp(() async {
     final dir = await Directory.systemTemp.createTemp('hive_test_main');
     Hive.init(dir.path);
+    registerHiveAdapters();
 
-    if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(CharacterAdapter());
-    if (!Hive.isAdapterRegistered(1))
-      Hive.registerAdapter(CustomFieldAdapter());
-    if (!Hive.isAdapterRegistered(2)) Hive.registerAdapter(NoteAdapter());
-    if (!Hive.isAdapterRegistered(3)) Hive.registerAdapter(RaceAdapter());
-    if (!Hive.isAdapterRegistered(4))
-      Hive.registerAdapter(QuestionnaireTemplateAdapter());
-    if (!Hive.isAdapterRegistered(12))
-      Hive.registerAdapter(RelationshipAdapter());
-
-    charBox = await Hive.openBox<Character>('test_chars');
-    raceBox = await Hive.openBox<Race>('test_races');
-    noteBox = await Hive.openBox<Note>('test_notes');
-    templateBox = await Hive.openBox<QuestionnaireTemplate>('test_templates');
-    settingsBox = await Hive.openBox<ExportPdfSettings>('test_pdf_settings');
-    relBox = await Hive.openBox<Relationship>('test_relationships');
+    charBox = await Hive.openBox<CharacterRecord>('test_chars');
+    raceBox = await Hive.openBox<RaceRecord>('test_races');
+    noteBox = await Hive.openBox<NoteRecord>('test_notes');
+    templateBox = await Hive.openBox<TemplateRecord>('test_templates');
+    settingsBox =
+        await Hive.openBox<ExportPdfSettingsRecord>('test_pdf_settings');
+    relBox = await Hive.openBox<RelationshipRecord>('test_relationships');
     appSettingsBox = await Hive.openBox<bool>('test_app_settings');
-    charactersBox = await Hive.openBox<Character>('characters');
+    charactersBox = await Hive.openBox<CharacterRecord>('characters');
 
     HiveService.setBoxesForTesting(
       characterBox: charBox,
@@ -129,7 +121,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final navigator = tester.state<NavigatorState>(find.byType(Navigator).first);
+    final navigator =
+        tester.state<NavigatorState>(find.byType(Navigator).first);
     navigator.push(
       MaterialPageRoute<void>(
         builder: (_) => const BackupSettingsScreen(),

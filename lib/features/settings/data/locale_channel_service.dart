@@ -1,13 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:characterbook/features/settings/domain/locale_channel_actions.dart';
 
-class LocaleChannelService {
+class LocaleChannelService implements LocaleChannelActions {
   static const _channel = MethodChannel('app_locale');
 
   static bool get _isAndroid =>
       !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
-  static Future<void> setNativeLocale(String? languageTag) async {
+  @override
+  Future<void> setNativeLocale(String? languageTag) async {
     if (!_isAndroid) return;
     try {
       await _channel.invokeMethod('setLocale', {'tag': languageTag ?? ''});
@@ -18,7 +20,8 @@ class LocaleChannelService {
     }
   }
 
-  static Future<String?> getNativeLocale() async {
+  @override
+  Future<String?> getNativeLocale() async {
     if (!_isAndroid) return null;
     try {
       return await _channel.invokeMethod<String>('getLocale');
@@ -31,7 +34,8 @@ class LocaleChannelService {
     }
   }
 
-  static Future<bool> openSystemLanguageSettings() async {
+  @override
+  Future<bool> openSystemLanguageSettings() async {
     if (!_isAndroid) return false;
     try {
       final result =

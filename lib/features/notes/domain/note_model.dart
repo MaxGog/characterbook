@@ -1,32 +1,20 @@
 import 'dart:math';
-import 'package:hive/hive.dart';
 
-part 'note_model.g.dart';
-
-@HiveType(typeId: 2)
-class Note extends HiveObject {
-  @HiveField(0)
+class Note {
   String id;
 
-  @HiveField(1)
   String title;
 
-  @HiveField(2)
   String content;
 
-  @HiveField(3)
   DateTime createdAt;
 
-  @HiveField(4)
   DateTime updatedAt;
 
-  @HiveField(5, defaultValue: [])
   List<String> characterIds;
 
-  @HiveField(6)
   List<String> tags;
 
-  @HiveField(7)
   String? folderId;
 
   Note({

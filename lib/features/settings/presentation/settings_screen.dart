@@ -1,4 +1,3 @@
-import 'package:characterbook/features/settings/data/locale_channel_service.dart';
 import 'package:characterbook/ui/widgets/easter_egg_helper.dart';
 import 'package:characterbook/ui/widgets/about_section_widget.dart';
 import 'package:flutter/foundation.dart';
@@ -7,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/ui/widgets/settings_section.dart';
-import 'package:characterbook/features/settings/domain/settings_actions.dart';
+import 'package:characterbook/features/settings/presentation/settings_actions.dart';
 import 'package:flutter/services.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -217,7 +216,9 @@ class _AndroidLanguageSyncNote extends StatelessWidget {
 
   Future<void> _openSystemLanguageSettings(BuildContext context, S s) async {
     final messenger = ScaffoldMessenger.of(context);
-    final ok = await LocaleChannelService.openSystemLanguageSettings();
+    final ok = await context
+        .read<LocaleSettingsActions>()
+        .openSystemLanguageSettings();
     if (!ok) {
       messenger.showSnackBar(
         SnackBar(content: Text(s.open_settings_failed)),

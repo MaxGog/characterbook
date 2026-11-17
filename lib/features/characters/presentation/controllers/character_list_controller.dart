@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:characterbook/features/characters/domain/enums/character_sort_enum.dart';
 import 'package:characterbook/features/characters/domain/character_model.dart';
-import 'package:characterbook/features/characters/application/character_service.dart';
+import 'package:characterbook/features/characters/presentation/providers/character_service.dart';
 import 'package:characterbook/features/characters/domain/character_repository.dart';
 import 'package:characterbook/features/sharing/presentation/clipboard_service.dart';
 import 'package:characterbook/features/sharing/presentation/pdf_export_manager.dart';
@@ -96,7 +96,7 @@ class CharacterListController extends ChangeNotifier {
     try {
       _isLoading = true;
       notifyListeners();
-      await _repository.delete(character.key);
+      await _repository.delete(character.id);
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -138,8 +138,11 @@ class CharacterListController extends ChangeNotifier {
     );
   }
 
-  Future<void> shareCharacterAsFile(Character character) async {
-    await SharingManager.shareCharacterAsFile(character);
+  Future<void> shareCharacterAsFile(
+    Character character,
+    BuildContext context,
+  ) async {
+    await SharingManager.shareCharacterAsFile(context, character);
   }
 
   Future<void> duplicateCharacter(

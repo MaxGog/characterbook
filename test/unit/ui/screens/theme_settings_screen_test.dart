@@ -1,6 +1,6 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/features/settings/data/theme_provider.dart';
-import 'package:characterbook/features/settings/domain/settings_actions.dart';
+import 'package:characterbook/features/settings/presentation/providers/theme_provider.dart';
+import 'package:characterbook/features/settings/presentation/settings_actions.dart';
 import 'package:characterbook/features/settings/presentation/theme_settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';

@@ -1,7 +1,7 @@
-import 'package:characterbook/data/services/relationship_service.dart';
+import 'package:characterbook/features/relationships/presentation/providers/relationship_service.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/features/characters/domain/character_model.dart';
-import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/features/templates/domain/template_model.dart';
 import 'package:characterbook/features/characters/domain/character_repository.dart';
 import 'package:characterbook/features/races/domain/race_repository.dart';
 import 'package:characterbook/providers/pins_provider.dart';
@@ -9,7 +9,7 @@ import 'package:characterbook/features/characters/presentation/controllers/chara
 import 'package:characterbook/ui/screens/field_editor_screen.dart';
 import 'package:characterbook/ui/widgets/avatar_picker_widget.dart';
 import 'package:characterbook/ui/widgets/dialogs/error_dialog.dart';
-import 'package:characterbook/features/characters/presentation/widgets/edit_relationship_bottom_sheet.dart';
+import 'package:characterbook/features/relationships/presentation/edit_relationship_bottom_sheet.dart';
 import 'package:characterbook/ui/widgets/fields/custom_fields_editor.dart';
 import 'package:characterbook/ui/widgets/fields/custom_text_field.dart';
 import 'package:characterbook/ui/widgets/fields/gender_selector_field.dart';

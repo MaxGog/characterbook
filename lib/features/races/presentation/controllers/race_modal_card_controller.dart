@@ -35,7 +35,7 @@ class RaceModalController extends ChangeNotifier {
 
   Future<void> deleteRace() async {
     try {
-      await _raceRepo.delete(race.key);
+      await _raceRepo.delete(race.id);
       notifyListeners();
     } catch (e) {
       _error = e.toString();

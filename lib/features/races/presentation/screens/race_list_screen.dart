@@ -1,7 +1,7 @@
 import 'package:characterbook/features/races/domain/enums/race_sort_enum.dart';
 import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/features/races/domain/race_model.dart';
-import 'package:characterbook/features/races/application/race_service.dart';
+import 'package:characterbook/features/races/presentation/providers/race_service.dart';
 import 'package:characterbook/features/characters/domain/character_repository.dart';
 import 'package:characterbook/features/races/domain/race_repository.dart';
 import 'package:characterbook/providers/pins_provider.dart';
@@ -68,7 +68,7 @@ class _RaceListScreenState extends State<RaceListScreen> {
 
   Future<bool> _isRaceUsed(Race race) async {
     final characters = await context.read<CharacterRepository>().getAll();
-    return characters.any((character) => character.race?.key == race.key);
+    return characters.any((character) => character.race?.id == race.id);
   }
 
   Future<void> _deleteRace(
@@ -95,7 +95,7 @@ class _RaceListScreenState extends State<RaceListScreen> {
       ),
     );
     if (confirmed == true) {
-      await controller.deleteRace(race.key);
+      await controller.deleteRace(race.id);
       if (mounted) AppNavigator.showSuccess(S.of(context).race_deleted);
     }
   }
@@ -147,7 +147,7 @@ class _RaceListScreenState extends State<RaceListScreen> {
                 },
                 onShareFile: () async {
                   try {
-                    await controller.shareRaceAsFile(race);
+                    await controller.shareRaceAsFile(race, context);
                   } catch (e) {
                     if (context.mounted) {
                       AppNavigator.showError('${s.error}: $e');
@@ -518,7 +518,7 @@ class _RaceListScreenState extends State<RaceListScreen> {
                                       ? Column(
                                           children: group.races
                                               .map((race) => RaceCardItem(
-                                                    key: ValueKey(race.key),
+                                                    key: ValueKey(race.id),
                                                     race: race,
                                                     onTap: () => _editRace(
                                                         context, race),
@@ -535,7 +535,8 @@ class _RaceListScreenState extends State<RaceListScreen> {
                                                         controller,
                                                         service),
                                                     onShare: () => controller
-                                                        .shareRaceAsFile(race),
+                                                        .shareRaceAsFile(
+                                                            race, context),
                                                     onDuplicate: null,
                                                     onSettings: () => AppNavigator
                                                         .openSwipeActionSettings(),
@@ -557,7 +558,7 @@ class _RaceListScreenState extends State<RaceListScreen> {
                           (context, index) {
                             final race = controller.filteredItems[index];
                             return RaceCardItem(
-                              key: ValueKey(race.key),
+                              key: ValueKey(race.id),
                               race: race,
                               onTap: () => _editRace(context, race),
                               onLongPress: () => _showRaceContextMenu(
@@ -565,7 +566,8 @@ class _RaceListScreenState extends State<RaceListScreen> {
                               onEdit: () => _editRace(context, race),
                               onDelete: () =>
                                   _deleteRace(race, controller, service),
-                              onShare: () => controller.shareRaceAsFile(race),
+                              onShare: () =>
+                                  controller.shareRaceAsFile(race, context),
                               onDuplicate: null,
                               onSettings: () =>
                                   AppNavigator.openSwipeActionSettings(),

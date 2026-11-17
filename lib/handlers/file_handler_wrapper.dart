@@ -6,10 +6,10 @@ import 'package:characterbook/generated/l10n.dart';
 import 'package:characterbook/handlers/file_handler.dart';
 import 'package:characterbook/features/characters/domain/character_model.dart';
 import 'package:characterbook/features/races/domain/race_model.dart';
-import 'package:characterbook/data/models/template_model.dart';
+import 'package:characterbook/features/templates/domain/template_model.dart';
 import 'package:characterbook/features/characters/presentation/screens/character_management_screen.dart';
 import 'package:characterbook/features/races/presentation/screens/race_management_screen.dart';
-import 'package:characterbook/ui/screens/templates/template_management_screen.dart';
+import 'package:characterbook/features/templates/presentation/template_management_screen.dart';
 
 class FileHandlerWrapper extends StatefulWidget {
   final Widget child;

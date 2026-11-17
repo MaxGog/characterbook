@@ -1,63 +1,42 @@
 import 'package:characterbook/features/characters/domain/custom_field_model.dart';
 import 'package:characterbook/features/races/domain/race_model.dart';
-import 'package:flutter/foundation.dart';
-import 'package:hive/hive.dart';
+import 'dart:typed_data';
 
-part 'character_model.g.dart';
-
-@HiveType(typeId: 0)
-class Character extends HiveObject {
+class Character {
   static const _unset = Object();
 
-  @HiveField(0)
   String id;
 
-  @HiveField(1)
   String name;
 
-  @HiveField(2)
   int age;
 
-  @HiveField(3)
   String gender;
 
-  @HiveField(4)
   String biography;
 
-  @HiveField(5)
   String personality;
 
-  @HiveField(6)
   String appearance;
 
-  @HiveField(7)
   Uint8List? imageBytes;
 
-  @HiveField(8)
   String abilities;
 
-  @HiveField(9)
   String other;
 
-  @HiveField(10)
   Uint8List? referenceImageBytes;
 
-  @HiveField(11)
   List<CustomField> customFields;
 
-  @HiveField(12)
   List<Uint8List> additionalImages;
 
-  @HiveField(13)
   DateTime lastEdited;
 
-  @HiveField(14)
   Race? race;
 
-  @HiveField(15)
   String? folderId;
 
-  @HiveField(16, defaultValue: [])
   List<String> tags;
 
   Character({

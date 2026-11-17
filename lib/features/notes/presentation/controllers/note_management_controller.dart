@@ -17,8 +17,6 @@ class NoteManagementController extends ChangeNotifier {
   List<String> _tags = [];
   List<String> _selectedCharacterIds = [];
 
-  dynamic _currentKey;
-
   bool _isLoading = false;
   String? _error;
   bool _hasUnsavedChanges = false;
@@ -43,8 +41,6 @@ class NoteManagementController extends ChangeNotifier {
 
   void _initialize() {
     if (_originalNote != null) {
-      _currentKey = _originalNote!.key;
-
       final String idStr = _originalNote!.id.toString();
 
       if (isCopyMode) {
@@ -52,7 +48,6 @@ class NoteManagementController extends ChangeNotifier {
           id: DateTime.now().millisecondsSinceEpoch.toString(),
           title: '${S.current.copy}: ${_originalNote!.title}',
         );
-        _currentKey = null;
       } else {
         _editable = _originalNote!.copyWith(
           id: idStr,
@@ -66,7 +61,6 @@ class NoteManagementController extends ChangeNotifier {
         content: '',
         folderId: '',
       );
-      _currentKey = null;
       _hasUnsavedChanges = true;
     }
     _tags = List.from(_editable.tags);
@@ -132,8 +126,7 @@ class NoteManagementController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final key = await _noteRepo.save(_editable, key: _currentKey);
-      _currentKey ??= key;
+      await _noteRepo.save(_editable);
       _hasUnsavedChanges = false;
       _error = null;
       return true;

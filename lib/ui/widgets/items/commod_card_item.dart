@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/data/models/swipe_action.dart';
+import 'package:characterbook/features/settings/presentation/swipe_action_extension.dart';
 import 'package:characterbook/core/app_settings_actions.dart';
 import 'package:provider/provider.dart';
 

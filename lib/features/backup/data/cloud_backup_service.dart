@@ -12,68 +12,70 @@ class CloudBackupService implements CloudBackupActions {
   static const _scopes = [drive.DriveApi.driveFileScope];
   static const _backupPrefix = 'characterbook_backup';
   static const _backupMimeType = 'application/characterbook';
+  static final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  static final Future<void> _googleSignInInitialization =
+      _googleSignIn.initialize();
 
   final BackupManager _backupManager;
-  final GoogleSignIn _googleSignIn;
-  drive.DriveApi? _driveApi;
 
-  CloudBackupService({
-    required BackupManager backupManager,
-    GoogleSignIn? googleSignIn,
-  })  : _backupManager = backupManager,
-        _googleSignIn = googleSignIn ?? GoogleSignIn(scopes: _scopes);
+  CloudBackupService({required BackupManager backupManager})
+      : _backupManager = backupManager;
 
   @override
   Future<void> exportData() async {
+    final data = await _createBackup();
+    final driveApi = await _authenticatedDriveApi(allowInteractive: true);
+    if (driveApi == null) throw StateError(S.current.auth_cancelled);
+    await _uploadBackup(driveApi, data);
+  }
+
+  Future<Map<String, dynamic>> _createBackup() async {
     final data = await _backupManager.createBackup();
     if (!_backupManager.containsData(data)) {
       throw const EmptyBackupException();
     }
+    return data;
+  }
 
-    final account = _googleSignIn.currentUser ?? await _googleSignIn.signIn();
-    if (account == null) throw StateError(S.current.auth_cancelled);
-
-    final client = await _googleSignIn.authenticatedClient();
-    if (client == null) throw StateError(S.current.auth_client_error);
-
+  Future<void> _uploadBackup(
+    drive.DriveApi driveApi,
+    Map<String, dynamic> data,
+  ) async {
     final json = jsonEncode(data);
     final fileName =
         '${_backupPrefix}_${DateTime.now().toIso8601String()}.characterbook';
     final bytes = utf8.encode(json);
-    await drive.DriveApi(client).files.create(
-          drive.File()
-            ..name = fileName
-            ..mimeType = _backupMimeType,
-          uploadMedia: drive.Media(
-            Stream<Uint8List>.value(Uint8List.fromList(bytes)),
-            bytes.length,
-            contentType: _backupMimeType,
-          ),
-        );
+    await driveApi.files.create(
+      drive.File()
+        ..name = fileName
+        ..mimeType = _backupMimeType,
+      uploadMedia: drive.Media(
+        Stream<Uint8List>.value(Uint8List.fromList(bytes)),
+        bytes.length,
+        contentType: _backupMimeType,
+      ),
+    );
   }
 
   @override
   Future<void> importData() async {
-    final account = await _googleSignIn.signIn();
-    if (account == null) throw StateError(S.current.auth_cancelled);
-
-    final client = await _googleSignIn.authenticatedClient();
-    if (client == null) throw StateError(S.current.auth_client_error);
-
-    _driveApi = drive.DriveApi(client);
-    final files = await _driveApi!.files.list(
+    final driveApi = await _authenticatedDriveApi(allowInteractive: true);
+    if (driveApi == null) throw StateError(S.current.auth_cancelled);
+    final files = await driveApi.files.list(
       q: "name contains '$_backupPrefix'",
       orderBy: 'createdTime desc',
       pageSize: 1,
     );
     final driveFiles = files.files;
-    if (driveFiles == null || driveFiles.isEmpty || driveFiles.first.id == null) {
+    if (driveFiles == null ||
+        driveFiles.isEmpty ||
+        driveFiles.first.id == null) {
       throw StateError(S.current.cloud_backup_not_found);
     }
     final file = driveFiles.first;
 
     final fileId = file.id!;
-    final media = await _driveApi!.files.get(
+    final media = await driveApi.files.get(
       fileId,
       downloadOptions: drive.DownloadOptions.fullMedia,
     ) as drive.Media;
@@ -86,9 +88,40 @@ class CloudBackupService implements CloudBackupActions {
 
   @override
   Future<void> autoExportIfSignedIn() async {
-    final account =
-        _googleSignIn.currentUser ?? await _googleSignIn.signInSilently();
-    if (account != null) await exportData();
+    final driveApi = await _authenticatedDriveApi(allowInteractive: false);
+    if (driveApi != null) {
+      await _uploadBackup(driveApi, await _createBackup());
+    }
+  }
+
+  Future<drive.DriveApi?> _authenticatedDriveApi({
+    required bool allowInteractive,
+  }) async {
+    await _googleSignInInitialization;
+    final account = await _googleSignIn.attemptLightweightAuthentication();
+    if (account == null && !allowInteractive) return null;
+
+    final authorizationClient =
+        account?.authorizationClient ?? _googleSignIn.authorizationClient;
+    final authorization =
+        await authorizationClient.authorizationForScopes(_scopes);
+    if (authorization != null) {
+      return drive.DriveApi(authorization.authClient(scopes: _scopes));
+    }
+    if (!allowInteractive) return null;
+
+    try {
+      final interactiveAuthorization =
+          await authorizationClient.authorizeScopes(_scopes);
+      return drive.DriveApi(
+        interactiveAuthorization.authClient(scopes: _scopes),
+      );
+    } on GoogleSignInException catch (error) {
+      if (error.code == GoogleSignInExceptionCode.canceled) {
+        throw StateError(S.current.auth_cancelled);
+      }
+      rethrow;
+    }
   }
 
   Future<Uint8List> _readStream(Stream<List<int>> stream) async {

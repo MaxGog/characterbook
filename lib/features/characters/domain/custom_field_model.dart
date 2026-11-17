@@ -1,13 +1,6 @@
-import 'package:hive/hive.dart';
-
-part 'custom_field_model.g.dart';
-
-@HiveType(typeId: 1)
 class CustomField {
-  @HiveField(0)
   final String key;
 
-  @HiveField(1)
   final String value;
 
   CustomField(this.key, this.value);

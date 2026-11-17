@@ -408,7 +408,7 @@ class _CharacterSelectorSectionState extends State<_CharacterSelectorSection> {
 
         final characters = snapshot.data ?? const <Character>[];
         final entries = characters
-            .map((character) => MapEntry(character.key.toString(), character))
+            .map((character) => MapEntry(character.id, character))
             .toList();
 
         return Column(
@@ -491,10 +491,9 @@ class _CharacterSelectorSectionState extends State<_CharacterSelectorSection> {
       spacing: 8,
       runSpacing: 8,
       children: selectedIds.map((characterId) {
-        final intKey = int.tryParse(characterId);
         Character? character;
         for (final item in characters) {
-          if (item.key.toString() == characterId || item.key == intKey) {
+          if (item.id == characterId) {
             character = item;
             break;
           }

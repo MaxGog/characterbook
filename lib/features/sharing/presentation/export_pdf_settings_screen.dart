@@ -1,8 +1,9 @@
-import 'package:characterbook/features/sharing/data/pdf_export_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:characterbook/data/models/export_pdf_settings_model.dart';
+import 'package:characterbook/features/sharing/domain/export_pdf_settings.dart';
+import 'package:characterbook/features/sharing/domain/export_pdf_settings_actions.dart';
 import 'package:characterbook/generated/l10n.dart';
+import 'package:provider/provider.dart';
 
 class ExportPdfSettingsScreen extends StatefulWidget {
   const ExportPdfSettingsScreen({super.key});
@@ -13,7 +14,6 @@ class ExportPdfSettingsScreen extends StatefulWidget {
 }
 
 class _ExportPdfSettingsScreenState extends State<ExportPdfSettingsScreen> {
-  final ExportPdfSettingsService _settingsService = ExportPdfSettingsService();
   ExportPdfSettings? _settings;
   bool _isLoading = true;
 
@@ -25,7 +25,7 @@ class _ExportPdfSettingsScreenState extends State<ExportPdfSettingsScreen> {
 
   Future<void> _loadSettings() async {
     try {
-      _settings = await _settingsService.getSettings();
+      _settings = await context.read<ExportPdfSettingsActions>().getSettings();
     } catch (_) {
       _settings = ExportPdfSettings();
     } finally {
@@ -37,7 +37,7 @@ class _ExportPdfSettingsScreenState extends State<ExportPdfSettingsScreen> {
 
   Future<void> _saveSettings() async {
     if (_settings == null) return;
-    await _settingsService.saveSettings(_settings!);
+    await context.read<ExportPdfSettingsActions>().saveSettings(_settings!);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
