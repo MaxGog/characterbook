@@ -1,6 +1,7 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/ui/widgets/fields/long_text_editor.dart';
+import 'package:flutter/material.dart';
 
 class FieldEditorResult {
   final String key;
@@ -116,25 +117,11 @@ class _FieldEditorScreenState extends State<FieldEditorScreen> {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
               sliver: SliverFillRemaining(
                 hasScrollBody: true,
-                child: TextField(
+                child: LongTextEditor(
                   controller: _valueController,
                   autofocus: !widget.isTitleEditable || !isNewField,
-                  minLines: null,
-                  maxLines: null,
                   expands: true,
-                  textAlignVertical: TextAlignVertical.top,
-                  keyboardType: TextInputType.multiline,
-                  textInputAction: TextInputAction.newline,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: S.of(context).start_writing,
-                    hintStyle: const TextStyle(fontSize: 16),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontSize: 16,
-                    height: 1.5,
-                  ),
+                  hintText: S.of(context).start_writing,
                 ),
               ),
             ),

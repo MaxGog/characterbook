@@ -7,6 +7,7 @@ import 'package:characterbook/features/notes/domain/note_repository.dart';
 import 'package:characterbook/features/notes/presentation/controllers/note_management_controller.dart';
 import 'package:characterbook/ui/widgets/avatar_widget.dart';
 import 'package:characterbook/ui/widgets/markdown_context_menu.dart';
+import 'package:characterbook/ui/widgets/fields/long_text_editor.dart';
 import 'package:characterbook/services/app_navigator.dart';
 import 'package:characterbook/ui/widgets/tags_section.dart';
 import 'package:flutter/material.dart';
@@ -150,21 +151,9 @@ class _NoteManagementScreenState extends State<NoteManagementScreen> {
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: TextFormField(
+                      child: LongTextEditor(
                         controller: _contentController,
-                        maxLines: null,
-                        keyboardType: TextInputType.multiline,
-                        textInputAction: TextInputAction.newline,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: s.start_writing,
-                          hintStyle: const TextStyle(fontSize: 16),
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(fontSize: 16, height: 1.5),
+                        hintText: s.start_writing,
                         contextMenuBuilder: (context, editableTextState) {
                           return MarkdownContextMenu(
                             controller: _contentController,

@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
   final String label;
+  final String? hintText;
   final String? initialValue;
+  final int? minLines;
   final int? maxLines;
+  final EdgeInsetsGeometry? contentPadding;
   final bool isRequired;
   final bool alignLabel;
   final FormFieldSetter<String>? onSaved;
@@ -12,13 +15,17 @@ class CustomTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
   final EditableTextContextMenuBuilder? contextMenuBuilder;
 
   const CustomTextField({
     super.key,
     required this.label,
+    this.hintText,
     this.initialValue,
+    this.minLines,
     this.maxLines = 1,
+    this.contentPadding,
     this.isRequired = false,
     this.alignLabel = false,
     this.onSaved,
@@ -26,6 +33,7 @@ class CustomTextField extends StatelessWidget {
     this.onChanged,
     this.controller,
     this.keyboardType,
+    this.textInputAction,
     this.contextMenuBuilder,
   });
 
@@ -38,13 +46,18 @@ class CustomTextField extends StatelessWidget {
       initialValue: controller == null ? initialValue : null,
       decoration: InputDecoration(
         labelText: label,
+        hintText: hintText,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         alignLabelWithHint: alignLabel,
+        contentPadding: contentPadding,
       ),
       style: theme.textTheme.bodyLarge,
+      minLines: minLines,
       maxLines: maxLines,
       keyboardType: keyboardType,
-      validator: validator ?? (isRequired ? (value) => _defaultValidator(context, value) : null),
+      textInputAction: textInputAction,
+      validator: validator ??
+          (isRequired ? (value) => _defaultValidator(context, value) : null),
       onSaved: onSaved,
       onChanged: onChanged,
       contextMenuBuilder: contextMenuBuilder,

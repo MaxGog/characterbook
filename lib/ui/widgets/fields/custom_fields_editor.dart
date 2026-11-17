@@ -2,6 +2,7 @@ import 'package:characterbook/ui/screens/field_editor_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:characterbook/features/characters/domain/custom_field_model.dart';
 import 'package:characterbook/generated/l10n.dart';
+import 'package:characterbook/ui/widgets/fields/custom_text_field.dart';
 
 class CustomFieldsEditor extends StatefulWidget {
   final List<CustomField> initialFields;
@@ -201,13 +202,12 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
       int index, CustomField field, S s, ThemeData theme) {
     final title = field.key.isEmpty ? s.field_name : field.key;
     return Card.outlined(
-      key: ValueKey('${field.key}_${field.value}_$index'),
+      key: ObjectKey(field),
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
       child: ReorderableDragStartListener(
         index: index,
-        key: ValueKey('${field.key}_${field.value}_$index'),
         child: ListTile(
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -370,8 +370,7 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
 
   Widget _buildVerticalFieldItem(int index, S s, ThemeData theme) {
     return Card.filled(
-      key: ValueKey(
-          'v_${_keyControllers[index].text}_${_valueControllers[index].text}_$index'),
+      key: ObjectKey(_keyControllers[index]),
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
@@ -394,34 +393,28 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
             Expanded(
               child: Column(
                 children: [
-                  TextField(
+                  CustomTextField(
+                    label: s.field_name,
+                    hintText: s.field_name_hint,
                     controller: _keyControllers[index],
-                    style: theme.textTheme.bodyLarge,
-                    decoration: InputDecoration(
-                      labelText: s.field_name,
-                      hintText: s.field_name_hint,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  TextField(
+                  CustomTextField(
+                    label: s.field_value,
+                    hintText: s.field_value_hint,
                     controller: _valueControllers[index],
-                    style: theme.textTheme.bodyLarge,
-                    maxLines: null,
                     minLines: 2,
-                    decoration: InputDecoration(
-                      labelText: s.field_value,
-                      hintText: s.field_value_hint,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 16),
-                      alignLabelWithHint: true,
+                    maxLines: null,
+                    alignLabel: true,
+                    keyboardType: TextInputType.multiline,
+                    textInputAction: TextInputAction.newline,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
                     ),
                   ),
                 ],
@@ -496,8 +489,7 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
     return SizedBox(
       width: 320,
       child: Card.filled(
-        key: ValueKey(
-            'v_${_keyControllers[index].text}_${_valueControllers[index].text}_$index'),
+        key: ObjectKey(_keyControllers[index]),
         margin: const EdgeInsets.only(right: 16, bottom: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         clipBehavior: Clip.antiAlias,
@@ -526,34 +518,28 @@ class _CustomFieldsEditorState extends State<CustomFieldsEditor> {
                 ],
               ),
               const SizedBox(height: 12),
-              TextField(
+              CustomTextField(
+                label: s.field_name,
+                hintText: s.field_name_hint,
                 controller: _keyControllers[index],
-                style: theme.textTheme.bodyLarge,
-                decoration: InputDecoration(
-                  labelText: s.field_name,
-                  hintText: s.field_name_hint,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
                 ),
               ),
               const SizedBox(height: 16),
-              TextField(
+              CustomTextField(
+                label: s.field_value,
+                hintText: s.field_value_hint,
                 controller: _valueControllers[index],
-                style: theme.textTheme.bodyLarge,
-                maxLines: null,
                 minLines: 3,
-                decoration: InputDecoration(
-                  labelText: s.field_value,
-                  hintText: s.field_value_hint,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  alignLabelWithHint: true,
+                maxLines: null,
+                alignLabel: true,
+                keyboardType: TextInputType.multiline,
+                textInputAction: TextInputAction.newline,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
                 ),
               ),
             ],
