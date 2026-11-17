@@ -49,7 +49,7 @@
 | **Android** | Android SDK, Java JDK 17+, включённый режим разработчика |
 | **Windows** | Visual Studio 2022+ с инструментами разработки классических приложений на C++ |
 | **Linux** | Clang, CMake, Ninja, pkg-config, GTK 3 и liblzma |
-| **macOS/iOS** | macOS и Xcode (для сборки iOS/macOS) |
+| **macOS/iOS** | macOS и Xcode (для сборки iOS/macOS); целевая версия iOS — 15.0+ |
 | **Web** | Chrome 90+ для тестирования |
 
 ### ⚙️ Пошаговая установка

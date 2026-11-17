@@ -5,7 +5,7 @@ import 'package:characterbook/features/races/domain/race_model.dart';
 import 'package:characterbook/features/templates/domain/template_model.dart';
 import 'package:characterbook/core/app_notification_actions.dart';
 import 'package:characterbook/services/file_picker_service.dart';
-import 'package:characterbook/ui/navigation/menu_content.dart';
+import 'package:characterbook/ui/navigation/app_menu_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,9 +16,11 @@ class AppNavigator {
     _notificationActions = actions;
   }
 
-  static BuildContext? get _context => appRouter.routerDelegate.navigatorKey.currentContext;
+  static BuildContext? get _context =>
+      appRouter.routerDelegate.navigatorKey.currentContext;
 
-  static NavigatorState? get navigator => appRouter.routerDelegate.navigatorKey.currentState;
+  static NavigatorState? get navigator =>
+      appRouter.routerDelegate.navigatorKey.currentState;
 
   static void goToHome() => appRouter.go('/home');
   static void goToCharacters() => appRouter.go('/characters');
@@ -101,59 +103,10 @@ class AppNavigator {
       showNotification(message, type: AppNotificationType.info);
 
   static void openMenu(BuildContext context) {
-    if (MediaQuery.of(context).size.width >= 600) {
+    if (MediaQuery.sizeOf(context).width >= 600) {
       scaffoldKey.currentState?.openDrawer();
     } else {
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (ctx) => DraggableScrollableSheet(
-          initialChildSize: 0.7,
-          minChildSize: 0.5,
-          maxChildSize: 0.95,
-          expand: false,
-          builder: (ctx, scrollController) => Container(
-            decoration: BoxDecoration(
-              color: Theme.of(ctx).colorScheme.surface,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(32)),
-            ),
-            child: Column(
-              children: [
-                // drag handle
-                Container(
-                  margin: const EdgeInsets.only(top: 12, bottom: 4),
-                  width: 32,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Theme.of(ctx)
-                        .colorScheme
-                        .onSurfaceVariant
-                        .withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.close_rounded),
-                        onPressed: () => Navigator.pop(ctx),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: MenuContent(scrollController: scrollController),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
+      showAppMenuBottomSheet(context);
     }
   }
 }

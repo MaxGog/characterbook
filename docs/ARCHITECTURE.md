@@ -353,6 +353,13 @@ main.dart                     # Точка входа в приложение
 - Кнопка «Открыть настройки системы» вызывает `Settings.ACTION_APP_LOCALE_SETTINGS` (Android 13+) или `Settings.ACTION_APPLICATION_DETAILS_SETTINGS` (Android ≤ 12). На остальных платформах метод возвращает `false`, UI показывает SnackBar с ошибкой.
 - На iOS, macOS, Windows, Linux и Web нативной per-app локализации нет — `LocaleChannelService` не вызывает MethodChannel, а `LocaleProvider` использует только `SharedPreferences`. Единое поведение UI (селектор языка) при этом сохраняется на всех платформах.
 
+## iOS-специфичные функции
+
+- Минимальная версия iOS — 15.0.
+- `SceneDelegate` принимает открытые системой URL документов и передаёт их `AppDelegate`; метод-каналы файлового выбора и открытия регистрируются в `didInitializeImplicitFlutterEngine`.
+- `Info.plist` объявляет типы файлов CharacterBook, чтобы iOS могла передавать такие документы приложению.
+- Зависимости Flutter, поддерживающие Swift Package Manager, фиксируются в `Package.resolved` рабочего пространства Xcode.
+
 ## Облачная синхронизация
 
 - Google Drive используется модулем `features/backup/data/CloudBackupService` для хранения резервных копий.
@@ -381,7 +388,8 @@ main.dart                     # Точка входа в приложение
 ### Навигация
 
 - `AppNavigationBar` — главная навигационная панель (нижняя на мобильных, боковая на десктопе).
-- `MenuContent` — содержимое бокового меню.
+- `MenuContent` — общее содержимое бокового меню и мобильного нижнего меню; `AppNavigator.openMenu` выбирает вариант по ширине окна.
+- `showAppMenuBottomSheet` — единая реализация мобильного меню, используемая навигацией и общей панелью приложения.
 
 ### Модальные окна
 

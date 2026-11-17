@@ -1,5 +1,5 @@
 import 'package:characterbook/generated/l10n.dart';
-import 'package:characterbook/ui/navigation/menu_content.dart';
+import 'package:characterbook/ui/navigation/app_menu_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -178,14 +178,11 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
         tooltip: S.of(context).search,
       ),
       IconButton(
-        onPressed: () => _showAppMenu(
+        onPressed: () => showAppMenuBottomSheet(
           context,
-          onFoldersPressed: onFoldersPressed,
-          onTemplatesPressed: onTemplatesPressed,
-          onViewModePressed: onViewModePressed,
-          onSettingsPressed: onSettingsPressed,
-          onHelpPressed: onHelpPressed,
-          onAboutPressed: onAboutPressed,
+          onSettingsTap: onSettingsPressed,
+          onHelpTap: onHelpPressed,
+          onAboutTap: onAboutPressed,
         ),
         icon: const Icon(Icons.account_circle_rounded),
         iconSize: 32,
@@ -198,72 +195,6 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
 
     return actions;
-  }
-
-  static void _showAppMenu(
-    BuildContext context, {
-    VoidCallback? onFoldersPressed,
-    VoidCallback? onTemplatesPressed,
-    VoidCallback? onViewModePressed,
-    VoidCallback? onSettingsPressed,
-    VoidCallback? onHelpPressed,
-    VoidCallback? onAboutPressed,
-  }) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
-        expand: false,
-        builder: (context, scrollController) {
-          return Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(32),
-              ),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 12, bottom: 4),
-                  width: 32,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurfaceVariant
-                        .withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.close_rounded),
-                        onPressed: () => Navigator.pop(context),
-                        tooltip: S.of(context).close,
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: MenuContent(
-                    scrollController: scrollController,
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
   }
 
   Widget _buildSearchField(BuildContext context) {

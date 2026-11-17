@@ -2,38 +2,55 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+
 	<key>CFBundleDisplayName</key>
 	<string>Characterbook</string>
+
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+
 	<key>CFBundleName</key>
 	<string>characterbook</string>
+
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
+
 	<key>CFBundleSignature</key>
 	<string>????</string>
+
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+
+	<!-- Launch screen -->
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
+
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+
+	<!-- Supported orientations -->
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -41,71 +58,126 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+
+	<!-- UIScene lifecycle -->
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneClassName</key>
+					<string>UIWindowScene</string>
+
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+
+					<key>UISceneConfigurationName</key>
+					<string>flutter</string>
+
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+
+	<!-- Other iOS settings -->
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	<key>NSDocumentsFolderUsageDescription</key>
-    <string>Для сохранения резервных копий</string>
-    <key>NSDownloadsFolderUsageDescription</key>
-    <string>Для загрузки резервных копий</string>
 
+	<!-- File system permissions -->
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>Для сохранения резервных копий</string>
+
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>Для загрузки резервных копий</string>
+
+	<!-- Calendar -->
 	<key>NSCalendarsUsageDescription</key>
 	<string>Для добавления напоминаний о событиях</string>
+
+	<!-- Notifications -->
 	<key>NSUserNotificationsUsageDescription</key>
 	<string>Для уведомлений о предстоящих событиях</string>
 
+	<!-- Supported document types -->
 	<key>CFBundleDocumentTypes</key>
 	<array>
+
 		<dict>
 			<key>CFBundleTypeName</key>
 			<string>Character File</string>
+
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+
 			<key>LSHandlerRank</key>
 			<string>Alternate</string>
+
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>ru.maxgog.character</string>
 			</array>
 		</dict>
+
 		<dict>
 			<key>CFBundleTypeName</key>
 			<string>Race File</string>
+
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+
 			<key>LSHandlerRank</key>
 			<string>Alternate</string>
+
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>ru.maxgog.race</string>
 			</array>
 		</dict>
+
 		<dict>
 			<key>CFBundleTypeName</key>
 			<string>Chax File</string>
+
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+
 			<key>LSHandlerRank</key>
 			<string>Alternate</string>
+
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>ru.maxgog.chax</string>
 			</array>
 		</dict>
+
 	</array>
 
+	<!-- Exported file types -->
 	<key>UTExportedTypeDeclarations</key>
 	<array>
+
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.data</string>
 			</array>
+
 			<key>UTTypeDescription</key>
 			<string>Character File</string>
+
 			<key>UTTypeIdentifier</key>
-			<string>com.yourcompany.character</string>
+			<string>ru.maxgog.character</string>
+
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -114,15 +186,19 @@
 				</array>
 			</dict>
 		</dict>
+
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.data</string>
 			</array>
+
 			<key>UTTypeDescription</key>
 			<string>Race File</string>
+
 			<key>UTTypeIdentifier</key>
-			<string>com.yourcompany.race</string>
+			<string>ru.maxgog.race</string>
+
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -131,15 +207,19 @@
 				</array>
 			</dict>
 		</dict>
+
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.data</string>
 			</array>
+
 			<key>UTTypeDescription</key>
 			<string>Chax File</string>
+
 			<key>UTTypeIdentifier</key>
-			<string>com.yourcompany.chax</string>
+			<string>ru.maxgog.chax</string>
+
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -148,6 +228,7 @@
 				</array>
 			</dict>
 		</dict>
+
 	</array>
 
 </dict>

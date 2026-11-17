@@ -11,7 +11,8 @@ class ColorChoiceChip extends StatelessWidget {
     super.key,
     required this.themeProvider,
     required this.label,
-    required this.color, required bool selected,
+    required this.color,
+    required bool selected,
   });
 
   @override

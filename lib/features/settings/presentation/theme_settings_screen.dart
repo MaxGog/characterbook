@@ -14,7 +14,8 @@ class ThemeSettingsScreen extends StatefulWidget {
 }
 
 class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
-  Future<void> _pickCustomColor(BuildContext context, Color currentColor) async {
+  Future<void> _pickCustomColor(
+      BuildContext context, Color currentColor) async {
     final selected = await showDialog<Color>(
       context: context,
       builder: (context) {
@@ -95,8 +96,8 @@ class _ThemePhonePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final s = S.of(context);
-    final previewHeight = (MediaQuery.sizeOf(context).height * 0.42)
-        .clamp(260.0, 360.0);
+    final previewHeight =
+        (MediaQuery.sizeOf(context).height * 0.42).clamp(260.0, 360.0);
     const designWidth = 252.0;
     const designHeight = 448.0;
 
@@ -109,82 +110,83 @@ class _ThemePhonePreview extends StatelessWidget {
             width: designWidth,
             height: designHeight,
             child: Container(
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerLowest,
-              borderRadius: BorderRadius.circular(40),
-              border: Border.all(
-                color: colorScheme.outlineVariant,
-                width: 1,
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerLowest,
+                borderRadius: BorderRadius.circular(40),
+                border: Border.all(
+                  color: colorScheme.outlineVariant,
+                  width: 1,
+                ),
+              ),
+              padding: const EdgeInsets.all(18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    s.app_name,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: colorScheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                        ),
+                    textAlign: TextAlign.left,
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerHigh,
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Container(
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerHigh,
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerHigh,
+                        borderRadius: BorderRadius.circular(26),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Container(
+                    height: 64,
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                    child: Center(
+                      child: Icon(Icons.home,
+                          color: colorScheme.primary, size: 26),
+                    ),
+                  ),
+                ],
               ),
             ),
-            padding: const EdgeInsets.all(18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  s.app_name,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: colorScheme.onSurface,
-                        fontWeight: FontWeight.w600,
-                      ),
-                  textAlign: TextAlign.left,
-                ),
-                const SizedBox(height: 14),
-                Container(
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: colorScheme.surfaceContainerHigh,
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Container(
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: colorScheme.surfaceContainerHigh,
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerHigh,
-                      borderRadius: BorderRadius.circular(26),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 18),
-                Container(
-                  height: 64,
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerLow,
-                    borderRadius: BorderRadius.circular(22),
-                  ),
-                  child: Center(
-                    child: Icon(Icons.home, color: colorScheme.primary, size: 26),
-                  ),
-                ),
-              ],
-            ),
           ),
-        ),
         ),
       ),
     );
@@ -452,8 +454,9 @@ class _ModePill extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final bg = selected ? colorScheme.primaryContainer : Colors.transparent;
-    final fg =
-        selected ? colorScheme.onPrimaryContainer : colorScheme.onSurfaceVariant;
+    final fg = selected
+        ? colorScheme.onPrimaryContainer
+        : colorScheme.onSurfaceVariant;
 
     return Material(
       color: bg,

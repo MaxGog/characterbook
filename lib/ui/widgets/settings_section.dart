@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class SettingsSection extends StatelessWidget {
   final String title;
   final List<Widget> children;
-  
+
   const SettingsSection({
     super.key,
     required this.title,
@@ -27,10 +27,11 @@ class SettingsSection extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 8),
               child: Text(
-                title.toUpperCase(),
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: colorScheme.onSurface,
-                ),
+                title,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ),
             const SizedBox(height: 12),
