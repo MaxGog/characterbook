@@ -41,9 +41,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: android
-            runner: ubuntu-latest
-            artifact-path: build/app/outputs/flutter-apk/app-debug.apk
           - platform: ios
             runner: macos-latest
             artifact-path: build/ios/iphoneos/Runner.app
@@ -53,12 +50,6 @@ jobs:
           - platform: linux
             runner: ubuntu-latest
             artifact-path: build/linux/x64/release/bundle
-          - platform: windows
-            runner: windows-latest
-            artifact-path: build/windows/**/runner/Release/**
-          - platform: macos
-            runner: macos-latest
-            artifact-path: build/macos/Build/Products/Release
     runs-on: ${{ matrix.runner }}
 
     steps:
@@ -69,13 +60,6 @@ jobs:
         run: |
           FLUTTER_VERSION=$(node -p "JSON.parse(require('fs').readFileSync('.fvmrc', 'utf8')).flutter")
           echo "FLUTTER_VERSION=$FLUTTER_VERSION" >> "$GITHUB_ENV"
-
-      - name: Set up Java
-        if: matrix.platform == 'android'
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
 
       - name: Install Linux desktop dependencies
         if: matrix.platform == 'linux'
@@ -91,15 +75,11 @@ jobs:
           cache-key: flutter-${{ runner.os }}-${{ hashFiles('pubspec.lock') }}
 
       - name: Enable desktop target
-        if: contains(fromJSON('["linux", "macos", "windows"]'), matrix.platform)
+        if: matrix.platform == 'linux'
         run: flutter config --enable-${{ matrix.platform }}-desktop
 
       - name: Install dependencies
         run: flutter pub get
-
-      - name: Build Android
-        if: matrix.platform == 'android'
-        run: flutter build apk --debug
 
       - name: Build iOS
         if: matrix.platform == 'ios'
@@ -112,14 +92,6 @@ jobs:
       - name: Build Linux
         if: matrix.platform == 'linux'
         run: flutter build linux --release
-
-      - name: Build Windows
-        if: matrix.platform == 'windows'
-        run: flutter build windows --release
-
-      - name: Build macOS
-        if: matrix.platform == 'macos'
-        run: flutter build macos --release
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
