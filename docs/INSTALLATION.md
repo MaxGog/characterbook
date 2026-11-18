@@ -36,11 +36,11 @@
 
 | Компонент | Минимальная версия | Рекомендуемая версия | Проверка |
 |-----------|-------------------|----------------------|----------|
-| **Flutter SDK** | 3.41.9 | 3.41.9 (закреплена в `.fvmrc`) | `fvm flutter --version` |
-| **Dart SDK** | Входит в Flutter SDK | Версия из выбранного Flutter SDK | `fvm dart --version` |
+| **Flutter SDK** | 3.44.0 | 3.50.0 (закреплена в `.fvmrc`) | `fvm flutter --version` |
+| **Dart SDK** | 3.12.0 | Версия из закреплённого Flutter SDK | `fvm dart --version` |
 | **Git** | 2.25.0 | 2.40.0+ | `git --version` |
 
-Для выбора одинаковой версии Flutter на разных устройствах используйте [FVM](https://fvm.app/). Сначала установите Flutter SDK, затем установите FVM командой `dart pub global activate fvm` и добавьте каталог глобальных Dart-пакетов в `PATH`. Если FVM не используется, установите Flutter 3.41.9 и замените `fvm flutter` на `flutter`.
+Для выбора одинаковой версии Flutter на разных устройствах используйте [FVM](https://fvm.app/). Сначала установите Flutter SDK, затем установите FVM командой `dart pub global activate fvm` и добавьте каталог глобальных Dart-пакетов в `PATH`. Если FVM не используется, установите Flutter 3.50.0 и замените `fvm flutter` на `flutter`.
 
 #### **Платформо-специфичные требования:**
 

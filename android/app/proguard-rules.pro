@@ -24,6 +24,9 @@
     <fields>;
 }
 
+# Flutter's deferred-component manager still references the legacy Play Core task API.
+-dontwarn com.google.android.play.core.tasks.**
+
 # ─── Сохранить модель данных (если используете JSON/gson/serialization) ──
 # Раскомментируйте и укажите ваш пакет, если сериализуете объекты:
 # -keep class ru.maxgog.listcharacters.** { *; }

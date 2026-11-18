@@ -1,5 +1,5 @@
-[![Flutter](https://img.shields.io/badge/Flutter-3.41.9-02569B?style=flat&logo=flutter&logoColor=white)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.7+-0175C2?style=flat&logo=dart&logoColor=white)](https://dart.dev)
+[![Flutter](https://img.shields.io/badge/Flutter-3.50.0-02569B?style=flat&logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.12+-0175C2?style=flat&logo=dart&logoColor=white)](https://dart.dev)
 [![License](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat)](LICENSE)
 
 # 🎭 CharacterBook
@@ -57,8 +57,8 @@ To build and run the project locally:
 
 ## 🧱 Tech Stack
 
-*   **Framework:** [Flutter](https://flutter.dev/) (3.41.9; pinned in `.fvmrc`).
-*   **Language:** [Dart](https://dart.dev/) (3.7+).
+*   **Framework:** [Flutter](https://flutter.dev/) (3.50.0; pinned in `.fvmrc`).
+*   **Language:** [Dart](https://dart.dev/) (3.12+).
 *   **Database:** [Hive](https://docs.hivedb.dev/) for fast local storage.
 *   **State management:** `Provider` and `flutter_bloc`.
 *   **Document generation:** `pdf`, `printing`, and `docs_gee` for creating PDF and DOCX files.
